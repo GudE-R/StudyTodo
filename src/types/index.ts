@@ -4,13 +4,14 @@ export interface Todo {
     dueDate?: Date;
     dueTime?: string;
     endTime?: string;
-    category?: string;
+    categoryId?: string; // Changed from category name to ID
     srsInterval?: string;
     range?: string;
     memo?: string;
     priority?: "high" | "medium" | "low";
     completed: boolean;
     createdAt: Date;
+    updatedAt: Date; // Added
 }
 
 export interface Category {
@@ -18,7 +19,10 @@ export interface Category {
     name: string;
     level: "large" | "medium" | "small";
     parentId?: string;
-    children?: Category[];
+    children?: Category[]; // For UI tree structure
+    order: number; // Added
+    createdAt: Date; // Added
+    updatedAt: Date; // Added
 }
 
 export interface SRSProfile {
@@ -26,6 +30,8 @@ export interface SRSProfile {
     name: string;
     intervals: number[]; // Days until next review (e.g., [1, 3, 7])
     isDefault?: boolean;
+    createdAt: Date; // Added
+    updatedAt: Date; // Added
 }
 
 /**

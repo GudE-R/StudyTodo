@@ -50,7 +50,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             // Category Filter
             if (analyticsCategory !== "all") {
                 const todo = todos.find(t => t.id === session.todoId);
-                if (!todo || todo.category !== analyticsCategory) return false;
+                if (!todo || todo.categoryId !== analyticsCategory) return false; // Use categoryId
             }
 
             switch (range) {
@@ -94,7 +94,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             // Count completed todos
             todos.filter(t => {
                 if (!t.completed) return false;
-                if (analyticsCategory !== "all" && t.category !== analyticsCategory) return false;
+                if (analyticsCategory !== "all" && t.categoryId !== analyticsCategory) return false; // Use categoryId
                 return true;
             }).forEach(t => {
                 const date = new Date(t.createdAt);
@@ -122,7 +122,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             });
             todos.filter(t => {
                 if (!t.completed) return false;
-                if (analyticsCategory !== "all" && t.category !== analyticsCategory) return false;
+                if (analyticsCategory !== "all" && t.categoryId !== analyticsCategory) return false; // Use categoryId
                 return true;
             }).forEach(t => {
                 const date = new Date(t.createdAt);
@@ -151,7 +151,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             });
             todos.filter(t => {
                 if (!t.completed) return false;
-                if (analyticsCategory !== "all" && t.category !== analyticsCategory) return false;
+                if (analyticsCategory !== "all" && t.categoryId !== analyticsCategory) return false; // Use categoryId
                 return true;
             }).forEach(t => {
                 const date = new Date(t.createdAt);
@@ -176,7 +176,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             });
             todos.filter(t => {
                 if (!t.completed) return false;
-                if (analyticsCategory !== "all" && t.category !== analyticsCategory) return false;
+                if (analyticsCategory !== "all" && t.categoryId !== analyticsCategory) return false; // Use categoryId
                 return true;
             }).forEach(t => {
                 const year = getYear(new Date(t.createdAt));
@@ -193,7 +193,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
     // --- History Logic ---
     const getFilteredTodos = () => {
         return todos.filter(todo => {
-            const matchesCategory = filterCategory === "all" || todo.category === filterCategory; // Note: category is string ID or name? Assuming string for now based on previous fixes
+            const matchesCategory = filterCategory === "all" || todo.categoryId === filterCategory; // Use categoryId
             const matchesStatus = filterStatus === "all"
                 ? true
                 : filterStatus === "completed" ? todo.completed : !todo.completed;
@@ -264,7 +264,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                     >
                                         <option value="all">All Categories</option>
                                         {flatCategories.map(cat => (
-                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option> // Use cat.id
                                         ))}
                                     </select>
                                 </div>
@@ -283,7 +283,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                     <div className="text-sm text-gray-500 font-medium mb-1">Completed Todos</div>
                                     <div className="text-3xl font-bold text-gray-800">
                                         {/* Count completed todos matching filter */}
-                                        {todos.filter(t => t.completed && (analyticsCategory === "all" || t.category === analyticsCategory) &&
+                                        {todos.filter(t => t.completed && (analyticsCategory === "all" || t.categoryId === analyticsCategory) && // Use categoryId
                                             (range === "all" ? true :
                                                 range === "week" ? isWithinInterval(new Date(t.createdAt), { start: startOfWeek(new Date(), { weekStartsOn: 1 }), end: endOfWeek(new Date(), { weekStartsOn: 1 }) }) :
                                                     range === "month" ? isWithinInterval(new Date(t.createdAt), { start: startOfMonth(new Date()), end: endOfMonth(new Date()) }) :
@@ -336,7 +336,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 >
                                     <option value="all">All Categories</option>
                                     {flatCategories.map(cat => (
-                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option> // Use cat.id
                                     ))}
                                 </select>
                             </div>
@@ -350,7 +350,9 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                             <div>
                                                 <div className="font-bold text-gray-800">{todo.title}</div>
                                                 <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
-                                                    <span className="bg-gray-100 px-2 py-0.5 rounded">{todo.category || "No Category"}</span>
+                                                    <span className="bg-gray-100 px-2 py-0.5 rounded">
+                                                        {todo.categoryId ? (flatCategories.find(c => c.id === todo.categoryId)?.name || "Unknown") : "No Category"}
+                                                    </span>
                                                     <span>{format(new Date(todo.createdAt), "yyyy/MM/dd HH:mm")}</span>
                                                 </div>
                                             </div>

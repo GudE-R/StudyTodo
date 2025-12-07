@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { isSameDay } from "date-fns";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
+import { generateId } from "@/lib/utils";
 import { AppShell } from "@/components/layout/AppShell";
 import { DateBar } from "@/components/home/DateBar";
 import { TodoList } from "@/components/home/TodoList";
@@ -17,62 +20,50 @@ import { Todo, Category, SRSProfile } from "@/types";
 /**
  * ホーム画面（メインページ）
  * 
- * 各コンポーネントを組み立て、ワイヤーフレーム通りのレイアウトを実現します。
- * AppShell内で絶対配置(absolute positioning)とFlexboxを組み合わせて
- * 画面サイズに応じたレスポンシブな配置を行います。
+ * Dexie.js (IndexedDB) を使用してデータを永続化します。
  */
-// モックデータ
-const INITIAL_CATEGORIES: Category[] = [
-  {
-    id: "1",
-    name: "学習",
-    level: "large",
-    children: [
-      {
-        id: "1-1",
-        name: "数学",
-        level: "medium",
-        parentId: "1",
-        children: [
-          { id: "1-1-1", name: "青チャート", level: "small", parentId: "1-1" },
-        ],
-      },
-      {
-        id: "1-2",
-        name: "英語",
-        level: "medium",
-        parentId: "1",
-        children: [],
-      },
-    ],
-  },
-];
 
-const INITIAL_SRS_PROFILES: SRSProfile[] = [
-  {
-    id: "default",
-    name: "忘却曲線 (標準)",
-    intervals: [1, 3, 7, 14, 30],
-    isDefault: true,
-  },
-  {
-    id: "short",
-    name: "短期集中",
-    intervals: [1, 2, 3, 5],
-    isDefault: false,
-  },
-];
+// カテゴリツリー構築ヘルパー
+const buildCategoryTree = (categories: Category[]) => {
+  const map = new Map<string, Category>();
+  const roots: Category[] = [];
+
+  // Deep copy to avoid mutating original objects from Dexie (which are frozen)
+  const cats = categories.map(c => ({ ...c, children: [] as Category[] }));
+
+  // First pass: map all categories
+  cats.forEach(cat => {
+    map.set(cat.id, cat);
+  });
+
+  // Second pass: link children to parents
+  cats.forEach(cat => {
+    if (cat.parentId) {
+      const parent = map.get(cat.parentId);
+      if (parent) {
+        parent.children?.push(cat);
+      }
+    } else {
+      roots.push(cat);
+    }
+  });
+
+  return roots;
+};
 
 export default function Home() {
   const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
-  const [todos, setTodos] = useState<Todo[]>([]);
   const [viewMode, setViewMode] = useState<"home" | "timer">("home");
   const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
 
-  // テンプレートデータ (本来はDB/LocalStorage等で永続化)
-  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
-  const [srsProfiles, setSrsProfiles] = useState<SRSProfile[]>(INITIAL_SRS_PROFILES);
+  // DBからデータを取得 (Live Query)
+  const todos = useLiveQuery(() => db.todos.orderBy("createdAt").reverse().toArray()) || [];
+  const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
+  const srsProfiles = useLiveQuery(() => db.srsProfiles.toArray()) || [];
+  const sessions = useLiveQuery(() => db.sessions.orderBy("createdAt").reverse().toArray()) || [];
+
+  const categories = buildCategoryTree(categoriesFlat);
 
   // 日付キープ機能用の状態
   const [keptDate, setKeptDate] = useState<Date | null>(null);
@@ -81,58 +72,60 @@ export default function Home() {
   // 現在選択中の日付（カレンダー・スケジュール表示用）
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
+  // Hydration Error対策: クライアントサイドでのみレンダリング
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // アクティビティモーダルの状態
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
-  // セッション（学習記録）の状態
-  const [sessions, setSessions] = useState<any[]>([]); // TODO: Type definition
 
-  const handleDeleteTodo = (todoId: string) => {
-    setTodos((prev) => prev.filter((t) => t.id !== todoId));
+  const handleDeleteTodo = async (todoId: string) => {
+    await db.todos.delete(todoId);
   };
 
-  const handleCreateTodo = (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
-    const newTodo: Todo = {
+  const handleCreateTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
+    await db.todos.add({
       ...todoData,
-      id: crypto.randomUUID(),
+      id: generateId(),
       createdAt: new Date(),
       completed: false,
-    };
-    setTodos((prev) => [newTodo, ...prev]);
+    });
     setIsTodoModalOpen(false);
   };
 
-  const handleStartNow = (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
+  const handleStartNow = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
     const newTodo: Todo = {
       ...todoData,
-      id: crypto.randomUUID(),
+      id: generateId(),
       createdAt: new Date(),
       completed: false,
     };
-    setTodos((prev) => [newTodo, ...prev]);
+    await db.todos.add(newTodo);
     setActiveTodo(newTodo);
     setViewMode("timer");
     setIsTodoModalOpen(false);
   };
 
-  const handleRecordTodo = (todoData: Omit<Todo, "id" | "createdAt" | "completed">, duration: number) => {
+  const handleRecordTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">, duration: number) => {
     const newTodo: Todo = {
       ...todoData,
-      id: crypto.randomUUID(),
-      createdAt: todoData.dueDate || new Date(), // Use selected date if available, else now
+      id: generateId(),
+      createdAt: todoData.dueDate || new Date(),
       completed: true,
     };
-    setTodos((prev) => [newTodo, ...prev]);
+    await db.todos.add(newTodo);
 
     // Create session record
-    const newSession = {
-      id: crypto.randomUUID(),
+    await db.sessions.add({
+      id: generateId(),
       todoId: newTodo.id,
       todoTitle: newTodo.title,
       duration: duration,
-      createdAt: newTodo.createdAt, // Match todo date
-      mode: "record", // New mode for manual recording
-    };
-    setSessions(prev => [newSession, ...prev]);
+      createdAt: newTodo.createdAt,
+      mode: "pomodoro", // Default to pomodoro for manual record for now, or add mode to handleRecordTodo args
+    });
     setIsTodoModalOpen(false);
   };
 
@@ -142,18 +135,17 @@ export default function Home() {
   };
 
   // セッション保存処理
-  const handleSaveSession = (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => {
-    const newSession = {
-      id: crypto.randomUUID(),
+  const handleSaveSession = async (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => {
+    await db.sessions.add({
+      id: generateId(),
       ...sessionData,
       createdAt: new Date(),
-    };
-    setSessions(prev => [newSession, ...prev]);
+      mode: sessionData.mode as "pomodoro" | "countdown" | "stopwatch"
+    });
   };
 
   // カレンダーの日付長押し時の処理
   const handleDateLongPress = (date: Date) => {
-    // 既に選択されている日付を再度長押しした場合は解除、そうでなければ設定
     if (keptDate && date.getTime() === keptDate.getTime()) {
       setKeptDate(null);
     } else {
@@ -163,14 +155,12 @@ export default function Home() {
 
   // スケジュールの時間長押し時の処理
   const handleTimeLongPress = (date: Date, time: string) => {
-    // 既に選択されている時間を再度長押しした場合は解除
-    // 日付も一致しているか確認
     if (keptTime === time && keptDate && date.getTime() === keptDate.getTime()) {
       setKeptTime(null);
-      setKeptDate(null); // 時間解除時は日付も解除する（セットで扱うため）
+      setKeptDate(null);
     } else {
       setKeptTime(time);
-      setKeptDate(date); // 押された日付をキープ
+      setKeptDate(date);
     }
   };
 
@@ -179,6 +169,10 @@ export default function Home() {
     setKeptDate(null);
     setKeptTime(null);
   };
+
+  if (!isClient) {
+    return null; // サーバーサイドでは何もレンダリングしない
+  }
 
   if (viewMode === "timer" && activeTodo) {
     return (
@@ -208,6 +202,7 @@ export default function Home() {
                 !t.completed &&
                 (!t.dueDate || isSameDay(new Date(t.dueDate), selectedDate))
               )}
+              categories={categories}
             />
           </div>
 
@@ -260,9 +255,9 @@ export default function Home() {
           isOpen={isTemplateModalOpen}
           onClose={() => setIsTemplateModalOpen(false)}
           categories={categories}
-          onCategoriesChange={setCategories}
+          onCategoriesChange={() => { }} // TODO: Implement category management
           srsProfiles={srsProfiles}
-          onSrsProfilesChange={setSrsProfiles}
+          onSrsProfilesChange={() => { }} // TODO: Implement SRS management
         />
         <ActivityModal
           isOpen={isActivityModalOpen}

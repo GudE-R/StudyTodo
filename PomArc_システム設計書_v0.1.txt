@@ -11,7 +11,9 @@
   - Web: Next.js（App Router/RSC、i18n、CSR+SSRのハイブリッド）
   - Mobile: Expo React Native（iOS/Android、同一コードベース）
 - データ層
-  - ローカル永続化: Web=IndexedDB、Mobile=SQLite（ローカルFirst）
+  - ローカル永続化: Web=IndexedDB (Dexie.js)、Mobile=SQLite（ローカルFirst）
+    - テーブル構成: todos, sessions, categories, srs_profiles
+    - ID戦略: UUID v4（クライアント生成、同期時の衝突回避）
   - 同期（[Pro]）: Supabase Postgres + Row Level Security、差分同期（フィールド単位の最新更新優先）
 - バックエンド
   - Supabase: 認証、DB、ストレージ、エッジ関数（定期ジョブ、簡易RPC）
@@ -51,18 +53,14 @@
 ## ドメインモデル（概略）
 - users
   - id, plan(tier), locale, created_at, updated_at
-- tasks（Todo+任意で開始/終了）
-  - id, user_id, title, category_id?, start_at?, end_at?, estimate_min?, srs_template_id?, range_note?, memo?, status, order_index, created_at, updated_at
-- categories（階層型）
-  - id, user_id, name, parent_id?, path_ltree?, created_at, updated_at
-- srs_templates
-  - id, user_id?, name, intervals_days(int[]), is_default, created_at, updated_at
-- reviews（SRS対象の進捗）
-  - id, user_id, subject, last_review_at?, next_due_at?, ease?, interval_days?, scheme_id?, carry_over_count, created_at, updated_at
-- sessions（タイマー記録）
-  - id, user_id, task_id?, subject?, source(pomodoro|cd|sw), start_at, end_at, elapsed_sec, was_interrupted, note?, created_at
-- stats_daily（[Pro]集計）
-  - id, user_id, date, focus_sec, pomo_count, review_done, by_category(jsonb), by_tag(jsonb), created_at
+- tasks (todos)
+  - id (UUID), user_id, title, category_id, start_at (dueDate), due_time, end_time, srs_interval, range_note, memo, priority, status (completed), created_at, updated_at
+- categories
+  - id (UUID), user_id, name, level, parent_id, order_index, created_at, updated_at
+- srs_profiles
+  - id (UUID), user_id, name, intervals (int[]), is_default, created_at, updated_at
+- sessions
+  - id (UUID), user_id, task_id, task_title, duration, mode, created_at
 
 索引・制約（例）
 - tasks: (user_id, status, start_at), (user_id, updated_at desc)

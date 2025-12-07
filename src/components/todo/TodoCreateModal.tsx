@@ -34,7 +34,7 @@ export function TodoCreateModal({
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [dueTime, setDueTime] = useState("");
     const [endTime, setEndTime] = useState("");
-    const [category, setCategory] = useState("");
+    const [categoryId, setCategoryId] = useState(""); // Changed to categoryId
     const [srsInterval, setSrsInterval] = useState("");
     const [range, setRange] = useState("");
     const [memo, setMemo] = useState("");
@@ -67,7 +67,7 @@ export function TodoCreateModal({
         const traverse = (cats: Category[], prefix: string = "") => {
             cats.forEach(cat => {
                 const label = prefix ? `${prefix} > ${cat.name}` : cat.name;
-                options.push({ value: cat.name, label });
+                options.push({ value: cat.id, label }); // Use cat.id as value
                 if (cat.children && cat.children.length > 0) {
                     traverse(cat.children, label);
                 }
@@ -81,7 +81,11 @@ export function TodoCreateModal({
 
     const getEffectiveTitle = () => {
         if (title.trim()) return title;
-        if (category) return category;
+        // Find category name by ID
+        if (categoryId) {
+            const cat = categoryOptions.find(c => c.value === categoryId);
+            if (cat) return cat.label.split(" > ").pop() || cat.label;
+        }
         return "No Title";
     };
 
@@ -104,11 +108,12 @@ export function TodoCreateModal({
             dueDate: effectiveDate || undefined,
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
-            category,
+            categoryId: categoryId || undefined, // Use categoryId
             srsInterval,
             range,
             memo,
             priority,
+            updatedAt: new Date(), // Added
         });
         resetForm();
     };
@@ -122,11 +127,12 @@ export function TodoCreateModal({
             dueDate: now,
             dueTime: format(now, "HH:mm"),
             // StartNow doesn't need endTime usually, as it's ongoing
-            category,
+            categoryId: categoryId || undefined, // Use categoryId
             srsInterval,
             range,
             memo,
             priority,
+            updatedAt: new Date(), // Added
         });
         resetForm();
     };
@@ -148,11 +154,12 @@ export function TodoCreateModal({
             dueDate: effectiveDate || undefined,
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
-            category,
+            categoryId: categoryId || undefined, // Use categoryId
             srsInterval,
             range,
             memo,
             priority,
+            updatedAt: new Date(), // Added
         }, durationNum * 60); // Convert minutes to seconds
         resetForm();
     };
@@ -162,7 +169,7 @@ export function TodoCreateModal({
         setDueDate(null);
         setDueTime("");
         setEndTime("");
-        setCategory("");
+        setCategoryId(""); // Reset categoryId
         setSrsInterval("");
         setRange("");
         setMemo("");
@@ -189,8 +196,8 @@ export function TodoCreateModal({
                     <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
                         <Tag size={18} className="text-gray-500" />
                         <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
                             className="bg-transparent text-sm w-full outline-none text-gray-700 appearance-none"
                         >
                             <option value="">カテゴリなし</option>
