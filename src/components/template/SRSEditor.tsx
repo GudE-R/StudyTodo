@@ -18,6 +18,8 @@ export function SRSEditor() {
     const [newName, setNewName] = useState("");
     const [newIntervals, setNewIntervals] = useState("");
 
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
     const startAdding = () => {
         setIsAdding(true);
         setNewName("");
@@ -59,10 +61,19 @@ export function SRSEditor() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("この設定を削除しますか？")) return;
+    const handleDeleteClick = (id: string) => {
+        if (deleteConfirmId === id) {
+            executeDelete(id);
+        } else {
+            setDeleteConfirmId(id);
+            setTimeout(() => setDeleteConfirmId(null), 3000);
+        }
+    };
+
+    const executeDelete = async (id: string) => {
         try {
             await db.srsProfiles.delete(id);
+            setDeleteConfirmId(null);
         } catch (error) {
             console.error("Failed to delete SRS profile", error);
             alert("SRS設定の削除に失敗しました");
@@ -131,10 +142,10 @@ export function SRSEditor() {
                             </div>
                             {!profile.isDefault && (
                                 <button
-                                    onClick={() => handleDelete(profile.id)}
-                                    className="text-gray-400 hover:text-red-500"
+                                    onClick={() => handleDeleteClick(profile.id)}
+                                    className={`transition-colors ${deleteConfirmId === profile.id ? "text-red-600 bg-red-50 px-2 py-0.5 rounded text-xs font-bold" : "text-gray-400 hover:text-red-500"}`}
                                 >
-                                    <Trash2 size={16} />
+                                    {deleteConfirmId === profile.id ? "削除する" : <Trash2 size={16} />}
                                 </button>
                             )}
                         </div>

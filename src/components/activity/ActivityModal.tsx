@@ -203,6 +203,18 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
     const filteredTodos = getFilteredTodos();
 
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    const handleDeleteClick = (id: string) => {
+        if (deleteConfirmId === id) {
+            onDeleteTodo(id);
+            setDeleteConfirmId(null);
+        } else {
+            setDeleteConfirmId(id);
+            setTimeout(() => setDeleteConfirmId(null), 3000);
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity p-4">
             <div className="w-full max-w-4xl h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
@@ -358,14 +370,10 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                             </div>
                                         </div>
                                         <button
-                                            onClick={() => {
-                                                if (confirm("Are you sure you want to delete this task?")) {
-                                                    onDeleteTodo(todo.id);
-                                                }
-                                            }}
-                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                                            onClick={() => handleDeleteClick(todo.id)}
+                                            className={`p-2 rounded-full transition-colors ${deleteConfirmId === todo.id ? "bg-red-50 text-red-600" : "text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"}`}
                                         >
-                                            <Trash2 size={18} />
+                                            {deleteConfirmId === todo.id ? <Trash2 size={18} fill="currentColor" /> : <Trash2 size={18} />}
                                         </button>
                                     </div>
                                 ))}

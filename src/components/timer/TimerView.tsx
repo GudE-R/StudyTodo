@@ -31,6 +31,9 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
     const [focusDuration, setFocusDuration] = useState(25);
     const [breakDuration, setBreakDuration] = useState(5);
 
+    // カウントダウン設定 (分)
+    const [countdownDuration, setCountdownDuration] = useState(15);
+
     const [timeLeft, setTimeLeft] = useState(focusDuration * 60);
     const [stopwatchTime, setStopwatchTime] = useState(0);
 
@@ -42,7 +45,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
     // モードや設定変更時にタイマーをリセット
     useEffect(() => {
         resetTimer();
-    }, [mode, status, focusDuration, breakDuration]);
+    }, [mode, status, focusDuration, breakDuration, countdownDuration]);
 
     // タイマーロジック
     useEffect(() => {
@@ -82,6 +85,8 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         } else if (mode === "pomodoro" && status === "break") {
             alert("休憩終了です！作業に戻りましょう。");
             setStatus("focus");
+        } else if (mode === "countdown") {
+            alert("タイマー終了です！");
         }
     };
 
@@ -97,7 +102,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                 setTimeLeft(breakDuration * 60);
             }
         } else if (mode === "countdown") {
-            setTimeLeft(15 * 60); // デフォルト15分
+            setTimeLeft(countdownDuration * 60);
         }
     };
 
@@ -113,7 +118,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         if (mode === "stopwatch") return 100; // ストップウォッチは常に満タン
         const total = mode === "pomodoro"
             ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
-            : 15 * 60;
+            : countdownDuration * 60;
         return ((total - timeLeft) / total) * 100;
     };
 
@@ -150,7 +155,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
             // カウントダウン系は「元々の時間 - 残り時間」が経過時間
             const total = mode === "pomodoro"
                 ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
-                : 15 * 60;
+                : countdownDuration * 60;
             actualDuration = total - timeLeft;
         }
 
@@ -281,6 +286,21 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                                 </button>
                             </>
                         )}
+                    </div>
+                )}
+
+                {/* Settings (Countdown Only) */}
+                {mode === "countdown" && !isRunning && !isPaused && (
+                    <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
+                        <span className="text-sm font-bold text-gray-500">タイマー時間:</span>
+                        <input
+                            type="number"
+                            min="1"
+                            value={countdownDuration}
+                            onChange={(e) => setCountdownDuration(Math.max(1, parseInt(e.target.value) || 0))}
+                            className="w-16 text-center border-b-2 border-blue-100 focus:border-blue-500 outline-none font-bold text-gray-800"
+                        />
+                        <span className="text-sm font-bold text-gray-500">分</span>
                     </div>
                 )}
 

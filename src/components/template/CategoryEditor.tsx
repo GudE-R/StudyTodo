@@ -17,6 +17,8 @@ export function CategoryEditor() {
     const [addingState, setAddingState] = useState<{ parentId: string | undefined, level: "large" | "medium" | "small" } | null>(null);
     const [inputName, setInputName] = useState("");
 
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
     const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
     const categories = buildCategoryTree(categoriesFlat);
 
@@ -69,9 +71,19 @@ export function CategoryEditor() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("このカテゴリと子カテゴリを削除しますか？")) return;
+    const handleDeleteClick = (id: string) => {
+        if (deleteConfirmId === id) {
+            // 2回目のクリックで削除実行
+            executeDelete(id);
+        } else {
+            // 1回目のクリックで確認状態へ
+            setDeleteConfirmId(id);
+            // 3秒後にリセット（オプション）
+            setTimeout(() => setDeleteConfirmId(null), 3000);
+        }
+    };
 
+    const executeDelete = async (id: string) => {
         try {
             // 再帰的に削除対象のIDを収集
             const idsToDelete: string[] = [];
@@ -83,6 +95,7 @@ export function CategoryEditor() {
             collectIds(id);
 
             await db.categories.bulkDelete(idsToDelete);
+            setDeleteConfirmId(null);
         } catch (error) {
             console.error("Failed to delete category", error);
             alert("カテゴリの削除に失敗しました");
@@ -118,6 +131,7 @@ export function CategoryEditor() {
                     const hasChildren = node.children && node.children.length > 0;
                     const isSmall = node.level === "small";
                     const isAddingChild = addingState?.parentId === node.id;
+                    const isDeleting = deleteConfirmId === node.id;
 
                     return (
                         <li key={node.id} className="ml-4">
@@ -145,8 +159,8 @@ export function CategoryEditor() {
                                 </span>
 
                                 {/* アクションボタン (ホバー時表示) */}
-                                <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {!isSmall && (
+                                <div className={`flex items-center space-x-1 transition-opacity ${isDeleting ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                                    {!isSmall && !isDeleting && (
                                         <button
                                             onClick={() => startAdding(node.id, node.level === "large" ? "medium" : "small")}
                                             className="p-1 text-gray-400 hover:text-blue-600"
@@ -156,11 +170,11 @@ export function CategoryEditor() {
                                         </button>
                                     )}
                                     <button
-                                        onClick={() => handleDelete(node.id)}
-                                        className="p-1 text-gray-400 hover:text-red-600"
+                                        onClick={() => handleDeleteClick(node.id)}
+                                        className={`p-1 transition-colors ${isDeleting ? "text-red-600 bg-red-50 rounded px-2 text-xs font-bold" : "text-gray-400 hover:text-red-600"}`}
                                         title="削除"
                                     >
-                                        <Trash2 size={14} />
+                                        {isDeleting ? "削除する" : <Trash2 size={14} />}
                                     </button>
                                 </div>
                             </div>

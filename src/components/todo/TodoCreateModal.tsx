@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Tag, Repeat, BookOpen, FileText, Play, Clock, CheckCircle } from "lucide-react";
+import { X, Tag, Repeat, BookOpen, FileText, Play, Clock, CheckCircle, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { Todo, Category, SRSProfile } from "@/types";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -323,9 +323,10 @@ export function TodoCreateModal({
                         </button>
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                            className="flex items-center justify-center space-x-1 bg-blue-100 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-200 transition-colors"
                         >
-                            作成
+                            <Plus size={18} />
+                            <span className="text-sm">作成</span>
                         </button>
                     </div>
                 </form>
