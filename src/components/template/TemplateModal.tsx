@@ -2,26 +2,17 @@
 
 import React, { useState } from "react";
 import { X, FolderTree, Repeat } from "lucide-react";
-import { Category, SRSProfile } from "@/types";
 import { CategoryEditor } from "./CategoryEditor";
 import { SRSEditor } from "./SRSEditor";
 
 interface TemplateModalProps {
     isOpen: boolean;
     onClose: () => void;
-    categories: Category[];
-    onCategoriesChange: (categories: Category[]) => void;
-    srsProfiles: SRSProfile[];
-    onSrsProfilesChange: (profiles: SRSProfile[]) => void;
 }
 
 export function TemplateModal({
     isOpen,
     onClose,
-    categories,
-    onCategoriesChange,
-    srsProfiles,
-    onSrsProfilesChange
 }: TemplateModalProps) {
     const [activeTab, setActiveTab] = useState<"category" | "srs">("category");
 
@@ -68,9 +59,9 @@ export function TemplateModal({
                 {/* Content */}
                 <div className="flex-1 overflow-hidden p-4 bg-gray-50/50">
                     {activeTab === "category" ? (
-                        <CategoryEditor categories={categories} onChange={onCategoriesChange} />
+                        <CategoryEditor />
                     ) : (
-                        <SRSEditor profiles={srsProfiles} onChange={onSrsProfilesChange} />
+                        <SRSEditor />
                     )}
                 </div>
             </div>

@@ -3,21 +3,22 @@
 import React, { useState } from "react";
 import { ChevronRight, ChevronDown, Plus, Trash2, Edit2, Folder, FolderOpen, File } from "lucide-react";
 import { Category } from "@/types";
-
-interface CategoryEditorProps {
-    categories: Category[];
-    onChange: (categories: Category[]) => void;
-}
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
+import { generateId, buildCategoryTree } from "@/lib/utils";
 
 /**
  * カテゴリ編集コンポーネント
  * 
  * 大・中・小の3階層のカテゴリをツリー形式で管理します。
  */
-export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
+export function CategoryEditor() {
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [editName, setEditName] = useState("");
+    const [addingState, setAddingState] = useState<{ parentId: string | undefined, level: "large" | "medium" | "small" } | null>(null);
+    const [inputName, setInputName] = useState("");
+
+    const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
+    const categories = buildCategoryTree(categoriesFlat);
 
     const toggleExpand = (id: string) => {
         const newExpanded = new Set(expandedIds);
@@ -29,52 +30,84 @@ export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
         setExpandedIds(newExpanded);
     };
 
-    const handleAddCategory = (parentId: string | undefined, level: "large" | "medium" | "small") => {
-        const name = prompt("カテゴリ名を入力してください");
-        if (!name) return;
-
-        const newCategory: Category = {
-            id: crypto.randomUUID(),
-            name,
-            level,
-            parentId,
-            children: [],
-        };
-
-        if (!parentId) {
-            // 大カテゴリの追加
-            onChange([...categories, newCategory]);
-        } else {
-            // 子カテゴリの追加（再帰的に検索して追加）
-            const addRecursive = (cats: Category[]): Category[] => {
-                return cats.map((cat) => {
-                    if (cat.id === parentId) {
-                        return { ...cat, children: [...(cat.children || []), newCategory] };
-                    }
-                    if (cat.children) {
-                        return { ...cat, children: addRecursive(cat.children) };
-                    }
-                    return cat;
-                });
-            };
-            onChange(addRecursive(categories));
-            // 親フォルダを自動展開
+    const startAdding = (parentId: string | undefined, level: "large" | "medium" | "small") => {
+        setAddingState({ parentId, level });
+        setInputName("");
+        if (parentId) {
             const newExpanded = new Set(expandedIds);
             newExpanded.add(parentId);
             setExpandedIds(newExpanded);
         }
     };
 
-    const handleDelete = (id: string) => {
+    const cancelAdding = () => {
+        setAddingState(null);
+        setInputName("");
+    };
+
+    const confirmAdding = async () => {
+        if (!inputName.trim() || !addingState) return;
+
+        try {
+            const newCategory: Category = {
+                id: generateId(),
+                name: inputName.trim(),
+                level: addingState.level,
+                parentId: addingState.parentId,
+                order: 0,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                children: [],
+            };
+
+            await db.categories.add(newCategory);
+            setAddingState(null);
+            setInputName("");
+        } catch (error) {
+            console.error("Failed to add category", error);
+            alert("カテゴリの追加に失敗しました");
+        }
+    };
+
+    const handleDelete = async (id: string) => {
         if (!confirm("このカテゴリと子カテゴリを削除しますか？")) return;
 
-        const deleteRecursive = (cats: Category[]): Category[] => {
-            return cats.filter((cat) => cat.id !== id).map((cat) => ({
-                ...cat,
-                children: cat.children ? deleteRecursive(cat.children) : [],
-            }));
-        };
-        onChange(deleteRecursive(categories));
+        try {
+            // 再帰的に削除対象のIDを収集
+            const idsToDelete: string[] = [];
+            const collectIds = (catId: string) => {
+                idsToDelete.push(catId);
+                const children = categoriesFlat.filter(c => c.parentId === catId);
+                children.forEach(child => collectIds(child.id));
+            };
+            collectIds(id);
+
+            await db.categories.bulkDelete(idsToDelete);
+        } catch (error) {
+            console.error("Failed to delete category", error);
+            alert("カテゴリの削除に失敗しました");
+        }
+    };
+
+    const renderInput = () => {
+        return (
+            <div className="flex items-center space-x-2 ml-8 mt-1">
+                <input
+                    type="text"
+                    value={inputName}
+                    onChange={(e) => setInputName(e.target.value)}
+                    className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="カテゴリ名"
+                    autoFocus
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") confirmAdding();
+                        if (e.key === "Escape") cancelAdding();
+                    }}
+                />
+                <button onClick={confirmAdding} className="text-blue-600 hover:text-blue-800 text-xs font-bold">追加</button>
+                <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 text-xs">キャンセル</button>
+            </div>
+        );
     };
 
     const renderTree = (nodes: Category[]) => {
@@ -84,6 +117,7 @@ export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
                     const isExpanded = expandedIds.has(node.id);
                     const hasChildren = node.children && node.children.length > 0;
                     const isSmall = node.level === "small";
+                    const isAddingChild = addingState?.parentId === node.id;
 
                     return (
                         <li key={node.id} className="ml-4">
@@ -114,7 +148,7 @@ export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
                                 <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     {!isSmall && (
                                         <button
-                                            onClick={() => handleAddCategory(node.id, node.level === "large" ? "medium" : "small")}
+                                            onClick={() => startAdding(node.id, node.level === "large" ? "medium" : "small")}
                                             className="p-1 text-gray-400 hover:text-blue-600"
                                             title="子カテゴリを追加"
                                         >
@@ -132,9 +166,10 @@ export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
                             </div>
 
                             {/* 子要素のレンダリング */}
-                            {isExpanded && node.children && (
+                            {(isExpanded || isAddingChild) && (
                                 <div className="border-l border-gray-100 ml-3">
-                                    {renderTree(node.children)}
+                                    {isExpanded && node.children && renderTree(node.children)}
+                                    {isAddingChild && renderInput()}
                                 </div>
                             )}
                         </li>
@@ -149,7 +184,7 @@ export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-gray-500">カテゴリ構成</h3>
                 <button
-                    onClick={() => handleAddCategory(undefined, "large")}
+                    onClick={() => startAdding(undefined, "large")}
                     className="flex items-center space-x-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-100"
                 >
                     <Plus size={12} />
@@ -158,13 +193,20 @@ export function CategoryEditor({ categories, onChange }: CategoryEditorProps) {
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2">
-                {categories.length === 0 ? (
+                {categories.length === 0 && !addingState ? (
                     <div className="text-center text-gray-400 text-sm py-8">
                         カテゴリがありません。<br />
                         「大カテゴリ追加」から作成してください。
                     </div>
                 ) : (
-                    renderTree(categories)
+                    <>
+                        {renderTree(categories)}
+                        {addingState?.parentId === undefined && addingState !== null && (
+                            <div className="ml-4">
+                                {renderInput()}
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

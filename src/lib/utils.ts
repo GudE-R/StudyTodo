@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Category } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -16,3 +17,31 @@ export function generateId(): string {
     return v.toString(16);
   });
 }
+
+// カテゴリツリー構築ヘルパー
+export const buildCategoryTree = (categories: Category[]) => {
+  const map = new Map<string, Category>();
+  const roots: Category[] = [];
+
+  // Deep copy to avoid mutating original objects from Dexie (which are frozen)
+  const cats = categories.map(c => ({ ...c, children: [] as Category[] }));
+
+  // First pass: map all categories
+  cats.forEach(cat => {
+    map.set(cat.id, cat);
+  });
+
+  // Second pass: link children to parents
+  cats.forEach(cat => {
+    if (cat.parentId) {
+      const parent = map.get(cat.parentId);
+      if (parent) {
+        parent.children?.push(cat);
+      }
+    } else {
+      roots.push(cat);
+    }
+  });
+
+  return roots;
+};

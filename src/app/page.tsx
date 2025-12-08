@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { isSameDay } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { generateId } from "@/lib/utils";
+import { generateId, buildCategoryTree } from "@/lib/utils";
 import { AppShell } from "@/components/layout/AppShell";
 import { DateBar } from "@/components/home/DateBar";
 import { TodoList } from "@/components/home/TodoList";
@@ -23,33 +23,7 @@ import { Todo, Category, SRSProfile } from "@/types";
  * Dexie.js (IndexedDB) を使用してデータを永続化します。
  */
 
-// カテゴリツリー構築ヘルパー
-const buildCategoryTree = (categories: Category[]) => {
-  const map = new Map<string, Category>();
-  const roots: Category[] = [];
-
-  // Deep copy to avoid mutating original objects from Dexie (which are frozen)
-  const cats = categories.map(c => ({ ...c, children: [] as Category[] }));
-
-  // First pass: map all categories
-  cats.forEach(cat => {
-    map.set(cat.id, cat);
-  });
-
-  // Second pass: link children to parents
-  cats.forEach(cat => {
-    if (cat.parentId) {
-      const parent = map.get(cat.parentId);
-      if (parent) {
-        parent.children?.push(cat);
-      }
-    } else {
-      roots.push(cat);
-    }
-  });
-
-  return roots;
-};
+// カテゴリツリー構築ヘルパーは src/lib/utils.ts に移動しました
 
 export default function Home() {
   const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
@@ -254,10 +228,6 @@ export default function Home() {
         <TemplateModal
           isOpen={isTemplateModalOpen}
           onClose={() => setIsTemplateModalOpen(false)}
-          categories={categories}
-          onCategoriesChange={() => { }} // TODO: Implement category management
-          srsProfiles={srsProfiles}
-          onSrsProfilesChange={() => { }} // TODO: Implement SRS management
         />
         <ActivityModal
           isOpen={isActivityModalOpen}
