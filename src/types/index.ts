@@ -20,9 +20,10 @@ export interface Category {
     level: "large" | "medium" | "small";
     parentId?: string;
     children?: Category[]; // For UI tree structure
-    order: number; // Added
-    createdAt: Date; // Added
-    updatedAt: Date; // Added
+    icon?: string; // Lucide icon name (e.g., "Book", "Code", "Music")
+    order: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface SRSProfile {

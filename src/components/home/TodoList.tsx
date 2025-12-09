@@ -1,25 +1,28 @@
+"use client";
+
 import React from "react";
-import { Circle } from "lucide-react";
+import { Circle, CheckCircle, GripVertical } from "lucide-react";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Todo, Category } from "@/types";
 
 interface TodoListProps {
     todos: Todo[];
-    categories?: Category[]; // Added categories prop
+    categories?: Category[];
+    onTodoClick?: (todo: Todo) => void;
+    onToggleComplete?: (todo: Todo) => void;
+    onReorder?: (todoId: string, newIndex: number) => void;
 }
 
 /**
  * Todoリストコンポーネント
  * 
- * ホーム画面左カラムに表示されるタスク一覧です。
- * 完了/未完了の切り替えや詳細表示への遷移を想定しています。
+ * ドラッグ&ドロップで並び替え可能なタスク一覧です。
+ * タップで詳細画面へ遷移、チェックで完了状態を切り替えます。
  */
-export function TodoList({ todos, categories = [] }: TodoListProps) {
-    // Helper to find category name
+export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete, onReorder }: TodoListProps) {
+    // カテゴリ名を取得するヘルパー関数
     const getCategoryName = (categoryId?: string) => {
         if (!categoryId) return null;
-        // Flatten categories for search (or simple search if we assume flat list passed? No, page passes tree)
-        // Actually, let's do a simple recursive search or assume we can pass flat list.
-        // page.tsx passes tree.
         const findCat = (cats: Category[]): string | undefined => {
             for (const cat of cats) {
                 if (cat.id === categoryId) return cat.name;
@@ -33,48 +36,100 @@ export function TodoList({ todos, categories = [] }: TodoListProps) {
         return findCat(categories);
     };
 
+    // ドラッグ終了時の処理
+    const handleDragEnd = (result: DropResult) => {
+        if (!result.destination || !onReorder) return;
+        if (result.source.index === result.destination.index) return;
+
+        const todoId = result.draggableId;
+        onReorder(todoId, result.destination.index);
+    };
+
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden">
             {/* ヘッダー領域 */}
-            <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Todo</h3>
+            <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Todo</h3>
             </div>
 
             {/* タスクリスト領域（スクロール可能） */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+            <div className="flex-1 overflow-y-auto p-2">
                 {todos.length === 0 ? (
-                    <div className="text-center py-10 text-gray-400 text-xs">
+                    <div className="text-center py-10 text-gray-400 dark:text-gray-500 text-xs">
                         タスクがありません
                     </div>
                 ) : (
-                    todos.map((todo) => {
-                        const categoryName = getCategoryName(todo.categoryId);
-                        return (
-                            <div key={todo.id} className="flex items-start p-2 bg-white border border-gray-100 rounded-lg shadow-sm hover:border-blue-200 transition-colors">
-                                {/* 完了チェックボタン */}
-                                <button className="mt-0.5 text-gray-300 hover:text-blue-500">
-                                    <Circle size={18} />
-                                </button>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="todo-list">
+                            {(provided) => (
+                                <div
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                    className="space-y-2"
+                                >
+                                    {todos.map((todo, index) => {
+                                        const categoryName = getCategoryName(todo.categoryId);
+                                        return (
+                                            <Draggable key={todo.id} draggableId={todo.id} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        onClick={() => onTodoClick?.(todo)}
+                                                        className={`flex items-start p-2 bg-white dark:bg-gray-800 border rounded-lg shadow-sm transition-colors cursor-pointer
+                                                            ${snapshot.isDragging
+                                                                ? "border-blue-400 shadow-lg"
+                                                                : "border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-700"
+                                                            }`}
+                                                    >
+                                                        {/* ドラッグハンドル */}
+                                                        <div
+                                                            {...provided.dragHandleProps}
+                                                            className="mr-1 text-gray-300 dark:text-gray-600 hover:text-gray-500 cursor-grab active:cursor-grabbing"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            <GripVertical size={16} />
+                                                        </div>
 
-                                {/* タスク内容 */}
-                                <div className="ml-2 flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 truncate">{todo.title}</p>
-                                    <div className="flex items-center space-x-2 mt-0.5">
-                                        {todo.dueTime && (
-                                            <span className="text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
-                                                {todo.dueTime}
-                                            </span>
-                                        )}
-                                        {categoryName && (
-                                            <span className="text-[10px] text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded">
-                                                {categoryName}
-                                            </span>
-                                        )}
-                                    </div>
+                                                        {/* 完了チェックボタン */}
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                onToggleComplete?.(todo);
+                                                            }}
+                                                            className={`mt-0.5 ${todo.completed ? "text-green-500" : "text-gray-300 dark:text-gray-600 hover:text-blue-500"}`}
+                                                        >
+                                                            {todo.completed ? <CheckCircle size={18} /> : <Circle size={18} />}
+                                                        </button>
+
+                                                        {/* タスク内容 */}
+                                                        <div className="ml-2 flex-1 min-w-0">
+                                                            <p className={`text-sm font-medium truncate ${todo.completed ? "text-gray-400 line-through" : "text-gray-900 dark:text-gray-100"}`}>
+                                                                {todo.title}
+                                                            </p>
+                                                            <div className="flex items-center space-x-2 mt-0.5">
+                                                                {todo.dueTime && (
+                                                                    <span className="text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">
+                                                                        {todo.dueTime}
+                                                                    </span>
+                                                                )}
+                                                                {categoryName && (
+                                                                    <span className="text-[10px] text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">
+                                                                        {categoryName}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        );
+                                    })}
+                                    {provided.placeholder}
                                 </div>
-                            </div>
-                        );
-                    })
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 )}
             </div>
         </div>

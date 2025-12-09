@@ -1,8 +1,41 @@
 @import "tailwindcss";
 
+/* ライトモード（デフォルト） */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --text-primary: #171717;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #60a5fa;
+  --button-bg: #f3f4f6;
+  --button-hover: #e5e7eb;
+  --border-color: #e5e7eb;
+  --modal-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+}
+
+/* ダークモード（.darkクラスで適用） */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card-bg: #1a1a1a;
+  --card-border: #2d2d2d;
+  --text-primary: #ededed;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #60a5fa;
+  --button-bg: #27272a;
+  --button-hover: #3f3f46;
+  --border-color: #3f3f46;
+  --modal-bg: #18181b;
+  --input-bg: #27272a;
+  --input-border: #3f3f46;
 }
 
 @theme inline {
@@ -12,15 +45,46 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ダークモード用のユーティリティクラス */
+.dark-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.dark-text-primary {
+  color: var(--text-primary);
+}
+
+.dark-text-secondary {
+  color: var(--text-secondary);
+}
+
+.dark-input {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-primary);
+}
+
+.dark-button {
+  background-color: var(--button-bg);
+  color: var(--text-primary);
+}
+
+.dark-button:hover {
+  background-color: var(--button-hover);
+}
+
+.dark-modal {
+  background-color: var(--modal-bg);
+}
+
+.dark-border {
+  border-color: var(--border-color);
 }

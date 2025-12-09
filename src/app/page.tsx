@@ -12,6 +12,7 @@ import { DaySchedule } from "@/components/home/DaySchedule";
 import { CalendarPane } from "@/components/home/CalendarPane";
 import { BottomActions } from "@/components/home/BottomActions";
 import { TodoCreateModal } from "@/components/todo/TodoCreateModal";
+import { TodoDetailModal } from "@/components/todo/TodoDetailModal";
 import { TemplateModal } from "@/components/template/TemplateModal";
 import { ActivityModal } from "@/components/activity/ActivityModal";
 import { TimerView } from "@/components/timer/TimerView";
@@ -50,10 +51,16 @@ export default function Home() {
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
+    // アプリ起動時に確実に今日の日付を選択
+    setSelectedDate(new Date());
   }, []);
 
   // アクティビティモーダルの状態
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+
+  // Todo詳細モーダルの状態
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+  const [isTodoDetailOpen, setIsTodoDetailOpen] = useState(false);
 
   const handleDeleteTodo = async (todoId: string) => {
     await db.todos.delete(todoId);
@@ -67,6 +74,50 @@ export default function Home() {
       completed: false,
     });
     setIsTodoModalOpen(false);
+  };
+
+  // Todo詳細を開く
+  const handleOpenTodoDetail = (todo: Todo) => {
+    setSelectedTodo(todo);
+    setIsTodoDetailOpen(true);
+  };
+
+  // Todoの完了状態を切り替え
+  const handleToggleTodoComplete = async (todo: Todo) => {
+    await db.todos.update(todo.id, { completed: !todo.completed, updatedAt: new Date() });
+  };
+
+  // 詳細画面からタイマーを開始
+  const handleStartFromDetail = (todo: Todo) => {
+    setActiveTodo(todo);
+    setViewMode("timer");
+    setIsTodoDetailOpen(false);
+  };
+
+  // Todoの並び替え（ドラッグ&ドロップ）
+  const handleReorderTodo = async (todoId: string, newIndex: number) => {
+    // 現在表示中のtodosリストで並び替え
+    const filteredTodos = todos.filter(t =>
+      !t.completed &&
+      (!t.dueDate || isSameDay(new Date(t.dueDate), selectedDate))
+    );
+
+    const oldIndex = filteredTodos.findIndex(t => t.id === todoId);
+    if (oldIndex === -1) return;
+
+    // 並び替え後の順序でcreatedAtを更新（簡易的な実装）
+    // 本格的には orderフィールドを追加するのが望ましい
+    const reorderedTodos = [...filteredTodos];
+    const [movedTodo] = reorderedTodos.splice(oldIndex, 1);
+    reorderedTodos.splice(newIndex, 0, movedTodo);
+
+    // 並び替えた順に新しいタイムスタンプを設定
+    const now = Date.now();
+    for (let i = 0; i < reorderedTodos.length; i++) {
+      await db.todos.update(reorderedTodos[i].id, {
+        updatedAt: new Date(now - i * 1000) // 新しいものほど上に
+      });
+    }
   };
 
   const handleStartNow = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
@@ -177,11 +228,14 @@ export default function Home() {
                 (!t.dueDate || isSameDay(new Date(t.dueDate), selectedDate))
               )}
               categories={categories}
+              onTodoClick={handleOpenTodoDetail}
+              onToggleComplete={handleToggleTodoComplete}
+              onReorder={handleReorderTodo}
             />
           </div>
 
           {/* Right Column: Day Schedule */}
-          <div className="w-1/2 h-full overflow-y-auto bg-gray-50/50">
+          <div className="w-1/2 h-full overflow-y-auto bg-gray-50/50 dark:bg-gray-900">
             <DaySchedule
               keptTime={keptTime}
               keptDate={keptDate}
@@ -189,6 +243,7 @@ export default function Home() {
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
               todos={todos}
+              onTodoClick={handleOpenTodoDetail}
             />
           </div>
         </div>
@@ -236,6 +291,14 @@ export default function Home() {
           todos={todos}
           onDeleteTodo={handleDeleteTodo}
           categories={categories}
+        />
+        <TodoDetailModal
+          isOpen={isTodoDetailOpen}
+          onClose={() => setIsTodoDetailOpen(false)}
+          todo={selectedTodo}
+          categories={categories}
+          onStartNow={handleStartFromDetail}
+          onDelete={handleDeleteTodo}
         />
       </div>
     </AppShell>

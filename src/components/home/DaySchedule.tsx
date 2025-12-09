@@ -13,6 +13,7 @@ interface DayScheduleProps {
     selectedDate: Date;
     onDateChange: (date: Date) => void;
     todos: Todo[];
+    onTodoClick?: (todo: Todo) => void; // Todo詳細への遷移用
 }
 
 /**
@@ -29,7 +30,8 @@ export function DaySchedule({
     onTimeLongPress,
     selectedDate,
     onDateChange,
-    todos
+    todos,
+    onTodoClick
 }: DayScheduleProps) {
     // バッファサイズ（前後何日分を表示するか）
     // 60日分あれば、頻繁な再レンダリングを防げます
@@ -50,6 +52,8 @@ export function DaySchedule({
     const isAutoScrollingRef = useRef(false);
     const isUserScrollingRef = useRef(false);
     const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    // IntersectionObserverを有効にするかどうか（初期スクロール完了後に有効化）
+    const [isObserverEnabled, setIsObserverEnabled] = useState(false);
 
     // 初期化およびselectedDateが大きく変わった場合の再生成
     useEffect(() => {
@@ -106,21 +110,26 @@ export function DaySchedule({
                 // 'auto'で即座に移動させることで、視覚的なズレを一瞬で補正する
                 el.scrollIntoView({ behavior: "auto", block: "start" });
 
-                // フラグ解除
+                // フラグ解除（IntersectionObserverを有効化）
                 setTimeout(() => {
                     isAutoScrollingRef.current = false;
-                }, 50);
+                    setIsObserverEnabled(true);
+                }, 100);
             }
         }
     }, [days, selectedDate]);
 
-    // スクロール連動（IntersectionObserver）
+    // スクロール連動（IntersectionObserver）- 初期スクロール完了後にのみ有効化
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
 
+        // Observerが有効化されるまで待機
+        if (!isObserverEnabled) return;
+
         const observer = new IntersectionObserver(
             (entries) => {
+                // 自動スクロール中は無視
                 if (isAutoScrollingRef.current) return;
 
                 // 最も表示領域が大きい要素を探す
@@ -157,7 +166,7 @@ export function DaySchedule({
         });
 
         return () => observer.disconnect();
-    }, [days, onDateChange, selectedDate]);
+    }, [days, onDateChange, selectedDate, isObserverEnabled]); // isObserverEnabledの変化を監視
 
 
     // 長押し関連の処理
@@ -269,14 +278,15 @@ export function DaySchedule({
                                         return (
                                             <div
                                                 key={todo.id}
-                                                className="absolute left-14 right-2 rounded-md bg-blue-100/80 border-l-4 border-blue-500 p-1 text-xs overflow-hidden z-0 pointer-events-none"
+                                                onClick={() => onTodoClick?.(todo)}
+                                                className="absolute left-14 right-2 rounded-md bg-blue-100/80 dark:bg-blue-900/40 border-l-4 border-blue-500 p-1 text-xs overflow-hidden z-10 cursor-pointer hover:bg-blue-200/80 dark:hover:bg-blue-800/50 transition-colors"
                                                 style={{
                                                     top: `${top}px`,
                                                     height: `${height}px`,
                                                 }}
                                             >
-                                                <div className="font-bold text-blue-800 truncate">{todo.title}</div>
-                                                <div className="text-blue-600 text-[10px]">
+                                                <div className="font-bold text-blue-800 dark:text-blue-200 truncate">{todo.title}</div>
+                                                <div className="text-blue-600 dark:text-blue-300 text-[10px]">
                                                     {todo.dueTime} - {todo.endTime || "?"}
                                                 </div>
                                             </div>
