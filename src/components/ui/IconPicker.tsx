@@ -38,7 +38,7 @@ export function IconPicker({ value, onChange, isOpen, onClose }: IconPickerProps
 
     // アイコンコンポーネントを動的に取得
     const getIconComponent = (name: string) => {
-        const IconComponent = (LucideIcons as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name];
+        const IconComponent = (LucideIcons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[name];
         return IconComponent || null;
     };
 
@@ -120,7 +120,7 @@ export function IconPicker({ value, onChange, isOpen, onClose }: IconPickerProps
 export function CategoryIcon({ iconName, size = 16, className = "" }: { iconName?: string; size?: number; className?: string }) {
     if (!iconName) return null;
 
-    const IconComponent = (LucideIcons as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[iconName];
+    const IconComponent = (LucideIcons as unknown as Record<string, React.ComponentType<{ size?: number; className?: string }>>)[iconName];
     if (!IconComponent) return null;
 
     return <IconComponent size={size} className={className} />;
