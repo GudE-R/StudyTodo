@@ -60,7 +60,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
     ];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
             <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl h-[85vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
 
                 {/* Header */}
