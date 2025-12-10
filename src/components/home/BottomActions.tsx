@@ -1,3 +1,5 @@
+"use client";
+
 import { LayoutTemplate, Plus, X, BarChart2 } from "lucide-react";
 
 interface BottomActionsProps {
@@ -9,8 +11,8 @@ interface BottomActionsProps {
 }
 
 /**
+ * 下部アクションバー
  * isHighlightedがtrueの場合、Todo作成ボタンが強調表示されます（キープ機能連携時など）。
- * また、その際にリセットボタン（×）を表示します。
  */
 export function BottomActions({
     onOpenTodoModal,
@@ -20,11 +22,11 @@ export function BottomActions({
     onOpenActivityModal
 }: BottomActionsProps) {
     return (
-        <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 flex justify-around items-center h-16">
+        <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-around items-center h-16">
             {/* テンプレート作成ボタン */}
             <button
                 onClick={onOpenTemplateModal}
-                className="flex flex-col items-center justify-center text-gray-500 hover:text-blue-600 space-y-1"
+                className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 space-y-1"
             >
                 <LayoutTemplate size={20} />
                 <span className="text-[10px]">テンプレ</span>
@@ -35,10 +37,10 @@ export function BottomActions({
                 <button
                     onClick={onOpenTodoModal}
                     className={`
-                        flex flex-col items-center justify-center bg-white border rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300
+                        flex flex-col items-center justify-center bg-white dark:bg-gray-800 border rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300
                         ${isHighlighted
-                            ? "text-orange-500 border-orange-200 ring-4 ring-orange-100 scale-110"
-                            : "text-blue-600 border-gray-100 hover:scale-105"}
+                            ? "text-orange-500 border-orange-200 dark:border-orange-700 ring-4 ring-orange-100 dark:ring-orange-900 scale-110"
+                            : "text-blue-600 dark:text-blue-400 border-gray-100 dark:border-gray-700 hover:scale-105"}
                     `}
                 >
                     <Plus size={28} />
@@ -61,7 +63,7 @@ export function BottomActions({
             {/* アクティビティボタン */}
             <button
                 onClick={onOpenActivityModal}
-                className="flex flex-col items-center justify-center space-y-1 text-gray-500 hover:text-blue-600 transition-colors"
+                className="flex flex-col items-center justify-center space-y-1 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
                 <BarChart2 size={24} />
                 <span className="text-[10px] font-medium">Activity</span>

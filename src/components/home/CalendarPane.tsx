@@ -116,32 +116,32 @@ export function CalendarPane({
 
     const getHeatmapColor = (level: number) => {
         switch (level) {
-            case 1: return "bg-green-100";
-            case 2: return "bg-green-200";
-            case 3: return "bg-green-300";
-            case 4: return "bg-green-400";
+            case 1: return "bg-green-100 dark:bg-green-900/40";
+            case 2: return "bg-green-200 dark:bg-green-800/50";
+            case 3: return "bg-green-300 dark:bg-green-700/60";
+            case 4: return "bg-green-400 dark:bg-green-600/70";
             default: return "";
         }
     };
 
     return (
-        <div className="h-full bg-white flex flex-col">
+        <div className="h-full bg-white dark:bg-gray-900 flex flex-col">
             {/* ヘッダー: 年月表示とナビゲーション */}
-            <div className="px-4 py-2 flex items-center justify-between border-b border-gray-100 flex-none">
+            <div className="px-4 py-2 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 flex-none">
                 <button
                     onClick={prevMonth}
-                    className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
                 >
                     <ChevronLeft size={20} />
                 </button>
 
-                <span className="text-sm font-bold text-gray-700">
+                <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
                     {format(currentMonth, "yyyy年 M月", { locale: ja })}
                 </span>
 
                 <button
                     onClick={nextMonth}
-                    className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
                 >
                     <ChevronRight size={20} />
                 </button>
@@ -150,9 +150,9 @@ export function CalendarPane({
             {/* カレンダー本体（スクロール可能領域） */}
             <div className="flex-1 flex flex-col p-1 overflow-y-auto min-h-0">
                 {/* 曜日ヘッダー */}
-                <div className="grid grid-cols-7 mb-0.5 flex-none sticky top-0 bg-white z-10">
+                <div className="grid grid-cols-7 mb-0.5 flex-none sticky top-0 bg-white dark:bg-gray-900 z-10">
                     {weekDays.map((day, i) => (
-                        <div key={i} className="text-center text-[10px] text-gray-400 font-medium">
+                        <div key={i} className="text-center text-[10px] text-gray-400 dark:text-gray-500 font-medium">
                             {day}
                         </div>
                     ))}
@@ -180,14 +180,14 @@ export function CalendarPane({
                                     onClick={() => handleClick(date)}
                                     className={`
                     w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200
-                    ${!isCurrentMonth ? "text-gray-300" : "text-gray-700"}
+                    ${!isCurrentMonth ? "text-gray-300 dark:text-gray-600" : "text-gray-700 dark:text-gray-200"}
                     ${isKept
-                                            ? "bg-orange-100 text-orange-600 ring-2 ring-orange-400 font-bold scale-110"
+                                            ? "bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 ring-2 ring-orange-400 font-bold scale-110"
                                             : isSelected
                                                 ? "bg-blue-600 text-white shadow-md scale-105"
                                                 : isToday
-                                                    ? "bg-blue-50 text-blue-600 border border-blue-200"
-                                                    : heatmapColor || "hover:bg-gray-50"}
+                                                    ? "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700"
+                                                    : heatmapColor || "hover:bg-gray-50 dark:hover:bg-gray-800"}
                   `}
                                 >
                                     {format(date, "d")}

@@ -216,12 +216,13 @@ export default function Home() {
         <DateBar
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
+          onSettingsClick={() => setIsTemplateModalOpen(true)}
         />
 
         {/* Main Content Area (Split View) */}
         <div className="flex-1 flex overflow-hidden min-h-0">
           {/* Left Column: Todo List */}
-          <div className="w-1/2 h-full overflow-y-auto border-r border-gray-100">
+          <div className="w-1/2 h-full overflow-y-auto border-r border-gray-100 dark:border-gray-800">
             <TodoList
               todos={todos.filter(t =>
                 !t.completed &&
@@ -249,7 +250,7 @@ export default function Home() {
         </div>
 
         {/* Bottom Area: Calendar (Fixed Height) */}
-        <div className="h-[30%] border-t border-gray-200 bg-white z-10">
+        <div className="h-[30%] border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-10">
           <CalendarPane
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}

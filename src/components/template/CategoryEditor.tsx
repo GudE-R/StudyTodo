@@ -109,7 +109,7 @@ export function CategoryEditor() {
                     type="text"
                     value={inputName}
                     onChange={(e) => setInputName(e.target.value)}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                    className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
                     placeholder="カテゴリ名"
                     autoFocus
                     onKeyDown={(e) => {
@@ -118,7 +118,7 @@ export function CategoryEditor() {
                     }}
                 />
                 <button onClick={confirmAdding} className="text-blue-600 hover:text-blue-800 text-xs font-bold">追加</button>
-                <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 text-xs">キャンセル</button>
+                <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs">キャンセル</button>
             </div>
         );
     };
@@ -140,12 +140,12 @@ export function CategoryEditor() {
                                 {!isSmall ? (
                                     <button
                                         onClick={() => toggleExpand(node.id)}
-                                        className="p-1 text-gray-400 hover:text-gray-600"
+                                        className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                     >
                                         {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                                     </button>
                                 ) : (
-                                    <span className="w-6" /> // インデント調整
+                                    <span className="w-6" />
                                 )}
 
                                 {/* アイコン */}
@@ -154,7 +154,7 @@ export function CategoryEditor() {
                                 </span>
 
                                 {/* カテゴリ名 */}
-                                <span className="flex-1 text-sm text-gray-700 font-medium py-1">
+                                <span className="flex-1 text-sm text-gray-700 dark:text-gray-200 font-medium py-1">
                                     {node.name}
                                 </span>
 
@@ -163,7 +163,7 @@ export function CategoryEditor() {
                                     {!isSmall && !isDeleting && (
                                         <button
                                             onClick={() => startAdding(node.id, node.level === "large" ? "medium" : "small")}
-                                            className="p-1 text-gray-400 hover:text-blue-600"
+                                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600"
                                             title="子カテゴリを追加"
                                         >
                                             <Plus size={14} />
@@ -171,7 +171,7 @@ export function CategoryEditor() {
                                     )}
                                     <button
                                         onClick={() => handleDeleteClick(node.id)}
-                                        className={`p-1 transition-colors ${isDeleting ? "text-red-600 bg-red-50 rounded px-2 text-xs font-bold" : "text-gray-400 hover:text-red-600"}`}
+                                        className={`p-1 transition-colors ${isDeleting ? "text-red-600 bg-red-50 dark:bg-red-900/30 rounded px-2 text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-600"}`}
                                         title="削除"
                                     >
                                         {isDeleting ? "削除する" : <Trash2 size={14} />}
@@ -196,10 +196,10 @@ export function CategoryEditor() {
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-gray-500">カテゴリ構成</h3>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">カテゴリ構成</h3>
                 <button
                     onClick={() => startAdding(undefined, "large")}
-                    className="flex items-center space-x-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-100"
+                    className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
                 >
                     <Plus size={12} />
                     <span>大カテゴリ追加</span>
@@ -208,7 +208,7 @@ export function CategoryEditor() {
 
             <div className="flex-1 overflow-y-auto pr-2">
                 {categories.length === 0 && !addingState ? (
-                    <div className="text-center text-gray-400 text-sm py-8">
+                    <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
                         カテゴリがありません。<br />
                         「大カテゴリ追加」から作成してください。
                     </div>
