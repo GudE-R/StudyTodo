@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, FolderTree, Repeat, Palette } from "lucide-react";
+import { X, FolderTree, Repeat } from "lucide-react";
 import { CategoryEditor } from "./CategoryEditor";
 import { SRSEditor } from "./SRSEditor";
-import { ThemeEditor } from "./ThemeEditor";
 
 interface TemplateModalProps {
     isOpen: boolean;
@@ -35,35 +34,24 @@ export function TemplateModal({
                 <div className="flex border-b border-gray-100 dark:border-gray-800">
                     <button
                         onClick={() => setActiveTab("category")}
-                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "category" ? "text-blue-600" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "category" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                             }`}
                     >
                         <FolderTree size={18} />
                         <span>カテゴリ</span>
                         {activeTab === "category" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
                         )}
                     </button>
                     <button
                         onClick={() => setActiveTab("srs")}
-                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "srs" ? "text-blue-600" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "srs" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                             }`}
                     >
                         <Repeat size={18} />
                         <span>SRS</span>
                         {activeTab === "srs" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
-                        )}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("theme")}
-                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "theme" ? "text-blue-600" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                            }`}
-                    >
-                        <Palette size={18} />
-                        <span>テーマ</span>
-                        {activeTab === "theme" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
                         )}
                     </button>
                 </div>
@@ -72,7 +60,6 @@ export function TemplateModal({
                 <div className="flex-1 overflow-hidden p-4 bg-gray-50/50 dark:bg-gray-900">
                     {activeTab === "category" && <CategoryEditor />}
                     {activeTab === "srs" && <SRSEditor />}
-                    {activeTab === "theme" && <ThemeEditor />}
                 </div>
             </div>
         </div>

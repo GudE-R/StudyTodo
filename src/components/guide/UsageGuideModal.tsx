@@ -45,7 +45,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
         {
             icon: Palette,
             title: "テーマ設定",
-            description: "設定画面のテーマタブで、ライト/ダーク/システムから選択できます。"
+            description: "設定画面（右上の歯車アイコン）から、ライト/ダーク/システムから選択できます。"
         },
         {
             icon: Clock,

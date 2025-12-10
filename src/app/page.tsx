@@ -16,6 +16,8 @@ import { TodoDetailModal } from "@/components/todo/TodoDetailModal";
 import { TemplateModal } from "@/components/template/TemplateModal";
 import { ActivityModal } from "@/components/activity/ActivityModal";
 import { TimerView } from "@/components/timer/TimerView";
+import { SettingsModal } from "@/components/settings/SettingsModal";
+import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { Todo, Category, SRSProfile } from "@/types";
 
 /**
@@ -57,6 +59,11 @@ export default function Home() {
 
   // アクティビティモーダルの状態
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+
+  // 設定モーダルと使用ガイドの状態
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
+
 
   // Todo詳細モーダルの状態
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
@@ -216,7 +223,7 @@ export default function Home() {
         <DateBar
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
-          onSettingsClick={() => setIsTemplateModalOpen(true)}
+          onSettingsClick={() => setIsSettingsModalOpen(true)}
         />
 
         {/* Main Content Area (Split View) */}
@@ -300,6 +307,15 @@ export default function Home() {
           categories={categories}
           onStartNow={handleStartFromDetail}
           onDelete={handleDeleteTodo}
+        />
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          onClose={() => setIsSettingsModalOpen(false)}
+          onOpenGuide={() => setIsGuideModalOpen(true)}
+        />
+        <UsageGuideModal
+          isOpen={isGuideModalOpen}
+          onClose={() => setIsGuideModalOpen(false)}
         />
       </div>
     </AppShell>
