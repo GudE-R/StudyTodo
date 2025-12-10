@@ -1,4 +1,53 @@
-# PomArc システム設計書 v0.1
+# PomArc システム設計書 v0.1.1
+最終更新: 2025-12-11 (統合・整理版)
+
+## 1. システム概要
+### アーキテクチャ
+*   **プラットフォーム**: Web (Next.js 16 App Router) / [将来] native app via Capacitor or Expo
+*   **レンダリング**: Client-Side Rendering (CSR) with Hydration。ローカルデータ依存のためクライアント主導。
+*   **言語**: TypeScript
+
+### データ層設計
+*   **ストレージ**: IndexedDB (Dexie.js ラッパーを使用)
+    *   **Local First**: サーバーと通信せず、ブラウザ内に全データを保持。
+*   **スキーマ概要**:
+    *   `todos`: タスク本体。期限、完了状態、カテゴリIDなどを保持。
+    *   `sessions`: 学習記録（ログ）。タスクID、実行時間、モードを保持。
+    *   `categories`: 階層構造を持つマスタデータ。`parentId`による隣接リストモデル。
+    *   `srsProfiles`: 復習間隔の設定プロファイル。
+
+## 2. コンポーネント設計
+### ディレクトリ構造
+*   `src/app`: ページルーティング (App Router)
+*   `src/components`: 機能別コンポーネント
+    *   `/home`: メイン画面構成要素 (List, Schedule, Calendar)
+    *   `/todo`: タスク関連モーダル
+    *   `/template`: マスタデータ管理 (Category, SRSEditor)
+    *   `/settings`: アプリ設定
+    *   `/activity`: 分析・履歴
+    *   `/ui`: 汎用パーツ (IconPicker, DatePicker)
+*   `src/lib`: ユーティリティ、DB設定
+*   `src/contexts`: React Context (Theme等)
+
+### 状態管理戦略
+*   **永続化データ**: Dexie LiveQuery (`useLiveQuery`) により、DBの変更をリアルタイムにUIへ反映。
+*   **アプリケーション状態**: Reactローカルステート (`useState`) でUIの開閉や選択状態を管理。
+*   **グローバル設定**: Context API (`ThemeContext` 等) でアプリ全体の設定を共有。
+
+## 3. UI/UX 設計指針
+*   **モバイルファースト**: タッチ操作、スワイプ、長押し等のジェスチャを考慮。
+*   **モーダル中心**: 多階層ページ遷移を避け、モーダルによるコンテキスト維持。
+*   **ダークモード対応**: CSS変数とTailwind CSS (`dark:` プレフィックス) による完全対応。
+
+## 4. 将来の拡張計画 (Pro機能)
+*   **データ同期**: Supabase等を用いたクラウド同期。
+*   **高度な分析**: 長期間の傾向分析、エクスポート機能。
+*   **認証**: 同期機能に伴うユーザーアカウント管理。
+
+---
+
+# PomArc システム設計書 v0.1（オリジナル詳細版）
+
 最終更新: 2025-10-28（JST） / 参照: PomArc_機能要件サマリ_v0.1.txt
 
 ## 目的と範囲
