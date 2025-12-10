@@ -25,6 +25,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
     const [analyticsCategory, setAnalyticsCategory] = useState<string>("all");
     const [filterCategory, setFilterCategory] = useState<string>("all");
     const [filterStatus, setFilterStatus] = useState<"all" | "completed" | "incomplete">("all");
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
     if (!isOpen) return null;
 
@@ -202,8 +203,6 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
     };
 
     const filteredTodos = getFilteredTodos();
-
-    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
     const handleDeleteClick = (id: string) => {
         if (deleteConfirmId === id) {
