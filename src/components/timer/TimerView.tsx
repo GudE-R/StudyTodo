@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Play, Pause, Square, ArrowLeft, MoreVertical, Coffee, Timer, Watch, CheckCircle } from "lucide-react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle } from "lucide-react";
 import { Todo } from "@/types";
 
 interface TimerViewProps {
@@ -42,10 +42,45 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+    // タイマー終了時の処理
+    const handleTimerComplete = useCallback(() => {
+        setIsRunning(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+
+        // ポモドーロモードで集中時間が終わったら休憩モードへ誘導
+        if (mode === "pomodoro" && status === "focus") {
+            // 音を鳴らすなどの処理がここに入ります
+            alert("お疲れ様でした！休憩しましょう。");
+            setStatus("break");
+        } else if (mode === "pomodoro" && status === "break") {
+            alert("休憩終了です！作業に戻りましょう。");
+            setStatus("focus");
+        } else if (mode === "countdown") {
+            alert("タイマー終了です！");
+        }
+    }, [mode, status]);
+
+    const resetTimer = useCallback(() => {
+        setIsRunning(false);
+        setIsPaused(false);
+        setStopwatchTime(0);
+
+        if (mode === "pomodoro") {
+            if (status === "focus") {
+                setTimeLeft(focusDuration * 60);
+            } else {
+                setTimeLeft(breakDuration * 60);
+            }
+        } else if (mode === "countdown") {
+            setTimeLeft(countdownDuration * 60);
+        }
+    }, [mode, status, focusDuration, breakDuration, countdownDuration]);
+
     // モードや設定変更時にタイマーをリセット
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         resetTimer();
-    }, [mode, status, focusDuration, breakDuration, countdownDuration]);
+    }, [resetTimer]);
 
     // タイマーロジック
     useEffect(() => {
@@ -70,41 +105,9 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
-    }, [isRunning, mode]);
+    }, [isRunning, mode, handleTimerComplete]);
 
-    // タイマー終了時の処理
-    const handleTimerComplete = () => {
-        setIsRunning(false);
-        if (timerRef.current) clearInterval(timerRef.current);
 
-        // ポモドーロモードで集中時間が終わったら休憩モードへ誘導
-        if (mode === "pomodoro" && status === "focus") {
-            // 音を鳴らすなどの処理がここに入ります
-            alert("お疲れ様でした！休憩しましょう。");
-            setStatus("break");
-        } else if (mode === "pomodoro" && status === "break") {
-            alert("休憩終了です！作業に戻りましょう。");
-            setStatus("focus");
-        } else if (mode === "countdown") {
-            alert("タイマー終了です！");
-        }
-    };
-
-    const resetTimer = () => {
-        setIsRunning(false);
-        setIsPaused(false);
-        setStopwatchTime(0);
-
-        if (mode === "pomodoro") {
-            if (status === "focus") {
-                setTimeLeft(focusDuration * 60);
-            } else {
-                setTimeLeft(breakDuration * 60);
-            }
-        } else if (mode === "countdown") {
-            setTimeLeft(countdownDuration * 60);
-        }
-    };
 
     // 時間フォーマット (MM:SS)
     const formatTime = (seconds: number) => {
@@ -139,10 +142,6 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
     // セッション保存処理
     const handleSaveSession = () => {
-        // 経過時間が0の場合は保存しない
-        const duration = mode === "stopwatch"
-            ? stopwatchTime
-            : (mode === "pomodoro" && status === "focus" ? (focusDuration * 60 - timeLeft) : 0); // ポモドーロの途中終了なども考慮すべきだが、一旦シンプルに
 
         // 簡易的に、ストップウォッチなら経過時間、ポモドーロなら設定時間を保存（完了時）
         // 途中保存の場合は経過時間を計算する必要がある

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
-import { format, addDays, subDays, isSameDay, startOfDay, differenceInDays } from "date-fns";
+import { format, addDays, subDays, isSameDay } from "date-fns";
 import { ja } from "date-fns/locale";
 
 import { Todo } from "@/types";
@@ -55,6 +55,12 @@ export function DaySchedule({
     // IntersectionObserverを有効にするかどうか（初期スクロール完了後に有効化）
     const [isObserverEnabled, setIsObserverEnabled] = useState(false);
 
+    // 日付リスト生成ヘルパー
+    const generateDays = (centerDate: Date) => {
+        const start = subDays(centerDate, BUFFER_DAYS);
+        return Array.from({ length: BUFFER_DAYS * 2 + 1 }, (_, i) => addDays(start, i));
+    };
+
     // 初期化およびselectedDateが大きく変わった場合の再生成
     useEffect(() => {
         // daysが空、またはselectedDateが現在の範囲から大きく外れている場合は再生成
@@ -62,17 +68,12 @@ export function DaySchedule({
 
         if (needsRegeneration) {
             const newDays = generateDays(selectedDate);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setDays(newDays);
             // 初回やジャンプ時は即座にスクロール位置を合わせるフラグを立てる
             isAutoScrollingRef.current = true;
         }
-    }, [selectedDate]);
-
-    // 日付リスト生成ヘルパー
-    const generateDays = (centerDate: Date) => {
-        const start = subDays(centerDate, BUFFER_DAYS);
-        return Array.from({ length: BUFFER_DAYS * 2 + 1 }, (_, i) => addDays(start, i));
-    };
+    }, [selectedDate, days]); // Added days to dependencies
 
     // selectedDateの変更を監視し、必要に応じてバッファを更新（無限スクロール処理）
     useEffect(() => {
@@ -89,6 +90,7 @@ export function DaySchedule({
             // ここではシンプルに「再生成して、selectedDateにスクロールを合わせる」アプローチをとる。
 
             const newDays = generateDays(selectedDate);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setDays(newDays);
 
             // DOM更新後にスクロール位置を修正するためにフラグを立てる
@@ -106,15 +108,15 @@ export function DaySchedule({
         if (targetDay) {
             const el = dayRefs.current[targetDay.toISOString()];
             if (el && containerRef.current) {
-                // 自動スクロール（再中心化やカレンダー遷移）の場合
-                // 'auto'で即座に移動させることで、視覚的なズレを一瞬で補正する
-                el.scrollIntoView({ behavior: "auto", block: "start" });
+                // scrollIntoViewが不安定なため、scrollTopを直接設定する
+                containerRef.current.scrollTop = el.offsetTop;
 
                 // フラグ解除（IntersectionObserverを有効化）
+                // レンダリングとスクロールの完了を確実に待つため時間を延ばす
                 setTimeout(() => {
                     isAutoScrollingRef.current = false;
                     setIsObserverEnabled(true);
-                }, 100);
+                }, 300);
             }
         }
     }, [days, selectedDate]);
@@ -145,6 +147,7 @@ export function DaySchedule({
                         // 親の状態を更新する前に、これが現在のselectedDateと違うか確認
                         if (!isSameDay(date, selectedDate)) {
                             isUserScrollingRef.current = true;
+                            console.log('[DaySchedule] Scroll trigger: Changing date from', selectedDate.toISOString(), 'to', date.toISOString());
                             onDateChange(date);
 
                             if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);

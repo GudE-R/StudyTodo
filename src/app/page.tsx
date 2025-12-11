@@ -18,7 +18,7 @@ import { ActivityModal } from "@/components/activity/ActivityModal";
 import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
-import { Todo, Category, SRSProfile } from "@/types";
+import { Todo } from "@/types";
 
 /**
  * ホーム画面（メインページ）
@@ -52,6 +52,7 @@ export default function Home() {
   // Hydration Error対策: クライアントサイドでのみレンダリング
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
     // アプリ起動時に確実に今日の日付を選択
     setSelectedDate(new Date());
@@ -239,6 +240,7 @@ export default function Home() {
               onTodoClick={handleOpenTodoDetail}
               onToggleComplete={handleToggleTodoComplete}
               onReorder={handleReorderTodo}
+              onStart={handleStartFromDetail}
             />
           </div>
 

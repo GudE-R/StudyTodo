@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Tag, Repeat, BookOpen, FileText, Play, Clock, CheckCircle, Plus } from "lucide-react";
+import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass } from "lucide-react";
 import { format } from "date-fns";
 import { Todo, Category, SRSProfile } from "@/types";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -45,6 +45,7 @@ export function TodoCreateModal({
     useEffect(() => {
         if (isOpen) {
             if (initialDate) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setDueDate(initialDate);
             } else {
                 setDueDate(null);
@@ -198,11 +199,11 @@ export function TodoCreateModal({
                         <select
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            className="bg-transparent text-sm w-full outline-none text-gray-700 appearance-none"
+                            className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 cursor-pointer"
                         >
-                            <option value="">カテゴリなし</option>
+                            <option value="" className="text-gray-500">カテゴリなし</option>
                             {categoryOptions.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
+                                <option key={opt.value} value={opt.value} className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">
                                     {opt.label}
                                 </option>
                             ))}
@@ -237,29 +238,31 @@ export function TodoCreateModal({
                                 if (!val) setEndTime(""); // Reset end time if start time cleared
                             }}
                             placeholder="開始時間"
+                            icon={<PlayCircle size={18} className="text-blue-500" />}
                         />
 
-                        {/* End Time (Disabled if no start time) */}
+                        {/* Duration (Record Only) - Swapped with EndTime */}
+                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
+                            <Hourglass size={18} className="text-orange-500" />
+                            <input
+                                type="number"
+                                min="1"
+                                placeholder="所要時間(分)"
+                                value={duration}
+                                onChange={(e) => setDuration(e.target.value)}
+                                className="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
+                            />
+                        </div>
+
+                        {/* End Time (Disabled if no start time) - Swapped with Duration */}
                         <TimePicker
                             value={endTime}
                             onChange={setEndTime}
                             placeholder="終了時間"
                             disabled={!dueTime}
                             defaultTime={dueTime}
+                            icon={<StopCircle size={18} className="text-red-500" />}
                         />
-
-                        {/* Duration (Record Only) */}
-                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
-                            <Clock size={18} className="text-gray-500" />
-                            <input
-                                type="number"
-                                min="1"
-                                placeholder="所要時間(記録用)"
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                                className="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
-                            />
-                        </div>
 
                         {/* SRS */}
                         <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg col-span-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Circle, CheckCircle, GripVertical } from "lucide-react";
+import { Circle, CheckCircle, GripVertical, PlayCircle } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Todo, Category } from "@/types";
 
@@ -11,6 +11,7 @@ interface TodoListProps {
     onTodoClick?: (todo: Todo) => void;
     onToggleComplete?: (todo: Todo) => void;
     onReorder?: (todoId: string, newIndex: number) => void;
+    onStart?: (todo: Todo) => void;
 }
 
 /**
@@ -19,7 +20,7 @@ interface TodoListProps {
  * ドラッグ&ドロップで並び替え可能なタスク一覧です。
  * タップで詳細画面へ遷移、チェックで完了状態を切り替えます。
  */
-export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete, onReorder }: TodoListProps) {
+export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete, onReorder, onStart }: TodoListProps) {
     // カテゴリ名を取得するヘルパー関数
     const getCategoryName = (categoryId?: string) => {
         if (!categoryId) return null;
@@ -101,6 +102,19 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                         >
                                                             {todo.completed ? <CheckCircle size={18} /> : <Circle size={18} />}
                                                         </button>
+
+                                                        {/* 開始ボタン (未完了時のみ表示) */}
+                                                        {!todo.completed && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    onStart?.(todo);
+                                                                }}
+                                                                className="mt-0.5 ml-1 text-gray-300 dark:text-gray-600 hover:text-blue-500"
+                                                            >
+                                                                <PlayCircle size={18} />
+                                                            </button>
+                                                        )}
 
                                                         {/* タスク内容 */}
                                                         <div className="ml-2 flex-1 min-w-0">

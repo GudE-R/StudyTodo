@@ -32,6 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     // クライアントサイドでマウント後にLocalStorageから読み込み
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
         const stored = localStorage.getItem("pomarc-theme") as Theme | null;
         if (stored && ["light", "dark", "system"].includes(stored)) {
@@ -55,7 +56,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         } else {
             effectiveTheme = theme;
         }
-
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setResolvedTheme(effectiveTheme);
 
         // HTML要素にクラスを適用

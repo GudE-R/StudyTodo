@@ -9,6 +9,7 @@ interface TimePickerProps {
     placeholder?: string;
     disabled?: boolean;
     defaultTime?: string;
+    icon?: React.ReactNode; // カスタムアイコン
 }
 
 /**
@@ -17,7 +18,7 @@ interface TimePickerProps {
  * 時間(HH)と分(MM)をそれぞれ独立してスクロール選択できるUIを提供します。
  * 分は5分刻みで表示されます。
  */
-export function TimePicker({ value, onChange, placeholder = "時間を選択", disabled = false, defaultTime }: TimePickerProps) {
+export function TimePicker({ value, onChange, placeholder = "時間を選択", disabled = false, defaultTime, icon }: TimePickerProps) {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const hourRef = useRef<HTMLUListElement>(null);
@@ -83,7 +84,7 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
           ${isOpen ? "ring-2 ring-blue-100 bg-white" : disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}
         `}
             >
-                <Clock size={18} className="text-gray-500" />
+                {icon || <Clock size={18} className="text-gray-500" />}
                 <span className={value ? "text-gray-700" : "text-gray-400"}>
                     {value || placeholder}
                 </span>

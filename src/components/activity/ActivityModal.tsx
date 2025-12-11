@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, eachDayOfInterval, eachMonthOfInterval, getHours, getDate, getMonth, getYear, subDays } from "date-fns";
+import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, eachDayOfInterval, eachMonthOfInterval, getMonth, getYear } from "date-fns";
 import { ja } from "date-fns/locale";
-import { X, BarChart2, History, Trash2, Filter, Calendar } from "lucide-react";
+import { X, BarChart2, History, Trash2, Filter } from "lucide-react";
 import { Session, Todo, Category } from "@/types";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface ActivityModalProps {
     isOpen: boolean;
@@ -307,20 +307,22 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             </div>
 
                             {/* Charts */}
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80">
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 flex flex-col">
                                 <h3 className="text-lg font-bold text-gray-800 mb-4">Focus Time Trend (min)</h3>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={chartData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} />
-                                        <YAxis axisLine={false} tickLine={false} fontSize={12} />
-                                        <Tooltip
-                                            cursor={{ fill: '#f3f4f6' }}
-                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                        />
-                                        <Bar dataKey="time" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Time (min)" />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                                <div className="flex-1 min-h-0">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={chartData}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                            <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} />
+                                            <YAxis axisLine={false} tickLine={false} fontSize={12} />
+                                            <Tooltip
+                                                cursor={{ fill: '#f3f4f6' }}
+                                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                            />
+                                            <Bar dataKey="time" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Time (min)" />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
                         </div>
                     ) : (
@@ -333,7 +335,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 </div>
                                 <select
                                     value={filterStatus}
-                                    onChange={(e) => setFilterStatus(e.target.value as any)}
+                                    onChange={(e) => setFilterStatus(e.target.value as "all" | "completed" | "incomplete")}
                                     className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                                 >
                                     <option value="all">All Status</option>

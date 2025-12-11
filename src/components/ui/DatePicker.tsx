@@ -36,6 +36,7 @@ export function DatePicker({ value, onChange, placeholder = "日付を選択" }:
 
     useEffect(() => {
         if (value) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentMonth(value);
         }
     }, [value]);

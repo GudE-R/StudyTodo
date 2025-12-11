@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronRight, ChevronDown, Plus, Trash2, Edit2, Folder, FolderOpen, File } from "lucide-react";
+import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File } from "lucide-react";
 import { Category } from "@/types";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -128,7 +128,7 @@ export function CategoryEditor() {
             <ul className="space-y-1">
                 {nodes.map((node) => {
                     const isExpanded = expandedIds.has(node.id);
-                    const hasChildren = node.children && node.children.length > 0;
+
                     const isSmall = node.level === "small";
                     const isAddingChild = addingState?.parentId === node.id;
                     const isDeleting = deleteConfirmId === node.id;
