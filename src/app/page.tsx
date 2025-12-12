@@ -19,6 +19,7 @@ import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { Todo } from "@/types";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 
 /**
@@ -175,6 +176,27 @@ export default function Home() {
     setKeptDate(null);
     setKeptTime(null);
   };
+
+  // Keyboard Shortcuts
+  const isAnyModalOpen = isTodoModalOpen || isTemplateModalOpen || isActivityModalOpen || isSettingsModalOpen || isGuideModalOpen || isTodoDetailOpen;
+
+  useKeyboardShortcuts({
+    onNewTodo: () => {
+      if (!isAnyModalOpen && viewMode === "home") {
+        setIsTodoModalOpen(true);
+      }
+    },
+    onCloseModal: () => {
+      if (isAnyModalOpen) {
+        setIsTodoModalOpen(false);
+        setIsTemplateModalOpen(false);
+        setIsActivityModalOpen(false);
+        setIsSettingsModalOpen(false);
+        setIsGuideModalOpen(false);
+        setIsTodoDetailOpen(false);
+      }
+    }
+  });
 
   if (!isClient) {
     return null;

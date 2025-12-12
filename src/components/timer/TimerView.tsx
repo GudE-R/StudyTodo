@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle } from "lucide-react";
 import { Todo } from "@/types";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 interface TimerViewProps {
     todo: Todo;
@@ -171,6 +172,20 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
             alert("記録する時間がありません。");
         }
     };
+
+    // Keyboard Shortcuts
+    useKeyboardShortcuts({
+        onToggleTimer: () => {
+            if (isRunning) {
+                setIsRunning(false);
+                setIsPaused(true);
+            } else {
+                setIsRunning(true);
+                setIsPaused(false);
+            }
+        },
+        onCloseModal: onBack // Escで戻る
+    });
 
     return (
         <div className={`flex flex-col h-screen transition-colors duration-500 ${getBgColor()}`}>

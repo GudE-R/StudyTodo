@@ -74,10 +74,10 @@
 - AppShell（共通）
   - TopBannerAd: 画面最上部の広告バナー
   - DateBar: 日付表示 / 左端プロフィール / 右端設定（同一行で並列）
-  - MainSplit:
-    - LeftPane: TodoList（一覧/操作）
-    - RightPane: DaySchedule（時間指定タスク表示/操作）
-  - CalendarPane: 中央下段のカレンダー（日付切替で他領域と同期）
+  - MainDashboard (3-Column Grid):
+    - LeftColumn: TodoList (タスク一覧)
+    - CenterColumn: DaySchedule (タイムライン)
+    - RightColumn: CalendarPane (カレンダー & 分析)
   - BottomActions: テンプレ作成 / Todo作成 / レポート
 
 ## 主要ユースフロー
