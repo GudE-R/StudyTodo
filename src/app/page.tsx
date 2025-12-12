@@ -20,13 +20,13 @@ import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { Todo } from "@/types";
 
+
 /**
  * ホーム画面（メインページ）
  * 
  * Dexie.js (IndexedDB) を使用してデータを永続化します。
+ * PC最適化：3カラムレイアウト (30% - 30% - 40%)
  */
-
-// カテゴリツリー構築ヘルパーは src/lib/utils.ts に移動しました
 
 export default function Home() {
   const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
@@ -34,7 +34,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<"home" | "timer">("home");
   const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
 
-  // DBからデータを取得 (Live Query)
+  // DBからデータを取得
   const todos = useLiveQuery(() => db.todos.orderBy("createdAt").reverse().toArray()) || [];
   const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
   const srsProfiles = useLiveQuery(() => db.srsProfiles.toArray()) || [];
@@ -42,37 +42,25 @@ export default function Home() {
 
   const categories = buildCategoryTree(categoriesFlat);
 
-  // 日付キープ機能用の状態
+  // 日付/時間キープ機能用の状態
   const [keptDate, setKeptDate] = useState<Date | null>(null);
-  // 時間キープ機能用の状態
   const [keptTime, setKeptTime] = useState<string | null>(null);
-  // 現在選択中の日付（カレンダー・スケジュール表示用）
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Hydration Error対策: クライアントサイドでのみレンダリング
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
-    // アプリ起動時に確実に今日の日付を選択
-    setSelectedDate(new Date());
   }, []);
 
-  // アクティビティモーダルの状態
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
-
-  // 設定モーダルと使用ガイドの状態
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
-
-
-  // Todo詳細モーダルの状態
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [isTodoDetailOpen, setIsTodoDetailOpen] = useState(false);
 
-  const handleDeleteTodo = async (todoId: string) => {
-    await db.todos.delete(todoId);
-  };
+  // --- Handlers ---
+  const handleDeleteTodo = async (todoId: string) => await db.todos.delete(todoId);
 
   const handleCreateTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
     await db.todos.add({
@@ -84,46 +72,37 @@ export default function Home() {
     setIsTodoModalOpen(false);
   };
 
-  // Todo詳細を開く
   const handleOpenTodoDetail = (todo: Todo) => {
     setSelectedTodo(todo);
     setIsTodoDetailOpen(true);
   };
 
-  // Todoの完了状態を切り替え
   const handleToggleTodoComplete = async (todo: Todo) => {
     await db.todos.update(todo.id, { completed: !todo.completed, updatedAt: new Date() });
   };
 
-  // 詳細画面からタイマーを開始
   const handleStartFromDetail = (todo: Todo) => {
     setActiveTodo(todo);
     setViewMode("timer");
     setIsTodoDetailOpen(false);
   };
 
-  // Todoの並び替え（ドラッグ&ドロップ）
   const handleReorderTodo = async (todoId: string, newIndex: number) => {
-    // 現在表示中のtodosリストで並び替え
     const filteredTodos = todos.filter(t =>
       !t.completed &&
       (!t.dueDate || isSameDay(new Date(t.dueDate), selectedDate))
     );
-
     const oldIndex = filteredTodos.findIndex(t => t.id === todoId);
     if (oldIndex === -1) return;
 
-    // 並び替え後の順序でcreatedAtを更新（簡易的な実装）
-    // 本格的には orderフィールドを追加するのが望ましい
     const reorderedTodos = [...filteredTodos];
     const [movedTodo] = reorderedTodos.splice(oldIndex, 1);
     reorderedTodos.splice(newIndex, 0, movedTodo);
 
-    // 並び替えた順に新しいタイムスタンプを設定
     const now = Date.now();
     for (let i = 0; i < reorderedTodos.length; i++) {
       await db.todos.update(reorderedTodos[i].id, {
-        updatedAt: new Date(now - i * 1000) // 新しいものほど上に
+        updatedAt: new Date(now - i * 1000)
       });
     }
   };
@@ -149,15 +128,13 @@ export default function Home() {
       completed: true,
     };
     await db.todos.add(newTodo);
-
-    // Create session record
     await db.sessions.add({
       id: generateId(),
       todoId: newTodo.id,
       todoTitle: newTodo.title,
       duration: duration,
       createdAt: newTodo.createdAt,
-      mode: "pomodoro", // Default to pomodoro for manual record for now, or add mode to handleRecordTodo args
+      mode: "pomodoro",
     });
     setIsTodoModalOpen(false);
   };
@@ -167,7 +144,6 @@ export default function Home() {
     setActiveTodo(null);
   };
 
-  // セッション保存処理
   const handleSaveSession = async (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => {
     await db.sessions.add({
       id: generateId(),
@@ -177,7 +153,6 @@ export default function Home() {
     });
   };
 
-  // カレンダーの日付長押し時の処理
   const handleDateLongPress = (date: Date) => {
     if (keptDate && date.getTime() === keptDate.getTime()) {
       setKeptDate(null);
@@ -186,7 +161,6 @@ export default function Home() {
     }
   };
 
-  // スケジュールの時間長押し時の処理
   const handleTimeLongPress = (date: Date, time: string) => {
     if (keptTime === time && keptDate && date.getTime() === keptDate.getTime()) {
       setKeptTime(null);
@@ -197,14 +171,13 @@ export default function Home() {
     }
   };
 
-  // キープ状態のリセット
   const handleResetKeep = () => {
     setKeptDate(null);
     setKeptTime(null);
   };
 
   if (!isClient) {
-    return null; // サーバーサイドでは何もレンダリングしない
+    return null;
   }
 
   if (viewMode === "timer" && activeTodo) {
@@ -219,18 +192,28 @@ export default function Home() {
 
   return (
     <AppShell>
-      <div className="flex flex-col h-full absolute inset-0 pb-20">
-        {/* Header Area */}
+      <div className="flex flex-col h-full absolute inset-0 pb-20 overflow-hidden">
+        {/* Header Area (Top) */}
         <DateBar
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
           onSettingsClick={() => setIsSettingsModalOpen(true)}
         />
 
-        {/* Main Content Area (Split View) */}
-        <div className="flex-1 flex overflow-hidden min-h-0">
-          {/* Left Column: Todo List */}
-          <div className="w-1/2 h-full overflow-y-auto border-r border-gray-100 dark:border-gray-800">
+        {/* 
+            Main Layout: 3-Columns Grid
+            Left: Todo (30%)
+            Center: Schedule (30%)
+            Right: Calendar (40%)
+         */}
+        <div className="flex-1 flex overflow-hidden min-h-0 relative z-0">
+
+          {/* Left: Todo List (30%) */}
+          <div className="w-[30%] h-full border-r border-gray-100 dark:border-gray-800 flex flex-col">
+            {/* Header for Todo */}
+            <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Todo List</h3>
+            </div>
             <TodoList
               todos={todos.filter(t =>
                 !t.completed &&
@@ -244,8 +227,12 @@ export default function Home() {
             />
           </div>
 
-          {/* Right Column: Day Schedule */}
-          <div className="w-1/2 h-full overflow-y-auto bg-gray-50/50 dark:bg-gray-900">
+          {/* Center: Day Schedule (30%) */}
+          <div className="w-[30%] h-full border-r border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900 flex flex-col">
+            {/* Header for Schedule */}
+            <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Schedule</h3>
+            </div>
             <DaySchedule
               keptTime={keptTime}
               keptDate={keptDate}
@@ -256,27 +243,51 @@ export default function Home() {
               onTodoClick={handleOpenTodoDetail}
             />
           </div>
+
+          {/* Right: Calendar & Analysis (40%) */}
+          <div className="w-[40%] h-full bg-white dark:bg-gray-900 flex flex-col">
+            {/* Header for Calendar (Already inside CalendarPane? No, we might want a unified header style) */}
+            {/* Note: CalendarPane has its own navigation header. We can keep it or wrap it. 
+                 Since CalendarPane header has Month Navigation, it's functional. Let's keep it.
+                 But for consistency, we might want a small section label or just let CalendarPane handle it.
+                 CalendarPane header style is "px-4 py-2 ... border-b". 
+                 Let's check CalendarPane logic. It has navigation built-in.
+             */}
+            <div className="flex-1 overflow-hidden relative">
+              <CalendarPane
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                keptDate={keptDate}
+                onDateLongPress={handleDateLongPress}
+                sessions={sessions}
+              />
+            </div>
+
+            {/* Here we could put Stats/Activity Graph in the bottom 50% of this column if requested. 
+                 For now, just CalendarPane taking full height.
+             */}
+          </div>
         </div>
 
-        {/* Bottom Area: Calendar (Fixed Height) */}
-        <div className="h-[30%] border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-10">
-          <CalendarPane
-            selectedDate={selectedDate}
-            onDateChange={setSelectedDate}
-            keptDate={keptDate}
-            onDateLongPress={handleDateLongPress}
-            sessions={sessions}
-          />
-        </div>
 
-        {/* Floating Bottom Actions */}
-        <BottomActions
-          onOpenTodoModal={() => setIsTodoModalOpen(true)}
-          onOpenTemplateModal={() => setIsTemplateModalOpen(true)}
-          onOpenActivityModal={() => setIsActivityModalOpen(true)}
-          isHighlighted={!!keptDate || !!keptTime}
-          onResetKeep={handleResetKeep}
-        />
+        {/* Floating Bottom Actions (Keep always visible, z-index managed) */}
+        <div className="z-50 relative pointer-events-none">
+          {/* Make sure BottomActions can receive clicks despite pointer-events-none on wrapper */}
+          {/* Actually BottomActions component styles need to handle positioning. 
+                Let's check BottomActions. It usually has "fixed bottom-4".
+                If we use relative wrapper here, we might break it. 
+                Let's just render it directly.
+            */}
+          <div className="pointer-events-auto">
+            <BottomActions
+              onOpenTodoModal={() => setIsTodoModalOpen(true)}
+              onOpenTemplateModal={() => setIsTemplateModalOpen(true)}
+              onOpenActivityModal={() => setIsActivityModalOpen(true)}
+              isHighlighted={!!keptDate || !!keptTime}
+              onResetKeep={handleResetKeep}
+            />
+          </div>
+        </div>
 
         {/* Modals */}
         <TodoCreateModal

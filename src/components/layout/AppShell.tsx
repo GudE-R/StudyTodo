@@ -23,10 +23,10 @@ export function AppShell({ children }: AppShellProps) {
 
             {/* 
         メインコンテンツラッパー
-        モバイル表示を想定し、最大幅を制限(max-w-md)して中央寄せしています。
+        PC向けフルスクリーンレイアウト。
         下部のボトムアクションバーのためにpb-20を設定しています。
       */}
-            <main className="max-w-md mx-auto bg-white min-h-[calc(100vh-50px)] shadow-sm relative pb-20">
+            <main className="w-full mx-auto bg-white dark:bg-gray-900 min-h-[calc(100vh-50px)] shadow-sm relative pb-20">
                 {children}
             </main>
         </div>

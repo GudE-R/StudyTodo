@@ -13,29 +13,27 @@ interface CalendarPaneProps {
     keptDate?: Date | null;
     onDateLongPress?: (date: Date) => void;
     sessions?: Session[];
+    isExpanded?: boolean; // 新規追加: 拡大状態
 }
 
 /**
  * カレンダーペインコンポーネント（月表示版・スクロール対応）
  * 
  * 画面下部（約1/3）に表示される月次カレンダーです。
- * - 月の切り替えが可能（◀ ▶ボタン）
- * - グリッド領域はスクロール可能で、ボトムアクションバーとの重なりを防ぎます
- * - 日付のクリックで表示日の切り替え（selectedDate）
- * - 日付の長押しで「日付キープ」機能（keptDate）を提供します
- * - アクティビティヒートマップ（草）を表示します
+ * - isExpanded propにより、グリッドの表示サイズや密度を調整可能にします（今回は単純にスクロール領域を広げるだけですが、将来的にWeekViewとの切り替え等もここで行えます）。
  */
 export function CalendarPane({
     selectedDate = new Date(),
     onDateChange,
     keptDate,
     onDateLongPress,
-    sessions = []
+    sessions = [],
+    isExpanded = false
 }: CalendarPaneProps) {
     const [currentMonth, setCurrentMonth] = useState(selectedDate);
     const today = new Date();
 
-    // selectedDateが変わったら、その月を表示するように同期（オプション）
+    // selectedDateが変わったら、その月を表示するように同期
     useEffect(() => {
         if (!isSameMonth(currentMonth, selectedDate)) {
             setCurrentMonth(selectedDate);
@@ -46,17 +44,9 @@ export function CalendarPane({
     const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
     const isLongPressRef = useRef(false);
 
-    // 前月へ移動
-    const prevMonth = () => {
-        setCurrentMonth(subMonths(currentMonth, 1));
-    };
+    const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+    const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
-    // 翌月へ移動
-    const nextMonth = () => {
-        setCurrentMonth(addMonths(currentMonth, 1));
-    };
-
-    // 長押し開始
     const handleTouchStart = (date: Date) => {
         isLongPressRef.current = false;
         longPressTimerRef.current = setTimeout(() => {
@@ -68,7 +58,6 @@ export function CalendarPane({
         }, 500);
     };
 
-    // 長押し終了・キャンセル
     const handleTouchEnd = () => {
         if (longPressTimerRef.current) {
             clearTimeout(longPressTimerRef.current);
@@ -76,14 +65,13 @@ export function CalendarPane({
         }
     };
 
-    // クリック処理
     const handleClick = (date: Date) => {
         if (!isLongPressRef.current && onDateChange) {
             onDateChange(date);
         }
     };
 
-    // カレンダーグリッドの生成ロジック
+    // カレンダーグリッドの生成
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
     const calendarStart = startOfWeek(monthStart);
@@ -96,17 +84,10 @@ export function CalendarPane({
 
     const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
 
-    // ヒートマップの計算
     const getActivityLevel = (date: Date) => {
         const dailySessions = sessions.filter(s => isSameDay(new Date(s.createdAt), date));
         const totalDuration = dailySessions.reduce((acc, s) => acc + s.duration, 0);
 
-        // レベル定義 (秒数ベース: 仮)
-        // 0: なし
-        // 1: 1分以上 (ちょっとやった)
-        // 2: 30分以上 (そこそこやった)
-        // 3: 1時間以上 (がんばった)
-        // 4: 3時間以上 (すごい)
         if (totalDuration === 0) return 0;
         if (totalDuration < 30 * 60) return 1;
         if (totalDuration < 60 * 60) return 2;
@@ -150,7 +131,7 @@ export function CalendarPane({
             {/* カレンダー本体（スクロール可能領域） */}
             <div className="flex-1 flex flex-col p-1 overflow-y-auto min-h-0">
                 {/* 曜日ヘッダー */}
-                <div className="grid grid-cols-7 mb-0.5 flex-none sticky top-0 bg-white dark:bg-gray-900 z-10">
+                <div className="grid grid-cols-7 mb-0.5 flex-none sticky top-0 bg-white dark:bg-gray-900 z-10 p-1">
                     {weekDays.map((day, i) => (
                         <div key={i} className="text-center text-[10px] text-gray-400 dark:text-gray-500 font-medium">
                             {day}
@@ -159,7 +140,7 @@ export function CalendarPane({
                 </div>
 
                 {/* 日付グリッド */}
-                <div className="grid grid-cols-7 auto-rows-fr gap-0.5 pb-2">
+                <div className={`grid grid-cols-7 auto-rows-fr gap-0.5 pb-2 transition-all duration-300 ${isExpanded ? "h-auto min-h-[300px]" : "h-full"}`}>
                     {calendarDays.map((date, i) => {
                         const isCurrentMonth = isSameMonth(date, monthStart);
                         const isToday = isSameDay(date, today);
@@ -170,7 +151,7 @@ export function CalendarPane({
                         const heatmapColor = !isSelected && !isKept && !isToday ? getHeatmapColor(activityLevel) : "";
 
                         return (
-                            <div key={i} className="flex flex-col items-center justify-center py-1">
+                            <div key={i} className="flex flex-col items-center justify-center py-1 relative">
                                 <button
                                     onMouseDown={() => handleTouchStart(date)}
                                     onMouseUp={handleTouchEnd}
@@ -179,7 +160,7 @@ export function CalendarPane({
                                     onTouchEnd={handleTouchEnd}
                                     onClick={() => handleClick(date)}
                                     className={`
-                    w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200
+                    w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200 z-0
                     ${!isCurrentMonth ? "text-gray-300 dark:text-gray-600" : "text-gray-700 dark:text-gray-200"}
                     ${isKept
                                             ? "bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 ring-2 ring-orange-400 font-bold scale-110"
@@ -193,12 +174,7 @@ export function CalendarPane({
                                     {format(date, "d")}
                                 </button>
 
-                                {/* タスク状況インジケーター (ヒートマップがある場合は不要かもしれないが、一応残す) */}
-                                {isCurrentMonth && (
-                                    <div className="flex space-x-0.5 mt-0.5 h-1">
-                                        {/* ヒートマップレベルが高い場合はドットを表示しないなどの調整も可能 */}
-                                    </div>
-                                )}
+                                {/* 拡大時のみ、ドットなどの詳細情報を出しても良い */}
                             </div>
                         );
                     })}

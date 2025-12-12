@@ -200,10 +200,7 @@ export function DaySchedule({
 
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden border-l border-gray-100">
-            {/* ヘッダー領域 */}
-            <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 z-10">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Schedule</h3>
-            </div>
+            {/* ヘッダー領域削除 (ExpandablePaneへ移動) */}
 
             {/* タイムライン領域（スクロール可能） */}
             <div
