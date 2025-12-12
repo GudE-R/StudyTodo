@@ -18,8 +18,11 @@ import { ActivityModal } from "@/components/activity/ActivityModal";
 import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
+import { AuthModal } from "@/components/auth/AuthModal";
 import { Todo } from "@/types";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { dataService } from "@/services/dataService";
+import { useSync } from "@/hooks/useSync";
 
 
 /**
@@ -57,14 +60,18 @@ export default function Home() {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [isTodoDetailOpen, setIsTodoDetailOpen] = useState(false);
 
+  // Sync Logic
+  const { isSyncing } = useSync();
+
   // --- Handlers ---
-  const handleDeleteTodo = async (todoId: string) => await db.todos.delete(todoId);
+  const handleDeleteTodo = async (todoId: string) => await dataService.deleteTodo(todoId);
 
   const handleCreateTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
-    await db.todos.add({
+    await dataService.addTodo({
       ...todoData,
       id: generateId(),
       createdAt: new Date(),
@@ -79,7 +86,7 @@ export default function Home() {
   };
 
   const handleToggleTodoComplete = async (todo: Todo) => {
-    await db.todos.update(todo.id, { completed: !todo.completed, updatedAt: new Date() });
+    await dataService.updateTodo(todo.id, { completed: !todo.completed, updatedAt: new Date() });
   };
 
   const handleStartFromDetail = (todo: Todo) => {
@@ -102,7 +109,7 @@ export default function Home() {
 
     const now = Date.now();
     for (let i = 0; i < reorderedTodos.length; i++) {
-      await db.todos.update(reorderedTodos[i].id, {
+      await dataService.updateTodo(reorderedTodos[i].id, {
         updatedAt: new Date(now - i * 1000)
       });
     }
@@ -115,7 +122,7 @@ export default function Home() {
       createdAt: new Date(),
       completed: false,
     };
-    await db.todos.add(newTodo);
+    await dataService.addTodo(newTodo);
     setActiveTodo(newTodo);
     setViewMode("timer");
     setIsTodoModalOpen(false);
@@ -128,8 +135,8 @@ export default function Home() {
       createdAt: todoData.dueDate || new Date(),
       completed: true,
     };
-    await db.todos.add(newTodo);
-    await db.sessions.add({
+    await dataService.addTodo(newTodo);
+    await dataService.addSession({
       id: generateId(),
       todoId: newTodo.id,
       todoTitle: newTodo.title,
@@ -146,7 +153,7 @@ export default function Home() {
   };
 
   const handleSaveSession = async (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => {
-    await db.sessions.add({
+    await dataService.addSession({
       id: generateId(),
       ...sessionData,
       createdAt: new Date(),
@@ -193,6 +200,7 @@ export default function Home() {
         setIsActivityModalOpen(false);
         setIsSettingsModalOpen(false);
         setIsGuideModalOpen(false);
+        setIsAuthModalOpen(false);
         setIsTodoDetailOpen(false);
       }
     }
@@ -347,10 +355,15 @@ export default function Home() {
           isOpen={isSettingsModalOpen}
           onClose={() => setIsSettingsModalOpen(false)}
           onOpenGuide={() => setIsGuideModalOpen(true)}
+          onOpenAuth={() => setIsAuthModalOpen(true)}
         />
         <UsageGuideModal
           isOpen={isGuideModalOpen}
           onClose={() => setIsGuideModalOpen(false)}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
         />
       </div>
     </AppShell>
