@@ -84,25 +84,29 @@ export function CalendarPane({
 
     const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
 
-    const getActivityLevel = (date: Date) => {
-        const dailySessions = sessions.filter(s => isSameDay(new Date(s.createdAt), date));
-        const totalDuration = dailySessions.reduce((acc, s) => acc + s.duration, 0);
-
+    const getActivityLevel = (totalDuration: number) => {
         if (totalDuration === 0) return 0;
-        if (totalDuration < 30 * 60) return 1;
-        if (totalDuration < 60 * 60) return 2;
-        if (totalDuration < 3 * 60 * 60) return 3;
-        return 4;
+        if (totalDuration < 15 * 60) return 1; // 15分未満
+        if (totalDuration < 60 * 60) return 2; // 1時間未満
+        if (totalDuration < 2 * 60 * 60) return 3; // 2時間未満
+        return 4; // 2時間以上
     };
 
     const getHeatmapColor = (level: number) => {
         switch (level) {
-            case 1: return "bg-green-100 dark:bg-green-900/40";
-            case 2: return "bg-green-200 dark:bg-green-800/50";
-            case 3: return "bg-green-300 dark:bg-green-700/60";
-            case 4: return "bg-green-400 dark:bg-green-600/70";
-            default: return "";
+            case 1: return "bg-green-200 dark:bg-green-900/60 border border-green-300 dark:border-green-800";
+            case 2: return "bg-green-300 dark:bg-green-800/70 border border-green-400 dark:border-green-700";
+            case 3: return "bg-green-400 dark:bg-green-700/80 border border-green-500 dark:border-green-600";
+            case 4: return "bg-green-500 dark:bg-green-600 border border-green-600 dark:border-green-500";
+            default: return "bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800";
         }
+    };
+
+    const formatDuration = (seconds: number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        if (h > 0) return `${h}時間${m}分`;
+        return `${m}分`;
     };
 
     return (
@@ -129,30 +133,41 @@ export function CalendarPane({
             </div>
 
             {/* カレンダー本体（スクロール可能領域） */}
-            <div className="flex-1 flex flex-col p-1 overflow-y-auto min-h-0">
+            <div className="flex-1 flex flex-col p-2 overflow-y-auto min-h-0">
                 {/* 曜日ヘッダー */}
-                <div className="grid grid-cols-7 mb-0.5 flex-none sticky top-0 bg-white dark:bg-gray-900 z-10 p-1">
+                <div className="grid grid-cols-7 mb-1 flex-none sticky top-0 bg-white dark:bg-gray-900 z-10">
                     {weekDays.map((day, i) => (
-                        <div key={i} className="text-center text-[10px] text-gray-400 dark:text-gray-500 font-medium">
+                        <div key={i} className="text-center text-[10px] text-gray-400 dark:text-gray-500 font-medium pb-1">
                             {day}
                         </div>
                     ))}
                 </div>
 
                 {/* 日付グリッド */}
-                <div className={`grid grid-cols-7 auto-rows-fr gap-0.5 pb-2 transition-all duration-300 ${isExpanded ? "h-auto min-h-[300px]" : "h-full"}`}>
+                <div className={`grid grid-cols-7 auto-rows-fr gap-1 pb-2 transition-all duration-300 ${isExpanded ? "h-auto min-h-[300px]" : "h-full"}`}>
                     {calendarDays.map((date, i) => {
                         const isCurrentMonth = isSameMonth(date, monthStart);
                         const isToday = isSameDay(date, today);
                         const isSelected = isSameDay(date, selectedDate);
                         const isKept = keptDate && isSameDay(date, keptDate);
 
-                        const activityLevel = getActivityLevel(date);
-                        const heatmapColor = !isSelected && !isKept && !isToday ? getHeatmapColor(activityLevel) : "";
+                        // Stats Calculation
+                        const dailySessions = sessions.filter(s => isSameDay(new Date(s.createdAt), date));
+                        const totalDuration = dailySessions.reduce((acc, s) => acc + s.duration, 0);
+                        const activityLevel = getActivityLevel(totalDuration);
+                        const heatmapClass = getHeatmapColor(activityLevel);
+
+                        // Tooltip Text
+                        const dateStr = format(date, "M/d(E)", { locale: ja });
+                        const statsStr = totalDuration > 0
+                            ? `${formatDuration(totalDuration)} / ${dailySessions.length}セッション`
+                            : "学習記録なし";
+                        const tooltipText = `${dateStr}\n${statsStr}`;
 
                         return (
-                            <div key={i} className="flex flex-col items-center justify-center py-1 relative">
+                            <div key={i} className="flex flex-col items-center justify-center relative aspect-square">
                                 <button
+                                    title={tooltipText} // Tooltip
                                     onMouseDown={() => handleTouchStart(date)}
                                     onMouseUp={handleTouchEnd}
                                     onMouseLeave={handleTouchEnd}
@@ -160,21 +175,26 @@ export function CalendarPane({
                                     onTouchEnd={handleTouchEnd}
                                     onClick={() => handleClick(date)}
                                     className={`
-                    w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-200 z-0
-                    ${!isCurrentMonth ? "text-gray-300 dark:text-gray-600" : "text-gray-700 dark:text-gray-200"}
-                    ${isKept
-                                            ? "bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 ring-2 ring-orange-400 font-bold scale-110"
-                                            : isSelected
-                                                ? "bg-blue-600 text-white shadow-md scale-105"
-                                                : isToday
-                                                    ? "bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700"
-                                                    : heatmapColor || "hover:bg-gray-50 dark:hover:bg-gray-800"}
+                    w-full h-full rounded-sm flex items-center justify-center text-xs transition-all duration-200 z-0
+                    ${!isCurrentMonth ? "opacity-30 grayscale" : ""}
+                    ${isSelected
+                                            ? "ring-2 ring-blue-500 z-10"
+                                            : isToday
+                                                ? "ring-1 ring-blue-400 dark:ring-blue-500"
+                                                : "hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-600"}
+                    ${isSelected || isToday ? "" : heatmapClass}
+                    ${isKept ? "ring-2 ring-orange-400 bg-orange-50 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400" : ""}
+                    ${(isSelected || isToday) && activityLevel > 0 ? heatmapClass : ""}
+                    ${(isSelected || isToday) && activityLevel === 0 ? "bg-white dark:bg-gray-800" : ""}
                   `}
                                 >
-                                    {format(date, "d")}
+                                    <span className={`
+                                        ${activityLevel > 2 ? "text-white drop-shadow-md font-medium" : "text-gray-700 dark:text-gray-300"}
+                                        ${!isCurrentMonth ? "text-gray-400 dark:text-gray-600" : ""}
+                                    `}>
+                                        {format(date, "d")}
+                                    </span>
                                 </button>
-
-                                {/* 拡大時のみ、ドットなどの詳細情報を出しても良い */}
                             </div>
                         );
                     })}

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle } from "lucide-react";
 import { Todo } from "@/types";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useNotification } from "@/hooks/useNotification";
 
 interface TimerViewProps {
     todo: Todo;
@@ -43,6 +44,14 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+    // 通知フック
+    const { requestPermission, sendNotification } = useNotification();
+
+    // 初回マウント時に通知許可をリクエスト
+    useEffect(() => {
+        requestPermission();
+    }, [requestPermission]);
+
     // タイマー終了時の処理
     const handleTimerComplete = useCallback(() => {
         setIsRunning(false);
@@ -50,16 +59,19 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
         // ポモドーロモードで集中時間が終わったら休憩モードへ誘導
         if (mode === "pomodoro" && status === "focus") {
-            // 音を鳴らすなどの処理がここに入ります
+            // 音声通知などもここで行う
+            sendNotification("集中終了！", { body: "お疲れ様でした。休憩しましょう。" });
             alert("お疲れ様でした！休憩しましょう。");
             setStatus("break");
         } else if (mode === "pomodoro" && status === "break") {
+            sendNotification("休憩終了！", { body: "次のセッションを始めましょう。" });
             alert("休憩終了です！作業に戻りましょう。");
             setStatus("focus");
         } else if (mode === "countdown") {
+            sendNotification("タイマー終了", { body: "設定した時間が経過しました。" });
             alert("タイマー終了です！");
         }
-    }, [mode, status]);
+    }, [mode, status, sendNotification]);
 
     const resetTimer = useCallback(() => {
         setIsRunning(false);

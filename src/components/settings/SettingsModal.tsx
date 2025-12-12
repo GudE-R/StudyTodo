@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { X, Palette, BookOpen } from "lucide-react";
+import { X, Palette, BookOpen, Database, Download } from "lucide-react";
 import { ThemeEditor } from "../template/ThemeEditor";
+import { exportToJson, exportSessionsToCsv } from "@/lib/export";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -64,6 +65,45 @@ export function SettingsModal({ isOpen, onClose, onOpenGuide }: SettingsModalPro
                             </span>
                             <BookOpen size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
                         </button>
+                    </div>
+
+                    {/* データ管理セクション */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
+                            <Database size={20} className="text-purple-500" />
+                            <h3>データ管理</h3>
+                        </div>
+                        <div className="space-y-2">
+                            <button
+                                onClick={async () => {
+                                    if (confirm("全てのデータをJSON形式でバックアップしますか？")) {
+                                        await exportToJson();
+                                    }
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
+                            >
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">バックアップを作成 (JSON)</span>
+                                    <span className="text-xs text-gray-400">設定やタスクを含む全データ</span>
+                                </div>
+                                <Download size={18} className="text-gray-400 group-hover:text-purple-500 transition-colors" />
+                            </button>
+
+                            <button
+                                onClick={async () => {
+                                    if (confirm("学習記録をCSV形式でエクスポートしますか？")) {
+                                        await exportSessionsToCsv();
+                                    }
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
+                            >
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">学習記録をエクスポート (CSV)</span>
+                                    <span className="text-xs text-gray-400">分析用のセッション履歴</span>
+                                </div>
+                                <Download size={18} className="text-gray-400 group-hover:text-green-500 transition-colors" />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Version Info (Optional) */}
