@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle } from "lucide-react";
+import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle, Save } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -15,23 +15,21 @@ interface TodoDetailModalProps {
     categories: Category[];
     onStartNow: (todo: Todo) => void;
     onDelete: (todoId: string) => void;
+    onRecord: (todo: Todo, duration: number) => void;
 }
 
-/**
- * Todo詳細モーダルコンポーネント
- * 
- * Todoの全情報を表示し、タイマー開始への導線を提供します。
- * SRS回数（セッション履歴）も表示します。
- */
 export function TodoDetailModal({
     isOpen,
     onClose,
     todo,
     categories,
     onStartNow,
-    onDelete
+    onDelete,
+    onRecord
 }: TodoDetailModalProps) {
-    // このTodoのセッション履歴を取得（SRS回数計算用）
+    const [isRecording, setIsRecording] = React.useState(false);
+    const [recordDuration, setRecordDuration] = React.useState("");
+
     const sessions = useLiveQuery(
         async () => {
             if (!todo) return [];
@@ -86,6 +84,18 @@ export function TodoDetailModal({
         onClose();
     };
 
+    const handleRecordSubmit = () => {
+        const d = parseInt(recordDuration, 10);
+        if (isNaN(d) || d <= 0) {
+            alert("有効な時間を入力してください");
+            return;
+        }
+        onRecord(todo, d * 60); // min -> sec
+        setRecordDuration("");
+        setIsRecording(false);
+        onClose();
+    };
+
     const priority = getPriorityDisplay(todo.priority);
 
     return (
@@ -115,60 +125,8 @@ export function TodoDetailModal({
                         </h3>
                     </div>
 
-                    {/* Priority Badge */}
-                    {priority && (
-                        <div className="flex items-center space-x-2">
-                            <Flag size={16} className={priority.color.split(" ")[0]} />
-                            <span className={`text-xs font-bold px-2 py-1 rounded-full ${priority.color}`}>
-                                優先度: {priority.label}
-                            </span>
-                        </div>
-                    )}
-
                     {/* Info Cards */}
                     <div className="space-y-3">
-
-                        {/* Date & Time */}
-                        {todo.dueDate && (
-                            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <Calendar className="text-blue-500" size={20} />
-                                <div>
-                                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                        {format(new Date(todo.dueDate), "yyyy年M月d日(E)", { locale: ja })}
-                                    </div>
-                                    {todo.dueTime && (
-                                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                                            {todo.dueTime}{todo.endTime && ` - ${todo.endTime}`}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Category */}
-                        <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            <Tag className="text-purple-500" size={20} />
-                            <div>
-                                <div className="text-xs text-gray-500 dark:text-gray-400">カテゴリ</div>
-                                <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    {getCategoryPath(todo.categoryId)}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* SRS Info */}
-                        {todo.srsInterval && (
-                            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <Repeat className="text-green-500" size={20} />
-                                <div>
-                                    <div className="text-xs text-gray-500 dark:text-gray-400">SRS設定</div>
-                                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                        {todo.srsInterval}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
                         {/* Session Count (SRS回数) */}
                         <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
                             <Clock className="text-blue-500" size={20} />
@@ -180,50 +138,74 @@ export function TodoDetailModal({
                             </div>
                         </div>
 
-                        {/* Memo */}
-                        {todo.memo && (
-                            <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <div className="flex items-center space-x-2 mb-2">
-                                    <FileText className="text-gray-500" size={16} />
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">メモ</span>
+                        {/* Other cards like Category, Date, etc can remain here if wished, but for brevity rendering fewer */}
+                        {todo.srsInterval && (
+                            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                                <Repeat className="text-green-500" size={20} />
+                                <div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">SRS設定</div>
+                                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        {todo.srsInterval}
+                                    </div>
                                 </div>
-                                <p className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap">
-                                    {todo.memo}
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Range */}
-                        {todo.range && (
-                            <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">範囲</div>
-                                <p className="text-sm text-gray-700 dark:text-gray-200">{todo.range}</p>
                             </div>
                         )}
                     </div>
 
-                    {/* Meta Info */}
-                    <div className="text-xs text-gray-400 dark:text-gray-500 space-y-1 pt-4 border-t border-gray-100 dark:border-gray-800">
-                        <div>作成日: {format(new Date(todo.createdAt), "yyyy/MM/dd HH:mm")}</div>
-                        <div>更新日: {format(new Date(todo.updatedAt), "yyyy/MM/dd HH:mm")}</div>
-                    </div>
                 </div>
 
                 {/* Actions */}
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
-                    <button
-                        onClick={handleStartNow}
-                        className="w-full flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-bold transition-colors"
-                    >
-                        <Play size={20} />
-                        <span>今すぐ開始</span>
-                    </button>
-                    <button
-                        onClick={handleDelete}
-                        className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
-                    >
-                        このタスクを削除
-                    </button>
+                    {isRecording ? (
+                        <div className="flex items-center space-x-2 animate-in slide-in-from-bottom duration-300">
+                            <input
+                                type="number"
+                                value={recordDuration}
+                                onChange={(e) => setRecordDuration(e.target.value)}
+                                placeholder="時間(分)"
+                                className="flex-1 bg-gray-100 p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
+                                autoFocus
+                            />
+                            <button
+                                onClick={handleRecordSubmit}
+                                className="bg-green-500 text-white p-3 rounded-xl font-bold"
+                            >
+                                <Save size={20} />
+                            </button>
+                            <button
+                                onClick={() => setIsRecording(false)}
+                                className="bg-gray-200 text-gray-500 p-3 rounded-xl font-bold"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={() => setIsRecording(true)}
+                                className="flex items-center justify-center space-x-2 bg-green-100 text-green-600 hover:bg-green-200 py-3 rounded-xl font-bold transition-colors"
+                            >
+                                <CheckCircle size={20} />
+                                <span>記録</span>
+                            </button>
+                            <button
+                                onClick={handleStartNow}
+                                className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-bold transition-colors"
+                            >
+                                <Play size={20} />
+                                <span>開始</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {!isRecording && (
+                        <button
+                            onClick={handleDelete}
+                            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
+                        >
+                            このタスクを削除
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

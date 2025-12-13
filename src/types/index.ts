@@ -12,6 +12,7 @@ export interface Todo {
     completed: boolean;
     createdAt: Date;
     updatedAt: Date; // Added
+    srsGroupId?: string; // ID of the original Todo (Cascade Delete key)
 }
 
 export interface Category {

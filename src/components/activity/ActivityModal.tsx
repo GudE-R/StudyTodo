@@ -6,6 +6,7 @@ import { ja } from "date-fns/locale";
 import { X, BarChart2, History, Trash2, Filter } from "lucide-react";
 import { Session, Todo, Category } from "@/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface ActivityModalProps {
     isOpen: boolean;
@@ -13,13 +14,14 @@ interface ActivityModalProps {
     sessions: Session[];
     todos: Todo[];
     onDeleteTodo: (todoId: string) => void;
+    onBulkDelete: (ids: string[]) => Promise<void>;
     categories: Category[];
 }
 
 type Tab = "analytics" | "history";
 type Range = "week" | "month" | "year" | "all";
 
-export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, categories }: ActivityModalProps) {
+export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, onBulkDelete, categories }: ActivityModalProps) {
     const [activeTab, setActiveTab] = useState<Tab>("analytics");
     const [range, setRange] = useState<Range>("week");
     const [analyticsCategory, setAnalyticsCategory] = useState<string>("all");
@@ -27,7 +29,30 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
     const [filterStatus, setFilterStatus] = useState<"all" | "completed" | "incomplete">("all");
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
     if (!isOpen) return null;
+
+    // Toggle Selection
+    const toggleSelect = (id: string) => {
+        const next = new Set(selectedIds);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        setSelectedIds(next);
+    };
+
+    const handleBulkDeleteClick = async () => {
+        if (selectedIds.size === 0) return;
+        if (confirm(`${selectedIds.size}件のタスクを削除しますか？`)) {
+            try {
+                await onBulkDelete(Array.from(selectedIds));
+                setSelectedIds(new Set());
+            } catch (e) {
+                console.error("Bulk delete failed", e);
+                alert("削除に失敗しました。更新して再度お試しください。");
+            }
+        }
+    };
 
     // Flatten categories for dropdown
     const flattenCategories = (cats: Category[]): Category[] => {
@@ -354,14 +379,44 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 </select>
                             </div>
 
+                            {/* Todo List Header with Bulk Actions */}
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-sm font-bold text-gray-700">Tasks</h3>
+                                {selectedIds.size > 0 && (
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            onClick={() => setSelectedIds(new Set())}
+                                            className="text-gray-500 text-xs font-bold hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+                                        >
+                                            キャンセル
+                                        </button>
+                                        <button
+                                            onClick={handleBulkDeleteClick}
+                                            className="text-red-500 text-xs font-bold hover:bg-red-50 px-2 py-1 rounded transition-colors"
+                                        >
+                                            選択した項目を削除 ({selectedIds.size})
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Todo List */}
                             <div className="space-y-2">
                                 {filteredTodos.map(todo => (
                                     <div key={todo.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
                                         <div className="flex items-center space-x-3">
+                                            {/* Checkbox */}
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedIds.has(todo.id)}
+                                                onChange={() => toggleSelect(todo.id)}
+                                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                            />
                                             <div className={`w-2 h-12 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
                                             <div>
-                                                <div className="font-bold text-gray-800">{todo.title}</div>
+                                                <div className="font-bold text-gray-800">
+                                                    <TodoTitle title={todo.title} />
+                                                </div>
                                                 <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
                                                     <span className="bg-gray-100 px-2 py-0.5 rounded">
                                                         {todo.categoryId ? (flatCategories.find(c => c.id === todo.categoryId)?.name || "Unknown") : "No Category"}
@@ -372,7 +427,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                         </div>
                                         <button
                                             onClick={() => handleDeleteClick(todo.id)}
-                                            className={`p-2 rounded-full transition-colors ${deleteConfirmId === todo.id ? "bg-red-50 text-red-600" : "text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"}`}
+                                            className={`p-2 rounded-full transition-colors ${deleteConfirmId === todo.id ? "bg-red-50 text-red-600 opacity-100" : "text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"}`}
                                         >
                                             {deleteConfirmId === todo.id ? <Trash2 size={18} fill="currentColor" /> : <Trash2 size={18} />}
                                         </button>

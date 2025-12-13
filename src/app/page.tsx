@@ -71,6 +71,21 @@ export default function Home() {
   const handleDeleteTodo = async (todoId: string) => await dataService.deleteTodo(todoId);
 
   const handleCreateTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
+    // Check for SRS
+    if (todoData.srsInterval && srsProfiles) {
+      const profile = srsProfiles.find(p => p.name === todoData.srsInterval);
+      if (profile && profile.intervals && profile.intervals.length > 0) {
+        await dataService.addSRSTodos({
+          ...todoData,
+          id: generateId(),
+          createdAt: new Date(),
+          completed: false,
+        }, profile.intervals); // intervals number[]
+        setIsTodoModalOpen(false);
+        return;
+      }
+    }
+
     await dataService.addTodo({
       ...todoData,
       id: generateId(),
@@ -159,6 +174,21 @@ export default function Home() {
       createdAt: new Date(),
       mode: sessionData.mode as "pomodoro" | "countdown" | "stopwatch"
     });
+  };
+
+  const handleRecordSession = async (todo: Todo, duration: number) => {
+    await dataService.addSession({
+      id: generateId(),
+      todoId: todo.id,
+      todoTitle: todo.title,
+      duration: duration,
+      createdAt: new Date(),
+      mode: "stopwatch", // logging manual time better fits stopwatch semantic
+    });
+  };
+
+  const handleBulkDelete = async (ids: string[]) => {
+    await Promise.all(ids.map(id => dataService.deleteTodo(id)));
   };
 
   const handleDateLongPress = (date: Date) => {
@@ -276,13 +306,6 @@ export default function Home() {
 
           {/* Right: Calendar & Analysis (40%) */}
           <div className="w-[40%] h-full bg-white dark:bg-gray-900 flex flex-col">
-            {/* Header for Calendar (Already inside CalendarPane? No, we might want a unified header style) */}
-            {/* Note: CalendarPane has its own navigation header. We can keep it or wrap it. 
-                 Since CalendarPane header has Month Navigation, it's functional. Let's keep it.
-                 But for consistency, we might want a small section label or just let CalendarPane handle it.
-                 CalendarPane header style is "px-4 py-2 ... border-b". 
-                 Let's check CalendarPane logic. It has navigation built-in.
-             */}
             <div className="flex-1 overflow-hidden relative">
               <CalendarPane
                 selectedDate={selectedDate}
@@ -292,22 +315,11 @@ export default function Home() {
                 sessions={sessions}
               />
             </div>
-
-            {/* Here we could put Stats/Activity Graph in the bottom 50% of this column if requested. 
-                 For now, just CalendarPane taking full height.
-             */}
           </div>
         </div>
 
-
         {/* Floating Bottom Actions (Keep always visible, z-index managed) */}
         <div className="z-50 relative pointer-events-none">
-          {/* Make sure BottomActions can receive clicks despite pointer-events-none on wrapper */}
-          {/* Actually BottomActions component styles need to handle positioning. 
-                Let's check BottomActions. It usually has "fixed bottom-4".
-                If we use relative wrapper here, we might break it. 
-                Let's just render it directly.
-            */}
           <div className="pointer-events-auto">
             <BottomActions
               onOpenTodoModal={() => setIsTodoModalOpen(true)}
@@ -341,6 +353,7 @@ export default function Home() {
           sessions={sessions}
           todos={todos}
           onDeleteTodo={handleDeleteTodo}
+          onBulkDelete={handleBulkDelete}
           categories={categories}
         />
         <TodoDetailModal
@@ -350,6 +363,7 @@ export default function Home() {
           categories={categories}
           onStartNow={handleStartFromDetail}
           onDelete={handleDeleteTodo}
+          onRecord={handleRecordSession}
         />
         <SettingsModal
           isOpen={isSettingsModalOpen}

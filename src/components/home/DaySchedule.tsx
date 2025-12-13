@@ -5,6 +5,7 @@ import { format, addDays, subDays, isSameDay } from "date-fns";
 import { ja } from "date-fns/locale";
 
 import { Todo } from "@/types";
+import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface DayScheduleProps {
     keptTime?: string | null;
@@ -285,7 +286,9 @@ export function DaySchedule({
                                                     height: `${height}px`,
                                                 }}
                                             >
-                                                <div className="font-bold text-blue-800 dark:text-blue-200 truncate">{todo.title}</div>
+                                                <div className="font-bold text-blue-800 dark:text-blue-200 truncate">
+                                                    <TodoTitle title={todo.title} />
+                                                </div>
                                                 <div className="text-blue-600 dark:text-blue-300 text-[10px]">
                                                     {todo.dueTime} - {todo.endTime || "?"}
                                                 </div>

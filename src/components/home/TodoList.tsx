@@ -4,6 +4,7 @@ import React from "react";
 import { Circle, CheckCircle, GripVertical, PlayCircle } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Todo, Category } from "@/types";
+import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface TodoListProps {
     todos: Todo[];
@@ -115,9 +116,9 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
 
                                                         {/* タスク内容 */}
                                                         <div className="ml-2 flex-1 min-w-0">
-                                                            <p className={`text-sm font-medium truncate ${todo.completed ? "text-gray-400 line-through" : "text-gray-900 dark:text-gray-100"}`}>
-                                                                {todo.title}
-                                                            </p>
+                                                            <div className={`text-sm font-medium truncate ${todo.completed ? "text-gray-400 line-through" : "text-gray-900 dark:text-gray-100"}`}>
+                                                                <TodoTitle title={todo.title} />
+                                                            </div>
                                                             <div className="flex items-center space-x-2 mt-0.5">
                                                                 {todo.dueTime && (
                                                                     <span className="text-[10px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">

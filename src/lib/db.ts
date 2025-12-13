@@ -11,11 +11,17 @@ export class PomArcDatabase extends Dexie {
     constructor() {
         super('PomArcDB_v2');
 
-        // Define tables and indexes
-        // id is primary key
-        // indexes are defined for fields we want to query by
+        // Version 2
         this.version(2).stores({
             todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt',
+            categories: 'id, parentId, order, createdAt, updatedAt',
+            srsProfiles: 'id, isDefault, createdAt, updatedAt',
+            sessions: 'id, todoId, createdAt'
+        });
+
+        // Version 3: Added srsGroupId index
+        this.version(3).stores({
+            todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt, srsGroupId',
             categories: 'id, parentId, order, createdAt, updatedAt',
             srsProfiles: 'id, isDefault, createdAt, updatedAt',
             sessions: 'id, todoId, createdAt'
