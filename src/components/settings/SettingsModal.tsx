@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { X, Palette, BookOpen, Database, Download, Cloud } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { X, Palette, BookOpen, Database, Download, Cloud, LogOut } from "lucide-react";
 import { ThemeEditor } from "../template/ThemeEditor";
 import { exportToJson, exportSessionsToCsv } from "@/lib/export";
 import { migrateLocalToCloud } from "@/lib/migration";
@@ -19,6 +20,25 @@ interface SettingsModalProps {
  * テーマ設定と使用ガイドへのアクセスを提供します。
  */
 export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: SettingsModalProps) {
+    const [userEmail, setUserEmail] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (isOpen) {
+            checkUser();
+        }
+    }, [isOpen]);
+
+    const checkUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUserEmail(user?.email ?? null);
+    };
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        setUserEmail(null);
+        alert("ログアウトしました");
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -75,40 +95,67 @@ export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: Sett
                             <Cloud size={20} className="text-blue-500" />
                             <h3>クラウド同期</h3>
                         </div>
-                        <button
-                            onClick={() => {
-                                onClose();
-                                onOpenAuth();
-                            }}
-                            className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
-                        >
-                            <div className="flex flex-col items-start">
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">ログイン / アカウント作成</span>
-                                <span className="text-xs text-gray-400">データをクラウドにバックアップ・同期</span>
-                            </div>
-                            <Cloud size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
-                        </button>
 
-                        <button
-                            onClick={async () => {
-                                if (confirm("ローカルデータをクラウドにアップロードしますか？\n（ログインが必要です）")) {
-                                    try {
-                                        const result = await migrateLocalToCloud();
-                                        alert(`完了しました！\nTodos: ${result.todos}件\nSessions: ${result.sessions}件`);
-                                        onClose();
-                                    } catch (e: any) {
-                                        alert(`エラー: ${e.message}`);
-                                    }
-                                }
-                            }}
-                            className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
-                        >
-                            <div className="flex flex-col items-start">
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">クラウドへアップロード (移行)</span>
-                                <span className="text-xs text-gray-400">現在のデータをクラウドDBに保存</span>
+                        {userEmail ? (
+                            // Logged In State
+                            <div className="space-y-2">
+                                <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-100 dark:border-blue-800">
+                                    <div className="text-xs text-blue-600 dark:text-blue-300 font-bold uppercase mb-1">
+                                        ログイン中
+                                    </div>
+                                    <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+                                        {userEmail}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors group"
+                                >
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-red-600 dark:group-hover:text-red-400">
+                                        ログアウト
+                                    </span>
+                                    <LogOut size={18} className="text-gray-400 group-hover:text-red-500 transition-colors" />
+                                </button>
                             </div>
-                            <Database size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
-                        </button>
+                        ) : (
+                            // Logged Out State
+                            <button
+                                onClick={() => {
+                                    onClose();
+                                    onOpenAuth();
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
+                            >
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">ログイン / アカウント作成</span>
+                                    <span className="text-xs text-gray-400">データをクラウドにバックアップ・同期</span>
+                                </div>
+                                <Cloud size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                            </button>
+                        )}
+
+                        {userEmail && (
+                            <button
+                                onClick={async () => {
+                                    if (confirm("ローカルデータをクラウドにアップロードしますか？\n（既存のクラウドデータは上書きされる可能性があります）")) {
+                                        try {
+                                            const result = await migrateLocalToCloud();
+                                            alert(`完了しました！\nTodos: ${result.todos}件\nSessions: ${result.sessions}件`);
+                                            onClose();
+                                        } catch (e: any) {
+                                            alert(`エラー: ${e.message}`);
+                                        }
+                                    }
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
+                            >
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">クラウドへアップロード (移行)</span>
+                                    <span className="text-xs text-gray-400">現在のデータをクラウドDBに保存</span>
+                                </div>
+                                <Database size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                            </button>
+                        )}
                     </div>
 
                     {/* データ管理セクション */}
