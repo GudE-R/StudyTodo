@@ -1,72 +1,140 @@
-import React from "react";
-import { StyleSheet, View, ScrollView, SafeAreaView, Text } from "react-native";
-import { ExpandablePane } from "./src/components/ui/ExpandablePane";
-import { RepositoryProvider } from "./src/providers/RepositoryProvider";
-import { MobileTodoList } from "./src/components/widgets/MobileTodoList";
-import { MobileDaySchedule } from "./src/components/widgets/MobileDaySchedule";
-import { MobileCalendar } from "./src/components/widgets/MobileCalendar";
-import { StatusBar } from "expo-status-bar";
+
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, SafeAreaView, Platform, StatusBar } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { RepositoryProvider } from './src/providers/RepositoryProvider';
+import { useThemeColors } from './src/hooks/useThemeColors';
+import { Todo } from '@pomarc/shared';
+
+// UI Components
+import { Header } from './src/components/ui/Header';
+import { BottomActions } from './src/components/ui/BottomActions';
+import { MobileTodoCreateModal } from './src/components/todo/MobileTodoCreateModal';
+import { TimerModal } from './src/components/timer/TimerModal';
+
+// Widgets
+import { TodoListWidget } from './src/components/widgets/TodoListWidget';
+import { DayScheduleWidget } from './src/components/widgets/DayScheduleWidget';
+import { CalendarWidget } from './src/components/widgets/CalendarWidget';
+
+// Logic Hooks
+import { useMobileTodos } from './src/hooks/useMobileTodos';
+import { useMobileSessions } from './src/hooks/useMobileSessions';
 
 function HomeScreen() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [activeTodo, setActiveTodo] = useState<Todo | undefined>(undefined);
+  const [isTimerVisible, setTimerVisible] = useState(false);
+
+  const { todos, refreshTodos, addTodo, updateTodo } = useMobileTodos();
+  const { sessions, refreshSessions, addSession } = useMobileSessions();
+
+  // Initial Data Load
+  useEffect(() => {
+    refreshTodos();
+    refreshSessions();
+  }, [refreshTodos, refreshSessions]);
+
+  const handlePlayTodo = (todo: Todo) => {
+    setActiveTodo(todo);
+    setTimerVisible(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.appTitle}>PomArc</Text>
-        <Text style={styles.date}>{new Date().toLocaleDateString()}</Text>
+      {/* Header */}
+      <Header />
+
+      {/* Main Content Area */}
+      <View style={styles.mainContent}>
+
+        {/* Split View: TodoList (Left) & DaySchedule (Right) */}
+        <View style={styles.splitViewContainer}>
+          <View style={styles.leftColumn}>
+            <TodoListWidget
+              todos={todos}
+              selectedDate={selectedDate}
+              onToggleTodo={(id, completed) => updateTodo(id, { completed })}
+              onPlayTodo={handlePlayTodo}
+            />
+          </View>
+          <View style={styles.rightColumn}>
+            <DayScheduleWidget
+              todos={todos}
+              selectedDate={selectedDate}
+            />
+          </View>
+        </View>
+
+        {/* Calendar (Below) */}
+        <View style={styles.calendarContainer}>
+          <CalendarWidget
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+            todos={todos}
+            sessions={sessions}
+          />
+        </View>
+
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ExpandablePane title="Current Task" color="#E3F2FD">
-          <Text>Timer and Task Details will go here</Text>
-        </ExpandablePane>
+      {/* Footer / Bottom Actions */}
+      <BottomActions onAddPress={() => setModalVisible(true)} />
 
-        <ExpandablePane title="Today's Tasks" color="#F3E5F5">
-          <MobileTodoList />
-        </ExpandablePane>
+      {/* Todo Create Modal */}
+      <MobileTodoCreateModal
+        visible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+        onAdd={addTodo}
+      />
 
-        <ExpandablePane title="Schedule" color="#FFF3E0">
-          <MobileDaySchedule />
-        </ExpandablePane>
+      {/* Timer Modal */}
+      <TimerModal
+        visible={isTimerVisible}
+        onClose={() => setTimerVisible(false)}
+        todo={activeTodo}
+        onSaveSession={async (session) => {
+          await addSession(session);
+          // Optionally auto-complete todo or refresh
+        }}
+      />
 
-        <ExpandablePane title="Calendar" color="#E8F5E9">
-          <MobileCalendar />
-        </ExpandablePane>
-      </ScrollView>
-      <StatusBar style="auto" />
     </SafeAreaView>
   );
 }
 
 export default function App() {
   return (
-    <RepositoryProvider>
-      <HomeScreen />
-    </RepositoryProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <RepositoryProvider>
+        <HomeScreen />
+      </RepositoryProvider>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
-    paddingTop: 40,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+  mainContent: {
+    flex: 1,
+    flexDirection: 'column',
   },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#2d3436",
+  splitViewContainer: {
+    flex: 1, // Takes up remaining space above calendar
+    flexDirection: 'row',
   },
-  date: {
-    fontSize: 16,
-    color: "#636e72",
-    marginTop: 4,
+  leftColumn: {
+    flex: 1, // 50% width
+    borderRightWidth: 1,
   },
-  scrollContent: {
-    padding: 20,
-    paddingTop: 0,
+  rightColumn: {
+    flex: 1, // 50% width
+  },
+  calendarContainer: {
+    borderTopWidth: 1,
   }
 });

@@ -3,19 +3,18 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native
 import { Todo } from "@pomarc/shared";
 import { useMobileTodos } from "../../hooks/useMobileTodos";
 
-export function MobileTodoList() {
-    const { todos, loading, refreshTodos, updateTodo } = useMobileTodos();
+interface MobileTodoListProps {
+    todos: Todo[];
+    onToggle: (todo: Todo) => void;
+    loading: boolean;
+}
 
-    useEffect(() => {
-        refreshTodos();
-    }, [refreshTodos]);
+export function MobileTodoList({ todos, onToggle, loading }: MobileTodoListProps) {
 
-    const handleToggle = (todo: Todo) => {
-        updateTodo(todo.id, { completed: !todo.completed, updatedAt: new Date() });
-    };
+    // Logic lifted to parent
 
     const renderItem = ({ item }: { item: Todo }) => (
-        <TouchableOpacity style={styles.item} onPress={() => handleToggle(item)}>
+        <TouchableOpacity style={styles.item} onPress={() => onToggle(item)}>
             <View style={[styles.checkbox, item.completed && styles.checked]}>
                 {item.completed && <Text style={styles.checkmark}>✓</Text>}
             </View>
@@ -37,7 +36,7 @@ export function MobileTodoList() {
     }
 
     if (todos.length === 0) {
-        return <Text style={styles.empty}>No tasks yet. Create one on Web!</Text>;
+        return <Text style={styles.empty}>No tasks yet. Create one via + button!</Text>;
     }
 
     return (

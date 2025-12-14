@@ -1,18 +1,33 @@
 export interface Todo {
     id: string;
     title: string;
-    dueDate?: Date;
+    dueDate?: Date | string; // Helper for serializing
     dueTime?: string;
     endTime?: string;
-    categoryId?: string; // Changed from category name to ID
+    categoryId?: string;
+
+    // Duration & Notes
+    estimatedDuration?: number; // minutes
+    actualDuration?: number; // minutes
+    notes?: string;
+    tags?: string[];
+
+    // SRS Fields
+    srsLevel?: number;
+    nextReviewDate?: Date | string;
+    srsProfileId?: string;
+    reviewHistory?: { date: string, correct: boolean }[];
+
+    // Legacy/Web compat
     srsInterval?: string;
     range?: string;
     memo?: string;
+
     priority?: "high" | "medium" | "low";
     completed: boolean;
-    createdAt: Date;
-    updatedAt: Date; // Added
-    srsGroupId?: string; // ID of the original Todo (Cascade Delete key)
+    createdAt: Date | string;
+    updatedAt: Date | string;
+    srsGroupId?: string;
 }
 
 export interface Category {
@@ -44,6 +59,8 @@ export interface Session {
     todoId: string;
     todoTitle: string;
     duration: number; // 秒単位
+    startTime?: Date | string;
+    endTime?: Date | string;
     createdAt: Date;
     mode: "pomodoro" | "countdown" | "stopwatch";
 }

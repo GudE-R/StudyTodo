@@ -1,25 +1,58 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { Todo } from "@pomarc/shared";
 
-export function MobileCalendar() {
-    // Simple calendar grid placeholder
+interface MobileCalendarProps {
+    isExpanded: boolean;
+    todos: Todo[];
+}
+
+export function MobileCalendar({ isExpanded, todos }: MobileCalendarProps) {
+    // 3-Week View (Default) vs 1-Month View (Expanded)
+    const weeks = isExpanded ? ["W1", "W2", "W3", "W4", "W5"] : ["Previous", "Current", "Next"];
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    // detailed logic omitted for brevity
+
+    // Helper to check if a date has tasks
+    const hasTaskOnDate = (dateOffset: number) => {
+        // Mock date calculation for this prototype
+        // In real app, we'd use a date library like date-fns
+        const d = new Date();
+        d.setDate(d.getDate() + dateOffset);
+        const dateStr = d.toDateString();
+        return todos.some(t => t.dueDate && new Date(t.dueDate).toDateString() === dateStr);
+    };
+
+    const renderWeek = (weekLabel: string, index: number) => (
+        <View key={weekLabel} style={styles.weekRow}>
+            {days.map((d, i) => {
+                const dayOffset = (index * 7) + i; // Very rough mock offset
+                const hasTask = hasTaskOnDate(dayOffset - 10); // adjusting mock offset to align somewhat with "today"
+
+                return (
+                    <View key={i} style={styles.dayCell}>
+                        <Text style={[styles.dateText, weekLabel === "Current" && d === "Wed" && styles.todayText]}>
+                            {/* Mock numbers: Start from 10th for demo */}
+                            {10 + i + (index * 7)}
+                        </Text>
+                        {hasTask && <View style={styles.dot} />}
+                    </View>
+                );
+            })}
+        </View>
+    );
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.month}>December 2025</Text>
+                <Text style={styles.month}>
+                    December 2025 {isExpanded ? "(Full Month)" : "(3 Weeks)"}
+                </Text>
             </View>
-            <View style={styles.grid}>
-                {days.map(day => (
-                    <Text key={day} style={styles.dayLabel}>{day}</Text>
-                ))}
-                {Array.from({ length: 31 }, (_, i) => (
-                    <TouchableOpacity key={i} style={styles.cell}>
-                        <Text style={[styles.dateText, i === 13 && styles.today]}>{i + 1}</Text>
-                    </TouchableOpacity>
-                ))}
+            <View style={styles.headerRow}>
+                {days.map(d => <Text key={d} style={styles.dayHeader}>{d}</Text>)}
+            </View>
+            <View style={styles.weeksContainer}>
+                {weeks.map((week, index) => renderWeek(week, isExpanded ? index : index - 1))}
             </View>
         </View>
     );
@@ -27,40 +60,57 @@ export function MobileCalendar() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 10,
+        flex: 1,
+        padding: 5,
     },
     header: {
         alignItems: "center",
-        marginBottom: 10,
+        marginBottom: 5,
     },
     month: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: "bold",
         color: "#333",
     },
-    grid: {
+    headerRow: {
         flexDirection: "row",
-        flexWrap: "wrap",
+        justifyContent: "space-around",
+        marginBottom: 2,
     },
-    dayLabel: {
-        width: "14.28%", // 100% / 7
-        textAlign: "center",
-        fontSize: 12,
+    dayHeader: {
+        fontSize: 10,
         color: "#999",
-        marginBottom: 5,
+        width: 30,
+        textAlign: "center",
     },
-    cell: {
-        width: "14.28%",
-        aspectRatio: 1,
+    weeksContainer: {
+        flex: 1,
+        justifyContent: "space-between",
+    },
+    weekRow: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        paddingVertical: 5,
+    },
+    dayCell: {
+        width: 30,
+        height: 35,
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
     },
     dateText: {
         fontSize: 14,
         color: "#333",
     },
-    today: {
-        color: "#007AFF",
+    todayText: {
+        color: "blue",
         fontWeight: "bold",
+    },
+    dot: {
+        width: 4,
+        height: 4,
+        borderRadius: 2,
+        backgroundColor: "orange",
+        marginTop: 2,
     }
 });
