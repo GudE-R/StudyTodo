@@ -31,7 +31,7 @@ export function useNotification() {
         if (Notification.permission === "granted") {
             new Notification(title, options);
         } else if (Notification.permission !== "denied") {
-            // 許可がなぁE��合�Eリクエストしてから送信を試みめE
+            // 許可がない場合はリクエストしてから送信を試みる
             Notification.requestPermission().then((permission) => {
                 if (permission === "granted") {
                     new Notification(title, options);

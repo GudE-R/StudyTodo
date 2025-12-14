@@ -78,7 +78,6 @@ export const DayScheduleWidget = ({ todos, selectedDate }: DayScheduleWidgetProp
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        borderLeftWidth: 1,
     },
     header: {
         fontSize: 12,

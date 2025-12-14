@@ -8,13 +8,13 @@ import { ja } from "date-fns/locale";
 interface DateBarProps {
     selectedDate?: Date;
     onDateChange?: (date: Date) => void;
-    onSettingsClick?: () => void; // 設定�EタンのクリチE��ハンドラ
+    onSettingsClick?: () => void; // 設定ボタンのクリックハンドラ
 }
 
 /**
- * 日付ナビゲーションバ�Eコンポ�EネンチE
+ * 日付ナビゲーションバーコンポーネント
  * 
- * 画面上部に配置され、日付�E表示・刁E��替え、�Eロフィール、設定へのアクセスを提供します、E
+ * 画面上部に配置され、日付の表示・切り替え、プロフィール、設定へのアクセスを提供します。
  */
 export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick }: DateBarProps) {
 
@@ -32,12 +32,12 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
 
     return (
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
-            {/* プロフィールアイコン�E�左端�E�E*/}
+            {/* プロフィールアイコン（左端） */}
             <button className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                 <User size={20} />
             </button>
 
-            {/* 日付表示とナビゲーション�E�中央�E�E*/}
+            {/* 日付表示とナビゲーション（中央） */}
             <div className="flex items-center space-x-2">
                 <button
                     onClick={handlePrevDay}
@@ -47,7 +47,7 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                 </button>
                 <div className="text-center min-w-[120px]">
                     <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {format(selectedDate, "M朁E日(EEE)", { locale: ja })}
+                        {format(selectedDate, "M月d日(EEE)", { locale: ja })}
                     </div>
                 </div>
                 <button
@@ -58,7 +58,7 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                 </button>
             </div>
 
-            {/* 設定アイコン�E�右端�E�E*/}
+            {/* 設定アイコン（右端） */}
             <button
                 onClick={onSettingsClick}
                 className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"

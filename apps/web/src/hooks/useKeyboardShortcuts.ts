@@ -8,9 +8,9 @@ interface ShortcutHandlers {
 }
 
 /**
- * キーボ�EドショートカチE��を管琁E��るカスタムフック
- * 
- * @param handlers 吁E��クションに対応するハンドラ関数
+ * キーボードショートカットを管理するカスタムフック
+ *
+ * @param handlers 各アクションに対応するハンドラ関数
  */
 export function useKeyboardShortcuts({
     onNewTodo,
@@ -20,7 +20,7 @@ export function useKeyboardShortcuts({
 }: ShortcutHandlers) {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            // 入力フィールド等にフォーカスがある場合�E無要E
+            // 入力フィールド等にフォーカスがある場合は無視
             const target = event.target as HTMLElement;
             if (
                 target.tagName === "INPUT" ||
@@ -55,8 +55,8 @@ export function useKeyboardShortcuts({
 
                 case "Enter":
                     if (onStartFocus) {
-                        // Enterは誤爁E��めE��ぁE�Eで、Ctrl/Metaとの絁E��合わせなどを検討しても良ぁE��
-                        // 一旦単体で実裁E��、呼び出し�Eで条件制御する
+                        // Enterは誤爆し易いので、Ctrl/Metaとの組み合わせなどを検討しても良いが
+                        // 一旦単体で実装し、呼び出し側で条件制御する
                         event.preventDefault();
                         onStartFocus();
                     }
