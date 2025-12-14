@@ -1,0 +1,168 @@
+apps/web/src/components/activity/ActivityModal.tsx(52,51): error TS1002: Unterminated string literal.
+apps/web/src/components/activity/ActivityModal.tsx(53,13): error TS1005: ',' expected.
+apps/web/src/components/activity/ActivityModal.tsx(166,43): error TS1002: Unterminated string literal.
+apps/web/src/components/activity/ActivityModal.tsx(167,17): error TS1005: ',' expected.
+apps/web/src/components/activity/ActivityModal.tsx(167,21): error TS1005: ',' expected.
+apps/web/src/components/activity/ActivityModal.tsx(168,22): error TS1005: ',' expected.
+apps/web/src/components/activity/ActivityModal.tsx(169,22): error TS1005: ',' expected.
+apps/web/src/components/activity/ActivityModal.tsx(170,13): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(34,61): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(34,68): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(34,73): error TS1002: Unterminated string literal.
+apps/web/src/components/auth/AuthModal.tsx(35,17): error TS1005: ':' expected.
+apps/web/src/components/auth/AuthModal.tsx(35,42): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(36,15): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(38,23): error TS1005: ':' expected.
+apps/web/src/components/auth/AuthModal.tsx(41,19): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(42,28): error TS1005: '{' expected.
+apps/web/src/components/auth/AuthModal.tsx(42,34): error TS1005: ':' expected.
+apps/web/src/components/auth/AuthModal.tsx(42,39): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(43,36): error TS1003: Identifier expected.
+apps/web/src/components/auth/AuthModal.tsx(43,77): error TS1005: ':' expected.
+apps/web/src/components/auth/AuthModal.tsx(43,84): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(43,89): error TS1002: Unterminated string literal.
+apps/web/src/components/auth/AuthModal.tsx(44,13): error TS1005: ':' expected.
+apps/web/src/components/auth/AuthModal.tsx(45,9): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(45,11): error TS1005: ',' expected.
+apps/web/src/components/auth/AuthModal.tsx(68,53): error TS1002: Unterminated string literal.
+apps/web/src/components/auth/AuthModal.tsx(99,30): error TS17008: JSX element 'label' has no corresponding closing tag.
+apps/web/src/components/auth/AuthModal.tsx(99,118): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/auth/AuthModal.tsx(136,56): error TS1002: Unterminated string literal.
+apps/web/src/components/auth/AuthModal.tsx(137,56): error TS1002: Unterminated string literal.
+apps/web/src/components/auth/AuthModal.tsx(138,25): error TS1005: '}' expected.
+apps/web/src/components/auth/AuthModal.tsx(145,1): error TS1472: 'catch' or 'finally' expected.
+apps/web/src/components/guide/UsageGuideModal.tsx(22,33): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(23,13): error TS1005: ',' expected.
+apps/web/src/components/guide/UsageGuideModal.tsx(23,92): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(28,112): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(33,90): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(37,36): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(38,13): error TS1005: ',' expected.
+apps/web/src/components/guide/UsageGuideModal.tsx(38,83): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(42,31): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(43,13): error TS1005: ',' expected.
+apps/web/src/components/guide/UsageGuideModal.tsx(43,82): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(47,30): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(48,13): error TS1005: ',' expected.
+apps/web/src/components/guide/UsageGuideModal.tsx(48,74): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(53,76): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(58,87): error TS1002: Unterminated string literal.
+apps/web/src/components/guide/UsageGuideModal.tsx(68,22): error TS17008: JSX element 'h2' has no corresponding closing tag.
+apps/web/src/components/guide/UsageGuideModal.tsx(68,100): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/home/BottomActions.tsx(34,18): error TS17008: JSX element 'span' has no corresponding closing tag.
+apps/web/src/components/home/BottomActions.tsx(34,69): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/home/CalendarPane.tsx(85,34): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,35): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,39): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,40): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,44): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,45): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,49): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(85,58): error TS1002: Unterminated string literal.
+apps/web/src/components/home/CalendarPane.tsx(87,5): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(109,17): error TS1005: ';' expected.
+apps/web/src/components/home/CalendarPane.tsx(124,71): error TS1002: Unterminated string literal.
+apps/web/src/components/home/CalendarPane.tsx(125,17): error TS1005: ',' expected.
+apps/web/src/components/home/CalendarPane.tsx(164,40): error TS1002: Unterminated string literal.
+apps/web/src/components/template/SRSEditor.tsx(84,10): error TS17008: JSX element 'div' has no corresponding closing tag.
+apps/web/src/components/template/SRSEditor.tsx(123,34): error TS17008: JSX element 'button' has no corresponding closing tag.
+apps/web/src/components/template/SRSEditor.tsx(123,155): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/template/SRSEditor.tsx(140,165): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/template/SRSEditor.tsx(141,34): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/template/SRSEditor.tsx(142,39): error TS17002: Expected corresponding JSX closing tag for 'span'.
+apps/web/src/components/template/SRSEditor.tsx(143,29): error TS1005: ')' expected.
+apps/web/src/components/template/SRSEditor.tsx(161,19): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/template/SRSEditor.tsx(163,9): error TS1005: ')' expected.
+apps/web/src/components/template/SRSEditor.tsx(165,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/template/SRSEditor.tsx(166,1): error TS1005: '</' expected.
+apps/web/src/components/template/TemplateModal.tsx(27,22): error TS17008: JSX element 'h2' has no corresponding closing tag.
+apps/web/src/components/template/TemplateModal.tsx(27,94): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/template/ThemeEditor.tsx(1,1): error TS1490: File appears to be binary.
+apps/web/src/components/template/ThemeEditor.tsx(16,72): error TS1005: ',' expected.
+apps/web/src/components/template/ThemeEditor.tsx(16,76): error TS1005: ',' expected.
+apps/web/src/components/template/ThemeEditor.tsx(78,1): error TS1005: '}' expected.
+apps/web/src/components/todo/TodoCreateModal.tsx(204,30): error TS17008: JSX element 'option' has no corresponding closing tag.
+apps/web/src/components/todo/TodoCreateModal.tsx(204,88): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(241,81): error TS1003: Identifier expected.
+apps/web/src/components/todo/TodoCreateModal.tsx(241,84): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(241,85): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(241,86): error TS1002: Unterminated string literal.
+apps/web/src/components/todo/TodoCreateModal.tsx(242,26): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(264,80): error TS1003: Identifier expected.
+apps/web/src/components/todo/TodoCreateModal.tsx(264,83): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(264,84): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(264,85): error TS1002: Unterminated string literal.
+apps/web/src/components/todo/TodoCreateModal.tsx(265,26): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(275,34): error TS17008: JSX element 'option' has no corresponding closing tag.
+apps/web/src/components/todo/TodoCreateModal.tsx(275,63): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoCreateModal.tsx(325,30): error TS17008: JSX element 'span' has no corresponding closing tag.
+apps/web/src/components/todo/TodoCreateModal.tsx(325,63): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoDetailModal.tsx(45,39): error TS1002: Unterminated string literal.
+apps/web/src/components/todo/TodoDetailModal.tsx(59,40): error TS1002: Unterminated string literal.
+apps/web/src/components/todo/TodoDetailModal.tsx(65,55): error TS1005: ',' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(65,59): error TS1005: ',' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(65,68): error TS1005: ';' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(65,78): error TS1005: ';' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(65,96): error TS1005: ';' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(65,100): error TS1002: Unterminated string literal.
+apps/web/src/components/todo/TodoDetailModal.tsx(67,54): error TS1005: ',' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(67,58): error TS1005: ',' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(67,69): error TS1005: ';' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(67,81): error TS1005: ';' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(67,101): error TS1005: ';' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(67,105): error TS1002: Unterminated string literal.
+apps/web/src/components/todo/TodoDetailModal.tsx(102,10): error TS17008: JSX element 'div' has no corresponding closing tag.
+apps/web/src/components/todo/TodoDetailModal.tsx(146,105): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoDetailModal.tsx(152,26): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/todo/TodoDetailModal.tsx(155,17): error TS1005: ')' expected.
+apps/web/src/components/todo/TodoDetailModal.tsx(196,34): error TS17008: JSX element 'span' has no corresponding closing tag.
+apps/web/src/components/todo/TodoDetailModal.tsx(196,47): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/todo/TodoDetailModal.tsx(213,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/todo/TodoDetailModal.tsx(214,1): error TS1005: '</' expected.
+apps/web/src/components/ui/DatePicker.tsx(20,90): error TS1002: Unterminated string literal.
+apps/web/src/components/ui/DatePicker.tsx(21,5): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(21,11): error TS1005: ':' expected.
+apps/web/src/components/ui/DatePicker.tsx(21,48): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(22,11): error TS1005: ':' expected.
+apps/web/src/components/ui/DatePicker.tsx(22,74): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(23,11): error TS1005: ':' expected.
+apps/web/src/components/ui/DatePicker.tsx(23,54): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(27,14): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,34): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,35): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,39): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,40): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,44): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,45): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,49): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(62,58): error TS1002: Unterminated string literal.
+apps/web/src/components/ui/DatePicker.tsx(64,5): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(93,79): error TS1002: Unterminated string literal.
+apps/web/src/components/ui/DatePicker.tsx(94,25): error TS1005: ',' expected.
+apps/web/src/components/ui/DatePicker.tsx(135,1): error TS1128: Declaration or statement expected.
+apps/web/src/components/ui/IconPicker.tsx(60,22): error TS17008: JSX element 'h3' has no corresponding closing tag.
+apps/web/src/components/ui/IconPicker.tsx(60,99): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/ui/TimePicker.tsx(21,127): error TS1002: Unterminated string literal.
+apps/web/src/components/ui/TimePicker.tsx(22,5): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(22,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(22,48): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(23,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(23,54): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(24,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(24,51): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(25,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(25,53): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(28,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(28,86): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(29,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(29,94): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(32,11): error TS1005: ':' expected.
+apps/web/src/components/ui/TimePicker.tsx(34,60): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(36,14): error TS1005: ',' expected.
+apps/web/src/components/ui/TimePicker.tsx(77,10): error TS17008: JSX element 'div' has no corresponding closing tag.
+apps/web/src/components/ui/TimePicker.tsx(94,18): error TS17008: JSX element 'div' has no corresponding closing tag.
+apps/web/src/components/ui/TimePicker.tsx(98,130): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/ui/TimePicker.tsx(119,130): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/web/src/components/ui/TimePicker.tsx(142,14): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/ui/TimePicker.tsx(145,1): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+apps/web/src/components/ui/TimePicker.tsx(146,1): error TS1005: '</' expected.
