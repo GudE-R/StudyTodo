@@ -7,9 +7,10 @@ import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 
 interface SettingsModalProps {
     onClose: () => void;
+    onOpenGuide: () => void;
 }
 
-export function SettingsModal({ onClose }: SettingsModalProps) {
+export function SettingsModal({ onClose, onOpenGuide }: SettingsModalProps) {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [showGuide, setShowGuide] = useState(false);

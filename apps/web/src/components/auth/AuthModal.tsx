@@ -1,22 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { X, Mail, Lock, LogIn, UserPlus } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { syncToSupabase } from "@/lib/migration";
 
 interface AuthModalProps {
-    isOpen: boolean;
     onClose: () => void;
 }
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-    const [isLoginMode, setIsLoginMode] = useState(true);
+export function AuthModal({ onClose }: AuthModalProps) {
+    const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
-
-    if (!isOpen) return null;
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,120 +22,114 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setMessage(null);
 
         try {
-            if (isLoginMode) {
-                // Login
+            if (isLogin) {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
                 });
                 if (error) throw error;
-                setMessage({ text: "ログインに成功しました�E�E, type: "success" });
+                setMessage({ type: 'success', text: 'Login successful!' });
+
+                // Sync after login
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    try {
+                        await syncToSupabase(user.id);
+                        console.log("Sync initiated");
+                    } catch (syncErr) {
+                        console.error("Sync failed", syncErr);
+                    }
+                }
                 setTimeout(onClose, 1500);
             } else {
-                // Sign Up
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
                 });
                 if (error) throw error;
-                setMessage({ text: "確認メールを送信しました。メールボックスを確認してください、E, type: "success" });
+                setMessage({ type: 'success', text: 'Check your email for the confirmation link.' });
             }
         } catch (error: any) {
-            setMessage({ text: error.message || "エラーが発生しました", type: "error" });
+            setMessage({ type: 'error', text: error.message });
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="relative bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-center">
-                    <button
-                        onClick={onClose}
-                        className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
-                    >
-                        <X size={24} />
-                    </button>
-                    <h2 className="text-2xl font-bold text-white mb-2">
-                        {isLoginMode ? "おかえりなさい" : "アカウント作�E"}
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                        {isLogin ? "Login" : "Sign Up"}
                     </h2>
-                    <p className="text-blue-100 text-sm">
-                        {isLoginMode
-                            ? "チE�Eタを同期して学習を継続しましょぁE
-                            : "PomArcに参加して学習データをバチE��アチE�E"}
-                    </p>
+                    <button onClick={onClose} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500">
+                        <X size={20} />
+                    </button>
                 </div>
 
-                {/* Form */}
-                <div className="p-6">
-                    <form onSubmit={handleAuth} className="space-y-4">
-                        {message && (
-                            <div className={`p-3 rounded-lg text-sm ${message.type === "error" ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"
-                                }`}>
-                                {message.text}
-                            </div>
+                <form onSubmit={handleAuth} className="p-6 space-y-4">
+                    {message && (
+                        <div className={`p-3 rounded-lg text-sm ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            {message.text}
+                        </div>
+                    )}
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Email</label>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-3 text-gray-400" size={18} />
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700"
+                                placeholder="hello@example.com"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700"
+                                placeholder="••••••••"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
+                    >
+                        {loading ? (
+                            <span>Processing...</span>
+                        ) : (
+                            <>
+                                {isLogin ? <LogIn size={18} /> : <UserPlus size={18} />}
+                                <span>{isLogin ? "Login" : "Sign Up"}</span>
+                            </>
                         )}
+                    </button>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">メールアドレス</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                    placeholder="your@email.com"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">パスワーチE/label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="password"
-                                    required
-                                    minLength={6}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                        </div>
-
+                    <div className="text-center">
                         <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            type="button"
+                            onClick={() => setIsLogin(!isLogin)}
+                            className="text-sm text-blue-600 hover:underline"
                         >
-                            {loading ? (
-                                <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
-                            ) : (
-                                <>
-                                    {isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
-                                    <span>{isLoginMode ? "ログイン" : "アカウント登録"}</span>
-                                </>
-                            )}
-                        </button>
-                    </form>
-
-                    <div className="mt-6 text-center">
-                        <button
-                            onClick={() => setIsLoginMode(!isLoginMode)}
-                            className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 underline transition-colors"
-                        >
-                            {isLoginMode
-                                ? "アカウントをお持ちでなぁE��はこちめE
-                                : "すでにアカウントをお持ちの方はこちめE}
+                            {isLogin ? "Need an account? Sign Up" : "Already have an account? Login"}
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );

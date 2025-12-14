@@ -4,7 +4,7 @@ import { generateId } from '@pomarc/shared';
 
 export class PomArcDatabase extends Dexie {
     todos!: Table<Todo>;
-    categories!: Table<Category>;
+    categories!: Table<any, string>; // Cast to any to avoid recursive type issue with Dexie KeyPaths
     srsProfiles!: Table<SRSProfile>;
     sessions!: Table<Session>;
 

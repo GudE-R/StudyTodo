@@ -7,8 +7,8 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNotification } from "@/hooks/useNotification";
 
 interface TimerViewProps {
-    todo: Todo;
-    onBack: () => void;
+    todo?: Todo;
+    onBack?: () => void;
     onSaveSession?: (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => void;
 }
 
@@ -166,10 +166,10 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
             actualDuration = total - timeLeft;
         }
 
-        if (actualDuration > 0 && onSaveSession) {
+        if (todo && todo.id && onSaveSession) {
             onSaveSession({
                 todoId: todo.id,
-                todoTitle: todo.title,
+                todoTitle: todo?.title ? `Focusing on: ${todo?.title}` : "Focus Timer",
                 duration: actualDuration,
                 mode: mode
             });
@@ -237,9 +237,9 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-colors ${status === "break" ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}>
                         {status === "break" ? "BREAK TIME" : "CURRENT TASK"}
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-800 line-clamp-2">
-                        {todo.title}
-                    </h1>
+                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-2">
+                        {todo?.title ? `Focusing on: ${todo.title}` : "Focus Timer"}
+                    </h2>
                 </div>
 
                 {/* Timer Display */}
