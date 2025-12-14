@@ -1,6 +1,10 @@
 import { StorageInterface, Todo, Category, SRSProfile, Session } from "@pomarc/shared";
 import * as SQLite from 'expo-sqlite';
 
+/**
+ * モバイル(Expo)用のSQLiteリポジトリ実装。
+ * StorageInterfaceを実装し、Web版(Dexie)と同様の操作を提供します。
+ */
 export class SQLiteRepository implements StorageInterface {
     private db: SQLite.SQLiteDatabase;
 
@@ -157,7 +161,8 @@ export class SQLiteRepository implements StorageInterface {
 
     async updateCategory(id: string, updates: Partial<Category>): Promise<void> {
         const row = this.toDB(updates);
-        const keys = Object.keys(row).filter(k => k !== 'id' && k !== 'children'); // exclude children, handled by repo logic usually or not persisted directly as list
+        // childrenプロパティはSQLには保存せず、メモリ上で再構築するため除外します
+        const keys = Object.keys(row).filter(k => k !== 'id' && k !== 'children');
         if (keys.length === 0) return;
 
         const setClause = keys.map(k => `"${k}" = ?`).join(', '); // quote keys for "order"

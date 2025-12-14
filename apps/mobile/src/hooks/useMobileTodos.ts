@@ -3,6 +3,11 @@ import { useState, useCallback } from "react";
 import { Todo } from "@pomarc/shared";
 import { useRepository } from "../providers/RepositoryProvider";
 
+/**
+ * モバイル用のTodo管理カスタムフック。
+ * リポジトリ経由でSQLiteデータの読み書きを行い、結果をstateで管理します。
+ * (Web版のuseLiveQueryのようなリアルタイム性はないため、手動refreshが必要です)
+ */
 export function useMobileTodos() {
     const repository = useRepository();
     const [todos, setTodos] = useState<Todo[]>([]);

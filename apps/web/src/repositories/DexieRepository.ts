@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 export class DexieRepository implements StorageInterface {
 
     // Todos
+    /** Todo一覧をDexieから取得します */
     async getTodos(): Promise<Todo[]> {
         return await db.todos.toArray();
     }
@@ -16,6 +17,10 @@ export class DexieRepository implements StorageInterface {
         await db.todos.add(todo);
     }
 
+    /** 
+     * Todoを更新します
+     * Note: Dexieの型定義とRecursive Typeの相性問題のため、updatesをanyにキャストしています。
+     */
     async updateTodo(id: string, updates: Partial<Todo>): Promise<void> {
         await db.todos.update(id, updates as any);
     }
