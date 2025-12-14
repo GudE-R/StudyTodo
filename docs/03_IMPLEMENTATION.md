@@ -53,10 +53,11 @@
 (詳細は以前のSPECSファイルを参照、ここでは割愛)
 
 ### 技術スタック
-*   **Framework**: Next.js 16 (App Router)
+*   **Framework**: Next.js 16 (App Router), Expo (React Native)
 *   **Language**: TypeScript
-*   **Styling**: Tailwind CSS v4
-*   **Database**: Dexie.js (IndexedDB wrapper)
+*   **Styling**: Tailwind CSS v4 (Web), StyleSheet (Mobile)
+*   **Database**: Dexie.js (Web), expo-sqlite (Mobile) - Abstracted via Repository Pattern
+*   **Architecture**: Monorepo (pnpm workspaces)
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 
 ---
@@ -68,6 +69,12 @@
 ### [未リリース]
 #### 追加
 - **ドキュメント**: ドキュメントを `docs/` ディレクトリに統合・整理。
+
+### [v0.2.0] - 2025-12-14
+#### 追加
+- **Nativeアプリ (Mobile)**: Expo + SQLite によるモバイルアプリ初期実装。
+- **リポジトリ構成**: `apps/web`, `apps/mobile`, `packages/shared` のモノレポ構成に移行。
+- **DB抽象化**: Web(Dexie) と Mobile(SQLite) でロジックを共有するための `RepositoryProvider` と `StorageInterface` の実装。
 
 ### [v0.1.2] - 2025-12-12
 #### 追加/変更
