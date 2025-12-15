@@ -20,7 +20,7 @@ import { useMobileCategories } from '../../hooks/useMobileCategories';
 export const MainLayout = () => {
     // Basic Layout without Reanimated
     const [currentDate, setCurrentDate] = useState(new Date());
-    const { categories } = useMobileCategories();
+    const { categories, refreshCategories } = useMobileCategories();
 
     const [isTodoModalVisible, setTodoModalVisible] = useState(false);
     const [isSettingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -77,7 +77,10 @@ export const MainLayout = () => {
             />
             <TemplateModal
                 visible={isTemplateModalVisible}
-                onClose={() => setTemplateModalVisible(false)}
+                onClose={() => {
+                    setTemplateModalVisible(false);
+                    refreshCategories();
+                }}
             />
             <ActivityModal
                 visible={isActivityModalVisible}

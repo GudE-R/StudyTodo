@@ -5,12 +5,13 @@ import { Layers, Plus, BarChart3 } from 'lucide-react-native';
 
 interface BottomActionsProps {
     onAddPress: () => void;
+    onTemplatePress: () => void;
 }
 
-export const BottomActions = ({ onAddPress }: BottomActionsProps) => {
+export const BottomActions = ({ onAddPress, onTemplatePress }: BottomActionsProps) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={onTemplatePress}>
                 <Layers size={24} color="#666" />
                 <Text style={styles.label}>Template</Text>
             </TouchableOpacity>

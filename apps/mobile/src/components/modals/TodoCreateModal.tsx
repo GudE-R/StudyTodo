@@ -27,7 +27,12 @@ interface TodoCreateModalProps {
 
 export const TodoCreateModal = ({ visible, onClose, categories }: TodoCreateModalProps) => {
     const { addTodo } = useMobileTodos();
-    const { profiles: srsProfiles } = useMobileSRS();
+    const { profiles: srsProfiles, refreshProfiles } = useMobileSRS();
+
+    // Refresh SRS on open
+    React.useEffect(() => {
+        if (visible) refreshProfiles();
+    }, [visible, refreshProfiles]);
 
     // State
     const [title, setTitle] = useState("");

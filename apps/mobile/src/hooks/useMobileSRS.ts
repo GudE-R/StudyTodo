@@ -68,10 +68,28 @@ export function useMobileSRS() {
         });
     };
 
+    const addSRSProfile = async (profile: SRSProfile) => {
+        await repository.addSRSProfile(profile);
+        await refreshProfiles();
+    };
+
+    const updateSRSProfile = async (id: string, updates: Partial<SRSProfile>) => {
+        await repository.updateSRSProfile(id, updates);
+        await refreshProfiles();
+    };
+
+    const deleteSRSProfile = async (id: string) => {
+        await repository.deleteSRSProfile(id);
+        await refreshProfiles();
+    };
+
     return {
         profiles,
         loading,
         refreshProfiles,
-        processReview
+        processReview,
+        addSRSProfile,
+        updateSRSProfile,
+        deleteSRSProfile
     };
 }
