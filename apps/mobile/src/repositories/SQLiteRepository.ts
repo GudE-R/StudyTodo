@@ -14,6 +14,7 @@ export class SQLiteRepository implements StorageInterface {
     }
 
     private init() {
+        // Initialize Todos table
         this.db.execSync(`
             CREATE TABLE IF NOT EXISTS todos (
                 id TEXT PRIMARY KEY,
@@ -27,13 +28,24 @@ export class SQLiteRepository implements StorageInterface {
                 actualDuration INTEGER,
                 priority TEXT,
                 notes TEXT,
+                memo TEXT,          -- Added for Web Parity
+                range TEXT,         -- Added for Web Parity
+                srsInterval TEXT,   -- Added for Web Parity
                 tags TEXT, -- JSON array
                 srsLevel INTEGER,
                 nextReviewDate TEXT,
                 srsProfileId TEXT,
                 reviewHistory TEXT -- JSON array
             );
+        `);
 
+        // Migrations (Safe Mode)
+        try { this.db.execSync('ALTER TABLE todos ADD COLUMN memo TEXT;'); } catch (e) { }
+        try { this.db.execSync('ALTER TABLE todos ADD COLUMN range TEXT;'); } catch (e) { }
+        try { this.db.execSync('ALTER TABLE todos ADD COLUMN srsInterval TEXT;'); } catch (e) { }
+
+        // Other tables
+        this.db.execSync(`
             CREATE TABLE IF NOT EXISTS categories (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -122,9 +134,9 @@ export class SQLiteRepository implements StorageInterface {
     async addTodo(todo: Todo): Promise<void> {
         const row = this.toDB(todo);
         await this.db.runAsync(
-            `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, categoryId, estimatedDuration, actualDuration, priority, notes, tags, srsLevel, nextReviewDate, srsProfileId, reviewHistory)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.reviewHistory]
+            `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, categoryId, estimatedDuration, actualDuration, priority, notes, memo, range, srsInterval, tags, srsLevel, nextReviewDate, srsProfileId, reviewHistory)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.reviewHistory]
         );
     }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     View,
     Text,
@@ -7,225 +7,368 @@ import {
     StyleSheet,
     Modal,
     Platform,
+    ScrollView,
     KeyboardAvoidingView,
-    ScrollView
+    ActionSheetIOS,
 } from 'react-native';
-import { X, Calendar, Flag, Send } from 'lucide-react-native';
+import { X, Calendar, PlayCircle, StopCircle, Hourglass, Repeat, BookOpen, FileText, CheckCircle, Play, Plus, Tag, ChevronDown } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Category, generateId, Todo } from '@pomarc/shared';
+import { Category, generateId, SRSProfile, Todo } from '@pomarc/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
+import { useMobileSRS } from '../../hooks/useMobileSRS';
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 
 interface TodoCreateModalProps {
     visible: boolean;
     onClose: () => void;
-    categories?: Category[]; // Optional for now
+    categories: Category[];
 }
 
-export const TodoCreateModal = ({ visible, onClose, categories = [] }: TodoCreateModalProps) => {
+export const TodoCreateModal = ({ visible, onClose, categories }: TodoCreateModalProps) => {
     const { addTodo } = useMobileTodos();
+    const { profiles: srsProfiles } = useMobileSRS();
+
+    // State
     const [title, setTitle] = useState("");
     const [categoryId, setCategoryId] = useState<string>("");
-    const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
 
-    // Date Picker State
+    // Options
     const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState(false);
+    const [startTime, setStartTime] = useState<Date | undefined>(undefined);
+    const [endTime, setEndTime] = useState<Date | undefined>(undefined);
+    const [durationStr, setDurationStr] = useState("");
+    const [srsProfileId, setSrsProfileId] = useState<string>("");
+    const [range, setRange] = useState("");
+    const [memo, setMemo] = useState("");
 
-    const handleSubmit = async () => {
-        if (!title.trim()) return;
+    // DatePicker Control
+    const [pickerMode, setPickerMode] = useState<"date" | "time">("date");
+    const [currentPickerTarget, setCurrentPickerTarget] = useState<"due" | "start" | "end" | null>(null);
 
-        try {
-            const newTodo: Todo = {
-                id: generateId(),
-                title,
-                categoryId: categoryId || undefined,
-                priority,
-                dueDate: dueDate,
-                completed: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                srsGroupId: undefined,
-                // srsInterval: undefined, 
-            };
+    // Helpers
+    const categoryOptions = useMemo(() => {
+        const options: { value: string; label: string }[] = [];
+        const traverse = (cats: Category[], prefix = "") => {
+            cats.forEach(c => {
+                const label = prefix ? `${prefix} > ${c.name}` : c.name;
+                options.push({ value: c.id, label });
+                if (c.children) traverse(c.children, label);
+            });
+        };
+        traverse(categories);
+        return options;
+    }, [categories]);
 
-            await addTodo(newTodo);
-            resetForm();
-            onClose();
-        } catch (error) {
-            console.error("Failed to add todo", error);
-            // Alert.alert("Error", "Failed to create task");
-        }
-    };
+    const activeCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || "カテゴリなし";
+    const activeSrsLabel = srsProfiles.find(p => p.id === srsProfileId)?.name || "SRSなし";
 
     const resetForm = () => {
         setTitle("");
         setCategoryId("");
-        setPriority("medium");
         setDueDate(undefined);
+        setStartTime(undefined);
+        setEndTime(undefined);
+        setDurationStr("");
+        setSrsProfileId("");
+        setRange("");
+        setMemo("");
+        onClose();
     };
 
-    const handleDateChange = (event: any, selectedDate?: Date) => {
-        if (Platform.OS === 'android') {
-            setShowDatePicker(false);
-        }
-        if (selectedDate) {
-            const current = dueDate || new Date();
-            // Set year/month/day
-            const newDate = new Date(current);
-            newDate.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    const handleCreate = async () => {
+        if (!title.trim() && !categoryId) return; // Allow if category selected (title auto-fill logic?) Web does this.
 
-            setDueDate(newDate);
+        try {
+            const finalTitle = title.trim() || activeCategoryLabel.split(' > ').pop() || "No Title";
 
-            if (Platform.OS === 'android') {
-                setShowTimePicker(true); // Chain to time picker
-            }
+            const newTodo: Todo = {
+                id: generateId(),
+                title: finalTitle,
+                categoryId: categoryId || undefined,
+                priority: 'medium',
+                dueDate: dueDate,
+                dueTime: startTime ? format(startTime, 'HH:mm') : undefined,
+                endTime: endTime ? format(endTime, 'HH:mm') : undefined,
+                estimatedDuration: durationStr ? parseInt(durationStr, 10) : undefined,
+                srsProfileId: srsProfileId || undefined, // using ID instead of 'srsInterval' string for robustness in V3? 
+                // Web logic maps 'srsInterval' to profile NAME usually? 
+                // Wait, Web used `srsInterval` string state = profile.name.
+                // Let's match Web exactly? Mobile repo uses `srsProfileId`. 
+                // Shared types have both `srsProfileId` and `srsInterval`.
+                // I'll stick to `srsProfileId` for better data integrity, 
+                // but populate `srsInterval` as name if needed for legacy.
+                srsInterval: srsProfiles.find(p => p.id === srsProfileId)?.name,
+                srsLevel: srsProfileId ? 0 : undefined,
+                range,
+                memo, // Mapped to notes? or 'memo' column we added.
+                notes: memo, // Sync both for safety
+                completed: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            await addTodo(newTodo);
+            resetForm();
+        } catch (e) {
+            console.error(e);
         }
     };
 
-    const handleTimeChange = (event: any, selectedDate?: Date) => {
-        if (Platform.OS === 'android') {
-            setShowTimePicker(false);
-        }
-        if (selectedDate) {
-            const current = dueDate || new Date();
-            const newDate = new Date(current);
-            newDate.setHours(selectedDate.getHours(), selectedDate.getMinutes());
-            setDueDate(newDate);
+    const handleRecord = async () => {
+        // Implement Session logging + Todo creation
+        // For now, just create todo as completed? Or just create todo.
+        // Web: onRecord -> create todo + log session.
+        // We lack session hook in this file. 
+        // Just calling handleCreate for now, todo: add session logic later.
+        await handleCreate();
+    };
+
+    const handleStartNow = async () => {
+        // Implement Timer start
+        await handleCreate();
+        // Navigation to Timer would happen here
+    };
+
+    // Picker Handling
+    const showPicker = (target: "due" | "start" | "end", mode: "date" | "time") => {
+        setCurrentPickerTarget(target);
+        setPickerMode(mode);
+    };
+
+    const onPickerChange = (event: any, selectedDate?: Date) => {
+        // Android closes picker automatically
+        if (Platform.OS === 'android') setCurrentPickerTarget(null);
+
+        if (selectedDate && currentPickerTarget) {
+            if (currentPickerTarget === 'due') setDueDate(selectedDate);
+            if (currentPickerTarget === 'start') setStartTime(selectedDate);
+            if (currentPickerTarget === 'end') setEndTime(selectedDate);
         }
     };
 
-    // Render Priority Button
-    const renderPriorityBtn = (p: "low" | "medium" | "high", color: string) => (
-        <TouchableOpacity
-            onPress={() => setPriority(p)}
-            style={[
-                styles.iconButton,
-                priority === p ? { backgroundColor: color } : {}
-            ]}
-        >
-            <Flag size={16} color={priority === p ? '#fff' : '#888'} fill={priority === p ? '#fff' : 'none'} />
-        </TouchableOpacity>
-    );
+    // Note: Category Picker for Android/iOS - Using a simple implementation overlay or just cycle for now?
+    // User requested "Tap to show list".
+    // I'll implement a custom overlay for Category selection at the bottom of the file.
+    const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
+    const [isSRSPickerVisible, setSRSPickerVisible] = useState(false);
 
     return (
-        <Modal
-            visible={visible}
-            transparent
-            animationType="slide"
-            onRequestClose={onClose}
-        >
-            <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={styles.keyboardView}
-                >
-                    <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
-                        <View style={styles.modalContent}>
-                            {/* Header */}
-                            <View style={styles.header}>
-                                <Text style={styles.title}>New Task</Text>
-                                <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                                    <X size={20} color="#555" />
-                                </TouchableOpacity>
-                            </View>
+        <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.overlay}>
+                <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
 
-                            {/* Input */}
+                <View style={styles.container}>
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <Text style={styles.headerTitle}>Todo作成</Text>
+                        <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+                            <X size={24} color="#888" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+
+                        {/* 1. Category Row */}
+                        <TouchableOpacity style={styles.categoryRow} onPress={() => setCategoryPickerVisible(true)}>
+                            <Tag size={18} color="#666" />
+                            <Text style={[styles.categoryText, !categoryId && styles.placeholderText]}>
+                                {activeCategoryLabel}
+                            </Text>
+                            <ChevronDown size={16} color="#999" style={{ marginLeft: 'auto' }} />
+                        </TouchableOpacity>
+
+                        {/* 2. Title Input */}
+                        <View style={styles.inputContainer}>
                             <TextInput
-                                style={styles.input}
-                                placeholder="What needs to be done?"
+                                style={styles.titleInput}
+                                placeholder="タスク名 (任意)"
                                 value={title}
                                 onChangeText={setTitle}
-                                autoFocus={visible}
+                                placeholderTextColor="#ccc"
                             />
+                        </View>
 
-                            {/* Options Row */}
-                            <View style={styles.optionsRow}>
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollOptions}>
+                        {/* 3. Grid Options */}
+                        <View style={styles.grid}>
+                            {/* Date */}
+                            <TouchableOpacity style={styles.gridItem} onPress={() => showPicker('due', 'date')}>
+                                <Calendar size={18} color="#3b82f6" />
+                                <Text style={styles.gridText}>
+                                    {dueDate ? format(dueDate, 'MM/dd(EEE)', { locale: ja }) : '日付'}
+                                </Text>
+                            </TouchableOpacity>
 
-                                    {/* Category Placeholder (Simple Button for now) */}
-                                    <TouchableOpacity style={styles.optionChip}>
-                                        <Text style={styles.optionText}>
-                                            {categories.find(c => c.id === categoryId)?.name || "No Category"}
-                                        </Text>
-                                    </TouchableOpacity>
+                            {/* Start Time */}
+                            <TouchableOpacity style={styles.gridItem} onPress={() => showPicker('start', 'time')}>
+                                <PlayCircle size={18} color="#3b82f6" />
+                                <Text style={styles.gridText}>
+                                    {startTime ? format(startTime, 'HH:mm') : '開始'}
+                                </Text>
+                            </TouchableOpacity>
 
-                                    {/* Date Picker Trigger */}
-                                    <TouchableOpacity
-                                        style={[styles.optionChip, dueDate && styles.activeChip]}
-                                        onPress={() => setShowDatePicker(true)}
-                                    >
-                                        <Calendar size={16} color={dueDate ? "#fff" : "#555"} />
-                                        {dueDate && (
-                                            <Text style={[styles.optionText, { color: '#fff', marginLeft: 4 }]}>
-                                                {dueDate.toLocaleDateString()} {dueDate.getHours()}:{String(dueDate.getMinutes()).padStart(2, '0')}
-                                            </Text>
-                                        )}
-                                    </TouchableOpacity>
-
-                                    {/* Priority */}
-                                    <View style={styles.priorityGroup}>
-                                        {renderPriorityBtn("low", "#3b82f6")}
-                                        {renderPriorityBtn("medium", "#f97316")}
-                                        {renderPriorityBtn("high", "#ef4444")}
-                                    </View>
-                                </ScrollView>
-
-                                {/* Submit Button */}
-                                <TouchableOpacity
-                                    style={[styles.submitBtn, !title.trim() && styles.disabledBtn]}
-                                    onPress={handleSubmit}
-                                    disabled={!title.trim()}
-                                >
-                                    <Send size={20} color="#fff" />
-                                </TouchableOpacity>
+                            {/* Duration */}
+                            <View style={styles.gridItem}>
+                                <Hourglass size={18} color="#f97316" />
+                                <TextInput
+                                    style={styles.inlineInput}
+                                    placeholder="分"
+                                    keyboardType="numeric"
+                                    value={durationStr}
+                                    onChangeText={setDurationStr}
+                                />
                             </View>
 
-                            {/* Date Pickers (Hidden/Modal) */}
-                            {showDatePicker && (
-                                <DateTimePicker
-                                    value={dueDate || new Date()}
-                                    mode="date"
-                                    display="default"
-                                    onChange={handleDateChange}
-                                />
-                            )}
-                            {showTimePicker && (
-                                <DateTimePicker
-                                    value={dueDate || new Date()}
-                                    mode="time"
-                                    display="default"
-                                    onChange={handleTimeChange}
-                                />
-                            )}
+                            {/* End Time */}
+                            <TouchableOpacity style={styles.gridItem} onPress={() => showPicker('end', 'time')}>
+                                <StopCircle size={18} color="#ef4444" />
+                                <Text style={styles.gridText}>
+                                    {endTime ? format(endTime, 'HH:mm') : '終了'}
+                                </Text>
+                            </TouchableOpacity>
+
+                            {/* SRS */}
+                            <TouchableOpacity style={[styles.gridItem, styles.colSpan2]} onPress={() => setSRSPickerVisible(true)}>
+                                <Repeat size={18} color="#888" />
+                                <Text style={styles.gridText}>{activeSrsLabel}</Text>
+                                <ChevronDown size={14} color="#ccc" style={{ marginLeft: 'auto' }} />
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
-            </TouchableOpacity>
+
+                        {/* 4. Extra Info */}
+                        <View style={styles.extraContainer}>
+                            <View style={styles.extraRow}>
+                                <BookOpen size={18} color="#999" />
+                                <TextInput
+                                    style={styles.extraInput}
+                                    placeholder="範囲 (例: p.10-20)"
+                                    value={range}
+                                    onChangeText={setRange}
+                                />
+                            </View>
+                            <View style={styles.extraRow}>
+                                <FileText size={18} color="#999" />
+                                <TextInput
+                                    style={styles.extraInput}
+                                    placeholder="メモ"
+                                    value={memo}
+                                    onChangeText={setMemo}
+                                />
+                            </View>
+                        </View>
+
+                    </ScrollView>
+
+                    {/* 5. Action Buttons */}
+                    <View style={styles.actionsRow}>
+                        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#dcfce7' }]} onPress={handleRecord}>
+                            <CheckCircle size={18} color="#16a34a" />
+                            <Text style={[styles.actionText, { color: '#16a34a' }]}>記録</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#ffedd5' }]} onPress={handleStartNow}>
+                            <Play size={18} color="#ea580c" fill="#ea580c" />
+                            <Text style={[styles.actionText, { color: '#ea580c' }]}>開始</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#dbeafe' }]} onPress={handleCreate}>
+                            <Plus size={18} color="#2563eb" />
+                            <Text style={[styles.actionText, { color: '#2563eb' }]}>作成</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Overlays for Pickers */}
+                {/* Simplified "Modal Selection" for Category */}
+                {isCategoryPickerVisible && (
+                    <SelectionModal
+                        title="カテゴリ選択"
+                        options={categoryOptions}
+                        onSelect={(val: string) => { setCategoryId(val); setCategoryPickerVisible(false); }}
+                        onClose={() => setCategoryPickerVisible(false)}
+                    />
+                )}
+                {isSRSPickerVisible && (
+                    <SelectionModal
+                        title="SRS設定"
+                        options={[{ value: '', label: 'SRSなし' }, ...srsProfiles.map(p => ({ value: p.id, label: p.name }))]}
+                        onSelect={(val: string) => { setSrsProfileId(val); setSRSPickerVisible(false); }}
+                        onClose={() => setSRSPickerVisible(false)}
+                    />
+                )}
+
+                {/* Date/Time Picker System */}
+                {(currentPickerTarget && (Platform.OS === 'ios' || currentPickerTarget)) && (
+                    <View>
+                        {/* iOS usually needs a separate view or managed visibility. 
+                           For brevity, using standard conditional rendering which works well on Android.
+                           For iOS, we ideally put it in the modal or bottom sheet. 
+                           Here we rely on the component's default behavior (Inline for iOS 14+, Spinner for older).
+                           To force bottom sheet style on iOS, we would wrap it.
+                           Let's stick to standard behavior.
+                        */}
+                        {(currentPickerTarget !== null && (Platform.OS === 'android' ? true : true)) && (
+                            <DateTimePicker
+                                value={
+                                    (currentPickerTarget === 'due' ? dueDate :
+                                        currentPickerTarget === 'start' ? startTime : endTime) || new Date()
+                                }
+                                mode={pickerMode}
+                                display="default"
+                                onChange={onPickerChange}
+                            />
+                        )}
+                        {/* iOS Close Button implementation if needed for inline picker */}
+                        {Platform.OS === 'ios' && currentPickerTarget && (
+                            <TouchableOpacity style={styles.pickerDoneBtn} onPress={() => setCurrentPickerTarget(null)}>
+                                <Text style={styles.pickerDoneText}>完了</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                )}
+
+            </KeyboardAvoidingView>
         </Modal>
     );
 };
 
+// Helper Component for Selection
+const SelectionModal = ({ title, options, onSelect, onClose }: any) => (
+    <Modal visible transparent animationType="fade">
+        <TouchableOpacity style={styles.selectionBackdrop} onPress={onClose}>
+            <View style={styles.selectionContainer}>
+                <View style={styles.selectionHeader}>
+                    <Text style={styles.selectionTitle}>{title}</Text>
+                    <TouchableOpacity onPress={onClose}><X size={20} color="#888" /></TouchableOpacity>
+                </View>
+                <ScrollView style={{ maxHeight: 300 }}>
+                    {options.map((opt: any) => (
+                        <TouchableOpacity key={opt.value} style={styles.optionItem} onPress={() => onSelect(opt.value)}>
+                            <Text style={styles.optionLabel}>{opt.label}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+        </TouchableOpacity>
+    </Modal>
+);
+
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
-    keyboardView: {
-        width: '100%',
+    backdrop: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
-    modalContent: {
+    container: {
         backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
         paddingBottom: 40,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 10,
+        maxHeight: '90%',
     },
     header: {
         flexDirection: 'row',
@@ -233,7 +376,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 15,
     },
-    title: {
+    headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
@@ -241,59 +384,141 @@ const styles = StyleSheet.create({
     closeBtn: {
         padding: 5,
     },
-    input: {
-        fontSize: 18,
+    scrollContent: {
+        paddingBottom: 20,
+    },
+    categoryRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f8fafc',
+        padding: 12,
+        borderRadius: 10,
+        marginBottom: 15,
+    },
+    categoryText: {
+        marginLeft: 10,
+        fontSize: 14,
+        color: '#333',
+    },
+    placeholderText: {
+        color: '#888',
+    },
+    inputContainer: {
+        marginBottom: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderColor: '#e2e8f0',
+    },
+    titleInput: {
+        fontSize: 20, // Large font
         paddingVertical: 10,
+        fontWeight: '500',
+    },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
         marginBottom: 20,
     },
-    optionsRow: {
+    gridItem: {
+        width: '48%', // Approx 2 col
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        padding: 10,
+        borderRadius: 12,
+        backgroundColor: '#f8fafc',
+        gap: 8,
     },
-    scrollOptions: {
+    colSpan2: {
+        width: '100%',
+    },
+    gridText: {
+        fontSize: 13,
+        color: '#333',
+    },
+    inlineInput: {
+        flex: 1,
+        fontSize: 13,
+        color: '#333',
+    },
+    extraContainer: {
+        gap: 10,
+        marginBottom: 20,
+    },
+    extraRow: {
+        flexDirection: 'row',
         alignItems: 'center',
-        paddingRight: 10,
+        gap: 10,
+        borderBottomWidth: 1,
+        borderColor: '#f1f5f9',
+        paddingVertical: 5,
+    },
+    extraInput: {
+        flex: 1,
+        fontSize: 14,
+        color: '#333',
+    },
+    actionsRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         gap: 10,
     },
-    optionChip: {
+    actionBtn: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f3f4f6',
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 20,
+        justifyContent: 'center',
+        paddingVertical: 12,
+        borderRadius: 12,
+        gap: 5,
     },
-    activeChip: {
-        backgroundColor: '#3b82f6',
+    actionText: {
+        fontSize: 13,
+        fontWeight: 'bold',
     },
-    optionText: {
-        fontSize: 14,
-        color: '#555',
+    // Picker specific
+    pickerDoneBtn: {
+        alignItems: 'flex-end',
+        padding: 10,
+        backgroundColor: '#f0f0f0',
     },
-    priorityGroup: {
-        flexDirection: 'row',
-        backgroundColor: '#f3f4f6',
-        borderRadius: 20,
-        padding: 4,
-        gap: 4,
+    pickerDoneText: {
+        color: '#007AFF',
+        fontWeight: 'bold',
     },
-    iconButton: {
-        padding: 6,
-        borderRadius: 15,
-    },
-    submitBtn: {
-        backgroundColor: '#2563eb',
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+    // Selection Modal
+    selectionBackdrop: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 2,
+        padding: 20,
     },
-    disabledBtn: {
-        backgroundColor: '#93c5fd',
+    selectionContainer: {
+        backgroundColor: '#fff',
+        width: '100%',
+        borderRadius: 15,
+        padding: 15,
+        maxHeight: 400,
+    },
+    selectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+        borderBottomWidth: 1,
+        borderColor: '#eee',
+        paddingBottom: 10,
+    },
+    selectionTitle: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    optionItem: {
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderColor: '#f8f8f8',
+    },
+    optionLabel: {
+        fontSize: 16,
+        color: '#333',
     }
 });
