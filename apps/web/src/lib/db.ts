@@ -1,10 +1,10 @@
 import Dexie, { Table } from 'dexie';
-import { Todo, Category, SRSProfile, Session } from '@pomarc/shared';
-import { generateId } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, Session } from '@/types';
+import { generateId } from '@/lib/utils';
 
 export class PomArcDatabase extends Dexie {
     todos!: Table<Todo>;
-    categories!: Table<any, string>; // Cast to any to avoid recursive type issue with Dexie KeyPaths
+    categories!: Table<Category>;
     srsProfiles!: Table<SRSProfile>;
     sessions!: Table<Session>;
 
@@ -44,7 +44,7 @@ export class PomArcDatabase extends Dexie {
         await this.categories.bulkAdd([
             {
                 id: rootId,
-                name: 'Learning',
+                name: '学習',
                 level: 'large',
                 order: 0,
                 createdAt: now,
@@ -61,7 +61,7 @@ export class PomArcDatabase extends Dexie {
             },
             {
                 id: subId2,
-                name: 'English',
+                name: '英語',
                 level: 'medium',
                 parentId: rootId,
                 order: 1,
@@ -70,7 +70,7 @@ export class PomArcDatabase extends Dexie {
             },
             {
                 id: generateId(),
-                name: 'Math Textbook',
+                name: '青チャート',
                 level: 'small',
                 parentId: subId1,
                 order: 0,
@@ -83,7 +83,7 @@ export class PomArcDatabase extends Dexie {
         await this.srsProfiles.bulkAdd([
             {
                 id: generateId(),
-                name: 'Forgetting Curve (Standard)',
+                name: '忘却曲線 (標準)',
                 intervals: [1, 3, 7, 14, 30],
                 isDefault: true, // boolean
                 createdAt: now,

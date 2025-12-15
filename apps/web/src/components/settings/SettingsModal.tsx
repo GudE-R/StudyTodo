@@ -1,81 +1,205 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { X, Moon, Sun, Monitor, BookOpen } from "lucide-react";
-import { useTheme } from "next-themes";
-import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
+import { supabase } from "@/lib/supabase";
+import { X, Palette, BookOpen, Database, Download, Cloud, LogOut } from "lucide-react";
+import { ThemeEditor } from "../template/ThemeEditor";
+import { exportToJson, exportSessionsToCsv } from "@/lib/export";
+import { migrateLocalToCloud } from "@/lib/migration";
 
 interface SettingsModalProps {
+    isOpen: boolean;
     onClose: () => void;
     onOpenGuide: () => void;
+    onOpenAuth: () => void;
 }
 
-export function SettingsModal({ onClose, onOpenGuide }: SettingsModalProps) {
-    const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-    const [showGuide, setShowGuide] = useState(false);
+/**
+ * 設定モーダル
+ * 
+ * テーマ設定と使用ガイドへのアクセスを提供します。
+ */
+export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: SettingsModalProps) {
+    const [userEmail, setUserEmail] = useState<string | null>(null);
 
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        if (isOpen) {
+            checkUser();
+        }
+    }, [isOpen]);
 
-    if (!mounted) return null;
+    const checkUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUserEmail(user?.email ?? null);
+    };
 
-    if (showGuide) {
-        return <UsageGuideModal onClose={() => setShowGuide(false)} />;
-    }
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        setUserEmail(null);
+        alert("ログアウトしました");
+    };
+
+    if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm overflow-hidden">
-                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
+            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl h-auto max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
+
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
                     <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">設定</h2>
-                    <button onClick={onClose} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500">
-                        <X size={20} />
+                    <button
+                        onClick={onClose}
+                        className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    >
+                        <X size={24} />
                     </button>
                 </div>
 
-                <div className="p-4 space-y-6">
-                    {/* Theme Settings */}
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                    {/* テーマ設定セクション */}
                     <div className="space-y-3">
-                        <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">テーマ設定</h3>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
+                            <Palette size={20} className="text-blue-500" />
+                            <h3>表示設定</h3>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+                            <ThemeEditor />
+                        </div>
+                    </div>
+
+                    {/* 使用ガイドセクション */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
+                            <BookOpen size={20} className="text-green-500" />
+                            <h3>サポート</h3>
+                        </div>
+                        <button
+                            onClick={() => {
+                                onClose();
+                                onOpenGuide();
+                            }}
+                            className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
+                        >
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                使い方ガイドを見る
+                            </span>
+                            <BookOpen size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                        </button>
+                    </div>
+
+                    {/* クラウド同期セクション */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
+                            <Cloud size={20} className="text-blue-500" />
+                            <h3>クラウド同期</h3>
+                        </div>
+
+                        {userEmail ? (
+                            // Logged In State
+                            <div className="space-y-2">
+                                <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-100 dark:border-blue-800">
+                                    <div className="text-xs text-blue-600 dark:text-blue-300 font-bold uppercase mb-1">
+                                        ログイン中
+                                    </div>
+                                    <div className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+                                        {userEmail}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors group"
+                                >
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-red-600 dark:group-hover:text-red-400">
+                                        ログアウト
+                                    </span>
+                                    <LogOut size={18} className="text-gray-400 group-hover:text-red-500 transition-colors" />
+                                </button>
+                            </div>
+                        ) : (
+                            // Logged Out State
                             <button
-                                onClick={() => setTheme("light")}
-                                className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all ${theme === "light" ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-600" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"}`}
+                                onClick={() => {
+                                    onClose();
+                                    onOpenAuth();
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
                             >
-                                <Sun size={20} className="mb-2" />
-                                <span className="text-xs font-medium">ライト</span>
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">ログイン / アカウント作成</span>
+                                    <span className="text-xs text-gray-400">データをクラウドにバックアップ・同期</span>
+                                </div>
+                                <Cloud size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
                             </button>
+                        )}
+
+                        {userEmail && (
                             <button
-                                onClick={() => setTheme("dark")}
-                                className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all ${theme === "dark" ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-600" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"}`}
+                                onClick={async () => {
+                                    if (confirm("ローカルデータをクラウドにアップロードしますか？\n（既存のクラウドデータは上書きされる可能性があります）")) {
+                                        try {
+                                            const result = await migrateLocalToCloud();
+                                            alert(`完了しました！\nTodos: ${result.todos}件\nSessions: ${result.sessions}件`);
+                                            onClose();
+                                        } catch (e: any) {
+                                            alert(`エラー: ${e.message}`);
+                                        }
+                                    }
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
                             >
-                                <Moon size={20} className="mb-2" />
-                                <span className="text-xs font-medium">ダーク</span>
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">クラウドへアップロード (移行)</span>
+                                    <span className="text-xs text-gray-400">現在のデータをクラウドDBに保存</span>
+                                </div>
+                                <Database size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
                             </button>
+                        )}
+                    </div>
+
+                    {/* データ管理セクション */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
+                            <Database size={20} className="text-purple-500" />
+                            <h3>データ管理</h3>
+                        </div>
+                        <div className="space-y-2">
                             <button
-                                onClick={() => setTheme("system")}
-                                className={`flex flex-col items-center justify-center p-3 rounded-lg border transition-all ${theme === "system" ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-600" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"}`}
+                                onClick={async () => {
+                                    if (confirm("全てのデータをJSON形式でバックアップしますか？")) {
+                                        await exportToJson();
+                                    }
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
                             >
-                                <Monitor size={20} className="mb-2" />
-                                <span className="text-xs font-medium">端末設定</span>
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">バックアップを作成 (JSON)</span>
+                                    <span className="text-xs text-gray-400">設定やタスクを含む全データ</span>
+                                </div>
+                                <Download size={18} className="text-gray-400 group-hover:text-purple-500 transition-colors" />
+                            </button>
+
+                            <button
+                                onClick={async () => {
+                                    if (confirm("学習記録をCSV形式でエクスポートしますか？")) {
+                                        await exportSessionsToCsv();
+                                    }
+                                }}
+                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
+                            >
+                                <div className="flex flex-col items-start">
+                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">学習記録をエクスポート (CSV)</span>
+                                    <span className="text-xs text-gray-400">分析用のセッション履歴</span>
+                                </div>
+                                <Download size={18} className="text-gray-400 group-hover:text-green-500 transition-colors" />
                             </button>
                         </div>
                     </div>
 
-                    {/* Usage Guide */}
-                    <div className="space-y-3">
-                        <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">アプリについて</h3>
-                        <button
-                            onClick={() => setShowGuide(true)}
-                            className="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <BookOpen size={20} className="text-gray-500" />
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">使い方ガイドを見る</span>
-                            </div>
-                        </button>
+                    {/* Version Info (Optional) */}
+                    <div className="text-center text-xs text-gray-400 pt-4">
+                        PomArc v1.0.0
                     </div>
                 </div>
             </div>

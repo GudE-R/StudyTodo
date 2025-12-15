@@ -1,47 +1,44 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronRight, ChevronDown, Plus, Trash2, Folder, Check } from "lucide-react";
-import { Category, generateId } from "@pomarc/shared";
-import { useCategories } from "@/hooks/domain/useCategories";
+import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File } from "lucide-react";
+import { Category } from "@/types";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
+import { generateId, buildCategoryTree } from "@/lib/utils";
 
-interface CategoryEditorProps {
-    // optional props if needed
-}
-
-export function CategoryEditor({ }: CategoryEditorProps) {
-    const {
-        categories,
-        categoryTree,
-        addCategory,
-        updateCategory,
-        deleteCategory
-    } = useCategories();
-
-    // Local state for UI
-    const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
-
-    // Adding state
-    const [addingState, setAddingState] = useState<{ parentId: string | null } | null>(null);
+/**
+ * カテゴリ編集コンポーネント
+ * 
+ * 大・中・小の3階層のカテゴリをツリー形式で管理します。
+ */
+export function CategoryEditor() {
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+    const [addingState, setAddingState] = useState<{ parentId: string | undefined, level: "large" | "medium" | "small" } | null>(null);
     const [inputName, setInputName] = useState("");
 
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
+    const categories = buildCategoryTree(categoriesFlat);
+
     const toggleExpand = (id: string) => {
-        const newExpanded = new Set(openCategories);
+        const newExpanded = new Set(expandedIds);
         if (newExpanded.has(id)) {
             newExpanded.delete(id);
         } else {
             newExpanded.add(id);
         }
-        setOpenCategories(newExpanded);
+        setExpandedIds(newExpanded);
     };
 
-    const startAdding = (parentId: string | null) => {
-        setAddingState({ parentId });
+    const startAdding = (parentId: string | undefined, level: "large" | "medium" | "small") => {
+        setAddingState({ parentId, level });
         setInputName("");
         if (parentId) {
-            const newExpanded = new Set(openCategories);
+            const newExpanded = new Set(expandedIds);
             newExpanded.add(parentId);
-            setOpenCategories(newExpanded);
+            setExpandedIds(newExpanded);
         }
     };
 
@@ -51,142 +48,179 @@ export function CategoryEditor({ }: CategoryEditorProps) {
     };
 
     const confirmAdding = async () => {
-        if (!inputName.trim()) return;
+        if (!inputName.trim() || !addingState) return;
+
         try {
-            await addCategory({
+            const newCategory: Category = {
                 id: generateId(),
                 name: inputName.trim(),
-                parentId: addingState?.parentId || undefined,
-                level: "medium", // Default
+                level: addingState.level,
+                parentId: addingState.parentId,
                 order: 0,
                 createdAt: new Date(),
-                updatedAt: new Date()
-            });
+                updatedAt: new Date(),
+                children: [],
+            };
+
+            await db.categories.add(newCategory);
             setAddingState(null);
             setInputName("");
         } catch (error) {
             console.error("Failed to add category", error);
+            alert("カテゴリの追加に失敗しました");
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Delete this category and all sub-categories?")) return;
-        // Cascade delete logic would be needed here ideally, but for now simple delete
-        // Implementing simple cascade delete for this ID's subtree
-        // Cascade delete logic using in-memory categories
-        const deleteRecursive = async (catId: string) => {
-            const children = categories.filter(c => c.parentId === catId);
-            for (const child of children) {
-                await deleteRecursive(child.id);
-            }
-            await deleteCategory(catId);
-        };
+    const handleDeleteClick = (id: string) => {
+        if (deleteConfirmId === id) {
+            // 2回目のクリックで削除実行
+            executeDelete(id);
+        } else {
+            // 1回目のクリックで確認状態へ
+            setDeleteConfirmId(id);
+            // 3秒後にリセット（オプション）
+            setTimeout(() => setDeleteConfirmId(null), 3000);
+        }
+    };
 
+    const executeDelete = async (id: string) => {
         try {
-            await deleteRecursive(id);
+            // 再帰的に削除対象のIDを収集
+            const idsToDelete: string[] = [];
+            const collectIds = (catId: string) => {
+                idsToDelete.push(catId);
+                const children = categoriesFlat.filter(c => c.parentId === catId);
+                children.forEach(child => collectIds(child.id));
+            };
+            collectIds(id);
+
+            await db.categories.bulkDelete(idsToDelete);
+            setDeleteConfirmId(null);
         } catch (error) {
-            console.error("Failed to delete", error);
+            console.error("Failed to delete category", error);
+            alert("カテゴリの削除に失敗しました");
         }
     };
 
-    const renderNode = (node: Category, level: number = 0) => {
-        const isExpanded = openCategories.has(node.id);
-        const hasChildren = node.children && node.children.length > 0;
-        const isAddingHere = addingState && addingState.parentId === node.id;
-
+    const renderInput = () => {
         return (
-            <div key={node.id} className="select-none">
-                <div
-                    className="flex items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg group"
-                    style={{ paddingLeft: `${level * 16 + 8} px` }}
-                >
-                    <button
-                        onClick={() => toggleExpand(node.id)}
-                        className={`p - 1 mr - 1 text - gray - 400 hover: text - gray - 600 dark: hover: text - gray - 300 ${hasChildren ? "" : "invisible"} `}
-                    >
-                        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                    </button>
-
-                    <Folder size={18} className="text-blue-500 mr-2" />
-                    <span className="flex-1 font-medium text-gray-700 dark:text-gray-200">{node.name}</span>
-
-                    <div className="opacity-0 group-hover:opacity-100 flex items-center space-x-1 transition-opacity">
-                        <button
-                            onClick={() => startAdding(node.id)}
-                            className="p-1 text-gray-400 hover:text-blue-500"
-                            title="Add Subcategory"
-                        >
-                            <Plus size={16} />
-                        </button>
-                        <button
-                            onClick={() => handleDelete(node.id)}
-                            className="p-1 text-gray-400 hover:text-red-500"
-                            title="Delete"
-                        >
-                            <Trash2 size={16} />
-                        </button>
-                    </div>
-                </div>
-
-                {isExpanded && (
-                    <div>
-                        {node.children?.map(child => renderNode(child, level + 1))}
-                        {isAddingHere && (
-                            <div className="flex items-center p-2" style={{ paddingLeft: `${(level + 1) * 16 + 8} px` }}>
-                                <input
-                                    autoFocus
-                                    type="text"
-                                    value={inputName}
-                                    onChange={e => setInputName(e.target.value)}
-                                    placeholder="Category Name"
-                                    className="flex-1 text-sm border-b border-blue-500 bg-transparent outline-none mr-2"
-                                    onKeyDown={e => { if (e.key === "Enter") confirmAdding(); else if (e.key === "Escape") cancelAdding(); }}
-                                />
-                                <button onClick={confirmAdding} className="text-green-500 mr-1"><Check size={16} /></button>
-                                <button onClick={cancelAdding} className="text-red-500"><Plus size={16} className="rotate-45" /></button>
-                            </div>
-                        )}
-                    </div>
-                )}
+            <div className="flex items-center space-x-2 ml-8 mt-1">
+                <input
+                    type="text"
+                    value={inputName}
+                    onChange={(e) => setInputName(e.target.value)}
+                    className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="カテゴリ名"
+                    autoFocus
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") confirmAdding();
+                        if (e.key === "Escape") cancelAdding();
+                    }}
+                />
+                <button onClick={confirmAdding} className="text-blue-600 hover:text-blue-800 text-xs font-bold">追加</button>
+                <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs">キャンセル</button>
             </div>
         );
     };
 
+    const renderTree = (nodes: Category[]) => {
+        return (
+            <ul className="space-y-1">
+                {nodes.map((node) => {
+                    const isExpanded = expandedIds.has(node.id);
+
+                    const isSmall = node.level === "small";
+                    const isAddingChild = addingState?.parentId === node.id;
+                    const isDeleting = deleteConfirmId === node.id;
+
+                    return (
+                        <li key={node.id} className="ml-4">
+                            <div className="flex items-center group">
+                                {/* 展開トグルボタン */}
+                                {!isSmall ? (
+                                    <button
+                                        onClick={() => toggleExpand(node.id)}
+                                        className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                                    >
+                                        {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                                    </button>
+                                ) : (
+                                    <span className="w-6" />
+                                )}
+
+                                {/* アイコン */}
+                                <span className="mr-2 text-blue-500">
+                                    {isSmall ? <File size={16} /> : isExpanded ? <FolderOpen size={16} /> : <Folder size={16} />}
+                                </span>
+
+                                {/* カテゴリ名 */}
+                                <span className="flex-1 text-sm text-gray-700 dark:text-gray-200 font-medium py-1">
+                                    {node.name}
+                                </span>
+
+                                {/* アクションボタン (ホバー時表示) */}
+                                <div className={`flex items-center space-x-1 transition-opacity ${isDeleting ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                                    {!isSmall && !isDeleting && (
+                                        <button
+                                            onClick={() => startAdding(node.id, node.level === "large" ? "medium" : "small")}
+                                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600"
+                                            title="子カテゴリを追加"
+                                        >
+                                            <Plus size={14} />
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleDeleteClick(node.id)}
+                                        className={`p-1 transition-colors ${isDeleting ? "text-red-600 bg-red-50 dark:bg-red-900/30 rounded px-2 text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-600"}`}
+                                        title="削除"
+                                    >
+                                        {isDeleting ? "削除する" : <Trash2 size={14} />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* 子要素のレンダリング */}
+                            {(isExpanded || isAddingChild) && (
+                                <div className="border-l border-gray-100 ml-3">
+                                    {isExpanded && node.children && renderTree(node.children)}
+                                    {isAddingChild && renderInput()}
+                                </div>
+                            )}
+                        </li>
+                    );
+                })}
+            </ul>
+        );
+    };
+
     return (
-        <div className="flex-1 overflow-y-auto min-h-[300px]">
-            <div className="flex items-center justify-between mb-4 px-2">
-                <span className="text-xs font-bold text-gray-500 uppercase">Categories</span>
+        <div className="h-full flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">カテゴリ構成</h3>
                 <button
-                    onClick={() => startAdding(null)}
-                    className="flex items-center space-x-1 text-blue-600 text-sm font-medium hover:underline"
+                    onClick={() => startAdding(undefined, "large")}
+                    className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
                 >
-                    <Plus size={16} />
-                    <span>New Root</span>
+                    <Plus size={12} />
+                    <span>大カテゴリ追加</span>
                 </button>
             </div>
 
-            {addingState && addingState.parentId === null && (
-                <div className="flex items-center p-2 mb-2 bg-gray-50 dark:bg-gray-700/30 rounded">
-                    <input
-                        autoFocus
-                        type="text"
-                        value={inputName}
-                        onChange={e => setInputName(e.target.value)}
-                        placeholder="Root Category Name"
-                        className="flex-1 text-sm bg-transparent outline-none mr-2"
-                        onKeyDown={e => { if (e.key === "Enter") confirmAdding(); else if (e.key === "Escape") cancelAdding(); }}
-                    />
-                    <button onClick={confirmAdding} className="text-green-500 mr-1"><Check size={16} /></button>
-                    <button onClick={cancelAdding} className="text-red-500"><Plus size={16} className="rotate-45" /></button>
-                </div>
-            )}
-
-            <div className="pb-10">
-                {categories.map(cat => renderNode(cat))}
-                {categories.length === 0 && !addingState && (
-                    <div className="text-center text-gray-400 text-sm py-10">
-                        No categories yet. Create one!
+            <div className="flex-1 overflow-y-auto pr-2">
+                {categories.length === 0 && !addingState ? (
+                    <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
+                        カテゴリがありません。<br />
+                        「大カテゴリ追加」から作成してください。
                     </div>
+                ) : (
+                    <>
+                        {renderTree(categories)}
+                        {addingState?.parentId === undefined && addingState !== null && (
+                            <div className="ml-4">
+                                {renderInput()}
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

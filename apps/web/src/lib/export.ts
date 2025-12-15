@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { format } from "date-fns";
 
 /**
- * ファイルをダウンロードさせるヘルパ�E関数
+ * ファイルをダウンロードさせるヘルパー関数
  */
 const downloadFile = (content: string, fileName: string, contentType: string) => {
     const blob = new Blob([content], { type: contentType });
@@ -17,7 +17,7 @@ const downloadFile = (content: string, fileName: string, contentType: string) =>
 };
 
 /**
- * 全チE�EタをJSONとしてエクスポ�EチE(バックアチE�E用送E
+ * 全データをJSONとしてエクスポート (バックアップ用途)
  */
 export const exportToJson = async () => {
     try {
@@ -45,7 +45,7 @@ export const exportToJson = async () => {
 };
 
 /**
- * 学習セチE��ョンをCSVとしてエクスポ�EチE(刁E��用送E
+ * 学習セッションをCSVとしてエクスポート (分析用途)
  */
 export const exportSessionsToCsv = async () => {
     try {
@@ -54,10 +54,10 @@ export const exportSessionsToCsv = async () => {
         // ヘッダー
         const header = ["SessionID", "TodoTitle", "Mode", "CreatedAt", "Duration(sec)", "TodoID"];
 
-        // 行データ作�E
+        // 行データ作成
         const rows = sessions.map((s) => [
             s.id,
-            `"${s.todoTitle || ""}"`, // カンマを含む可能性がある�EでクォーチE
+            `"${s.todoTitle || ""}"`, // カンマを含む可能性があるのでクォート
             s.mode,
             format(new Date(s.createdAt), "yyyy-MM-dd HH:mm:ss"),
             s.duration,
@@ -70,7 +70,7 @@ export const exportSessionsToCsv = async () => {
         ].join("\n");
 
         const fileName = `pomarc_sessions_${format(new Date(), "yyyyMMdd")}.csv`;
-        // UTF-8 BOMを追加してExcelでの斁E��化けを防ぁE
+        // UTF-8 BOMを追加してExcelでの文字化けを防ぐ
         const bom = "\uFEFF";
         downloadFile(bom + csvContent, fileName, "text/csv");
         return true;

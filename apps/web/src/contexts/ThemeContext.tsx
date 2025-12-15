@@ -3,29 +3,29 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 /**
- * チE�Eマ�E型定義
- * - light: ライトモーチE
- * - dark: ダークモーチE
- * - system: シスチE��設定に従う
+ * テーマの型定義
+ * - light: ライトモード
+ * - dark: ダークモード
+ * - system: システム設定に従う
  */
 type Theme = "light" | "dark" | "system";
 
 interface ThemeContextType {
     theme: Theme;
     setTheme: (theme: Theme) => void;
-    resolvedTheme: "light" | "dark"; // 実際に適用されるテーチE
+    resolvedTheme: "light" | "dark"; // 実際に適用されるテーマ
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 /**
- * チE�Eマ�Eロバイダーコンポ�EネンチE
+ * テーマプロバイダーコンポーネント
  * 
- * アプリ全体でチE�Eマ状態を共有し、HTMLのclass属性でダークモードを制御します、E
- * LocalStorageにチE�Eマ設定を永続化します、E
+ * アプリ全体でテーマ状態を共有し、HTMLのclass属性でダークモードを制御します。
+ * LocalStorageにテーマ設定を永続化します。
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    // LocalStorageから初期値を取得！ESR対策でnull初期化！E
+    // LocalStorageから初期値を取得（SSR対策でnull初期化）
     const [theme, setThemeState] = useState<Theme>("light");
     const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
     const [mounted, setMounted] = useState(false);
@@ -40,14 +40,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    // チE�Eマ変更時�E処琁E
+    // テーマ変更時の処理
     useEffect(() => {
         if (!mounted) return;
 
-        // LocalStorageに保孁E
+        // LocalStorageに保存
         localStorage.setItem("pomarc-theme", theme);
 
-        // 実際に適用するチE�Eマを決宁E
+        // 実際に適用するテーマを決定
         let effectiveTheme: "light" | "dark";
         if (theme === "system") {
             effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -65,7 +65,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         root.classList.add(effectiveTheme);
     }, [theme, mounted]);
 
-    // シスチE��チE�Eマ変更を監要E
+    // システムテーマ変更を監視
     useEffect(() => {
         if (!mounted || theme !== "system") return;
 
@@ -84,7 +84,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         setThemeState(newTheme);
     };
 
-    // SSR中は子要素のみ返す�E�Eydration対策！E
+    // SSR中は子要素のみ返す（Hydration対策）
     if (!mounted) {
         return <>{children}</>;
     }
@@ -97,7 +97,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 }
 
 /**
- * チE�EマコンチE��ストを使用するカスタムフック
+ * テーマコンテキストを使用するカスタムフック
  */
 export function useTheme() {
     const context = useContext(ThemeContext);

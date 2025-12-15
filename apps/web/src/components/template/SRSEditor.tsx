@@ -1,156 +1,164 @@
 "use client";
 
 import React, { useState } from "react";
-import { Trash2, Plus, Info, Repeat } from "lucide-react";
-import { generateId, SRSProfile } from "@pomarc/shared";
-import { useSRSProfiles } from "@/hooks/domain/useSRSProfiles";
+import { Plus, Trash2, TrendingUp, Calendar } from "lucide-react";
+import { SRSProfile } from "@/types";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
+import { generateId } from "@/lib/utils";
 
-interface SRSEditorProps {
-    onClose: () => void;
-}
+/**
+ * SRS（忘却曲線）設定エディタ
+ * 
+ * 復習間隔のプリセットを管理します。
+ */
+export function SRSEditor() {
+    const profiles = useLiveQuery(() => db.srsProfiles.toArray()) || [];
+    const [isAdding, setIsAdding] = useState(false);
+    const [newName, setNewName] = useState("");
+    const [newIntervals, setNewIntervals] = useState("");
 
-export function SRSEditor({ onClose }: SRSEditorProps) {
-    const { srsProfiles: profiles, addSRSProfile, deleteSRSProfile, updateSRSProfile } = useSRSProfiles();
-    const [name, setName] = useState("");
-    const [intervals, setIntervals] = useState("1, 3, 7, 14, 30");
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-    const handleAdd = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!name.trim()) return;
+    const startAdding = () => {
+        setIsAdding(true);
+        setNewName("");
+        setNewIntervals("");
+    };
 
-        const intervalArray = intervals
-            .split(",")
-            .map(s => parseInt(s.trim()))
-            .filter(n => !isNaN(n) && n > 0);
+    const cancelAdding = () => {
+        setIsAdding(false);
+        setNewName("");
+        setNewIntervals("");
+    };
 
-        if (intervalArray.length === 0) {
-            alert("Please enter valid intervals (comma separated numbers).");
+    const confirmAdding = async () => {
+        if (!newName.trim() || !newIntervals.trim()) return;
+
+        const intervals = newIntervals.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        if (intervals.length === 0) {
+            alert("有効な数値が入力されませんでした");
             return;
         }
 
         try {
-            await addSRSProfile({
+            const newProfile: SRSProfile = {
                 id: generateId(),
-                name,
-                intervals: intervalArray,
-                isDefault: profiles.length === 0, // Make default if first one
+                name: newName.trim(),
+                intervals,
+                isDefault: false,
                 createdAt: new Date(),
-                updatedAt: new Date()
-            });
-            setName("");
-            setIntervals("1, 3, 7, 14, 30");
+                updatedAt: new Date(),
+            };
+
+            await db.srsProfiles.add(newProfile);
+            setIsAdding(false);
+            setNewName("");
+            setNewIntervals("");
         } catch (error) {
-            console.error("Failed to add profile", error);
+            console.error("Failed to add SRS profile", error);
+            alert("SRS設定の追加に失敗しました");
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Delete this profile?")) return;
+    const handleDeleteClick = (id: string) => {
+        if (deleteConfirmId === id) {
+            executeDelete(id);
+        } else {
+            setDeleteConfirmId(id);
+            setTimeout(() => setDeleteConfirmId(null), 3000);
+        }
+    };
+
+    const executeDelete = async (id: string) => {
         try {
-            await deleteSRSProfile(id);
+            await db.srsProfiles.delete(id);
+            setDeleteConfirmId(null);
         } catch (error) {
-            console.error("Failed to delete", error);
+            console.error("Failed to delete SRS profile", error);
+            alert("SRS設定の削除に失敗しました");
         }
-    };
-
-    const handleSetDefault = async (id: string) => {
-        // Unset current default
-        const currentDefault = profiles.find(p => p.isDefault);
-        if (currentDefault) {
-            await updateSRSProfile(currentDefault.id, { isDefault: false });
-        }
-        await updateSRSProfile(id, { isDefault: true });
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[80vh]">
-                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
-                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center">
-                        <Repeat className="mr-2 text-purple-500" />
-                        SRS Profiles
-                    </h2>
-                    <button onClick={onClose} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium">
-                        Close
+        <div className="h-full flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">SRS設定リスト</h3>
+                {!isAdding && (
+                    <button
+                        onClick={startAdding}
+                        className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                    >
+                        <Plus size={12} />
+                        <span>新規作成</span>
                     </button>
-                </div>
+                )}
+            </div>
 
-                <div className="p-4 bg-purple-50 dark:bg-purple-900/10 border-b border-purple-100 dark:border-purple-800">
-                    <div className="flex items-start space-x-2 text-sm text-purple-700 dark:text-purple-300">
-                        <Info size={16} className="mt-0.5 flex-shrink-0" />
-                        <p>
-                            Define review intervals in days. E.g., "1, 3, 7" means reviews happen 1 day, 3 days, and 7 days after completion.
-                        </p>
-                    </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {/* List */}
-                    <div className="space-y-2">
-                        {profiles.map(profile => (
-                            <div key={profile.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-lg">
-                                <div>
-                                    <div className="flex items-center space-x-2">
-                                        <span className="font-bold text-gray-800 dark:text-gray-200">{profile.name}</span>
-                                        {profile.isDefault && (
-                                            <span className="bg-blue-100 text-blue-600 text-[10px] px-1.5 py-0.5 rounded-full font-bold">DEFAULT</span>
-                                        )}
-                                    </div>
-                                    <div className="text-xs text-gray-500 mt-1 font-mono">
-                                        [{profile.intervals.join(", ")}] days
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    {!profile.isDefault && (
-                                        <button
-                                            onClick={() => handleSetDefault(profile.id)}
-                                            className="text-xs text-blue-500 hover:underline px-2"
-                                        >
-                                            Make Default
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => handleDelete(profile.id)}
-                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                {isAdding && (
+                    <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-lg p-3 mb-3">
+                        <div className="space-y-2">
+                            <input
+                                type="text"
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                                placeholder="設定名（例: 短期集中）"
+                                autoFocus
+                            />
+                            <input
+                                type="text"
+                                value={newIntervals}
+                                onChange={(e) => setNewIntervals(e.target.value)}
+                                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                                placeholder="復習間隔（例: 1, 3, 7）"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") confirmAdding();
+                                    if (e.key === "Escape") cancelAdding();
+                                }}
+                            />
+                            <div className="flex justify-end space-x-2 mt-2">
+                                <button onClick={cancelAdding} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">キャンセル</button>
+                                <button onClick={confirmAdding} className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">保存</button>
                             </div>
-                        ))}
+                        </div>
                     </div>
+                )}
 
-                    {/* Add Form */}
-                    <form onSubmit={handleAdd} className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg space-y-3">
-                        <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">Add New Profile</h3>
-                        <div>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                placeholder="Profile Name (e.g., Hard Mode)"
-                                className="w-full p-2 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-purple-500 outline-none"
-                            />
+                {profiles.map((profile) => (
+                    <div key={profile.id} className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center space-x-2">
+                                {profile.isDefault ? (
+                                    <TrendingUp size={16} className="text-orange-500" />
+                                ) : (
+                                    <Calendar size={16} className="text-blue-500" />
+                                )}
+                                <span className="font-bold text-gray-700 dark:text-gray-200">{profile.name}</span>
+                                {profile.isDefault && (
+                                    <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">デフォルト</span>
+                                )}
+                            </div>
+                            {!profile.isDefault && (
+                                <button
+                                    onClick={() => handleDeleteClick(profile.id)}
+                                    className={`transition-colors ${deleteConfirmId === profile.id ? "text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-500"}`}
+                                >
+                                    {deleteConfirmId === profile.id ? "削除する" : <Trash2 size={16} />}
+                                </button>
+                            )}
                         </div>
-                        <div>
-                            <input
-                                type="text"
-                                value={intervals}
-                                onChange={e => setIntervals(e.target.value)}
-                                placeholder="Intervals (1, 3, 7...)"
-                                className="w-full p-2 text-sm border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 focus:border-purple-500 outline-none font-mono"
-                            />
+
+                        <div className="flex flex-wrap gap-1">
+                            {profile.intervals.map((days, i) => (
+                                <span key={i} className="text-xs bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-600">
+                                    {days}日後
+                                </span>
+                            ))}
                         </div>
-                        <button
-                            type="submit"
-                            disabled={!name.trim()}
-                            className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded font-medium flex items-center justify-center space-x-1"
-                        >
-                            <Plus size={16} />
-                            <span>Add Profile</span>
-                        </button>
-                    </form>
-                </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

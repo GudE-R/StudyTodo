@@ -1,21 +1,23 @@
-import { Todo, Session, Category, SRSProfile } from "@pomarc/shared";
+import { Todo, Session } from "@/types";
 
-const toSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-const toCamelCase = (str: string) => str.replace(/([-_][a-z])/g, group => group.toUpperCase().replace('-', '').replace('_', ''));
+/**
+ * App uses camelCase, DB uses snake_case.
+ * Supabase client might handle some, but explicit mapping is safer.
+ */
 
 export const mapper = {
     toSupabase: (entity: any) => {
         const newObj: any = {};
         for (const key in entity) {
-            if (Object.prototype.hasOwnProperty.call(entity, key)) {
-                let value = entity[key];
-                const newKey = toSnakeCase(key);
+            const newKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+            let value = entity[key];
 
-                if (value instanceof Date) {
-                    value = value.toISOString();
-                }
-                newObj[newKey] = value;
+            // Date to ISO string
+            if (value instanceof Date) {
+                value = value.toISOString();
             }
+
+            newObj[newKey] = value;
         }
         return newObj;
     },
@@ -23,19 +25,15 @@ export const mapper = {
     fromSupabase: (entity: any) => {
         const newObj: any = {};
         for (const key in entity) {
-            if (Object.prototype.hasOwnProperty.call(entity, key)) {
-                let value = entity[key];
-                const newKey = toCamelCase(key);
+            const newKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+            let value = entity[key];
 
-                // Heuristic for Dates
-                if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-                    const date = new Date(value);
-                    if (!isNaN(date.getTime())) {
-                        value = date;
-                    }
-                }
-                newObj[newKey] = value;
+            // Basic heuristic for Dates: if key contains 'At' or 'Date' and value is string
+            if ((newKey.endsWith('At') || newKey.endsWith('Date')) && typeof value === 'string') {
+                value = new Date(value);
             }
+
+            newObj[newKey] = value;
         }
         return newObj;
     }

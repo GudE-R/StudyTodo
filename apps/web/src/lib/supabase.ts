@@ -13,7 +13,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     `);
 }
 
-// クライアント作成。URLがない場合は空文字を渡すが、これを使用するとエラーになるため、使用側でチェックが必要。
+// クライアント作成（URLがない場合は空文字を渡すが、これを使用するとエラーになるため、使用側でチェックが必要）
 export const supabase = createClient(
     supabaseUrl || "https://placeholder.supabase.co",
     supabaseAnonKey || "placeholder-key"

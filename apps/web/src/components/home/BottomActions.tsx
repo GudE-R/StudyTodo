@@ -1,50 +1,76 @@
 "use client";
 
 import { LayoutTemplate, Plus, X, BarChart2 } from "lucide-react";
-import React from "react";
 
 interface BottomActionsProps {
-    onOpenSRSEditor: () => void;
-    onOpenCategoryEditor: () => void;
-    onOpenAuth: () => void;
-    onOpenActivity: () => void;
+    onOpenTodoModal: () => void;
+    onOpenTemplateModal: () => void;
+    isHighlighted?: boolean;
+    onResetKeep?: () => void;
+    onOpenActivityModal: () => void;
 }
 
-export function BottomActions({ onOpenSRSEditor, onOpenCategoryEditor, onOpenAuth, onOpenActivity }: BottomActionsProps) {
-    const [isOpen, setIsOpen] = React.useState(false);
-
+/**
+ * 下部アクションバー
+ * isHighlightedがtrueの場合、Todo作成ボタンが強調表示されます（キープ機能連携時など）。
+ */
+export function BottomActions({
+    onOpenTodoModal,
+    onOpenTemplateModal,
+    isHighlighted = false,
+    onResetKeep,
+    onOpenActivityModal
+}: BottomActionsProps) {
     return (
-        <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-4">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-8 py-3 flex justify-between items-center h-20 z-50 rounded-2xl shadow-2xl w-full max-w-lg transition-all duration-300 hover:scale-[1.02]">
+            {/* テンプレート作成ボタン */}
+            <button
+                onClick={onOpenTemplateModal}
+                className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 space-y-1.5 px-4 group"
+            >
+                <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
+                    <LayoutTemplate size={24} />
+                </div>
+                <span className="text-xs font-medium">テンプレート</span>
+            </button>
 
-            {/* Menu Items */}
-            <div className={`flex flex-col items-end space-y-3 transition-all duration-300 ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"}`}>
+            {/* Todo作成ボタン（強調表示） */}
+            <div className="relative -mt-12">
                 <button
-                    onClick={() => { onOpenCategoryEditor(); setIsOpen(false); }}
-                    className="flex items-center space-x-2 bg-white dark:bg-gray-800 p-2 pr-4 rounded-full shadow-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    onClick={onOpenTodoModal}
+                    className={`
+                        flex flex-col items-center justify-center bg-white dark:bg-gray-800 border-4 border-gray-100 dark:border-gray-900 rounded-full p-4 shadow-xl transition-all duration-300
+                        ${isHighlighted
+                            ? "text-orange-500 ring-4 ring-orange-100 dark:ring-orange-900/50 scale-110"
+                            : "text-blue-600 dark:text-blue-400 hover:scale-110 hover:shadow-2xl"}
+                    `}
                 >
-                    <div className="bg-orange-100 text-orange-600 p-2 rounded-full">
-                        <LayoutTemplate size={20} />
-                    </div>
-                    <span className="font-bold text-gray-700 dark:text-gray-200 text-sm">Category / Templates</span>
+                    <Plus size={36} strokeWidth={2.5} />
                 </button>
 
-                <button
-                    onClick={() => { onOpenActivity(); setIsOpen(false); }}
-                    className="flex items-center space-x-2 bg-white dark:bg-gray-800 p-2 pr-4 rounded-full shadow-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                    <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
-                        <BarChart2 size={20} />
-                    </div>
-                    <span className="font-bold text-gray-700 dark:text-gray-200 text-sm">Activity Log</span>
-                </button>
+                {/* リセットボタン（キープ中のみ表示） */}
+                {isHighlighted && onResetKeep && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onResetKeep();
+                        }}
+                        className="absolute -right-1 top-0 bg-gray-500 text-white rounded-full p-1.5 shadow-md hover:bg-gray-600 transition-colors animate-in zoom-in duration-200"
+                    >
+                        <X size={16} />
+                    </button>
+                )}
             </div>
 
-            {/* Main Toggle Button */}
+            {/* アクティビティボタン */}
             <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center justify-center w-16 h-16 rounded-full shadow-xl transition-all duration-300 ${isOpen ? "bg-gray-800 dark:bg-white text-white dark:text-gray-800 rotate-45" : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-105"}`}
+                onClick={onOpenActivityModal}
+                className="flex flex-col items-center justify-center space-y-1.5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-4 group"
             >
-                <Plus size={32} />
+                <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
+                    <BarChart2 size={24} />
+                </div>
+                <span className="text-xs font-medium">Activity</span>
             </button>
         </div>
     );

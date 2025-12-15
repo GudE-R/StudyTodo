@@ -9,7 +9,7 @@ interface ShortcutHandlers {
 
 /**
  * キーボードショートカットを管理するカスタムフック
- *
+ * 
  * @param handlers 各アクションに対応するハンドラ関数
  */
 export function useKeyboardShortcuts({
@@ -55,7 +55,7 @@ export function useKeyboardShortcuts({
 
                 case "Enter":
                     if (onStartFocus) {
-                        // Enterは誤爆し易いので、Ctrl/Metaとの組み合わせなどを検討しても良いが
+                        // Enterは誤爆しやすいので、Ctrl/Metaとの組み合わせなどを検討しても良いが
                         // 一旦単体で実装し、呼び出し側で条件制御する
                         event.preventDefault();
                         onStartFocus();

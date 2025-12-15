@@ -1,8 +1,8 @@
 import React from "react";
 
 /**
- * Todoのタイトルを表示するコンポ�Eネント、E
- * "(N回目)" のようなサフィチE��スを検�Eして薁E��グレーで表示します、E
+ * Todoのタイトルを表示するコンポーネント。
+ * "(N回目)" のようなサフィックスを検出して薄いグレーで表示します。
  */
 export const TodoTitle = ({ title, className = "" }: { title: string, className?: string }) => {
     // Match " (N回目)" at the end

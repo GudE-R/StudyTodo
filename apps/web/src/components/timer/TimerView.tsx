@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle } from "lucide-react";
-import { Todo } from "@pomarc/shared";
+import { Todo } from "@/types";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNotification } from "@/hooks/useNotification";
 
 interface TimerViewProps {
-    todo?: Todo;
-    onBack?: () => void;
+    todo: Todo;
+    onBack: () => void;
     onSaveSession?: (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => void;
 }
 
@@ -16,24 +16,24 @@ type TimerMode = "pomodoro" | "countdown" | "stopwatch";
 type TimerStatus = "focus" | "break";
 
 /**
- * Pomodoro Timer Component (Extended)
+ * ポモドーロタイマー画面コンポーネント (拡張版)
  * 
- * Features:
- * 1. Pomodoro Mode (25min/50min) + Break (5min/10min)
- * 2. Countdown Mode (Custom time - default 15min)
- * 3. Stopwatch Mode
- * 4. Record Only (Mock)
+ * 以下の機能を提供します：
+ * 1. ポモドーロモード (25分/50分) + 休憩 (5分/10分)
+ * 2. カウントダウンモード (任意時間 - 今回はモックとして15分固定)
+ * 3. ストップウォッチモード
+ * 4. 記録機能 (モック)
  */
 export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
-    // State Management
+    // 状態管理
     const [mode, setMode] = useState<TimerMode>("pomodoro");
     const [status, setStatus] = useState<TimerStatus>("focus");
 
-    // Pomodoro Settings (minutes)
+    // ポモドーロ設定 (分)
     const [focusDuration, setFocusDuration] = useState(25);
     const [breakDuration, setBreakDuration] = useState(5);
 
-    // Countdown Settings (minutes)
+    // カウントダウン設定 (分)
     const [countdownDuration, setCountdownDuration] = useState(15);
 
     const [timeLeft, setTimeLeft] = useState(focusDuration * 60);
@@ -44,32 +44,32 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Notifications
+    // 通知フック
     const { requestPermission, sendNotification } = useNotification();
 
-    // Request permission on mount
+    // 初回マウント時に通知許可をリクエスト
     useEffect(() => {
         requestPermission();
     }, [requestPermission]);
 
-    // Timer Complete Handler
+    // タイマー終了時の処理
     const handleTimerComplete = useCallback(() => {
         setIsRunning(false);
         if (timerRef.current) clearInterval(timerRef.current);
 
-        // Switch to break/focus if in Pomodoro mode
+        // ポモドーロモードで集中時間が終わったら休憩モードへ誘導
         if (mode === "pomodoro" && status === "focus") {
-            // Sound and Notification
-            sendNotification("Focus Completed!", { body: "Great job! Let's take a break." });
-            alert("Focus Completed! Let's take a break.");
+            // 音声通知などもここで行う
+            sendNotification("集中終了！", { body: "お疲れ様でした。休憩しましょう。" });
+            alert("お疲れ様でした！休憩しましょう。");
             setStatus("break");
         } else if (mode === "pomodoro" && status === "break") {
-            sendNotification("Break Completed!", { body: "Ready for the next session?" });
-            alert("Break Completed! Ready for the next session?");
+            sendNotification("休憩終了！", { body: "次のセッションを始めましょう。" });
+            alert("休憩終了です！作業に戻りましょう。");
             setStatus("focus");
         } else if (mode === "countdown") {
-            sendNotification("Timer Finished!", { body: "The set time has passed." });
-            alert("Timer Finished!");
+            sendNotification("タイマー終了", { body: "設定した時間が経過しました。" });
+            alert("タイマー終了です！");
         }
     }, [mode, status, sendNotification]);
 
@@ -89,13 +89,13 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         }
     }, [mode, status, focusDuration, breakDuration, countdownDuration]);
 
-    // Reset timer on mode/settings change
+    // モードや設定変更時にタイマーをリセット
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         resetTimer();
     }, [resetTimer]);
 
-    // Timer Logic
+    // タイマーロジック
     useEffect(() => {
         if (isRunning) {
             timerRef.current = setInterval(() => {
@@ -120,16 +120,18 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         };
     }, [isRunning, mode, handleTimerComplete]);
 
-    // Time Formatter (MM:SS)
+
+
+    // 時間フォーマット (MM:SS)
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60).toString().padStart(2, "0");
         const s = (seconds % 60).toString().padStart(2, "0");
         return `${m}:${s}`;
     };
 
-    // Circular Progress Calculation
+    // 円形プログレスバーの計算
     const calculateProgress = () => {
-        if (mode === "stopwatch") return 100; // Stopwatch is always full
+        if (mode === "stopwatch") return 100; // ストップウォッチは常に満タン
         const total = mode === "pomodoro"
             ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
             : countdownDuration * 60;
@@ -140,7 +142,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
     const circumference = 2 * Math.PI * 120;
     const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-    // Theme Color
+    // テーマカラーの決定
     const getThemeColor = () => {
         if (status === "break") return "text-green-500";
         return "text-blue-600";
@@ -151,32 +153,35 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         return "bg-blue-50";
     };
 
-    // Save Session Handler
+    // セッション保存処理
     const handleSaveSession = () => {
-        // Ideally, we calculate elapsed time.
-        // Here we just use the tracked duration logic or stopwatch time.
+
+        // 簡易的に、ストップウォッチなら経過時間、ポモドーロなら設定時間を保存（完了時）
+        // 途中保存の場合は経過時間を計算する必要がある
+        // ここでは「記録のみ保存」ボタン用として、現在の経過時間を保存するロジックにする
+
         let actualDuration = 0;
         if (mode === "stopwatch") {
             actualDuration = stopwatchTime;
         } else {
-            // For countdown/pomodoro, duration is total - remaining
+            // カウントダウン系は「元々の時間 - 残り時間」が経過時間
             const total = mode === "pomodoro"
                 ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
                 : countdownDuration * 60;
             actualDuration = total - timeLeft;
         }
 
-        if (todo && todo.id && onSaveSession) {
+        if (actualDuration > 0 && onSaveSession) {
             onSaveSession({
                 todoId: todo.id,
-                todoTitle: todo?.title ? `Focusing on: ${todo?.title}` : "Focus Timer",
+                todoTitle: todo.title,
                 duration: actualDuration,
                 mode: mode
             });
-            alert("Session Recorded!");
-            // Reset or continue depends on requirements. Here we don't reset automatically.
+            alert("セッションを記録しました！");
+            // 保存後はリセットするか、そのまま続けるかは要件次第だが、ここではリセットしない
         } else {
-            alert("No time recorded to save.");
+            alert("記録する時間がありません。");
         }
     };
 
@@ -191,7 +196,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                 setIsPaused(false);
             }
         },
-        onCloseModal: onBack // Esc to go back
+        onCloseModal: onBack // Escで戻る
     });
 
     return (
@@ -202,7 +207,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     <ArrowLeft size={24} />
                 </button>
 
-                {/* Mode Switcher */}
+                {/* モード切替タブ */}
                 <div className="flex bg-white/50 rounded-full p-1">
                     <button
                         onClick={() => { setMode("pomodoro"); setStatus("focus"); }}
@@ -237,9 +242,9 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-colors ${status === "break" ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}>
                         {status === "break" ? "BREAK TIME" : "CURRENT TASK"}
                     </div>
-                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-2">
-                        {todo?.title ? `Focusing on: ${todo.title}` : "Focus Timer"}
-                    </h2>
+                    <h1 className="text-2xl font-bold text-gray-800 line-clamp-2">
+                        {todo.title}
+                    </h1>
                 </div>
 
                 {/* Timer Display */}
@@ -282,13 +287,13 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                                     onClick={() => setFocusDuration(25)}
                                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 25 ? "bg-blue-600 text-white" : "bg-white text-gray-500"}`}
                                 >
-                                    25min
+                                    25分
                                 </button>
                                 <button
                                     onClick={() => setFocusDuration(50)}
                                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 50 ? "bg-blue-600 text-white" : "bg-white text-gray-500"}`}
                                 >
-                                    50min
+                                    50分
                                 </button>
                             </>
                         ) : (
@@ -297,13 +302,13 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                                     onClick={() => setBreakDuration(5)}
                                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${breakDuration === 5 ? "bg-green-600 text-white" : "bg-white text-gray-500"}`}
                                 >
-                                    5min
+                                    5分
                                 </button>
                                 <button
                                     onClick={() => setBreakDuration(10)}
                                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${breakDuration === 10 ? "bg-green-600 text-white" : "bg-white text-gray-500"}`}
                                 >
-                                    10min
+                                    10分
                                 </button>
                             </>
                         )}
@@ -313,7 +318,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                 {/* Settings (Countdown Only) */}
                 {mode === "countdown" && !isRunning && !isPaused && (
                     <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-                        <span className="text-sm font-bold text-gray-500">Timer:</span>
+                        <span className="text-sm font-bold text-gray-500">タイマー時間:</span>
                         <input
                             type="number"
                             min="1"
@@ -321,7 +326,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                             onChange={(e) => setCountdownDuration(Math.max(1, parseInt(e.target.value) || 0))}
                             className="w-16 text-center border-b-2 border-blue-100 focus:border-blue-500 outline-none font-bold text-gray-800"
                         />
-                        <span className="text-sm font-bold text-gray-500">min</span>
+                        <span className="text-sm font-bold text-gray-500">分</span>
                     </div>
                 )}
 
@@ -359,9 +364,10 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     className="flex items-center space-x-2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                     <CheckCircle size={18} />
-                    <span className="text-sm font-medium">Record Session Only</span>
+                    <span className="text-sm font-medium">記録のみ保存</span>
                 </button>
             </div>
         </div>
     );
 }
+

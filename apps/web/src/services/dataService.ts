@@ -1,14 +1,14 @@
 import { db } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
 import { mapper } from "@/lib/mapper";
-import { Todo, Session, Category, SRSProfile } from "@pomarc/shared";
+import { Todo, Session, Category, SRSProfile } from "@/types";
 import { addDays } from "date-fns";
-import { generateId } from "@pomarc/shared";
+import { generateId } from "@/lib/utils";
 
 /**
  * Data Service
- * 繝ｭ繝ｼ繧ｫ繝ｫDB(Dexie)縺ｨ繧ｯ繝ｩ繧ｦ繝吋B(Supabase)縺ｸ縺ｮ譖ｸ縺崎ｾｼ縺ｿ繧呈歓雎｡蛹悶＠縺ｾ縺吶・
- * "Dual Write" 謌ｦ逡･繧貞ｮ溯｣・・
+ * ローカルDB(Dexie)とクラウドDB(Supabase)への書き込みを抽象化します。
+ * "Dual Write" 戦略を実装。
  */
 export const dataService = {
     // --- Todos ---
@@ -17,12 +17,12 @@ export const dataService = {
         await db.todos.add(todo);
 
         // 2. Cloud (Fire and Forget or Await?)
-        // UX縺ｮ縺溘ａ縺ｫAwait縺励↑縺・焔繧ゅ≠繧九′縲∵紛蜷域ｧ縺ｮ縺溘ａAwait謗ｨ螂ｨ縲ゅ◆縺�縺励お繝ｩ繝ｼ縺ｧ豁｢縺ｾ繧峨↑縺・ｈ縺・↓縲・
+        // UXのためにAwaitしない手もあるが、整合性のためAwait推奨。ただしエラーで止まらないように。
         this.syncToCloud("todos", todo);
     },
 
     /**
-     * SRS繝励Ο繝輔ぃ繧､繝ｫ縺ｫ蝓ｺ縺･縺・※縲∬､・焚縺ｮTodo(蠕ｩ鄙・繧剃ｸ諡ｬ逕滓・繝ｻ菫晏ｭ倥＠縺ｾ縺吶・
+     * SRSプロファイルに基づいて、複数のTodo(復習)を一括生成・保存します。
      */
     async addSRSTodos(baseTodo: Todo, intervals: number[]) {
         const baseId = generateId();
@@ -42,7 +42,7 @@ export const dataService = {
             const reviewTodo: Todo = {
                 ...baseTodo,
                 id: generateId(),
-                title: `${baseTodo.title} (${index + 1}蝗樒岼)`, // Updated format
+                title: `${baseTodo.title} (${index + 1}回目)`, // Updated format
                 dueDate: addDays(baseDate, days),
                 completed: false,
                 updatedAt: new Date(),

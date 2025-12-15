@@ -1,87 +1,103 @@
 "use client";
 
 import React from "react";
-import { X, Play, Calendar, Clock, Repeat, Palette, BookOpen } from "lucide-react";
+import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen } from "lucide-react";
 
 interface UsageGuideModalProps {
+    isOpen: boolean;
     onClose: () => void;
 }
 
-export function UsageGuideModal({ onClose }: UsageGuideModalProps) {
-    const features = [
+/**
+ * 使用ガイドモーダルコンポーネント
+ * 
+ * PomArcの主要機能の使い方を説明します。
+ */
+export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
+    if (!isOpen) return null;
+
+    const guides = [
         {
             icon: Play,
-            title: "Pomodoro Timer",
-            description: "Study efficiently with 25min focus + 5min break cycles."
+            title: "タスクの作成と開始",
+            description: "画面下部の「＋」ボタンからタスクを作成できます。「今すぐ開始」で即座にタイマーを開始、「記録」で過去の学習を記録できます。"
+        },
+        {
+            icon: Timer,
+            title: "タイマー機能",
+            description: "ポモドーロ（25分集中→5分休憩）、カウントダウン、ストップウォッチの3つのモードを選択できます。タイマー完了後は自動的に記録されます。"
         },
         {
             icon: Calendar,
-            title: "Study Schedule",
-            description: "Manage your study plan with Drag & Drop."
+            title: "カレンダーとスケジュール",
+            description: "カレンダーで日付をタップして切り替え。スケジュール上で時間を長押しすると、その時刻でタスク作成モーダルが開きます。"
         },
         {
             icon: Repeat,
-            title: "SRS (Spaced Repetition)",
-            description: "Review tasks at optimal intervals based on the Forgetting Curve."
+            title: "SRS（間隔反復）",
+            description: "設定画面でSRSプロファイルを作成。タスクに適用すると、効率的な復習スケジュールが自動で設定されます。"
         },
         {
-            icon: Clock,
-            title: "Session Recording",
-            description: "Track your study time for each task."
+            icon: FolderTree,
+            title: "カテゴリ管理",
+            description: "設定画面でカテゴリを作成・編集。大分類→中分類→小分類の3階層で整理できます。"
         },
         {
             icon: Palette,
-            title: "Theme Customization",
-            description: "Switch between Light, Dark, and System themes."
+            title: "テーマ設定",
+            description: "設定画面（右上の歯車アイコン）から、ライト/ダーク/システムから選択できます。"
+        },
+        {
+            icon: Clock,
+            title: "学習履歴",
+            description: "画面下部の「活動」ボタンで、これまでの学習記録を確認できます。日別・週別の統計も表示されます。"
+        },
+        {
+            icon: BookOpen,
+            title: "タスク詳細",
+            description: "リストやスケジュール上のタスクをタップすると詳細画面が開きます。ここから「今すぐ開始」やタスクの削除ができます。"
         }
     ];
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
-                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center space-x-2">
-                        <BookOpen className="text-blue-500" />
-                        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Usage Guide</h2>
-                    </div>
-                    <button onClick={onClose} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500">
-                        <X size={20} />
+        <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
+            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl h-[85vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
+
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">使い方ガイド</h2>
+                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                        <X size={24} />
                     </button>
                 </div>
 
-                <div className="p-6 overflow-y-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {features.map((feature, index) => (
-                            <div key={index} className="flex space-x-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-colors">
-                                <div className="flex-shrink-0">
-                                    <div className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm text-blue-500">
-                                        <feature.icon size={24} />
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    {guides.map((guide, index) => {
+                        const Icon = guide.icon;
+                        return (
+                            <div key={index} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                                <div className="flex items-center space-x-3 mb-2">
+                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                                        <Icon className="text-blue-600 dark:text-blue-400" size={20} />
                                     </div>
+                                    <h3 className="font-bold text-gray-800 dark:text-gray-100">{guide.title}</h3>
                                 </div>
-                                <div>
-                                    <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-1">{feature.title}</h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                                        {feature.description}
-                                    </p>
-                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                                    {guide.description}
+                                </p>
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
-                        <h3 className="font-bold text-blue-700 dark:text-blue-300 mb-2">Need Help?</h3>
-                        <p className="text-sm text-blue-600 dark:text-blue-400">
-                            This application is designed to help students manage their tasks and study time effectively. Start by adding a Category and a Todo!
-                        </p>
-                    </div>
+                        );
+                    })}
                 </div>
 
-                <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-end">
+                {/* Footer */}
+                <div className="p-4 border-t border-gray-100 dark:border-gray-800">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 font-medium transition-colors"
+                        className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold transition-colors"
                     >
-                        Close
+                        閉じる
                     </button>
                 </div>
             </div>

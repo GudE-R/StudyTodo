@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { RepositoryProvider } from "@/providers/RepositoryProvider";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PomArc",
-  description: "Pomodoro & SRS Todo App",
+  title: "PomArc - ポモドーロタイマー & SRS学習",
+  description: "効率的な学習をサポートするポモドーロタイマーとSRS（間隔反復システム）アプリ",
 };
 
 export default function RootLayout({
@@ -25,19 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ja" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-50`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <RepositoryProvider>
-            {children}
-          </RepositoryProvider>
+        <ThemeProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>
