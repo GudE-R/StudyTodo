@@ -23,16 +23,23 @@ interface TodoCreateModalProps {
     visible: boolean;
     onClose: () => void;
     categories: Category[];
+    initialDate?: Date;
+    initialTime?: string;
 }
 
-export const TodoCreateModal = ({ visible, onClose, categories }: TodoCreateModalProps) => {
+export const TodoCreateModal = ({ visible, onClose, categories, initialDate, initialTime }: TodoCreateModalProps) => {
     const { addTodo } = useMobileTodos();
     const { profiles: srsProfiles, refreshProfiles } = useMobileSRS();
 
     // Refresh SRS on open
     React.useEffect(() => {
-        if (visible) refreshProfiles();
-    }, [visible, refreshProfiles]);
+        if (visible) {
+            refreshProfiles();
+            // Apply Keep defaults if provided, else reset
+            if (initialDate) setDueDate(initialDate);
+            if (initialTime) setStartTime(new Date(`${format(initialDate || new Date(), 'yyyy-MM-dd')}T${initialTime}`));
+        }
+    }, [visible, refreshProfiles, initialDate, initialTime]);
 
     // State
     const [title, setTitle] = useState("");

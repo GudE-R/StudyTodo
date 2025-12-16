@@ -22,10 +22,40 @@ export const MainLayout = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const { categories, refreshCategories } = useMobileCategories();
 
+    // Keep State
+    const [keptDate, setKeptDate] = useState<Date | null>(null);
+    const [keptTime, setKeptTime] = useState<string | null>(null);
+
     const [isTodoModalVisible, setTodoModalVisible] = useState(false);
     const [isSettingsModalVisible, setSettingsModalVisible] = useState(false);
     const [isTemplateModalVisible, setTemplateModalVisible] = useState(false);
     const [isActivityModalVisible, setActivityModalVisible] = useState(false);
+
+    // Keep Handlers
+    const handleDateLongPress = (date: Date) => {
+        if (keptDate && date.getTime() === keptDate.getTime()) {
+            setKeptDate(null);
+        } else {
+            setKeptDate(date);
+        }
+    };
+
+    // For Schedule time slot
+    const handleTimeLongPress = (date: Date, time: string) => {
+        // If same slot, toggle off
+        if (keptTime === time && keptDate && date.getTime() === keptDate.getTime()) {
+            setKeptTime(null);
+            setKeptDate(null);
+        } else {
+            setKeptTime(time);
+            setKeptDate(date);
+        }
+    };
+
+    const handleResetKeep = () => {
+        setKeptDate(null);
+        setKeptTime(null);
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -52,11 +82,22 @@ export const MainLayout = () => {
                         <MobileTodoList date={currentDate} />
                     </View>
                     <View style={styles.paneHalf}>
-                        <MobileDaySchedule currentDate={currentDate} onDateChange={setCurrentDate} />
+                        <MobileDaySchedule
+                            currentDate={currentDate}
+                            onDateChange={setCurrentDate}
+                            keptDate={keptDate}
+                            keptTime={keptTime}
+                            onTimeLongPress={(date, time) => handleTimeLongPress(date, time)}
+                        />
                     </View>
                 </View>
                 <View style={styles.calendarPane}>
-                    <MobileCalendar currentDate={currentDate} onDateSelect={setCurrentDate} />
+                    <MobileCalendar
+                        currentDate={currentDate}
+                        onDateSelect={setCurrentDate}
+                        keptDate={keptDate}
+                        onDateLongPress={(date) => handleDateLongPress(date)}
+                    />
                 </View>
             </View>
 
@@ -64,12 +105,16 @@ export const MainLayout = () => {
                 onOpenTemplate={() => setTemplateModalVisible(true)}
                 onOpenTodo={() => setTodoModalVisible(true)}
                 onOpenReport={() => setActivityModalVisible(true)}
+                isHighlighted={!!keptDate || !!keptTime}
+                onResetKeep={handleResetKeep}
             />
 
             <TodoCreateModal
                 visible={isTodoModalVisible}
                 onClose={() => setTodoModalVisible(false)}
                 categories={categories}
+                initialDate={keptDate || undefined}
+                initialTime={keptTime || undefined}
             />
             <SettingsModal
                 visible={isSettingsModalVisible}

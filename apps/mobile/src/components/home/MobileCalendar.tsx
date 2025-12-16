@@ -6,9 +6,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 interface MobileCalendarProps {
     currentDate?: Date;
     onDateSelect?: (date: Date) => void;
+    keptDate?: Date | null;
+    onDateLongPress?: (date: Date) => void;
 }
 
-export const MobileCalendar = ({ currentDate = new Date(), onDateSelect }: MobileCalendarProps) => {
+export const MobileCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: MobileCalendarProps) => {
     const [viewingMonth, setViewingMonth] = useState(currentDate);
 
     useEffect(() => {
@@ -57,14 +59,21 @@ export const MobileCalendar = ({ currentDate = new Date(), onDateSelect }: Mobil
                         if (!day) return <View key={`pad-${index}`} style={styles.dayCell} />;
 
                         const isSelected = isSameDay(day, currentDate);
+                        const isKept = keptDate && isSameDay(day, keptDate);
+
                         return (
                             <TouchableOpacity
                                 key={day.toISOString()}
-                                style={styles.dayCell}
+                                style={[styles.dayCell, isKept && styles.keptDayCell]}
                                 onPress={() => onDateSelect?.(day)}
+                                onLongPress={() => onDateLongPress?.(day)}
                             >
-                                <View style={[styles.dateCircle, isSelected && styles.selectedDay]}>
-                                    <Text style={[styles.dayText, isSelected && styles.selectedDayText]}>
+                                <View style={[styles.dateCircle, isSelected && styles.selectedDay, isKept && !isSelected && styles.keptDayCircle]}>
+                                    <Text style={[
+                                        styles.dayText,
+                                        isSelected && styles.selectedDayText,
+                                        isKept && !isSelected && styles.keptDayText
+                                    ]}>
                                         {format(day, 'd')}
                                     </Text>
                                 </View>
@@ -143,6 +152,18 @@ const styles = StyleSheet.create({
     },
     selectedDayText: {
         color: '#fff',
+        fontWeight: 'bold',
+    },
+    keptDayCell: {
+        // Option to highlight entire cell bg if needed
+    },
+    keptDayCircle: {
+        borderWidth: 2,
+        borderColor: '#f97316', // Orange border
+        backgroundColor: '#fff',
+    },
+    keptDayText: {
+        color: '#f97316',
         fontWeight: 'bold',
     }
 });

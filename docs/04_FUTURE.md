@@ -19,11 +19,11 @@ Web版を「最強のデスクトップツール」として完成させます�
 - [x] **ヒートマップの高度化**: 分析機能の強化。
 - [x] ~~週間レポート機能~~ (スキップ)
 
-### フェーズ 3: クラウド同期とモバイル展開 (Future)
+### フェーズ 3: クラウド同期とモバイル展開 (In Progress)
 モバイル対応への布石として、データ基盤を刷新してからNativeアプリへ移行します。
 - [ ] **クラウドDB移行**: Dexie.js (Local) から Supabase 等へ。
 - [ ] **ユーザー認証**: 複数端末でのログイン機能。
-- [x] **Nativeモバイルアプリ開発**: React Native (Expo) によるiOS/Androidアプリ開発（Web版とロジック共有）。
+- [x] **Nativeモバイルアプリ開発**: React Native (Expo) によるiOS/Androidアプリ開発（基本的なTodo, Schedule, Calendar, Template, Activity 機能実装完了）。
 
 ---
 

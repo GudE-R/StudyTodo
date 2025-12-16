@@ -1,16 +1,19 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, ViewToken } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ViewToken, TouchableOpacity } from 'react-native';
 import { addDays, format, startOfDay, isSameDay } from 'date-fns';
 
 interface MobileDayScheduleProps {
     currentDate?: Date;
     onDateChange?: (date: Date) => void;
+    keptDate?: Date | null;
+    keptTime?: string | null;
+    onTimeLongPress?: (date: Date, time: string) => void;
 }
 
 const HOUR_HEIGHT = 60;
 const DAY_HEIGHT = HOUR_HEIGHT * 24;
 
-export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange }: MobileDayScheduleProps) => {
+export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: MobileDayScheduleProps) => {
     const listRef = useRef<FlatList>(null);
     const isProgrammaticScroll = useRef(false);
 
@@ -90,12 +93,23 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange }: Mo
                 <Text style={styles.dayTitle}>{format(item, 'MMM d (EEE)')}</Text>
             </View>
             {/* Timeline Hours */}
-            {Array.from({ length: 24 }).map((_, hour) => (
-                <View key={hour} style={[styles.hourSlot, { height: HOUR_HEIGHT }]}>
-                    <Text style={styles.hourText}>{hour}:00</Text>
-                    <View style={styles.hourLine} />
-                </View>
-            ))}
+            {/* Timeline Hours */}
+            {Array.from({ length: 24 }).map((_, hour) => {
+                const timeStr = `${hour}:00`;
+                const isKept = keptTime === timeStr && keptDate && isSameDay(item, keptDate);
+
+                return (
+                    <TouchableOpacity
+                        key={hour}
+                        style={[styles.hourSlot, { height: HOUR_HEIGHT }, isKept && styles.keptSlot]}
+                        activeOpacity={1}
+                        onLongPress={() => onTimeLongPress?.(item, timeStr)}
+                    >
+                        <Text style={[styles.hourText, isKept && styles.keptText]}>{hour}:00</Text>
+                        <View style={styles.hourLine} />
+                    </TouchableOpacity>
+                );
+            })}
 
             {/* Current Time Indicator (only if today) */}
             {isSameDay(item, new Date()) && (
@@ -212,5 +226,12 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 1,
         backgroundColor: 'red',
+    },
+    keptSlot: {
+        backgroundColor: 'rgba(59, 130, 246, 0.1)', // Blue-ish highlight
+    },
+    keptText: {
+        color: '#3b82f6',
+        fontWeight: 'bold',
     }
 });
