@@ -14,13 +14,22 @@ import { TodoCreateModal } from '../modals/TodoCreateModal';
 import { SettingsModal } from '../modals/SettingsModal';
 import { TemplateModal } from '../modals/TemplateModal';
 import { ActivityModal } from '../modals/ActivityModal';
+import { MobileTimerView } from '../timer/MobileTimerView'; // Import Timer
 
 import { useMobileCategories } from '../../hooks/useMobileCategories';
+import { useMobileTodos } from '../../hooks/useMobileTodos';
+import { useMobileSessions } from '../../hooks/useMobileSessions';
+import { Todo, generateId } from '@pomarc/shared'; // Utils
 
 export const MainLayout = () => {
     // Basic Layout without Reanimated
     const [currentDate, setCurrentDate] = useState(new Date());
     const { categories, refreshCategories } = useMobileCategories();
+    const { addTodo } = useMobileTodos();
+    const { addSession } = useMobileSessions();
+
+    const [viewMode, setViewMode] = useState<"home" | "timer">("home");
+    const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
 
     // Keep State
     const [keptDate, setKeptDate] = useState<Date | null>(null);
@@ -56,6 +65,43 @@ export const MainLayout = () => {
         setKeptDate(null);
         setKeptTime(null);
     };
+
+    const handleStartNow = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
+        const newTodo: Todo = {
+            ...todoData,
+            id: generateId(),
+            createdAt: new Date(),
+            completed: false,
+        };
+        await addTodo(newTodo);
+        setActiveTodo(newTodo);
+        setViewMode("timer");
+        setTodoModalVisible(false);
+    };
+
+    if (viewMode === "timer" && activeTodo) {
+        return (
+            <SafeAreaView style={styles.safeArea}>
+                <MobileTimerView
+                    todo={activeTodo}
+                    onBack={() => {
+                        setViewMode("home");
+                        setActiveTodo(null);
+                    }}
+                    onSaveSession={async (data) => {
+                        await addSession({
+                            id: generateId(),
+                            todoId: data.todoId,
+                            todoTitle: data.todoTitle,
+                            duration: data.duration,
+                            mode: data.mode as "pomodoro" | "stopwatch" | "countdown",
+                            createdAt: new Date(),
+                        });
+                    }}
+                />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -115,6 +161,7 @@ export const MainLayout = () => {
                 categories={categories}
                 initialDate={keptDate || undefined}
                 initialTime={keptTime || undefined}
+                onStartNow={handleStartNow}
             />
             <SettingsModal
                 visible={isSettingsModalVisible}

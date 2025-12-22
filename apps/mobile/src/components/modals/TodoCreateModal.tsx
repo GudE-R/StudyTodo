@@ -25,9 +25,10 @@ interface TodoCreateModalProps {
     categories: Category[];
     initialDate?: Date;
     initialTime?: string;
+    onStartNow?: (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => void;
 }
 
-export const TodoCreateModal = ({ visible, onClose, categories, initialDate, initialTime }: TodoCreateModalProps) => {
+export const TodoCreateModal = ({ visible, onClose, categories, initialDate, initialTime, onStartNow }: TodoCreateModalProps) => {
     const { addTodo } = useMobileTodos();
     const { profiles: srsProfiles, refreshProfiles } = useMobileSRS();
 
@@ -137,9 +138,31 @@ export const TodoCreateModal = ({ visible, onClose, categories, initialDate, ini
     };
 
     const handleStartNow = async () => {
-        // Implement Timer start
-        await handleCreate();
-        // Navigation to Timer would happen here
+        if (!title.trim() && !categoryId) return;
+        const finalTitle = title.trim() || activeCategoryLabel.split(' > ').pop() || "No Title";
+
+        if (onStartNow) {
+            onStartNow({
+                title: finalTitle,
+                categoryId: categoryId || undefined,
+                priority: 'medium',
+                dueDate: dueDate,
+                dueTime: startTime ? format(startTime, 'HH:mm') : undefined,
+                endTime: endTime ? format(endTime, 'HH:mm') : undefined,
+                estimatedDuration: durationStr ? parseInt(durationStr, 10) : undefined,
+                srsProfileId: srsProfileId || undefined,
+                srsInterval: srsProfiles.find(p => p.id === srsProfileId)?.name,
+                srsLevel: srsProfileId ? 0 : undefined,
+                range,
+                memo,
+                notes: memo,
+                updatedAt: new Date(),
+            });
+            resetForm();
+        } else {
+            // Fallback if no prop provided (e.g. older usage)
+            await handleCreate();
+        }
     };
 
     // Picker Handling
@@ -149,19 +172,27 @@ export const TodoCreateModal = ({ visible, onClose, categories, initialDate, ini
     };
 
     const onPickerChange = (event: any, selectedDate?: Date) => {
-        // Android closes picker automatically
-        if (Platform.OS === 'android') setCurrentPickerTarget(null);
+        if (Platform.OS === 'android') {
+            setCurrentPickerTarget(null); // Close dialog on Android
+        }
+
+        if (event.type === 'dismissed') return;
 
         if (selectedDate && currentPickerTarget) {
-            if (currentPickerTarget === 'due') setDueDate(selectedDate);
-            if (currentPickerTarget === 'start') setStartTime(selectedDate);
-            if (currentPickerTarget === 'end') setEndTime(selectedDate);
+            if (currentPickerTarget === 'due') {
+                setDueDate(selectedDate);
+            }
+            if (currentPickerTarget === 'start') {
+                setStartTime(selectedDate);
+                // Web Parity: Auto-set due date if empty
+                if (!dueDate) setDueDate(new Date());
+            }
+            if (currentPickerTarget === 'end') {
+                setEndTime(selectedDate);
+            }
         }
     };
 
-    // Note: Category Picker for Android/iOS - Using a simple implementation overlay or just cycle for now?
-    // User requested "Tap to show list".
-    // I'll implement a custom overlay for Category selection at the bottom of the file.
     const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
     const [isSRSPickerVisible, setSRSPickerVisible] = useState(false);
 
@@ -170,7 +201,7 @@ export const TodoCreateModal = ({ visible, onClose, categories, initialDate, ini
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.overlay}>
                 <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
 
-                <View style={styles.container}>
+                <View style={[styles.container, (currentPickerTarget && Platform.OS === 'ios') ? { paddingBottom: 250 } : {}]}>
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={styles.headerTitle}>Todo作成</Text>
@@ -291,7 +322,6 @@ export const TodoCreateModal = ({ visible, onClose, categories, initialDate, ini
                 </View>
 
                 {/* Overlays for Pickers */}
-                {/* Simplified "Modal Selection" for Category */}
                 {isCategoryPickerVisible && (
                     <SelectionModal
                         title="カテゴリ選択"
@@ -309,34 +339,39 @@ export const TodoCreateModal = ({ visible, onClose, categories, initialDate, ini
                     />
                 )}
 
-                {/* Date/Time Picker System */}
-                {(currentPickerTarget && (Platform.OS === 'ios' || currentPickerTarget)) && (
-                    <View>
-                        {/* iOS usually needs a separate view or managed visibility. 
-                           For brevity, using standard conditional rendering which works well on Android.
-                           For iOS, we ideally put it in the modal or bottom sheet. 
-                           Here we rely on the component's default behavior (Inline for iOS 14+, Spinner for older).
-                           To force bottom sheet style on iOS, we would wrap it.
-                           Let's stick to standard behavior.
-                        */}
-                        {(currentPickerTarget !== null && (Platform.OS === 'android' ? true : true)) && (
-                            <DateTimePicker
-                                value={
-                                    (currentPickerTarget === 'due' ? dueDate :
-                                        currentPickerTarget === 'start' ? startTime : endTime) || new Date()
-                                }
-                                mode={pickerMode}
-                                display="default"
-                                onChange={onPickerChange}
-                            />
-                        )}
-                        {/* iOS Close Button implementation if needed for inline picker */}
-                        {Platform.OS === 'ios' && currentPickerTarget && (
-                            <TouchableOpacity style={styles.pickerDoneBtn} onPress={() => setCurrentPickerTarget(null)}>
+                {/* iOS Picker (Bottom Sheet Style) */}
+                {Platform.OS === 'ios' && currentPickerTarget && (
+                    <View style={styles.iosPickerContainer}>
+                        <View style={styles.iosPickerHeader}>
+                            <TouchableOpacity onPress={() => setCurrentPickerTarget(null)}>
                                 <Text style={styles.pickerDoneText}>完了</Text>
                             </TouchableOpacity>
-                        )}
+                        </View>
+                        <DateTimePicker
+                            value={
+                                (currentPickerTarget === 'due' ? dueDate :
+                                    currentPickerTarget === 'start' ? startTime : endTime) || new Date()
+                            }
+                            mode={pickerMode}
+                            display="spinner"
+                            onChange={onPickerChange}
+                            style={styles.iosPicker}
+                            textColor="#000000"
+                        />
                     </View>
+                )}
+
+                {/* Android Picker (Dialog) - Rendered conditionally but without wrapper */}
+                {Platform.OS === 'android' && currentPickerTarget && (
+                    <DateTimePicker
+                        value={
+                            (currentPickerTarget === 'due' ? dueDate :
+                                currentPickerTarget === 'start' ? startTime : endTime) || new Date()
+                        }
+                        mode={pickerMode}
+                        display="default"
+                        onChange={onPickerChange}
+                    />
                 )}
 
             </KeyboardAvoidingView>
@@ -524,13 +559,33 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
-    optionItem: {
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderColor: '#f8f8f8',
-    },
     optionLabel: {
         fontSize: 16,
         color: '#333',
+    },
+    // iOS Picker Styles
+    iosPickerContainer: {
+        backgroundColor: '#fff',
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100, // Ensure on top
+    },
+    iosPickerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        padding: 10,
+        backgroundColor: '#f8fafc',
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
+    iosPicker: {
+        backgroundColor: '#d1d5db', // Contrast background for white spinner text? Or just white. 
+        // Typically system picker is transparent/white. 
+        // If we force text color black, white bg is fine.
+        backgroundColor: '#fff',
     }
 });
