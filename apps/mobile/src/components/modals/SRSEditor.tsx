@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert 
 import { Repeat, Plus, Trash2, Calendar, TrendingUp } from 'lucide-react-native';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { SRSProfile } from '@pomarc/shared';
+import { generateId } from '../../lib/utils';
+
 
 export const SRSEditor = () => {
     const { profiles, addSRSProfile, deleteSRSProfile } = useMobileSRS();
@@ -23,7 +25,7 @@ export const SRSEditor = () => {
         }
 
         const newProfile: SRSProfile = {
-            id: Date.now().toString(),
+            id: generateId(),
             name: newName.trim(),
             intervals: intervals,
             isDefault: false,

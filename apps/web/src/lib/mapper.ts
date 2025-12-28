@@ -5,9 +5,14 @@ import { Todo, Session } from "@pomarc/shared";
  * Supabase client might handle some, but explicit mapping is safer.
  */
 export const mapper = {
-    toSupabase: (entity: any, userId?: string) => {
+    toSupabase: (entity: any, userId?: string, allowedFields?: string[]) => {
         const newObj: any = {};
         for (const key in entity) {
+            // If allowedFields is provided, skip keys not in it
+            if (allowedFields && !allowedFields.includes(key)) {
+                continue;
+            }
+
             // Skip Dexie internal keys if any, though usually none.
             // Convert to snake_case
             const newKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
@@ -21,7 +26,8 @@ export const mapper = {
             newObj[newKey] = value;
         }
 
-        // Add user_id if provided
+        // Add user_id if provided (This relies on user_id NOT being in allowedFields check if allowedFields is STRICT local fields only)
+        // Usually allowedFields includes ID etc. user_id is appended.
         if (userId) {
             newObj['user_id'] = userId;
         }

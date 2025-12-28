@@ -85,9 +85,31 @@ export function useSync() {
 
                 // Export to Supabase
                 if (toExport.length > 0) {
-                    const mappedExports = toExport.map(item => mapper.toSupabase(item, userId));
+                    // Define allowed fields per table to avoid sending extraneous props
+                    let allowedFields: string[] | undefined;
+
+                    if (supabaseTableName === 'categories') {
+                        allowedFields = ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'];
+                    } else if (supabaseTableName === 'todos') {
+                        allowedFields = [
+                            'id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate',
+                            'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes',
+                            'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory',
+                            'memo', 'range', 'srsInterval', 'srsGroupId'
+                        ];
+                    } else if (supabaseTableName === 'srs_profiles') {
+                        allowedFields = ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'];
+                    } else if (supabaseTableName === 'sessions') {
+                        allowedFields = ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt'];
+                    }
+
+                    const mappedExports = toExport.map(item => mapper.toSupabase(item, userId, allowedFields));
                     const { error } = await supabase.from(supabaseTableName).upsert(mappedExports);
-                    if (error) throw error;
+                    if (error) {
+                        // Enhance error logging
+                        console.error(`Sync Error details for ${supabaseTableName}:`, JSON.stringify(error, null, 2));
+                        throw error;
+                    }
                 }
 
                 return { imported: toImport.length, exported: toExport.length };

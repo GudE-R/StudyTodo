@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert 
 import { Folder, File, ChevronRight, ChevronDown, Plus, Trash2 } from 'lucide-react-native';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { Category } from '@pomarc/shared';
+import { generateId } from '../../lib/utils';
+
 
 // Utility to build tree
 const buildCategoryTree = (categories: Category[]): Category[] => {
@@ -56,7 +58,7 @@ export const CategoryEditor = () => {
     const confirmAdding = async () => {
         if (!inputName.trim() || !addingLevel) return;
         const newCat: Category = {
-            id: Date.now().toString(), // Helper in shared would be better
+            id: generateId(),
             name: inputName.trim(),
             level: addingLevel,
             parentId: addingParentId,

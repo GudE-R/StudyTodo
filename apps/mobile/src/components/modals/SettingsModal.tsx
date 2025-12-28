@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch } from 'react-native';
-import { X, Moon, Sun, Monitor, BookOpen } from 'lucide-react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndicator } from 'react-native';
+import { X, Moon, Sun, Monitor, BookOpen, RefreshCw } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { AuthModal } from './AuthModal';
 import { useThemeColors } from '../../hooks/useThemeColors';
+import { useMobileSync } from '../../hooks/useMobileSync';
 
 interface SettingsModalProps {
     visible: boolean;
@@ -16,6 +17,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     const { colors, isDark } = useThemeColors();
     const { user, signOut } = useAuth();
     const [showAuthModal, setShowAuthModal] = React.useState(false);
+    const { isSyncing, lastSyncTime, sync } = useMobileSync();
 
     const renderThemeOption = (label: string, icon: any, selected: boolean) => (
         <TouchableOpacity
@@ -69,6 +71,36 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                                         <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>Log Out</Text>
                                     </View>
                                 </TouchableOpacity>
+
+                                {/* Sync Button */}
+                                <TouchableOpacity
+                                    style={[styles.syncBtn, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}
+                                    onPress={async () => {
+                                        if (user && !isSyncing) {
+                                            await sync(user.id);
+                                            alert("Sync Complete!");
+                                        }
+                                    }}
+                                    disabled={isSyncing}
+                                >
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <View>
+                                            <Text style={[styles.syncBtnText, { color: colors.text }]}>
+                                                {isSyncing ? "Syncing..." : "Sync Now"}
+                                            </Text>
+                                            <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 2 }}>
+                                                {lastSyncTime
+                                                    ? `Last sync: ${lastSyncTime.toLocaleTimeString()}`
+                                                    : "Sync to cloud"}
+                                            </Text>
+                                        </View>
+                                        {isSyncing ? (
+                                            <ActivityIndicator size="small" color={colors.primary} />
+                                        ) : (
+                                            <RefreshCw size={20} color={colors.textSecondary} />
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         ) : (
                             <TouchableOpacity
@@ -94,7 +126,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
             </View>
 
             <AuthModal visible={showAuthModal} onClose={() => setShowAuthModal(false)} />
-        </Modal>
+        </Modal >
     );
 };
 
@@ -184,5 +216,15 @@ const styles = StyleSheet.create({
     actionBtnText: {
         fontSize: 14,
         fontWeight: 'bold',
+    },
+    syncBtn: {
+        marginTop: 10,
+        padding: 15,
+        borderRadius: 10,
+        borderWidth: 1,
+    },
+    syncBtnText: {
+        fontSize: 14,
+        fontWeight: '600',
     }
 });
