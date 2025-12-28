@@ -58,6 +58,7 @@
 *   **Styling**: Tailwind CSS v4 (Web), StyleSheet (Mobile)
 *   **Database**: Dexie.js (Web), expo-sqlite (Mobile) - Abstracted via Repository Pattern
 *   **Architecture**: Monorepo (pnpm workspaces)
+    *   **Note**: Mobile版は `packages/shared` を利用しているが、Web版は現在独自の型定義を使用しており、データモデルに一部乖離がある（検証済み）。将来的な統合が必要。
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 
 ---
