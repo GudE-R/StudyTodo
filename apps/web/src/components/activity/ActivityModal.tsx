@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, eachDayOfInterval, eachMonthOfInterval, getMonth, getYear } from "date-fns";
 import { ja } from "date-fns/locale";
 import { X, BarChart2, History, Trash2, Filter } from "lucide-react";
-import { Session, Todo, Category } from "@/types";
+import { Session, Todo, Category } from "@pomarc/shared";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 

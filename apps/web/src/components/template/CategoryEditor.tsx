@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File } from "lucide-react";
-import { Category } from "@/types";
+import { Category } from "@pomarc/shared";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { generateId, buildCategoryTree } from "@/lib/utils";

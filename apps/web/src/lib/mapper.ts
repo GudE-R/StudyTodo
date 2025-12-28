@@ -1,4 +1,4 @@
-import { Todo, Session } from "@/types";
+import { Todo, Session } from "@pomarc/shared";
 
 /**
  * App uses camelCase, DB uses snake_case.

@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { format, addDays, subDays, isSameDay } from "date-fns";
 import { ja } from "date-fns/locale";
 
-import { Todo } from "@/types";
+import { Todo } from "@pomarc/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface DayScheduleProps {

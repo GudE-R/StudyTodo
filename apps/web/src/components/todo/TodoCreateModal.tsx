@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass } from "lucide-react";
 import { format } from "date-fns";
-import { Todo, Category, SRSProfile } from "@/types";
+import { Todo, Category, SRSProfile } from "@pomarc/shared";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TimePicker } from "@/components/ui/TimePicker";
 

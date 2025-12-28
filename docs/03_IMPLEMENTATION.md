@@ -75,6 +75,9 @@
     - **TodoCreateModal**: タイトル入力のフォントサイズをMobile版に合わせて拡大 (20px)。
 - **バグ修正**:
     - **Supabase**: 環境変数の欠落によるコンソールエラーを修正（`.env.local`作成）。
+- **リファクタリング (Tech Debt)**:
+    - **Sharedパッケージ導入**: Web版独自の型定義 (`apps/web/src/types/index.ts`) を廃止し、`@pomarc/shared` を導入してデータモデルをMobile版と統一。
+    - **型安全性向上**: Dexie.js のテーブル定義を更新し、再帰的型定義 (`Category`) による循環参照エラーを回避。
 
 ### [Environment] - 2025-12-27
 #### 変更

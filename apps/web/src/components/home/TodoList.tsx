@@ -3,7 +3,7 @@
 import React from "react";
 import { Circle, CheckCircle, GripVertical, PlayCircle } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { Todo, Category } from "@/types";
+import { Todo, Category } from "@pomarc/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface TodoListProps {

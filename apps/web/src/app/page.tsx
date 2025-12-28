@@ -19,7 +19,7 @@ import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { Todo } from "@/types";
+import { Todo } from "@pomarc/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
 import { useSync } from "@/hooks/useSync";
@@ -144,10 +144,11 @@ export default function Home() {
   };
 
   const handleRecordTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">, duration: number) => {
+    const createdAt = todoData.dueDate ? new Date(todoData.dueDate) : new Date();
     const newTodo: Todo = {
       ...todoData,
       id: generateId(),
-      createdAt: todoData.dueDate || new Date(),
+      createdAt: createdAt,
       completed: true,
     };
     await dataService.addTodo(newTodo);
@@ -156,7 +157,7 @@ export default function Home() {
       todoId: newTodo.id,
       todoTitle: newTodo.title,
       duration: duration,
-      createdAt: newTodo.createdAt,
+      createdAt: createdAt,
       mode: "pomodoro",
     });
     setIsTodoModalOpen(false);

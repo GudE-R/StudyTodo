@@ -5,7 +5,7 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInte
 import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Session } from "@/types";
+import { Session } from "@pomarc/shared";
 
 interface CalendarPaneProps {
     selectedDate?: Date;

@@ -1,10 +1,10 @@
 import Dexie, { Table } from 'dexie';
-import { Todo, Category, SRSProfile, Session } from '@/types';
+import { Todo, Category, SRSProfile, Session } from '@pomarc/shared';
 import { generateId } from '@/lib/utils';
 
 export class PomArcDatabase extends Dexie {
     todos!: Table<Todo>;
-    categories!: Table<Category>;
+    categories!: Table<Omit<Category, 'children'>>;
     srsProfiles!: Table<SRSProfile>;
     sessions!: Table<Session>;
 

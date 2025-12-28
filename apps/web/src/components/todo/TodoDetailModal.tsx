@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { Todo, Category } from "@/types";
+import { Todo, Category } from "@pomarc/shared";
 
 interface TodoDetailModalProps {
     isOpen: boolean;

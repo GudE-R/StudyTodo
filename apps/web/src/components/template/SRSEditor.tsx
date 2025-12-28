@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Plus, Trash2, TrendingUp, Calendar } from "lucide-react";
-import { SRSProfile } from "@/types";
+import { SRSProfile } from "@pomarc/shared";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { generateId } from "@/lib/utils";
