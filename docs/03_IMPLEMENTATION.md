@@ -78,6 +78,10 @@
 - **リファクタリング (Tech Debt)**:
     - **Sharedパッケージ導入**: Web版独自の型定義 (`apps/web/src/types/index.ts`) を廃止し、`@pomarc/shared` を導入してデータモデルをMobile版と統一。
     - **型安全性向上**: Dexie.js のテーブル定義を更新し、再帰的型定義 (`Category`) による循環参照エラーを回避。
+- **機能追加 (Web Auth)**:
+    - **AuthContext**: アプリケーション全体で認証状態を管理するContextを実装。
+    - **AuthModal**: `useAuth` フックを利用するようにリファクタリングし、ログイン/サインアップ処理を共通化。
+    - **SettingsModal**: ログイン状態に応じたUI切り替え（ユーザー情報表示、ログアウト）を実装。
 
 ### [Environment] - 2025-12-27
 #### 変更

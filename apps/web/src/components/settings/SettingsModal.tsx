@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { X, Palette, BookOpen, Database, Download, Cloud, LogOut } from "lucide-react";
 import { ThemeEditor } from "../template/ThemeEditor";
 import { exportToJson, exportSessionsToCsv } from "@/lib/export";
@@ -20,21 +20,15 @@ interface SettingsModalProps {
  * テーマ設定と使用ガイドへのアクセスを提供します。
  */
 export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: SettingsModalProps) {
+    const { user, signOut } = useAuth();
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
     useEffect(() => {
-        if (isOpen) {
-            checkUser();
-        }
-    }, [isOpen]);
-
-    const checkUser = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
         setUserEmail(user?.email ?? null);
-    };
+    }, [user]);
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
+        await signOut();
         setUserEmail(null);
         alert("ログアウトしました");
     };

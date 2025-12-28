@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { X, Mail, Lock, LogIn, UserPlus } from "lucide-react";
 
 interface AuthModalProps {
@@ -18,6 +18,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     if (!isOpen) return null;
 
+    const { signIn, signUp } = useAuth();
+
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -26,19 +28,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         try {
             if (isLoginMode) {
                 // Login
-                const { error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password,
-                });
+                const { error } = await signIn(email, password);
                 if (error) throw error;
                 setMessage({ text: "ログインに成功しました！", type: "success" });
                 setTimeout(onClose, 1500);
             } else {
                 // Sign Up
-                const { error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                });
+                const { error } = await signUp(email, password);
                 if (error) throw error;
                 setMessage({ text: "確認メールを送信しました。メールボックスを確認してください。", type: "success" });
             }
