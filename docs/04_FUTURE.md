@@ -21,7 +21,7 @@ Web版を「最強のデスクトップツール」として完成させます�
 
 ### フェーズ 3: クラウド同期とモバイル展開 (In Progress)
 モバイル対応への布石として、データ基盤を刷新してからNativeアプリへ移行します。
-- [ ] **Mobile版クラウド同期**: Web版で実装した同期ロジック (`useSync`) をMobile版にも移植し、データの完全同期を実現する。
+- [x] **Mobile版クラウド同期**: Web版で実装した同期ロジック (`useSync`) をMobile版にも移植し、データの完全同期を実現する。
 - [ ] **リアルタイム同期**: Supabase Realtimeを利用して、変更を即座に反映させる。
 - [ ] **オフライン対応**: Mobile/Web共に、オフライン時のデータ作成とオンライン復帰時の同期を堅牢にする。
 - [x] **Nativeモバイルアプリ開発**: React Native (Expo) によるiOS/Androidアプリ開発（Todo, Schedule, Calendar, Template, Activity, Timer 機能実装完了）。
