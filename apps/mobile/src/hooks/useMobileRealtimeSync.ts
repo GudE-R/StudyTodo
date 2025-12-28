@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRepository } from '../providers/RepositoryProvider';
 import { mapper } from '../lib/mapper';
+import { SQLiteRepository } from '../repositories/SQLiteRepository';
 
 export function useMobileRealtimeSync(userId: string | undefined) {
-    const repo = useRepository();
+    const repo = useRepository() as SQLiteRepository;
     const isProcessingCloudChange = useRef(false);
 
     useEffect(() => {
@@ -85,7 +86,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
         });
 
         // 2. Subscribe to Local Repository Changes (Sender/Push)
-        repo.onDataChange?.(async (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => {
+        repo.onDataChange(async (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => {
             // Skip if this change was triggered by the cloud sync above or by a full sync
             if (isProcessingCloudChange.current) return;
 

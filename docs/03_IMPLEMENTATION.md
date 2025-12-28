@@ -88,6 +88,12 @@
     - **Supabaseスキーマ更新**: `migration_add_missing_columns.sql` で不足カラムを追加
     - **ID生成**: Mobile版で`expo-crypto`を使用したUUID生成に統一
     - **Mobile Auth**: Mobile版 (`apps/mobile`) に `expo-secure-store` と `Supabase` を導入し、認証機能 (`AuthProvider`, `AuthModal`, `SettingsModal`) を実装。
+- **Realtime Sync (Automatic Bidirectional Sync)**:
+    - **Web版**: `useRealtimeSync.ts` 実装。Dexie の `hook('creating/updating/deleting')` を利用してローカルの変更を即座にクラウドへPush。Supabase Realtimeによる即時Pull。
+    - **Mobile版**: `SQLiteRepository` に `onDataChange` 監視を追加。`useMobileRealtimeSync.ts` フックにより即時双方向同期を実現。
+    - **ループ防止**: `trans.source === 'sync'` (Web) や `isProcessingCloudChange` フラグ (Mobile) を導入し、同期による変更の再送信を防止。
+    - **Supabaseスキーマ修正**: アプリ側のデータモデルに合わせて `estimated_duration`, `notes`, `due_time`, `end_time` カラムを `todos` テーブルへ追加。
+    - **型不整合の解決**: `packages/shared` の `StorageInterface` を拡張し、モノレポ内での型定義不整合を解消（ビルドとキャストによる対応）。
 
 ### [Environment] - 2025-12-28
 #### 変更

@@ -42,7 +42,7 @@ create table public.todos (
   completed boolean default false,
   due_date timestamp with time zone,
   priority text default 'medium',
-  estimated_time integer, -- minutes
+  estimated_duration integer, -- minutes
   category_id uuid references public.categories(id),
   srs_profile_id uuid references public.srs_profiles(id),
   srs_level integer default 0,

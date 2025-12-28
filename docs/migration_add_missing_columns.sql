@@ -6,6 +6,9 @@ ALTER TABLE public.todos ADD COLUMN IF NOT EXISTS actual_duration integer defaul
 ALTER TABLE public.todos ADD COLUMN IF NOT EXISTS tags jsonb;
 ALTER TABLE public.todos ADD COLUMN IF NOT EXISTS review_history jsonb;
 ALTER TABLE public.todos ADD COLUMN IF NOT EXISTS srs_group_id uuid;
+ALTER TABLE public.todos ADD COLUMN IF NOT EXISTS estimated_duration integer;
+-- If you have 'estimated_time' column from old schema, rename it:
+-- ALTER TABLE public.todos RENAME COLUMN estimated_time TO estimated_duration;
 
 -- Add missing columns to 'categories'
 ALTER TABLE public.categories ADD COLUMN IF NOT EXISTS level text;

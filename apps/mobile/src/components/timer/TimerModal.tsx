@@ -5,7 +5,7 @@ import { X, Play, Pause, Save, RotateCcw } from 'lucide-react-native';
 import { Todo, Session } from '@pomarc/shared';
 import * as Crypto from 'expo-crypto';
 import { useTimer, TimerMode } from '../../hooks/useTimer';
-import { useSRS } from '../../hooks/useSRS';
+import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { format } from 'date-fns';
 
 interface TimerModalProps {
@@ -54,7 +54,7 @@ export const TimerModal = ({ visible, onClose, todo, onSaveSession }: TimerModal
         else if (newMode === 'stopwatch') resetTimer(0);
     };
 
-    const { processReview } = useSRS();
+    const { processReview } = useMobileSRS();
 
     const saveSession = async () => {
         if (elapsed < 5) { // Too short
