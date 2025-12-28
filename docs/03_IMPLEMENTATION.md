@@ -82,8 +82,9 @@
     - **AuthContext**: アプリケーション全体で認証状態を管理するContextを実装。
     - **AuthModal**: `useAuth` フックを利用するようにリファクタリングし、ログイン/サインアップ処理を共通化。
     - **SettingsModal**: ログイン状態に応じたUI切り替え（ユーザー情報表示、ログアウト）を実装。
+    - **Cloud Sync**: `useSync` フックと `mapper.ts` を強化し、Dexie.js (Web) と Supabase (Cloud) の双方向同期（Pull/Push, Merge）を実装。
 
-### [Environment] - 2025-12-27
+### [Environment] - 2025-12-28
 #### 変更
 - **Node.js バージョンアップ**: Next.js 15 の要件を満たすため、Node.js を v18 から v20 (LTS) にアップグレード (via NVM)。
 

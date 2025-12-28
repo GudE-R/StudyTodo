@@ -10,6 +10,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+    const { signIn, signUp } = useAuth();
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,8 +18,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
     if (!isOpen) return null;
-
-    const { signIn, signUp } = useAuth();
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();

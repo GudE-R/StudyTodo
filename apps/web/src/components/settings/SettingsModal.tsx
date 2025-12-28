@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { X, Palette, BookOpen, Database, Download, Cloud, LogOut } from "lucide-react";
 import { ThemeEditor } from "../template/ThemeEditor";
 import { exportToJson, exportSessionsToCsv } from "@/lib/export";
-import { migrateLocalToCloud } from "@/lib/migration";
+import { useSync } from "@/hooks/useSync";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -21,6 +21,7 @@ interface SettingsModalProps {
  */
 export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: SettingsModalProps) {
     const { user, signOut } = useAuth();
+    const { sync, isSyncing, lastSyncTime } = useSync();
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
     useEffect(() => {
@@ -129,26 +130,30 @@ export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: Sett
                         )}
 
                         {userEmail && (
-                            <button
-                                onClick={async () => {
-                                    if (confirm("ローカルデータをクラウドにアップロードしますか？\n（既存のクラウドデータは上書きされる可能性があります）")) {
-                                        try {
-                                            const result = await migrateLocalToCloud();
-                                            alert(`完了しました！\nTodos: ${result.todos}件\nSessions: ${result.sessions}件`);
-                                            onClose();
-                                        } catch (e: any) {
-                                            alert(`エラー: ${e.message}`);
+                            <div className="space-y-2">
+                                <button
+                                    onClick={async () => {
+                                        if (user && !isSyncing) {
+                                            await sync(user.id);
+                                            alert("同期が完了しました！");
                                         }
-                                    }
-                                }}
-                                className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
-                            >
-                                <div className="flex flex-col items-start">
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">クラウドへアップロード (移行)</span>
-                                    <span className="text-xs text-gray-400">現在のデータをクラウドDBに保存</span>
-                                </div>
-                                <Database size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
-                            </button>
+                                    }}
+                                    disabled={isSyncing}
+                                    className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <div className="flex flex-col items-start">
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            {isSyncing ? "同期中..." : "今すぐ同期"}
+                                        </span>
+                                        <span className="text-xs text-gray-400">
+                                            {lastSyncTime
+                                                ? `最終同期: ${lastSyncTime.toLocaleTimeString()}`
+                                                : "データをクラウドと同期"}
+                                        </span>
+                                    </div>
+                                    <Database size={18} className={`text-gray-400 group-hover:text-blue-500 transition-colors ${isSyncing ? "animate-spin" : ""}`} />
+                                </button>
+                            </div>
                         )}
                     </div>
 

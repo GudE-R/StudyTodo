@@ -4,11 +4,12 @@ import { Todo, Session } from "@pomarc/shared";
  * App uses camelCase, DB uses snake_case.
  * Supabase client might handle some, but explicit mapping is safer.
  */
-
 export const mapper = {
-    toSupabase: (entity: any) => {
+    toSupabase: (entity: any, userId?: string) => {
         const newObj: any = {};
         for (const key in entity) {
+            // Skip Dexie internal keys if any, though usually none.
+            // Convert to snake_case
             const newKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
             let value = entity[key];
 
@@ -19,17 +20,26 @@ export const mapper = {
 
             newObj[newKey] = value;
         }
+
+        // Add user_id if provided
+        if (userId) {
+            newObj['user_id'] = userId;
+        }
+
         return newObj;
     },
 
     fromSupabase: (entity: any) => {
         const newObj: any = {};
         for (const key in entity) {
+            // Skip system fields not needed in local DB
+            if (key === 'user_id') continue;
+
             const newKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
             let value = entity[key];
 
-            // Basic heuristic for Dates: if key contains 'At' or 'Date' and value is string
-            if ((newKey.endsWith('At') || newKey.endsWith('Date')) && typeof value === 'string') {
+            // Date conversion
+            if ((newKey.endsWith('At') || newKey.endsWith('Date') || key === 'due_date') && typeof value === 'string' && value) {
                 value = new Date(value);
             }
 
