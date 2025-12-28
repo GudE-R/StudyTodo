@@ -7,10 +7,19 @@ import * as SQLite from 'expo-sqlite';
  */
 export class SQLiteRepository implements StorageInterface {
     private db: SQLite.SQLiteDatabase;
+    private onChangeListeners: ((table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void)[] = [];
 
     constructor() {
         this.db = SQLite.openDatabaseSync('pomarc.db');
         this.init();
+    }
+
+    onDataChange(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void) {
+        this.onChangeListeners.push(callback);
+    }
+
+    private notifyChange(table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) {
+        this.onChangeListeners.forEach(listener => listener(table, type, data));
     }
 
     private init() {
@@ -138,6 +147,7 @@ export class SQLiteRepository implements StorageInterface {
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.reviewHistory]
         );
+        this.notifyChange('todos', 'INSERT', todo);
     }
 
     async updateTodo(id: string, updates: Partial<Todo>): Promise<void> {
@@ -150,10 +160,15 @@ export class SQLiteRepository implements StorageInterface {
         const values = keys.map(k => row[k]);
 
         await this.db.runAsync(`UPDATE todos SET ${setClause} WHERE id = ?`, [...values, id]);
+
+        // Fetch full updated item for notification
+        const updated = await this.getTodo(id);
+        if (updated) this.notifyChange('todos', 'UPDATE', updated);
     }
 
     async deleteTodo(id: string): Promise<void> {
         await this.db.runAsync('DELETE FROM todos WHERE id = ?', [id]);
+        this.notifyChange('todos', 'DELETE', { id });
     }
 
     // Categories
@@ -169,6 +184,7 @@ export class SQLiteRepository implements StorageInterface {
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [row.id, row.name, row.parentId, row.level, row.isDefault, row.order, row.createdAt, row.updatedAt] // quote order
         );
+        this.notifyChange('categories', 'INSERT', category);
     }
 
     async updateCategory(id: string, updates: Partial<Category>): Promise<void> {
@@ -181,10 +197,15 @@ export class SQLiteRepository implements StorageInterface {
         const values = keys.map(k => row[k]);
 
         await this.db.runAsync(`UPDATE categories SET ${setClause} WHERE id = ?`, [...values, id]);
+
+        // Notify change with updated record
+        const rows = await this.db.getAllAsync('SELECT * FROM categories WHERE id = ?', [id]);
+        if (rows.length > 0) this.notifyChange('categories', 'UPDATE', this.fromDB(rows[0]));
     }
 
     async deleteCategory(id: string): Promise<void> {
         await this.db.runAsync('DELETE FROM categories WHERE id = ?', [id]);
+        this.notifyChange('categories', 'DELETE', { id });
     }
 
     // SRS Profiles
@@ -200,6 +221,7 @@ export class SQLiteRepository implements StorageInterface {
              VALUES (?, ?, ?, ?, ?, ?)`,
             [row.id, row.name, row.intervals, row.isDefault, row.createdAt, row.updatedAt]
         );
+        this.notifyChange('srs_profiles', 'INSERT', profile);
     }
 
     async updateSRSProfile(id: string, updates: Partial<SRSProfile>): Promise<void> {
@@ -211,10 +233,14 @@ export class SQLiteRepository implements StorageInterface {
         const values = keys.map(k => row[k]);
 
         await this.db.runAsync(`UPDATE srsProfiles SET ${setClause} WHERE id = ?`, [...values, id]);
+
+        const rows = await this.db.getAllAsync('SELECT * FROM srsProfiles WHERE id = ?', [id]);
+        if (rows.length > 0) this.notifyChange('srs_profiles', 'UPDATE', this.fromDB(rows[0]));
     }
 
     async deleteSRSProfile(id: string): Promise<void> {
         await this.db.runAsync('DELETE FROM srsProfiles WHERE id = ?', [id]);
+        this.notifyChange('srs_profiles', 'DELETE', { id });
     }
 
     // Sessions
@@ -225,6 +251,7 @@ export class SQLiteRepository implements StorageInterface {
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [row.id, row.todoId, row.todoTitle, row.startTime, row.endTime, row.duration, row.mode, row.createdAt]
         );
+        this.notifyChange('sessions', 'INSERT', session);
     }
 
     async getSessions(): Promise<Session[]> {

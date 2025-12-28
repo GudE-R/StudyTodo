@@ -38,4 +38,6 @@ export interface StorageInterface {
     addSession(session: Session): Promise<void>;
     /** 学習セッションの履歴を取得します */
     getSessions(): Promise<Session[]>;
+    /** データ変更時のコールバックを登録します (リアルタイム同期用) */
+    onDataChange?(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void): void;
 }

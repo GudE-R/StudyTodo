@@ -2,24 +2,29 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { db } from "@/lib/db";
 import { mapper } from "@/lib/mapper";
+import { useRealtimeSync } from "./useRealtimeSync";
 
 /**
  * useSync Hook
  * 認証状態を監視し、ログイン時(およびアプリ起動時)にクラウドから最新データを取得して
  * ローカルDB(Dexie)にマージします。
+ * また、リアルタイム同期リスナーを有効にします。
  */
 export function useSync() {
     const [isSyncing, setIsSyncing] = useState(false);
     const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+    const [userId, setUserId] = useState<string | undefined>();
 
-    const sync = async (userId: string) => {
+    const sync = async (uId: string) => {
         if (isSyncing) return;
         setIsSyncing(true);
-        console.log("Starting Sync...");
+        console.log("Starting Full Sync...");
+
+        // Set userId for DB hooks
+        db.setUserId(uId);
 
         try {
-            // 1. Fetch all data from both sources
-            // Supabase
+            // ... (fetching cloud/local data)
             const { data: cloudTodos, error: todoError } = await supabase.from('todos').select('*');
             const { data: cloudSessions, error: sessionError } = await supabase.from('sessions').select('*');
             const { data: cloudCategories, error: catError } = await supabase.from('categories').select('*');
@@ -30,17 +35,15 @@ export function useSync() {
             if (catError) throw catError;
             if (srsError) throw srsError;
 
-            // Dexie
             const localTodos = await db.todos.toArray();
             const localSessions = await db.sessions.toArray();
             const localCategories = await db.categories.toArray();
             const localSrs = await db.srsProfiles.toArray();
 
-            // 2. Merge Logic (Last Write Wins)
             const processTable = async (
                 localItems: any[],
                 cloudItems: any[],
-                tableName: 'categories' | 'todos' | 'sessions' | 'srs_profiles' | 'srsProfiles', // Dexie table name
+                tableName: 'categories' | 'todos' | 'sessions' | 'srsProfiles',
                 supabaseTableName: string
             ) => {
                 const cloudMap = new Map(cloudItems.map(i => [i.id, mapper.fromSupabase(i)]));
@@ -49,14 +52,11 @@ export function useSync() {
                 const toImport: any[] = [];
                 const toExport: any[] = [];
 
-                // Check Cloud items against Local
                 for (const [id, cloudItem] of cloudMap) {
                     const localItem = localMap.get(id);
                     if (!localItem) {
-                        // Cloud has it, Local doesn't -> Import
                         toImport.push(cloudItem);
                     } else {
-                        // Both have it -> Compare updatedAt
                         const cloudTime = new Date(cloudItem.updatedAt || 0).getTime();
                         const localTime = new Date(localItem.updatedAt || 0).getTime();
 
@@ -68,59 +68,49 @@ export function useSync() {
                     }
                 }
 
-                // Check Local items strictly for missing in Cloud (New items)
                 for (const [id, localItem] of localMap) {
                     if (!cloudMap.has(id)) {
                         toExport.push(localItem);
                     }
                 }
 
-                // 3. Apply changes
-
-                // Import to Dexie
+                // Apply changes using transaction with source='sync' to prevent loops
                 if (toImport.length > 0) {
-                    // @ts-ignore
-                    await db[tableName].bulkPut(toImport);
+                    await db.transaction('rw', db[tableName], (trans) => {
+                        // @ts-ignore
+                        trans.source = 'sync';
+                        // @ts-ignore
+                        return db[tableName].bulkPut(toImport);
+                    });
                 }
 
-                // Export to Supabase
                 if (toExport.length > 0) {
-                    // Define allowed fields per table to avoid sending extraneous props
                     let allowedFields: string[] | undefined;
-
+                    // ... (allowedFields definition)
                     if (supabaseTableName === 'categories') {
                         allowedFields = ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'];
                     } else if (supabaseTableName === 'todos') {
-                        allowedFields = [
-                            'id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate',
-                            'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes',
-                            'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory',
-                            'memo', 'range', 'srsInterval', 'srsGroupId'
-                        ];
+                        allowedFields = ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'];
                     } else if (supabaseTableName === 'srs_profiles') {
                         allowedFields = ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'];
                     } else if (supabaseTableName === 'sessions') {
                         allowedFields = ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt'];
                     }
 
-                    const mappedExports = toExport.map(item => mapper.toSupabase(item, userId, allowedFields));
+                    const mappedExports = toExport.map(item => mapper.toSupabase(item, uId, allowedFields));
                     const { error } = await supabase.from(supabaseTableName).upsert(mappedExports);
-                    if (error) {
-                        // Enhance error logging
-                        console.error(`Sync Error details for ${supabaseTableName}:`, JSON.stringify(error, null, 2));
-                        throw error;
-                    }
+                    if (error) throw error;
                 }
 
                 return { imported: toImport.length, exported: toExport.length };
             };
 
             await processTable(localCategories, cloudCategories, 'categories', 'categories');
-            await processTable(localSrs, cloudSrs, 'srsProfiles', 'srs_profiles'); // Note: Dexie table is srsProfiles
+            await processTable(localSrs, cloudSrs, 'srsProfiles', 'srs_profiles');
             await processTable(localTodos, cloudTodos, 'todos', 'todos');
             await processTable(localSessions, cloudSessions, 'sessions', 'sessions');
 
-            console.log("Sync Complete.");
+            console.log("Full Sync Complete.");
             setLastSyncTime(new Date());
 
         } catch (error) {
@@ -130,13 +120,19 @@ export function useSync() {
         }
     };
 
-    // Auto-pull on login is now actually a full sync to ensure consistency?
-    // Or just pull? Full sync is safer but maybe heavier. 
-    // Let's do full sync to ensure "Login on new device -> Get data" AND "Login on old device -> Push pending"
+    // Activate Realtime Subscription
+    useRealtimeSync(userId);
+
     useEffect(() => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+                setUserId(session.user.id);
+                // Also set it on db directly for direct writes before sync finishes
+                db.setUserId(session.user.id);
                 await sync(session.user.id);
+            } else if (event === 'SIGNED_OUT') {
+                setUserId(undefined);
+                db.setUserId(null);
             }
         });
 

@@ -8,18 +8,16 @@ export class PomArcDatabase extends Dexie {
     srsProfiles!: Table<SRSProfile>;
     sessions!: Table<Session>;
 
+    private currentUserId: string | null = null;
+
+    setUserId(id: string | null) {
+        this.currentUserId = id;
+    }
+
     constructor() {
         super('PomArcDB_v2');
 
-        // Version 2
-        this.version(2).stores({
-            todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt',
-            categories: 'id, parentId, order, createdAt, updatedAt',
-            srsProfiles: 'id, isDefault, createdAt, updatedAt',
-            sessions: 'id, todoId, createdAt'
-        });
-
-        // Version 3: Added srsGroupId index
+        // ... (stores configuration)
         this.version(3).stores({
             todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt, srsGroupId',
             categories: 'id, parentId, order, createdAt, updatedAt',
@@ -27,9 +25,70 @@ export class PomArcDatabase extends Dexie {
             sessions: 'id, todoId, createdAt'
         });
 
+        // Setup hooks for realtime push
+        this.setupHooks();
+
         // Populate with initial data
         this.on('populate', () => {
             this.populateInitialData();
+        });
+    }
+
+    private setupHooks() {
+        const tables = ['todos', 'categories', 'srsProfiles', 'sessions'];
+        const supabaseTableMap: Record<string, string> = {
+            'todos': 'todos',
+            'categories': 'categories',
+            'srsProfiles': 'srs_profiles',
+            'sessions': 'sessions'
+        };
+
+        const allowedFieldsMap: Record<string, string[]> = {
+            'todos': ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'],
+            'categories': ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'],
+            'srsProfiles': ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'],
+            'sessions': ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt']
+        };
+
+        tables.forEach(tableName => {
+            // @ts-ignore
+            this[tableName].hook('creating', (primKey, obj, trans) => {
+                // @ts-ignore
+                if (trans.source === 'sync' || !this.currentUserId) return;
+
+                // Trigger async push
+                setTimeout(async () => {
+                    const { supabase } = await import('./supabase');
+                    const { mapper } = await import('./mapper');
+                    const mapped = mapper.toSupabase(obj, this.currentUserId!, allowedFieldsMap[tableName]);
+                    await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
+                }, 0);
+            });
+
+            // @ts-ignore
+            this[tableName].hook('updating', (mods, primKey, obj, trans) => {
+                // @ts-ignore
+                if (trans.source === 'sync' || !this.currentUserId) return;
+
+                const updatedObj = { ...obj, ...mods };
+                setTimeout(async () => {
+                    const { supabase } = await import('./supabase');
+                    const { mapper } = await import('./mapper');
+                    const mapped = mapper.toSupabase(updatedObj, this.currentUserId!, allowedFieldsMap[tableName]);
+                    await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
+                }, 0);
+            });
+
+            // @ts-ignore
+            this[tableName].hook('deleting', (primKey, obj, trans) => {
+                // @ts-ignore
+                if (trans.source === 'sync' || !this.currentUserId) return;
+
+                setTimeout(async () => {
+                    const { supabase } = await import('./supabase');
+                    await supabase.from(supabaseTableMap[tableName]).delete().eq('id', primKey);
+                }, 0);
+            });
         });
     }
 
