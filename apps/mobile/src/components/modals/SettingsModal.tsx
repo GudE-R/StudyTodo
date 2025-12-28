@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch } from 'react-native';
 import { X, Moon, Sun, Monitor, BookOpen } from 'lucide-react-native';
+import { useAuth } from '../../providers/AuthProvider';
+import { AuthModal } from './AuthModal';
 import { useThemeColors } from '../../hooks/useThemeColors';
 
 interface SettingsModalProps {
@@ -12,6 +14,8 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // Note: Theme switching logic is not fully implemented in valid React Native without a Context.
     // For now, this is UI only.
     const { colors, isDark } = useThemeColors();
+    const { user, signOut } = useAuth();
+    const [showAuthModal, setShowAuthModal] = React.useState(false);
 
     const renderThemeOption = (label: string, icon: any, selected: boolean) => (
         <TouchableOpacity
@@ -45,6 +49,38 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                             {renderThemeOption("System", <Monitor size={24} color={isDark ? '#fff' : '#000'} />, false)}
                         </View>
 
+                        {/* Cloud Sync / Account */}
+                        <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>Account</Text>
+
+                        {user ? (
+                            <View>
+                                <View style={[styles.userInfo, { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff', borderColor: '#bfdbfe' }]}>
+                                    <Text style={[styles.userLabel, { color: '#2563eb' }]}>LOGGED IN AS</Text>
+                                    <Text style={[styles.userEmail, { color: colors.text }]}>{user.email}</Text>
+                                </View>
+                                <TouchableOpacity
+                                    style={[styles.actionBtn, { borderColor: user ? '#ef4444' : colors.border, marginTop: 10 }]}
+                                    onPress={async () => {
+                                        await signOut();
+                                        alert("Logged out");
+                                    }}
+                                >
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>Log Out</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <TouchableOpacity
+                                style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}
+                                onPress={() => setShowAuthModal(true)}
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={[styles.actionBtnText, { color: colors.text }]}>Log In / Sign Up</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+
                         {/* Guide */}
                         <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>About App</Text>
                         <TouchableOpacity style={[styles.guideBtn, { borderColor: colors.border }]}>
@@ -56,6 +92,8 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                     </View>
                 </View>
             </View>
+
+            <AuthModal visible={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </Modal>
     );
 };
@@ -121,5 +159,30 @@ const styles = StyleSheet.create({
     guideText: {
         marginLeft: 10,
         fontWeight: '500',
+    },
+    userInfo: {
+        padding: 15,
+        borderRadius: 10,
+        borderWidth: 1,
+        marginBottom: 10,
+    },
+    userLabel: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    userEmail: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    actionBtn: {
+        padding: 15,
+        borderRadius: 10,
+        borderWidth: 1,
+        alignItems: 'center',
+    },
+    actionBtnText: {
+        fontSize: 14,
+        fontWeight: 'bold',
     }
 });

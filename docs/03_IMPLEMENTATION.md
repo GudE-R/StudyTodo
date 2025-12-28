@@ -83,6 +83,7 @@
     - **AuthModal**: `useAuth` フックを利用するようにリファクタリングし、ログイン/サインアップ処理を共通化。
     - **SettingsModal**: ログイン状態に応じたUI切り替え（ユーザー情報表示、ログアウト）を実装。
     - **Cloud Sync**: `useSync` フックと `mapper.ts` を強化し、Dexie.js (Web) と Supabase (Cloud) の双方向同期（Pull/Push, Merge）を実装。
+    - **Mobile Auth**: Mobile版 (`apps/mobile`) に `expo-secure-store` と `Supabase` を導入し、認証機能 (`AuthProvider`, `AuthModal`, `SettingsModal`) を実装。
 
 ### [Environment] - 2025-12-28
 #### 変更
