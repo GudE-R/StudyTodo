@@ -9,7 +9,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
         [Supabase Error] Environment variables missing.
         NEXT_PUBLIC_SUPABASE_URL: ${supabaseUrl ? "Loaded" : "Missing"}
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${supabaseAnonKey ? "Loaded" : "Missing"}
-        Please check d:/PomArc/.env.local content format.
+        Please check .env.local content format.
     `);
 }
 

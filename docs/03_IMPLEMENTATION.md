@@ -67,6 +67,15 @@
 
 これまでの主要な変更履歴です。
 
+### [Web UI Parity] - 2025-12-XX
+#### 修正/変更 (Web)
+- **Mobile版との同等性向上 (Layout & UX)**:
+    - **DateBar**: Mobile版に合わせてUserアイコンを削除し、日付フォントサイズを拡大。
+    - **BottomActions**: テンプレートアイコンを `LayoutTemplate` から `FolderTree` (Mobile版と同等の意匠) に変更。
+    - **TodoCreateModal**: タイトル入力のフォントサイズをMobile版に合わせて拡大 (20px)。
+- **バグ修正**:
+    - **Supabase**: 環境変数の欠落によるコンソールエラーを修正（`.env.local`作成）。
+
 ### [Environment] - 2025-12-27
 #### 変更
 - **Node.js バージョンアップ**: Next.js 15 の要件を満たすため、Node.js を v18 から v20 (LTS) にアップグレード (via NVM)。

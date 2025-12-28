@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutTemplate, Plus, X, BarChart2 } from "lucide-react";
+import { FolderTree, Plus, X, BarChart2 } from "lucide-react";
 
 interface BottomActionsProps {
     onOpenTodoModal: () => void;
@@ -29,7 +29,7 @@ export function BottomActions({
                 className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 space-y-1.5 px-4 group"
             >
                 <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
-                    <LayoutTemplate size={24} />
+                    <FolderTree size={24} />
                 </div>
                 <span className="text-xs font-medium">テンプレート</span>
             </button>

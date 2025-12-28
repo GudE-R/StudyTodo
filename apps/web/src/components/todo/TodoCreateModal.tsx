@@ -217,7 +217,7 @@ export function TodoCreateModal({
                             placeholder="タスク名 (任意)"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            className="w-full text-lg font-medium border-b-2 border-blue-100 focus:border-blue-500 outline-none py-2 placeholder-gray-300"
+                            className="w-full text-xl font-medium border-b-2 border-blue-100 focus:border-blue-500 outline-none py-2 placeholder-gray-300"
                         />
                     </div>
 

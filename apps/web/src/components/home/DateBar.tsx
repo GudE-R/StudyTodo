@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { User, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -32,21 +32,16 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
 
     return (
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
-            {/* プロフィールアイコン（左端） */}
-            <button className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-                <User size={20} />
-            </button>
-
             {/* 日付表示とナビゲーション（中央） */}
-            <div className="flex items-center space-x-2">
+            <div className="flex-1 flex items-center justify-center space-x-4">
                 <button
                     onClick={handlePrevDay}
                     className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors"
                 >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={24} />
                 </button>
-                <div className="text-center min-w-[120px]">
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <div className="text-center min-w-[140px]">
+                    <div className="text-base font-bold text-gray-900 dark:text-gray-100">
                         {format(selectedDate, "M月d日(EEE)", { locale: ja })}
                     </div>
                 </div>
@@ -54,7 +49,7 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                     onClick={handleNextDay}
                     className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-full transition-colors"
                 >
-                    <ChevronRight size={20} />
+                    <ChevronRight size={24} />
                 </button>
             </div>
 
