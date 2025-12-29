@@ -139,7 +139,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
         });
 
         // 2. Subscribe to Local Repository Changes (Sender/Push with Offline Queue)
-        repo.onDataChange(async (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => {
+        const unsubscribeDataChange = repo.onDataChange(async (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => {
             // Skip if this change was triggered by the cloud sync above or by a full sync
             if (isProcessingCloudChange.current) return;
 
@@ -184,6 +184,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
 
         return () => {
             channels.forEach(ch => supabase.removeChannel(ch));
+            unsubscribeDataChange();
         };
     }, [userId, repo]);
 }

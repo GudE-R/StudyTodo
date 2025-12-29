@@ -14,8 +14,15 @@ export class SQLiteRepository implements StorageInterface {
         this.init();
     }
 
-    onDataChange(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void) {
+    onDataChange(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void): () => void {
         this.onChangeListeners.push(callback);
+        // Return unsubscribe function
+        return () => {
+            const index = this.onChangeListeners.indexOf(callback);
+            if (index > -1) {
+                this.onChangeListeners.splice(index, 1);
+            }
+        };
     }
 
     private notifyChange(table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) {
