@@ -10,9 +10,11 @@
         "dev:mobile": "npm run start -w mobile",
         "mobile": "npm run dev:mobile",
         "build:web": "npm run build -w @pomarc/web",
-        "lint:web": "npm run lint -w @pomarc/web"
+        "lint:web": "npm run lint -w @pomarc/web",
+        "test": "npm test -ws --if-present"
     },
     "devDependencies": {
+        "react-test-renderer": "^19.1.0",
         "typescript": "^5.0.0"
     }
 }

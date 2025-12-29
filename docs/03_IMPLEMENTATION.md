@@ -58,7 +58,8 @@
 *   **Styling**: Tailwind CSS v4 (Web), StyleSheet (Mobile)
 *   **Database**: Dexie.js (Web), expo-sqlite (Mobile) - Abstracted via Repository Pattern
 *   **Architecture**: Monorepo (pnpm workspaces)
-    *   **Note**: Mobile版は `packages/shared` を利用しているが、Web版は現在独自の型定義を使用しており、データモデルに一部乖離がある（検証済み）。将来的な統合が必要。
+*   **Testing**: Vitest (`shared`, `web`), Jest (`mobile`)
+    *   **Note**: `packages/shared` と `apps/web` は Vitest、`apps/mobile` は Expo 互換のため Jest を使用。
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 
 ---
@@ -94,6 +95,13 @@
     - **ループ防止**: `trans.source === 'sync'` (Web) や `isProcessingCloudChange` フラグ (Mobile) を導入し、同期による変更の再送信を防止。
     - **Supabaseスキーマ修正**: アプリ側のデータモデルに合わせて `estimated_duration`, `notes`, `due_time`, `end_time` カラムを `todos` テーブルへ追加。
     - **型不整合の解決**: `packages/shared` の `StorageInterface` を拡張し、モノレポ内での型定義不整合を解消（ビルドとキャストによる対応）。
+
+### [Testing] - 2025-12-30
+#### 追加
+- **自動テスト環境の導入**:
+    - **Shared/Web**: Vitest を導入。高速なユニットテストとコンポーネントテスト (`React Testing Library`) を実現。
+    - **Mobile**: Jest (`jest-expo`) を導入。React Native 19 / Expo 54 環境に対応した `react-test-renderer` の整合性問題を解決。
+    - **一括実行**: ルートディレクトリの `npm test` で全ワークスペースのテストを実行可能に整備。
 
 ### [Environment] - 2025-12-28
 #### 変更
