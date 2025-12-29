@@ -95,6 +95,11 @@
     - **ループ防止**: `trans.source === 'sync'` (Web) や `isProcessingCloudChange` フラグ (Mobile) を導入し、同期による変更の再送信を防止。
     - **Supabaseスキーマ修正**: アプリ側のデータモデルに合わせて `estimated_duration`, `notes`, `due_time`, `end_time` カラムを `todos` テーブルへ追加。
     - **型不整合の解決**: `packages/shared` の `StorageInterface` を拡張し、モノレポ内での型定義不整合を解消（ビルドとキャストによる対応）。
+- **Offline Queue (オフラインキュー堅牢化)**:
+    - **共通**: `packages/shared` に `SyncQueueItem`, `SyncQueueInterface` 型定義を追加。
+    - **Web版**: `offlineQueue.ts` 実装。Dexie別DBでキュー管理、`navigator.onLine` でネットワーク検出、Hook失敗時に自動キュー追加。
+    - **Mobile版**: `OfflineQueueRepository.ts` 実装。SQLite `sync_queue` テーブルでキュー管理、`expo-network` でネットワーク検出。
+    - **自動リトライ**: アプリ起動時およびネットワーク復帰時にキューを処理。3回失敗で自動削除。
 
 ### [Testing] - 2025-12-30
 #### 追加

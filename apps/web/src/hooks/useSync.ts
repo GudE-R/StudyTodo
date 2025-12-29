@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { db } from "@/lib/db";
 import { mapper } from "@/lib/mapper";
 import { useRealtimeSync } from "./useRealtimeSync";
+import { initNetworkListener, processOfflineQueue } from "@/lib/offlineQueue";
 
 /**
  * useSync Hook
@@ -130,6 +131,14 @@ export function useSync() {
                 // Also set it on db directly for direct writes before sync finishes
                 db.setUserId(session.user.id);
                 await sync(session.user.id);
+
+                // Process any pending offline changes
+                await processOfflineQueue(session.user.id, supabase, mapper);
+
+                // Setup network listener for future reconnections
+                initNetworkListener(async () => {
+                    await processOfflineQueue(session.user.id, supabase, mapper);
+                });
             } else if (event === 'SIGNED_OUT') {
                 setUserId(undefined);
                 db.setUserId(null);

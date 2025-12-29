@@ -56,12 +56,24 @@ export class PomArcDatabase extends Dexie {
                 // @ts-ignore
                 if (trans.source === 'sync' || !this.currentUserId) return;
 
-                // Trigger async push
+                // Trigger async push (with offline queue fallback)
                 setTimeout(async () => {
                     const { supabase } = await import('./supabase');
                     const { mapper } = await import('./mapper');
+                    const { offlineQueue, isOnline } = await import('./offlineQueue');
+
                     const mapped = mapper.toSupabase(obj, this.currentUserId!, allowedFieldsMap[tableName]);
-                    await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
+
+                    if (!isOnline()) {
+                        await offlineQueue.add({ table: tableName, operation: 'INSERT', data: obj });
+                        return;
+                    }
+
+                    const { error } = await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
+                    if (error) {
+                        console.warn('[db.ts] Push failed, adding to offline queue:', error.message);
+                        await offlineQueue.add({ table: tableName, operation: 'INSERT', data: obj });
+                    }
                 }, 0);
             });
 
@@ -74,8 +86,20 @@ export class PomArcDatabase extends Dexie {
                 setTimeout(async () => {
                     const { supabase } = await import('./supabase');
                     const { mapper } = await import('./mapper');
+                    const { offlineQueue, isOnline } = await import('./offlineQueue');
+
                     const mapped = mapper.toSupabase(updatedObj, this.currentUserId!, allowedFieldsMap[tableName]);
-                    await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
+
+                    if (!isOnline()) {
+                        await offlineQueue.add({ table: tableName, operation: 'UPDATE', data: updatedObj });
+                        return;
+                    }
+
+                    const { error } = await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
+                    if (error) {
+                        console.warn('[db.ts] Push failed, adding to offline queue:', error.message);
+                        await offlineQueue.add({ table: tableName, operation: 'UPDATE', data: updatedObj });
+                    }
                 }, 0);
             });
 
@@ -86,7 +110,18 @@ export class PomArcDatabase extends Dexie {
 
                 setTimeout(async () => {
                     const { supabase } = await import('./supabase');
-                    await supabase.from(supabaseTableMap[tableName]).delete().eq('id', primKey);
+                    const { offlineQueue, isOnline } = await import('./offlineQueue');
+
+                    if (!isOnline()) {
+                        await offlineQueue.add({ table: tableName, operation: 'DELETE', data: { id: primKey } });
+                        return;
+                    }
+
+                    const { error } = await supabase.from(supabaseTableMap[tableName]).delete().eq('id', primKey);
+                    if (error) {
+                        console.warn('[db.ts] Delete failed, adding to offline queue:', error.message);
+                        await offlineQueue.add({ table: tableName, operation: 'DELETE', data: { id: primKey } });
+                    }
                 }, 0);
             });
         });
