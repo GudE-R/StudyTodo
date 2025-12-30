@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, ViewToken, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SectionList, SectionListData, ViewToken, TouchableOpacity } from 'react-native';
 import { addDays, format, startOfDay, isSameDay } from 'date-fns';
 
 interface MobileDayScheduleProps {
@@ -14,19 +14,23 @@ const SLOT_HEIGHT = 30;
 const DAY_HEIGHT = SLOT_HEIGHT * 48;
 
 export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: MobileDayScheduleProps) => {
-    const listRef = useRef<FlatList>(null);
+    const listRef = useRef<SectionList<Date, { title: Date }>>(null);
     const isProgrammaticScroll = useRef(false);
 
     // Range: -30 to +30 days
     // IMPORTANT: If we want real infinite scroll, we need windowing logic. 
     // For now, sticking to fixed range to avoid complexity in this step.
     const initialDate = useMemo(() => startOfDay(new Date()), []);
-    const data = useMemo(() => {
-        const days = [];
+    const sections = useMemo(() => {
+        const result = [];
         for (let i = -30; i <= 30; i++) {
-            days.push(addDays(initialDate, i));
+            const date = addDays(initialDate, i);
+            result.push({
+                title: date,
+                data: [date], // Each section has one item (the full day timeline)
+            });
         }
-        return days;
+        return result;
     }, [initialDate]);
 
     // Initial load scroll
@@ -45,39 +49,30 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
         const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
         const index = diffDays + 30;
 
-        if (index >= 0 && index < data.length) {
-            // Scroll to that index without animation to feel instant for date selection
-            // But if user is scrolling manually, we shouldn't interrupt?
-            // Actually this prop update usually comes from User selecting Calendar.
-            listRef.current?.scrollToIndex({ index, animated: true });
+        if (index >= 0 && index < sections.length) {
+            listRef.current?.scrollToLocation({
+                sectionIndex: index,
+                itemIndex: 0,
+                animated: true,
+                viewOffset: 0
+            });
         }
-    }, [currentDate, initialDate, data]);
+    }, [currentDate, initialDate, sections]);
 
     const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
         if (viewableItems.length > 0) {
-            // Use the item responsible for the majority of view?
-            // viewableItems[0] is typically the top one.
             const firstItem = viewableItems[0];
-            const itemDate = firstItem.item as Date;
+            // In SectionList, item might be null for headers, but my items are Dates.
+            // SectionList ViewToken has `section` property.
+            const itemDate = firstItem.item as Date | undefined;
+            const section = firstItem.section as any;
 
-            if (firstItem.isViewable && onDateChange) {
-                // To prevent loop when parent updates prop back to us:
-                // We are setting isProgrammaticScroll = true before calling scrollTo from Prop.
-                // But here we are the source.
-                // We should ensure we don't re-trigger a scroll back to top if the user is scrolling down.
+            if (onDateChange) {
+                const targetDate = itemDate || section?.title;
+                if (!targetDate) return;
 
-                // This logic is tricky. 
-                // Simple approach: Check if date actually changed.
-                // Check if the prop `currentDate` is already this date (ignoring time).
-
-                // Note: We can't easily access the LATEST prop value inside this Ref callback without a Ref to props.
-                // But we can trigger the change. The parent will update. 
-                // The useEffect will see the new prop.
-                // If the new prop matches the index we are mostly looking at, we should act carefully.
-
-                isProgrammaticScroll.current = true; // Mark as "We caused this"
-                onDateChange(itemDate);
-                // Reset flag after render cycle? Or in useEffect?
+                isProgrammaticScroll.current = true;
+                onDateChange(targetDate);
                 setTimeout(() => { isProgrammaticScroll.current = false; }, 500);
             }
         }
@@ -87,11 +82,14 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
         itemVisiblePercentThreshold: 50 // Trigger when 50% of the day is visible
     }).current;
 
+    const renderSectionHeader = ({ section }: { section: SectionListData<Date, { title: Date }> }) => (
+        <View style={styles.dayHeader}>
+            <Text style={styles.dayTitle}>{format(section.title, 'MMM d (EEE)')}</Text>
+        </View>
+    );
+
     const renderItem = ({ item }: { item: Date }) => (
         <View style={[styles.dayContainer, { height: DAY_HEIGHT }]}>
-            <View style={styles.dayHeader}>
-                <Text style={styles.dayTitle}>{format(item, 'MMM d (EEE)')}</Text>
-            </View>
             {/* Timeline Slots */}
             {Array.from({ length: 48 }).map((_, slotIndex) => {
                 const hour = Math.floor(slotIndex / 2);
@@ -142,11 +140,6 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
         </View>
     );
 
-    const getItemLayout = (data: any, index: number) => ({
-        length: DAY_HEIGHT,
-        offset: DAY_HEIGHT * index,
-        index,
-    });
 
     const onScrollBeginDrag = () => {
         // User started scrolling manually
@@ -155,13 +148,14 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
 
     return (
         <View style={styles.container}>
-            <FlatList
+            <SectionList
                 ref={listRef}
-                data={data}
+                sections={sections}
                 renderItem={renderItem}
+                renderSectionHeader={renderSectionHeader}
                 keyExtractor={(item) => item.toISOString()}
-                getItemLayout={getItemLayout}
-                initialScrollIndex={30} // Today
+                stickySectionHeadersEnabled={true}
+                initialNumToRender={5}
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
