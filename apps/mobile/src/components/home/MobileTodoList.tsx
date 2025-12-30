@@ -18,6 +18,8 @@ export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
 
     // Filter todos for the selected date
     const filteredTodos = todos.filter(todo => {
+        if (todo.completed) return false;
+
         if (!todo.dueDate) {
             // If no due date, show it in the list for now
             return true;
