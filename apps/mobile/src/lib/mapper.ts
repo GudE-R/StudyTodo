@@ -40,8 +40,14 @@ export const mapper = {
             const newKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
             let value = entity[key];
 
+            // Specific manual mapping for mismatches
+            if (key === 'estimated_time') {
+                newObj['estimatedDuration'] = value;
+                continue;
+            }
+
             // Date conversion
-            if ((newKey.endsWith('At') || newKey.endsWith('Date') || key === 'due_date') && typeof value === 'string' && value) {
+            if ((newKey.endsWith('At') || newKey.endsWith('Date') || key === 'due_date' || key === 'start_time' || key === 'end_time') && typeof value === 'string' && value) {
                 value = new Date(value);
             }
 

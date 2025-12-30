@@ -105,6 +105,10 @@ export class SQLiteRepository implements StorageInterface {
                 createdAt TEXT
             );
         `);
+
+        // Additional migrations...
+        try { this.db.execSync(`ALTER TABLE todos ADD COLUMN estimatedDuration INTEGER;`); } catch (e) { }
+        try { this.db.execSync(`ALTER TABLE todos ADD COLUMN actualDuration INTEGER;`); } catch (e) { }
     }
 
     // Helper to serialize/deserialize
@@ -172,7 +176,16 @@ export class SQLiteRepository implements StorageInterface {
     async updateTodo(id: string, updates: Partial<Todo>): Promise<void> {
         // Construct dynamic UPDATE query
         const row = this.toDB(updates);
-        const keys = Object.keys(row).filter(k => k !== 'id');
+
+        // Allowed columns in local DB
+        const allowedColumns = [
+            'title', 'description', 'completed', 'createdAt', 'updatedAt',
+            'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration',
+            'priority', 'notes', 'memo', 'range', 'srsInterval', 'tags',
+            'srsLevel', 'nextReviewDate', 'srsProfileId', 'srsGroupId', 'reviewHistory'
+        ];
+
+        const keys = Object.keys(row).filter(k => k !== 'id' && allowedColumns.includes(k));
         if (keys.length === 0) return;
 
         const setClause = keys.map(k => `${k} = ?`).join(', ');
