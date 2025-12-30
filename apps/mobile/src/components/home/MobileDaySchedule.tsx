@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         color: '#888',
         fontSize: 12,
-        top: -8,
+        // top: -8 removed to prevent overlap with header
     },
     hourLine: {
         flex: 1,
