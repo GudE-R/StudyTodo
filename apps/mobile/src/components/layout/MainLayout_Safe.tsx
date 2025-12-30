@@ -110,13 +110,15 @@ export const MainLayout = () => {
                 date={currentDate}
                 onOpenSettings={() => setSettingsModalVisible(true)}
                 onPrevDate={() => setCurrentDate(d => {
-                    const newDate = new Date(d);
-                    newDate.setDate(d.getDate() - 1);
+                    const safeD = (d instanceof Date && !isNaN(d.getTime())) ? d : new Date();
+                    const newDate = new Date(safeD);
+                    newDate.setDate(safeD.getDate() - 1);
                     return newDate;
                 })}
                 onNextDate={() => setCurrentDate(d => {
-                    const newDate = new Date(d);
-                    newDate.setDate(d.getDate() + 1);
+                    const safeD = (d instanceof Date && !isNaN(d.getTime())) ? d : new Date();
+                    const newDate = new Date(safeD);
+                    newDate.setDate(safeD.getDate() + 1);
                     return newDate;
                 })}
             />
