@@ -12,6 +12,10 @@ interface HeaderProps {
 }
 
 export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
+    // Validate date to prevent RangeError
+    const safeDate = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
+    const formattedDate = format(safeDate, 'M月d日(EEE)', { locale: ja });
+
     return (
         <View style={styles.container}>
             <View style={styles.leftContainer}>
@@ -23,7 +27,7 @@ export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date
                     <ChevronLeft size={24} color="#333" />
                 </TouchableOpacity>
 
-                <Text style={styles.dateText}>{format(date, 'M月d日(EEE)', { locale: ja })}</Text>
+                <Text style={styles.dateText}>{formattedDate}</Text>
 
                 <TouchableOpacity onPress={onNextDate} style={styles.navBtn}>
                     <ChevronRight size={24} color="#333" />
