@@ -107,8 +107,11 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                                     localItem = sessions.find(s => s.id === cloudItem.id);
                                 }
 
-                                const cloudTime = new Date(cloudItem.updatedAt || 0).getTime();
-                                const localTime = new Date(localItem?.updatedAt || 0).getTime();
+                                // Safely parse dates with validation
+                                const cloudDate = cloudItem.updatedAt ? new Date(cloudItem.updatedAt) : null;
+                                const localDate = localItem?.updatedAt ? new Date(localItem.updatedAt) : null;
+                                const cloudTime = (cloudDate && !isNaN(cloudDate.getTime())) ? cloudDate.getTime() : 0;
+                                const localTime = (localDate && !isNaN(localDate.getTime())) ? localDate.getTime() : 0;
 
                                 if (!localItem || cloudTime > localTime) {
                                     console.log(`Mobile: Applying cloud update to ${config.sqlite}:`, cloudItem.id);
