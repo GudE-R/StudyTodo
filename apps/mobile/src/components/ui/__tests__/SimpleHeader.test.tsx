@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { Header } from '../Header';
+import { SimpleHeader } from '../SimpleHeader';
 
-describe('Header', () => {
+describe('SimpleHeader', () => {
     it('renders correctly', () => {
-        const { getByText } = render(<Header />);
+        const { getByText } = render(<SimpleHeader />);
 
         // Check if the current date is rendered (roughly)
         // Since it depends on the current date, we just check if it exists

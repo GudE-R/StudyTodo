@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 
-interface MobileCalendarProps {
+interface HomeCalendarProps {
     currentDate?: Date;
     onDateSelect?: (date: Date) => void;
     keptDate?: Date | null;
     onDateLongPress?: (date: Date) => void;
 }
 
-export const MobileCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: MobileCalendarProps) => {
+export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: HomeCalendarProps) => {
     // Validate currentDate to prevent RangeError
     const safeCurrentDate = (currentDate instanceof Date && !isNaN(currentDate.getTime())) ? currentDate : new Date();
 

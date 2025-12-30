@@ -3,11 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 
 import { Todo } from "@pomarc/shared";
 
-interface MobileDayScheduleProps {
+interface DayScheduleMiniWidgetProps {
     todos: Todo[];
 }
 
-export function MobileDaySchedule({ todos }: MobileDayScheduleProps) {
+export function DayScheduleMiniWidget({ todos }: DayScheduleMiniWidgetProps) {
     // Filter tasks for today (or tasks that should appear on schedule)
     // For now, let's just show tasks with a dueTime, assuming they are for today for simplicity 
     // (Actual logic needs date comparison)

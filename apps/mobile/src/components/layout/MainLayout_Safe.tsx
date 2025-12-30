@@ -5,9 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AdBanner } from './AdBanner';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { MobileTodoList } from '../home/MobileTodoList';
-import { MobileDaySchedule } from '../home/MobileDaySchedule';
-import { MobileCalendar } from '../home/MobileCalendar';
+import { HomeTodoList } from '../home/HomeTodoList';
+import { HomeDaySchedule } from '../home/HomeDaySchedule';
+import { HomeCalendar } from '../home/HomeCalendar';
 
 // Modals
 import { TodoCreateModal } from '../modals/TodoCreateModal';
@@ -127,10 +127,10 @@ export const MainLayout = () => {
             <View style={styles.mainContent}>
                 <View style={styles.splitRow}>
                     <View style={styles.paneHalf}>
-                        <MobileTodoList date={currentDate} />
+                        <HomeTodoList date={currentDate} />
                     </View>
                     <View style={styles.paneHalf}>
-                        <MobileDaySchedule
+                        <HomeDaySchedule
                             currentDate={currentDate}
                             onDateChange={setCurrentDate}
                             keptDate={keptDate}
@@ -140,7 +140,7 @@ export const MainLayout = () => {
                     </View>
                 </View>
                 <View style={styles.calendarPane}>
-                    <MobileCalendar
+                    <HomeCalendar
                         currentDate={currentDate}
                         onDateSelect={setCurrentDate}
                         keptDate={keptDate}

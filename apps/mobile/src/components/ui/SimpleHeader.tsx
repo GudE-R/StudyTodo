@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Settings, UserCircle } from 'lucide-react-native';
 
-export const Header = () => {
+export const SimpleHeader = () => {
     const today = new Date().toLocaleDateString('ja-JP', {
         month: 'long',
         day: 'numeric',

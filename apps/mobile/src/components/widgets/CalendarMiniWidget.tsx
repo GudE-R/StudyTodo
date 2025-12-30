@@ -2,12 +2,12 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Todo } from "@pomarc/shared";
 
-interface MobileCalendarProps {
+interface CalendarMiniWidgetProps {
     isExpanded: boolean;
     todos: Todo[];
 }
 
-export function MobileCalendar({ isExpanded, todos }: MobileCalendarProps) {
+export function CalendarMiniWidget({ isExpanded, todos }: CalendarMiniWidgetProps) {
     // 3-Week View (Default) vs 1-Month View (Expanded)
     const weeks = isExpanded ? ["W1", "W2", "W3", "W4", "W5"] : ["Previous", "Current", "Next"];
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react'
 import { View, Text, StyleSheet, SectionList, SectionListData, ViewToken, TouchableOpacity } from 'react-native';
 import { addDays, format, startOfDay, isSameDay } from 'date-fns';
 
-interface MobileDayScheduleProps {
+interface HomeDayScheduleProps {
     currentDate?: Date;
     onDateChange?: (date: Date) => void;
     keptDate?: Date | null;
@@ -13,7 +13,7 @@ interface MobileDayScheduleProps {
 const SLOT_HEIGHT = 30;
 const DAY_HEIGHT = SLOT_HEIGHT * 48;
 
-export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: MobileDayScheduleProps) => {
+export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: HomeDayScheduleProps) => {
     const listRef = useRef<SectionList<Date, { title: Date }>>(null);
     const isProgrammaticScroll = useRef(false);
 

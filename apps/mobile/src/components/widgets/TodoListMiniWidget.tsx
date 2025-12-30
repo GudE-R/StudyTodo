@@ -3,13 +3,13 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native
 import { Todo } from "@pomarc/shared";
 import { useMobileTodos } from "../../hooks/useMobileTodos";
 
-interface MobileTodoListProps {
+interface TodoListMiniWidgetProps {
     todos: Todo[];
     onToggle: (todo: Todo) => void;
     loading: boolean;
 }
 
-export function MobileTodoList({ todos, onToggle, loading }: MobileTodoListProps) {
+export function TodoListMiniWidget({ todos, onToggle, loading }: TodoListMiniWidgetProps) {
 
     // Logic lifted to parent
 

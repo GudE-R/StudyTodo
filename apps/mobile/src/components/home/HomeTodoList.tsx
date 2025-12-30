@@ -4,11 +4,11 @@ import { Todo } from '@pomarc/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { isSameDay } from 'date-fns';
 
-interface MobileTodoListProps {
+interface HomeTodoListProps {
     date?: Date;
 }
 
-export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
+export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
     const { todos, loading, refreshTodos, updateTodo } = useMobileTodos();
 
     // Load and Subscribe
