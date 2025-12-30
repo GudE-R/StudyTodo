@@ -11,13 +11,16 @@ interface MobileCalendarProps {
 }
 
 export const MobileCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: MobileCalendarProps) => {
-    const [viewingMonth, setViewingMonth] = useState(currentDate);
+    // Validate currentDate to prevent RangeError
+    const safeCurrentDate = (currentDate instanceof Date && !isNaN(currentDate.getTime())) ? currentDate : new Date();
+
+    const [viewingMonth, setViewingMonth] = useState(safeCurrentDate);
 
     useEffect(() => {
-        if (!isSameMonth(currentDate, viewingMonth)) {
-            setViewingMonth(currentDate);
+        if (!isSameMonth(safeCurrentDate, viewingMonth)) {
+            setViewingMonth(safeCurrentDate);
         }
-    }, [currentDate]);
+    }, [safeCurrentDate]);
 
     const handlePrevMonth = () => {
         setViewingMonth(subMonths(viewingMonth, 1));
@@ -58,8 +61,9 @@ export const MobileCalendar = ({ currentDate = new Date(), onDateSelect, keptDat
                     {paddedDays.map((day: any, index) => {
                         if (!day) return <View key={`pad-${index}`} style={styles.dayCell} />;
 
-                        const isSelected = isSameDay(day, currentDate);
-                        const isKept = keptDate && isSameDay(day, keptDate);
+                        const isSelected = isSameDay(day, safeCurrentDate);
+                        const safeKeptDate = (keptDate instanceof Date && !isNaN(keptDate.getTime())) ? keptDate : null;
+                        const isKept = safeKeptDate && isSameDay(day, safeKeptDate);
 
                         return (
                             <TouchableOpacity
