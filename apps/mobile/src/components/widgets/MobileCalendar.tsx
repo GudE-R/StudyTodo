@@ -19,7 +19,11 @@ export function MobileCalendar({ isExpanded, todos }: MobileCalendarProps) {
         const d = new Date();
         d.setDate(d.getDate() + dateOffset);
         const dateStr = d.toDateString();
-        return todos.some(t => t.dueDate && new Date(t.dueDate).toDateString() === dateStr);
+        return todos.some(t => {
+            if (!t.dueDate) return false;
+            const dd = new Date(t.dueDate);
+            return !isNaN(dd.getTime()) && dd.toDateString() === dateStr;
+        });
     };
 
     const renderWeek = (weekLabel: string, index: number) => (

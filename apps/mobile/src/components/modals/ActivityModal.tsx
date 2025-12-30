@@ -130,8 +130,13 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
             // Maybe filter status? Web has status filter. Just show all for now or add toggle.
             // Let's simplified to just finished tasks + created tasks? 
             // Web shows "All / Completed / Incomplete".
-            return true;
-        }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }).sort((a, b) => {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            const timeA = !isNaN(dateA.getTime()) ? dateA.getTime() : 0;
+            const timeB = !isNaN(dateB.getTime()) ? dateB.getTime() : 0;
+            return timeB - timeA;
+        });
     }, [todos, filterCategory]);
 
     const toggleSelection = (id: string) => {

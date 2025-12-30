@@ -15,8 +15,10 @@ export function MobileDaySchedule({ todos }: MobileDayScheduleProps) {
 
     const scheduleItems = todos.filter(t => {
         if (!t.dueDate) return false;
-        // Simple date check
-        const isToday = new Date(t.dueDate).toDateString() === todayStr;
+        // Safe date check
+        const dueDateObj = new Date(t.dueDate);
+        if (isNaN(dueDateObj.getTime())) return false;
+        const isToday = dueDateObj.toDateString() === todayStr;
         return isToday && t.dueTime;
     });
 

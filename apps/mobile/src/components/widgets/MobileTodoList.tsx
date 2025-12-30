@@ -22,11 +22,12 @@ export function MobileTodoList({ todos, onToggle, loading }: MobileTodoListProps
                 <Text style={[styles.title, item.completed && styles.completedText]}>
                     {item.title}
                 </Text>
-                {item.dueDate && (
-                    <Text style={styles.date}>
-                        {new Date(item.dueDate).toLocaleDateString()}
-                    </Text>
-                )}
+                {item.dueDate && (() => {
+                    const d = new Date(item.dueDate);
+                    return !isNaN(d.getTime()) ? (
+                        <Text style={styles.date}>{d.toLocaleDateString()}</Text>
+                    ) : null;
+                })()}
             </View>
         </TouchableOpacity>
     );

@@ -45,11 +45,12 @@ export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
                 <Text style={[styles.title, item.completed && styles.completedText]}>
                     {item.title}
                 </Text>
-                {item.dueDate && (
-                    <Text style={styles.time}>
-                        {new Date(item.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </Text>
-                )}
+                {item.dueDate && (() => {
+                    const d = new Date(item.dueDate);
+                    return !isNaN(d.getTime()) ? (
+                        <Text style={styles.time}>{d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                    ) : null;
+                })()}
             </View>
         </TouchableOpacity>
     );

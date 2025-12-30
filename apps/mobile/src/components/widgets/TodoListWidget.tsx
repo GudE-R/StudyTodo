@@ -19,13 +19,19 @@ export const TodoListWidget = ({ todos, selectedDate, onToggleTodo, onPlayTodo }
     const filteredTodos = useMemo(() => {
         return todos.filter(todo => {
             if (!todo.dueDate) return false;
-            return isSameDay(new Date(todo.dueDate), selectedDate);
+            const d = new Date(todo.dueDate);
+            if (isNaN(d.getTime())) return false;
+            return isSameDay(d, selectedDate);
         }).sort((a, b) => {
             if (a.completed !== b.completed) return a.completed ? 1 : -1;
             /* @ts-ignore */
             if (headerPriority(a.priority) !== headerPriority(b.priority))
                 return headerPriority(a.priority) - headerPriority(b.priority);
-            return new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime();
+            const dateA = new Date(a.dueDate!);
+            const dateB = new Date(b.dueDate!);
+            const timeA = !isNaN(dateA.getTime()) ? dateA.getTime() : 0;
+            const timeB = !isNaN(dateB.getTime()) ? dateB.getTime() : 0;
+            return timeA - timeB;
         });
     }, [todos, selectedDate]);
 
