@@ -52,7 +52,12 @@ export const mapper = {
 
             // Date conversion
             if ((newKey.endsWith('At') || newKey.endsWith('Date') || key === 'due_date' || key === 'start_time' || key === 'end_time') && typeof value === 'string' && value) {
-                value = new Date(value);
+                const d = new Date(value);
+                if (!isNaN(d.getTime())) {
+                    value = d;
+                } else {
+                    value = undefined;
+                }
             }
 
             newObj[newKey] = value;

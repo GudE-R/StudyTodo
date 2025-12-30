@@ -171,7 +171,7 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
                 sections={sections}
                 renderItem={renderItem}
                 renderSectionHeader={renderSectionHeader}
-                keyExtractor={(item) => item?.toISOString?.() || Math.random().toString()}
+                keyExtractor={(item) => (item instanceof Date && !isNaN(item.getTime())) ? item.toISOString() : Math.random().toString()}
                 stickySectionHeadersEnabled={true}
                 initialNumToRender={5}
                 getItemLayout={getItemLayout}

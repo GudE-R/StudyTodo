@@ -60,7 +60,7 @@ export function useMobileSRS() {
 
         await repository.updateTodo(todo.id, {
             srsLevel: nextLevel,
-            nextReviewDate: nextReviewDate.toISOString(),
+            nextReviewDate: (nextReviewDate instanceof Date && !isNaN(nextReviewDate.getTime())) ? nextReviewDate.toISOString() : new Date().toISOString(),
             reviewHistory: [
                 ...(todo.reviewHistory || []),
                 { date: new Date().toISOString(), correct }

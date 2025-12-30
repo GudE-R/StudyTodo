@@ -63,7 +63,7 @@ export const MobileCalendar = ({ currentDate = new Date(), onDateSelect, keptDat
 
                         return (
                             <TouchableOpacity
-                                key={day.toISOString()}
+                                key={(day instanceof Date && !isNaN(day.getTime())) ? day.toISOString() : index.toString()}
                                 style={[styles.dayCell, isKept && styles.keptDayCell]}
                                 onPress={() => onDateSelect?.(day)}
                                 onLongPress={() => onDateLongPress?.(day)}
