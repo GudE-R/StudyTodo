@@ -119,7 +119,13 @@ export class SQLiteRepository implements StorageInterface {
         // Date objects to ISO strings are handled by JSON.stringify usually, but here we expect objects with Date properties
         // We need to ensure Dates are stored as ISO strings
         ['createdAt', 'updatedAt', 'dueDate', 'nextReviewDate', 'startTime', 'endTime'].forEach(key => {
-            if (row[key] instanceof Date) row[key] = row[key].toISOString();
+            if (row[key] instanceof Date) {
+                if (!isNaN(row[key].getTime())) {
+                    row[key] = row[key].toISOString();
+                } else {
+                    row[key] = null;
+                }
+            }
         });
 
         // JSON fields
@@ -137,7 +143,10 @@ export class SQLiteRepository implements StorageInterface {
         obj.isDefault = !!obj.isDefault;
 
         ['createdAt', 'updatedAt', 'dueDate', 'nextReviewDate', 'startTime', 'endTime'].forEach(key => {
-            if (obj[key]) obj[key] = new Date(obj[key]);
+            if (obj[key]) {
+                const d = new Date(obj[key]);
+                obj[key] = !isNaN(d.getTime()) ? d : undefined;
+            }
         });
 
         ['tags', 'reviewHistory', 'intervals'].forEach(key => {

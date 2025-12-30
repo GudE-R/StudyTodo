@@ -17,7 +17,11 @@ export const mapper = {
 
             // Date to ISO string
             if (value instanceof Date) {
-                value = value.toISOString();
+                if (!isNaN(value.getTime())) {
+                    value = value.toISOString();
+                } else {
+                    value = null; // or keep as is? Null is safer for DB
+                }
             }
 
             newObj[newKey] = value;
