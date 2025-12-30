@@ -110,6 +110,13 @@
 - **モバイル版日付ヘッダーのスティッキー化**:
     - `FlatList` から `SectionList` に移行し、日付ヘッダーをスティッキー（上部固定）表示に変更。
     - 日付の境界（23:00〜0:00）での操作性を改善し、タイムラインの連続性を確保。
+    - **バグ修正**: オフスクリーンの日付へのスクロール時に発生していた `Invariant Violation` (scrollToIndex error) を、`getItemLayout` の実装により解決。
+        - [x] エラー原因の特定 (scrollToIndex)
+        - [x] `MobileDaySchedule.tsx` の修正
+            - [x] 不要なプロップの削除、または `getItemLayout` の再実装
+            - [x] `scrollToLocation` の呼び出し内容の確認
+        - [x] 動作確認
+        - [x] Gitコミット＆プッシュ
 - **破線の視認性向上**:
     - Web版の30分ラインの色を濃く調整 (`border-gray-100` だが見やすい位置へ)。実線を `gray-300` に強化。
     - モバイル版の30分ラインを `borderStyle: 'dashed'` を用いた破線表示に修正。

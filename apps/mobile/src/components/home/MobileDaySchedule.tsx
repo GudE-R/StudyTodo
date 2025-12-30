@@ -141,6 +141,24 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
     );
 
 
+    const HEADER_HEIGHT = 44; // Estimated/Fixed height of header
+
+    const getItemLayout = (data: any, index: number) => {
+        // SectionList's internal FlatList sees: Header0, Item0, Header1, Item1, ...
+        // Index 2n: Header
+        // Index 2n+1: Item
+        const sectionIndex = Math.floor(index / 2);
+        const isHeader = index % 2 === 0;
+
+        const offset = sectionIndex * (HEADER_HEIGHT + DAY_HEIGHT);
+
+        return {
+            length: isHeader ? HEADER_HEIGHT : DAY_HEIGHT,
+            offset: isHeader ? offset : offset + HEADER_HEIGHT,
+            index,
+        };
+    };
+
     const onScrollBeginDrag = () => {
         // User started scrolling manually
         isProgrammaticScroll.current = false;
@@ -156,6 +174,15 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
                 keyExtractor={(item) => item.toISOString()}
                 stickySectionHeadersEnabled={true}
                 initialNumToRender={5}
+                getItemLayout={getItemLayout}
+                onScrollToIndexFailed={(info) => {
+                    console.log('Scroll failed', info);
+                    listRef.current?.scrollToLocation({
+                        sectionIndex: Math.floor(info.index / 2),
+                        itemIndex: 0,
+                        animated: false,
+                    });
+                }}
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
@@ -196,7 +223,9 @@ const styles = StyleSheet.create({
         borderColor: '#ccc'
     },
     dayHeader: {
-        padding: 10,
+        height: 44,
+        paddingHorizontal: 10,
+        justifyContent: 'center',
         backgroundColor: '#f8fafc',
         borderBottomWidth: 1,
         borderColor: '#eee',
