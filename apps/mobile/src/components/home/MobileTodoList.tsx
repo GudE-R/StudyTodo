@@ -17,11 +17,15 @@ export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
     }, [refreshTodos]);
 
     // Filter todos for the selected date
-    const filteredTodos = todos; // SHOW EVERYTHING FOR DEBUGGING
-
-    useEffect(() => {
-        console.log(`[DEBUG] MobileTodoList Render. Date: ${date.toDateString()} Total: ${todos.length}`);
-    }, [todos, date]);
+    const filteredTodos = todos.filter(todo => {
+        if (!todo.dueDate) {
+            // If no due date, show it in the list for now
+            return true;
+        }
+        // Ensure we compare Date objects
+        const todoDate = todo.dueDate instanceof Date ? todo.dueDate : new Date(todo.dueDate);
+        return isSameDay(todoDate, date);
+    });
 
     const handleToggle = async (todo: Todo) => {
         await updateTodo(todo.id, {
@@ -67,18 +71,16 @@ export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
     }
 
     return (
-        <View style={[styles.container, { backgroundColor: '#ffffcc', flex: 1 }]}>
-            <Text style={{ color: 'red', fontWeight: 'bold', padding: 5 }}>
-                DEBUG: TODOS={todos.length} FILTERED={filteredTodos.length}
-            </Text>
-            <ScrollView style={{ flex: 1 }}>
-                {filteredTodos.map((item, index) => (
-                    <View key={item.id} style={{ padding: 10, borderBottomWidth: 1, borderColor: 'blue', backgroundColor: 'white' }}>
-                        <Text style={{ fontWeight: 'bold' }}>#{index + 1}: {item.title || "[NO TITLE]"}</Text>
-                        <Text style={{ fontSize: 10, color: '#666' }}>ID: {item.id}</Text>
-                    </View>
-                ))}
-            </ScrollView>
+        <View style={styles.container}>
+            <View style={styles.debugHeader}>
+                <Text style={styles.debugText}>Tasks: {filteredTodos.length} / {todos.length}</Text>
+            </View>
+            <FlatList
+                data={filteredTodos}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                contentContainerStyle={styles.list}
+            />
         </View>
     );
 };
@@ -87,6 +89,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    debugHeader: {
+        paddingHorizontal: 12,
+        paddingTop: 4,
+        backgroundColor: '#f8fafc',
+    },
+    debugText: {
+        fontSize: 10,
+        color: '#64748b',
+        fontWeight: 'bold',
     },
     list: {
         padding: 8,
@@ -107,20 +119,20 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
+        borderBottomColor: '#f1f5f9',
     },
     checkbox: {
         width: 22,
         height: 22,
         borderRadius: 11,
         borderWidth: 2,
-        borderColor: '#007AFF',
+        borderColor: '#3b82f6',
         marginRight: 10,
         alignItems: 'center',
         justifyContent: 'center',
     },
     checked: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#3b82f6',
     },
     checkmark: {
         color: 'white',
@@ -132,15 +144,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 15,
-        color: '#333',
+        color: '#1e293b',
+        fontWeight: '500',
     },
     completedText: {
         textDecorationLine: 'line-through',
-        color: '#999',
+        color: '#94a3b8',
     },
     time: {
         fontSize: 11,
-        color: '#666',
+        color: '#64748b',
         marginTop: 2,
     }
 });
