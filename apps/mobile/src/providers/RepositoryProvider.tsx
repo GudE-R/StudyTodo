@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { StorageInterface } from "@pomarc/shared";
 import { SQLiteRepository } from "../repositories/SQLiteRepository";
 
@@ -14,8 +14,23 @@ export function RepositoryProvider({
     children: ReactNode;
     repository?: StorageInterface;
 }) {
-    // If not provided, use/create singleton
-    const activeRepository = repository || (repositoryInstance || (repositoryInstance = new SQLiteRepository()));
+    const activeRepository = useMemo(() => {
+        if (repository) return repository;
+
+        if (!repositoryInstance) {
+            try {
+                repositoryInstance = new SQLiteRepository();
+            } catch (error) {
+                console.error("Failed to initialize SQLiteRepository:", error);
+                return null;
+            }
+        }
+        return repositoryInstance;
+    }, [repository]);
+
+    if (!activeRepository) {
+        return null;
+    }
 
     return (
         <RepositoryContext.Provider value={activeRepository}>
