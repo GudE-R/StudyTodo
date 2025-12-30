@@ -242,8 +242,8 @@ export function DaySchedule({
                                         <div
                                             key={`${day.toISOString()}-${slot}`}
                                             className={`
-                                                flex h-6 relative group transition-colors duration-200 select-none
-                                                ${isHalfHour ? "border-b border-dashed border-gray-200" : "border-b border-gray-100"}
+                                                flex h-6 relative group transition-colors duration-200 select-none border-gray-200
+                                                ${isHalfHour ? "border-t border-dashed border-gray-100" : "border-t border-solid border-gray-300"}
                                                 ${isKept ? "bg-orange-50" : "hover:bg-gray-50"}
                                             `}
                                             onMouseDown={() => handleTouchStart(day, slot)}
@@ -260,8 +260,8 @@ export function DaySchedule({
                                             </div>
                                             <div className="flex-1 relative">
                                                 <div className={`
-                                                    absolute inset-0 border-l border-dashed
-                                                    ${isKept ? "border-orange-200" : "border-gray-50"}
+                                                    absolute inset-y-0 left-0 border-l border-dashed border-gray-50
+                                                    ${isKept ? "border-orange-200" : ""}
                                                 `} />
                                             </div >
                                         </div >

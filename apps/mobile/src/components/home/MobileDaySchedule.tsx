@@ -107,7 +107,6 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
                             styles.hourSlot,
                             { height: SLOT_HEIGHT },
                             isKept && styles.keptSlot,
-                            isHalfHour && { borderBottomWidth: 0 } // Sub-line handled by different style if needed
                         ]}
                         activeOpacity={1}
                         onLongPress={() => onTimeLongPress?.(item, timeStr)}
@@ -117,11 +116,19 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
                         </Text>
                         <View style={[
                             styles.hourLine,
-                            isHalfHour && {
+                            isHalfHour ? {
+                                // 3:30 slot -> This line is the 3:30 line (dashed)
                                 backgroundColor: 'transparent',
                                 borderBottomWidth: 1,
                                 borderStyle: 'dashed',
-                                borderColor: '#ccc'
+                                borderColor: '#d0d0d0', // Slightly darker than before for visibility
+                                height: 1,
+                                top: 0,
+                            } : {
+                                // 3:00 slot -> This line is the 3:00 line (solid)
+                                backgroundColor: '#bbb', // Darker for full hour
+                                height: 1.5,
+                                top: 0,
                             }
                         ]} />
                     </TouchableOpacity>
@@ -208,8 +215,7 @@ const styles = StyleSheet.create({
     hourSlot: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        borderBottomWidth: 1,
-        borderColor: '#f0f0f0',
+        // borderBottomWidth removed to avoid overlap
     },
     hourText: {
         width: 50,
@@ -221,8 +227,7 @@ const styles = StyleSheet.create({
     },
     hourLine: {
         flex: 1,
-        height: 1,
-        backgroundColor: '#f0f0f0',
+        marginTop: 0, // Align closer to text top if needed
     },
     currentTimeLine: {
         position: 'absolute',
