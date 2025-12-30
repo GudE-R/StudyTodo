@@ -35,6 +35,7 @@ export class SQLiteRepository implements StorageInterface {
             CREATE TABLE IF NOT EXISTS todos (
                 id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
+                description TEXT,     -- Added
                 completed INTEGER DEFAULT 0,
                 createdAt TEXT,
                 updatedAt TEXT,
@@ -44,21 +45,23 @@ export class SQLiteRepository implements StorageInterface {
                 actualDuration INTEGER,
                 priority TEXT,
                 notes TEXT,
-                memo TEXT,          -- Added for Web Parity
-                range TEXT,         -- Added for Web Parity
-                srsInterval TEXT,   -- Added for Web Parity
-                tags TEXT, -- JSON array
+                memo TEXT,
+                range TEXT,
+                srsInterval TEXT,
+                tags TEXT,
                 srsLevel INTEGER,
                 nextReviewDate TEXT,
                 srsProfileId TEXT,
-                reviewHistory TEXT -- JSON array
+                srsGroupId TEXT,     -- Added
+                reviewHistory TEXT
             );
         `);
 
-        // Migrations (Safe Mode)
-        try { this.db.execSync('ALTER TABLE todos ADD COLUMN memo TEXT;'); } catch (e) { }
-        try { this.db.execSync('ALTER TABLE todos ADD COLUMN range TEXT;'); } catch (e) { }
-        try { this.db.execSync('ALTER TABLE todos ADD COLUMN srsInterval TEXT;'); } catch (e) { }
+        // Migrations (Safe Mode) - using try/catch to ignore "duplicate column" errors
+        const todoMigrations = ['memo', 'range', 'srsInterval', 'description', 'srsGroupId'];
+        todoMigrations.forEach(col => {
+            try { this.db.execSync(`ALTER TABLE todos ADD COLUMN ${col} TEXT;`); } catch (e) { }
+        });
 
         // Other tables
         this.db.execSync(`
@@ -69,14 +72,23 @@ export class SQLiteRepository implements StorageInterface {
                 level TEXT,
                 isDefault INTEGER,
                 "order" INTEGER,
+                color TEXT,         -- Added
+                icon TEXT,          -- Added
                 createdAt TEXT,
                 updatedAt TEXT
             );
+        `);
 
+        const catMigrations = ['color', 'icon'];
+        catMigrations.forEach(col => {
+            try { this.db.execSync(`ALTER TABLE categories ADD COLUMN ${col} TEXT;`); } catch (e) { }
+        });
+
+        this.db.execSync(`
             CREATE TABLE IF NOT EXISTS srsProfiles (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
-                intervals TEXT, -- JSON array
+                intervals TEXT,
                 isDefault INTEGER,
                 createdAt TEXT,
                 updatedAt TEXT
