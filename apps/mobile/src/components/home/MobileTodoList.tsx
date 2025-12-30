@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Todo } from '@pomarc/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { isSameDay } from 'date-fns';
@@ -11,15 +11,17 @@ interface MobileTodoListProps {
 export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
     const { todos, loading, refreshTodos, updateTodo } = useMobileTodos();
 
+    // Load and Subscribe
     useEffect(() => {
         refreshTodos();
     }, [refreshTodos]);
 
     // Filter todos for the selected date
-    const filteredTodos = todos.filter(todo => {
-        if (!todo.dueDate) return false;
-        return isSameDay(new Date(todo.dueDate), date);
-    });
+    const filteredTodos = todos; // SHOW EVERYTHING FOR DEBUGGING
+
+    useEffect(() => {
+        console.log(`[DEBUG] MobileTodoList Render. Date: ${date.toDateString()} Total: ${todos.length}`);
+    }, [todos, date]);
 
     const handleToggle = async (todo: Todo) => {
         await updateTodo(todo.id, {
@@ -65,13 +67,18 @@ export const MobileTodoList = ({ date = new Date() }: MobileTodoListProps) => {
     }
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={filteredTodos}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                contentContainerStyle={styles.list}
-            />
+        <View style={[styles.container, { backgroundColor: '#ffffcc', flex: 1 }]}>
+            <Text style={{ color: 'red', fontWeight: 'bold', padding: 5 }}>
+                DEBUG: TODOS={todos.length} FILTERED={filteredTodos.length}
+            </Text>
+            <ScrollView style={{ flex: 1 }}>
+                {filteredTodos.map((item, index) => (
+                    <View key={item.id} style={{ padding: 10, borderBottomWidth: 1, borderColor: 'blue', backgroundColor: 'white' }}>
+                        <Text style={{ fontWeight: 'bold' }}>#{index + 1}: {item.title || "[NO TITLE]"}</Text>
+                        <Text style={{ fontSize: 10, color: '#666' }}>ID: {item.id}</Text>
+                    </View>
+                ))}
+            </ScrollView>
         </View>
     );
 };

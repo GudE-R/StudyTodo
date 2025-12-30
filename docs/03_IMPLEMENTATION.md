@@ -107,6 +107,11 @@
     - **Shared/Web**: Vitest を導入。高速なユニットテストとコンポーネントテスト (`React Testing Library`) を実現。
     - **Mobile**: Jest (`jest-expo`) を導入。React Native 19 / Expo 54 環境に対応した `react-test-renderer` の整合性問題を解決。
     - **一括実行**: ルートディレクトリの `npm test` で全ワークスペースのテストを実行可能に整備。
+- **モバイル版テスト環境の修正**:
+    - **Shared ESM 化**: `@pomarc/shared` を ES Module (`type: module`) に移行し、Vitest の実行エラーを解消。
+    - **Testable Architecture**: `RepositoryProvider` をリファクタリングし、テスト時にモックリポジトリを注入可能に改善。
+    - **Native Mocking**: `jest-setup.js` に `expo-sqlite`, `expo-crypto`, `expo-secure-store` のモック設定を追加。
+    - **ユニットテスト追加**: `useMobileTodos` の基本的なフックテストを追加。
 
 ### [Environment] - 2025-12-28
 #### 変更

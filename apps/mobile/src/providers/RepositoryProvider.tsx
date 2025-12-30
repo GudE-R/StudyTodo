@@ -4,11 +4,21 @@ import { SQLiteRepository } from "../repositories/SQLiteRepository";
 
 const RepositoryContext = createContext<StorageInterface | null>(null);
 
-const repository = new SQLiteRepository();
+// singleton instance for app usage
+let repositoryInstance: StorageInterface | null = null;
 
-export function RepositoryProvider({ children }: { children: ReactNode }) {
+export function RepositoryProvider({
+    children,
+    repository
+}: {
+    children: ReactNode;
+    repository?: StorageInterface;
+}) {
+    // If not provided, use/create singleton
+    const activeRepository = repository || (repositoryInstance || (repositoryInstance = new SQLiteRepository()));
+
     return (
-        <RepositoryContext.Provider value={repository}>
+        <RepositoryContext.Provider value={activeRepository}>
             {children}
         </RepositoryContext.Provider>
     );
