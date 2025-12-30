@@ -99,7 +99,15 @@
     - **共通**: `packages/shared` に `SyncQueueItem`, `SyncQueueInterface` 型定義を追加。
     - **Web版**: `offlineQueue.ts` 実装。Dexie別DBでキュー管理、`navigator.onLine` でネットワーク検出、Hook失敗時に自動キュー追加。
     - **Mobile版**: `OfflineQueueRepository.ts` 実装。SQLite `sync_queue` テーブルでキュー管理、`expo-network` でネットワーク検出。
-    - **自動リトライ**: アプリ起動時およびネットワーク復帰時にキューを処理。3回失敗で自動削除。
+    - [x] **自動リトライ**: アプリ起動時およびネットワーク復帰時にキューを処理。3回失敗で自動削除。
+
+### [Day Schedule Improvement] - 2025-12-30
+#### 修正/変更 (Web & Mobile)
+- **30分単位の表示と操作に対応**:
+    - Dayスケジュールの時間軸を1時間単位から30分単位に細分化。
+    - 30分ごとのライン（点線）を追加し、視覚的な時間把握を詳細化。
+    - キープ機能（長押しによる時間指定）も30分単位で行えるように改善。
+    - 1時間ごとのラベル表示を維持しつつ、30分枠を点線で表現。
 
 ### [Testing] - 2025-12-30
 #### 追加

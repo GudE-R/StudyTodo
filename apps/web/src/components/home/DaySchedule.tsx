@@ -40,8 +40,8 @@ export function DaySchedule({
     // 再中心化のトリガーとなる閾値（端から何日以内で更新するか）
     const RECENTER_THRESHOLD = 15;
 
-    // 0時から23時までの時間枠 (24時間対応)
-    const hours = Array.from({ length: 24 }, (_, i) => i);
+    // 30分刻みの時間枠 (24時間 * 2 = 48枠)
+    const timeSlots = Array.from({ length: 48 }, (_, i) => i * 0.5);
 
     // 表示する日付リストの状態
     const [days, setDays] = useState<Date[]>([]);
@@ -172,14 +172,15 @@ export function DaySchedule({
         return () => observer.disconnect();
     }, [days, onDateChange, selectedDate, isObserverEnabled]); // isObserverEnabledの変化を監視
 
-
     // 長押し関連の処理
     const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleTouchStart = (date: Date, hour: number) => {
+    const handleTouchStart = (date: Date, timeSlot: number) => {
         longPressTimerRef.current = setTimeout(() => {
             if (onTimeLongPress) {
-                const timeStr = `${hour.toString().padStart(2, "0")}:00`;
+                const hour = Math.floor(timeSlot);
+                const minutes = (timeSlot % 1) * 60;
+                const timeStr = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
                 onTimeLongPress(date, timeStr);
                 if (navigator.vibrate) navigator.vibrate(50);
             }
@@ -196,7 +197,7 @@ export function DaySchedule({
     // 時間文字列(HH:mm)を分に変換するヘルパー
     const timeToMinutes = (time: string) => {
         const [h, m] = time.split(":").map(Number);
-        return h * 60 + m;
+        return h * 60 + (m || 0);
     };
 
     return (
@@ -230,28 +231,32 @@ export function DaySchedule({
 
                             {/* 時間枠 */}
                             <div className="relative">
-                                {hours.map((hour) => {
-                                    const timeStr = `${hour.toString().padStart(2, "0")}:00`;
+                                {timeSlots.map((slot) => {
+                                    const hour = Math.floor(slot);
+                                    const minutes = (slot % 1) * 60;
+                                    const timeStr = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+                                    const isHalfHour = minutes === 30;
                                     const isKept = keptTime === timeStr && keptDate && isSameDay(day, keptDate);
 
                                     return (
                                         <div
-                                            key={`${day.toISOString()}-${hour}`}
+                                            key={`${day.toISOString()}-${slot}`}
                                             className={`
-                                                flex h-12 border-b border-gray-50 relative group transition-colors duration-200 select-none
+                                                flex h-6 relative group transition-colors duration-200 select-none
+                                                ${isHalfHour ? "border-b border-dashed border-gray-50" : "border-b border-gray-100"}
                                                 ${isKept ? "bg-orange-50" : "hover:bg-gray-50"}
                                             `}
-                                            onMouseDown={() => handleTouchStart(day, hour)}
+                                            onMouseDown={() => handleTouchStart(day, slot)}
                                             onMouseUp={handleTouchEnd}
                                             onMouseLeave={handleTouchEnd}
-                                            onTouchStart={() => handleTouchStart(day, hour)}
+                                            onTouchStart={() => handleTouchStart(day, slot)}
                                             onTouchEnd={handleTouchEnd}
                                         >
                                             <div className={`
-                                                w-12 text-[10px] text-right pr-2 pt-1 transition-colors
+                                                w-12 text-[10px] text-right pr-2 pt-0.5 transition-colors
                                                 ${isKept ? "text-orange-600 font-bold" : "text-gray-400"}
                                             `}>
-                                                {timeStr}
+                                                {!isHalfHour || isKept ? timeStr : ""}
                                             </div>
                                             <div className="flex-1 relative">
                                                 <div className={`
@@ -262,6 +267,7 @@ export function DaySchedule({
                                         </div >
                                     );
                                 })}
+
 
                                 {/* Todoブロックの描画 */}
                                 {

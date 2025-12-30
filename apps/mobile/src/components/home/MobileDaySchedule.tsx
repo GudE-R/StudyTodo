@@ -10,8 +10,8 @@ interface MobileDayScheduleProps {
     onTimeLongPress?: (date: Date, time: string) => void;
 }
 
-const HOUR_HEIGHT = 60;
-const DAY_HEIGHT = HOUR_HEIGHT * 24;
+const SLOT_HEIGHT = 30;
+const DAY_HEIGHT = SLOT_HEIGHT * 48;
 
 export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: MobileDayScheduleProps) => {
     const listRef = useRef<FlatList>(null);
@@ -92,21 +92,33 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
             <View style={styles.dayHeader}>
                 <Text style={styles.dayTitle}>{format(item, 'MMM d (EEE)')}</Text>
             </View>
-            {/* Timeline Hours */}
-            {/* Timeline Hours */}
-            {Array.from({ length: 24 }).map((_, hour) => {
-                const timeStr = `${hour}:00`;
+            {/* Timeline Slots */}
+            {Array.from({ length: 48 }).map((_, slotIndex) => {
+                const hour = Math.floor(slotIndex / 2);
+                const minutes = (slotIndex % 2) * 30;
+                const timeStr = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+                const isHalfHour = minutes === 30;
                 const isKept = keptTime === timeStr && keptDate && isSameDay(item, keptDate);
 
                 return (
                     <TouchableOpacity
-                        key={hour}
-                        style={[styles.hourSlot, { height: HOUR_HEIGHT }, isKept && styles.keptSlot]}
+                        key={slotIndex}
+                        style={[
+                            styles.hourSlot,
+                            { height: SLOT_HEIGHT },
+                            isKept && styles.keptSlot,
+                            isHalfHour && { borderBottomWidth: 0 } // Sub-line handled by different style if needed
+                        ]}
                         activeOpacity={1}
                         onLongPress={() => onTimeLongPress?.(item, timeStr)}
                     >
-                        <Text style={[styles.hourText, isKept && styles.keptText]}>{hour}:00</Text>
-                        <View style={styles.hourLine} />
+                        <Text style={[styles.hourText, isKept && styles.keptText]}>
+                            {!isHalfHour || isKept ? timeStr : ''}
+                        </Text>
+                        <View style={[
+                            styles.hourLine,
+                            isHalfHour && { backgroundColor: '#f9f9f9', height: 0.5 }
+                        ]} />
                     </TouchableOpacity>
                 );
             })}
@@ -156,7 +168,7 @@ const CurrentTimeIndicator = () => {
     }, []);
 
     const minutes = now.getHours() * 60 + now.getMinutes();
-    const top = (minutes / 60) * HOUR_HEIGHT;
+    const top = (minutes / 30) * SLOT_HEIGHT;
 
     return (
         <View style={[styles.currentTimeLine, { top }]}>
