@@ -69,7 +69,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
         const tableConfigs = [
             { supabase: 'todos', sqlite: 'todos' },
             { supabase: 'categories', sqlite: 'categories' },
-            { supabase: 'srs_profiles', sqlite: 'srs_profiles' },
+            { supabase: 'srs_profiles', sqlite: 'srsProfiles' },
             { supabase: 'sessions', sqlite: 'sessions' }
         ];
 
@@ -126,7 +126,11 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                                     }
                                 }
                             } else if (payload.eventType === 'DELETE') {
-                                // For now, we don't handle hard deletes from cloud to avoid accidental data loss
+                                const oldItem = payload.old;
+                                console.log(`Mobile: Cloud deletion detected in ${config.sqlite}:`, oldItem.id);
+                                if (config.sqlite === 'todos') await repo.deleteTodo(oldItem.id);
+                                else if (config.sqlite === 'categories') await repo.deleteCategory(oldItem.id);
+                                else if (config.sqlite === 'srsProfiles') await repo.deleteSRSProfile(oldItem.id);
                             }
                         } catch (err) {
                             console.error('Error processing cloud change:', err);
@@ -135,7 +139,9 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                         }
                     }
                 )
-                .subscribe();
+                .subscribe((status) => {
+                    console.log(`[MobileSync] Channel ${config.supabase} status: ${status}`);
+                });
         });
 
         // 2. Subscribe to Local Repository Changes (Sender/Push with Offline Queue)

@@ -32,6 +32,7 @@ export function useRealtimeSync(userId: string | undefined) {
 
                         if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
                             const cloudItem = mapper.fromSupabase(payload.new);
+                            console.log(`Web: Cloud update received for ${table.dexie}:`, cloudItem.id);
 
                             // Get local item to compare updatedAt
                             // @ts-ignore
@@ -43,12 +44,16 @@ export function useRealtimeSync(userId: string | undefined) {
                                 await db[table.dexie].put(cloudItem);
                             }
                         } else if (payload.eventType === 'DELETE') {
-                            // Optionally handle delete
-                            // await db[table.dexie].delete(payload.old.id);
+                            const oldItem = payload.old;
+                            console.log(`Web: Cloud deletion detected in ${table.dexie}:`, oldItem.id);
+                            // @ts-ignore
+                            await db[table.dexie].delete(oldItem.id);
                         }
                     }
                 )
-                .subscribe();
+                .subscribe((status) => {
+                    console.log(`[WebSync] Channel ${table.supabase} status: ${status}`);
+                });
         });
 
         return () => {
