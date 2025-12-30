@@ -27,3 +27,25 @@ Web版とのデータ構造の違い（カラム不足）によりSupabase同期
 これでWebとMobileで完全にデータ同期ができるようになった
 そろそろマーケティングの勉強をしようと思う
 アプリ販売の手順を調べる
+
+12/30
+モバイルアプリで「RangeError: Invalid time value」エラーが発生していたため、日付処理のバリデーションを追加した
+複数のコンポーネント（Header, MobileCalendar, MobileTodoList等）で無効な日付に対してtoISOString()やgetDate()を呼び出していたのが原因だった
+isNaN(date.getTime())チェックを追加し、無効な場合は現在時刻にフォールバックするよう修正
+
+また、同じ名前のファイルが複数フォルダに存在していた問題を解消するためリファクタリングを実施した
+- home/フォルダ: MobileCalendar→HomeCalendar, MobileDaySchedule→HomeDaySchedule, MobileTodoList→HomeTodoList
+- widgets/フォルダ: MobileCalendar→CalendarMiniWidget, MobileDaySchedule→DayScheduleMiniWidget, MobileTodoList→TodoListMiniWidget  
+- ui/フォルダ: Header→SimpleHeader
+
+これでファイル名の混乱が解消され、デバッグやメンテナンスがしやすくなった
+
+その他の改善点:
+- デイスケジュールをFlatListからSectionListに移行し、日付ヘッダーをスティッキー表示（上部固定）にした
+- 23:30から翌日0:00へのスクロールがスムーズになり、日付の境界付近での操作性が向上した
+- タイムラインの30分ラインを実線（HH:00）と破線（HH:30）で視覚的に区別できるようにした
+- 日付ヘッダーと0:00の時刻表示が重なる問題を修正した
+
+同期機能の堅牢化:
+- useMobileSync と useMobileRealtimeSync の日付比較ロジックにバリデーションを追加
+- mapper.ts と SQLiteRepository.ts で不正な日付データを安全に処理できるよう改善
