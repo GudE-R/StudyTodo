@@ -117,7 +117,12 @@ export const MobileDaySchedule = ({ currentDate = new Date(), onDateChange, kept
                         </Text>
                         <View style={[
                             styles.hourLine,
-                            isHalfHour && { backgroundColor: '#f9f9f9', height: 0.5 }
+                            isHalfHour && {
+                                backgroundColor: 'transparent',
+                                borderBottomWidth: 1,
+                                borderStyle: 'dashed',
+                                borderColor: '#ccc'
+                            }
                         ]} />
                     </TouchableOpacity>
                 );

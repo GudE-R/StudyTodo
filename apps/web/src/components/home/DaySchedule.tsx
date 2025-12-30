@@ -243,7 +243,7 @@ export function DaySchedule({
                                             key={`${day.toISOString()}-${slot}`}
                                             className={`
                                                 flex h-6 relative group transition-colors duration-200 select-none
-                                                ${isHalfHour ? "border-b border-dashed border-gray-50" : "border-b border-gray-100"}
+                                                ${isHalfHour ? "border-b border-dashed border-gray-200" : "border-b border-gray-100"}
                                                 ${isKept ? "bg-orange-50" : "hover:bg-gray-50"}
                                             `}
                                             onMouseDown={() => handleTouchStart(day, slot)}
