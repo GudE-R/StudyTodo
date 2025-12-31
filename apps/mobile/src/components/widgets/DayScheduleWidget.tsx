@@ -1,8 +1,8 @@
 
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Todo } from '@pomarc/shared';
-import { isSameDay, getHours, getMinutes } from 'date-fns';
+import { Todo, getTodoScheduleRange } from '@pomarc/shared';
+import { isSameDay } from 'date-fns';
 import { useThemeColors } from '../../hooks/useThemeColors';
 
 interface DayScheduleWidgetProps {
@@ -17,21 +17,20 @@ export const DayScheduleWidget = ({ todos, selectedDate }: DayScheduleWidgetProp
     const HOUR_HEIGHT = 40;
 
     const scheduledTodos = useMemo(() => {
-        return todos.filter(todo => {
-            if (!todo.dueDate) return false;
-            return isSameDay(new Date(todo.dueDate), selectedDate);
-        }).map(todo => {
-            const date = new Date(todo.dueDate!);
-            const startHour = getHours(date);
-            const startMin = getMinutes(date);
-            const top = (startHour + startMin / 60) * HOUR_HEIGHT;
+        return todos.map(todo => {
+            if (!todo.dueDate || !isSameDay(new Date(todo.dueDate), selectedDate)) return null;
 
-            // Duration default 30 mins if not set
-            const duration = todo.estimatedDuration || 30;
-            const height = (duration / 60) * HOUR_HEIGHT;
+            const schedule = getTodoScheduleRange(todo);
+            if (!schedule) return null;
+
+            const { start: startMinutes, end: endMinutes } = schedule;
+            // Calculate top position based on minutes from start of day
+            const top = (startMinutes / 60) * HOUR_HEIGHT;
+            const durationMinutes = endMinutes - startMinutes;
+            const height = (durationMinutes / 60) * HOUR_HEIGHT;
 
             return { ...todo, top, height };
-        });
+        }).filter((t): t is (Todo & { top: number, height: number }) => t !== null);
     }, [todos, selectedDate]);
 
     return (

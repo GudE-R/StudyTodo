@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-import { Todo } from "@pomarc/shared";
+import { Todo, getTodoScheduleRange } from "@pomarc/shared";
 
 interface DayScheduleMiniWidgetProps {
     todos: Todo[];
@@ -13,25 +13,23 @@ export function DayScheduleMiniWidget({ todos }: DayScheduleMiniWidgetProps) {
     // (Actual logic needs date comparison)
     const todayStr = new Date().toDateString();
 
-    const scheduleItems = todos.filter(t => {
-        if (!t.dueDate) return false;
+    const scheduleItems = todos.map(t => {
+        if (!t.dueDate) return null;
         // Safe date check
         const dueDateObj = new Date(t.dueDate);
-        if (isNaN(dueDateObj.getTime())) return false;
+        if (isNaN(dueDateObj.getTime())) return null;
         const isToday = dueDateObj.toDateString() === todayStr;
-        return isToday && t.dueTime;
-    });
+        if (!isToday) return null;
+
+        const schedule = getTodoScheduleRange(t);
+        if (!schedule) return null;
+
+        return { ...t, schedule };
+    }).filter((t): t is (Todo & { schedule: { start: number, end: number } }) => t !== null);
 
     const hours = Array.from({ length: 15 }, (_, i) => i + 7); // 7 AM to 9 PM
-
-    const getTaskStyle = (dueTime: string) => {
-        // Simple vertical positioning logic
-        const [h, m] = dueTime.split(':').map(Number);
-        // hour row height is 40
-        // relative top = (h - 7) * 40 + (m / 60) * 40
-        const top = (h - 7) * 40 + (m / 60) * 40;
-        return { top };
-    };
+    const startHourOffset = 7;
+    const hourHeight = 40;
 
     return (
         <View style={styles.container}>
@@ -45,12 +43,26 @@ export function DayScheduleMiniWidget({ todos }: DayScheduleMiniWidgetProps) {
 
                 {/* Render Events */}
                 {scheduleItems.map(item => {
-                    if (!item.dueTime) return null;
-                    const top = getTaskStyle(item.dueTime).top;
+                    const { start: startMinutes } = item.schedule;
+
+                    // Display Start Time String
+                    const h = Math.floor(startMinutes / 60);
+                    const m = startMinutes % 60;
+                    const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+
+                    // Calculate top (relative to 7 AM)
+                    // If start time is before 7 AM, it might appear off-screen or negative top (clip it?)
+                    // For simply logic, just calculate.
+                    const relativeMinutes = startMinutes - (startHourOffset * 60);
+                    const top = (relativeMinutes / 60) * hourHeight;
+
+                    // Skip if out of view (before 7 AM or after 9 PM + 1h ?)
+                    if (relativeMinutes < 0) return null; // Or show at 0 if wanted
+
                     return (
                         <View key={item.id} style={[styles.eventItem, { top: top }]}>
                             <Text style={styles.eventTitle} numberOfLines={1}>{item.title}</Text>
-                            <Text style={styles.eventTime}>{item.dueTime}</Text>
+                            <Text style={styles.eventTime}>{timeStr}</Text>
                         </View>
                     );
                 })}

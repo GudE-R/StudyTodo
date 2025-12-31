@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { format, addDays, subDays, isSameDay } from "date-fns";
 import { ja } from "date-fns/locale";
 
-import { Todo } from "@pomarc/shared";
+import { Todo, getTodoScheduleRange } from "@pomarc/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface DayScheduleProps {
@@ -194,12 +194,6 @@ export function DaySchedule({
         }
     };
 
-    // 時間文字列(HH:mm)を分に変換するヘルパー
-    const timeToMinutes = (time: string) => {
-        const [h, m] = time.split(":").map(Number);
-        return h * 60 + (m || 0);
-    };
-
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden border-l border-gray-100">
             {/* ヘッダー領域削除 (ExpandablePaneへ移動) */}
@@ -210,10 +204,13 @@ export function DaySchedule({
                 className="flex-1 overflow-y-auto relative scroll-smooth"
             >
                 {days.map((day) => {
-                    // その日のTodoをフィルタリング
-                    const dayTodos = todos.filter(t =>
-                        t.dueDate && isSameDay(new Date(t.dueDate), day) && t.dueTime
-                    );
+                    // その日のTodoをフィルタリングし、スケジュール情報を計算
+                    const dayTodos = todos.map(todo => {
+                        if (!todo.dueDate || !isSameDay(new Date(todo.dueDate), day)) return null;
+                        const schedule = getTodoScheduleRange(todo);
+                        if (!schedule) return null;
+                        return { ...todo, schedule };
+                    }).filter((t): t is (Todo & { schedule: { start: number, end: number } }) => t !== null);
 
                     return (
                         <div
@@ -272,10 +269,7 @@ export function DaySchedule({
                                 {/* Todoブロックの描画 */}
                                 {
                                     dayTodos.map(todo => {
-                                        if (!todo.dueTime) return null;
-
-                                        const startMinutes = timeToMinutes(todo.dueTime);
-                                        const endMinutes = todo.endTime ? timeToMinutes(todo.endTime) : startMinutes + 60; // Default 1 hour
+                                        const { start: startMinutes, end: endMinutes } = todo.schedule;
                                         const duration = endMinutes - startMinutes;
 
                                         // 1時間 = 48px (h-12) -> 1分 = 0.8px
@@ -296,7 +290,7 @@ export function DaySchedule({
                                                     <TodoTitle title={todo.title} />
                                                 </div>
                                                 <div className="text-blue-600 dark:text-blue-300 text-[10px]">
-                                                    {todo.dueTime} - {todo.endTime || "?"}
+                                                    {todo.dueTime || format(new Date(todo.dueDate!), "HH:mm")} - {todo.endTime || "?"}
                                                 </div>
                                             </div>
                                         );
