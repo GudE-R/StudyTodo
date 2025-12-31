@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { mapper, allowedFieldsMap } from "@pomarc/shared";
+import { mapper, allowedFieldsMap, compareDates, Session } from "@pomarc/shared";
 import { useRepository } from "../providers/RepositoryProvider";
 
 import { useMobileRealtimeSync } from "./useMobileRealtimeSync";
@@ -49,20 +49,19 @@ export function useMobileSync() {
                 const toUpdateLocal: any[] = [];
                 const toExport: any[] = [];
 
-                for (const [id, cloudItem] of cloudMap) {
+                for (const [id, rawCloudItem] of cloudMap) {
                     const localItem = localMap.get(id);
                     if (!localItem) {
-                        toImport.push(cloudItem);
+                        toImport.push(rawCloudItem);
                     } else {
-                        // Safely parse dates with validation
-                        const cloudDate = cloudItem.updatedAt ? new Date(cloudItem.updatedAt) : null;
-                        const localDate = localItem.updatedAt ? new Date(localItem.updatedAt) : null;
-                        const cloudTime = (cloudDate && !isNaN(cloudDate.getTime())) ? cloudDate.getTime() : 0;
-                        const localTime = (localDate && !isNaN(localDate.getTime())) ? localDate.getTime() : 0;
+                        // Use shared compareDates utility
+                        const cloudUpdatedAt = (rawCloudItem as { updatedAt?: Date | string }).updatedAt;
+                        const localUpdatedAt = (localItem as { updatedAt?: Date | string }).updatedAt;
+                        const comparison = compareDates(cloudUpdatedAt, localUpdatedAt);
 
-                        if (cloudTime > localTime) {
-                            toUpdateLocal.push(cloudItem);
-                        } else if (localTime > cloudTime) {
+                        if (comparison > 0) {
+                            toUpdateLocal.push(rawCloudItem);
+                        } else if (comparison < 0) {
                             toExport.push(localItem);
                         }
                     }
@@ -104,13 +103,13 @@ export function useMobileSync() {
             // Sessions logic
             const sessionCloudMap = new Map(cloudSessions.map(i => [i.id, mapper.fromSupabase(i)]));
             const sessionLocalMap = new Map(localSessions.map(i => [i.id, i]));
-            for (const [id, cloudItem] of sessionCloudMap) {
-                if (!sessionLocalMap.has(id)) await repo.addSession(cloudItem);
+            for (const [id, rawCloudItem] of sessionCloudMap) {
+                if (!sessionLocalMap.has(id)) await repo.addSession(rawCloudItem as unknown as Session);
             }
             const sessionsToExport = localSessions.filter(s => !sessionCloudMap.has(s.id));
             if (sessionsToExport.length > 0) {
                 const allowedSessionFields = ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt'];
-                const mappedExports = sessionsToExport.map(item => mapper.toSupabase(item, uId, allowedSessionFields));
+                const mappedExports = sessionsToExport.map(item => mapper.toSupabase(item as unknown as Record<string, unknown>, uId, allowedSessionFields));
                 await supabase.from('sessions').upsert(mappedExports);
             }
 

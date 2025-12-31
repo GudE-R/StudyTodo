@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRepository } from '../providers/RepositoryProvider';
-import { mapper, allowedFieldsMap } from '@pomarc/shared';
+import { mapper, allowedFieldsMap, compareDates, Todo, Category, SRSProfile, Session } from '@pomarc/shared';
 import { SQLiteRepository } from '../repositories/SQLiteRepository';
 import { offlineQueue } from '../repositories/OfflineQueueRepository';
 import * as Network from 'expo-network';
@@ -86,40 +86,44 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                         isProcessingCloudChange.current = true;
                         try {
                             if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-                                const cloudItem = mapper.fromSupabase(payload.new);
+                                const rawCloudItem = mapper.fromSupabase(payload.new);
+                                const cloudItemId = rawCloudItem.id as string;
 
                                 // Fetch local item to compare
                                 let localItem: any;
-                                if (config.sqlite === 'todos') localItem = await repo.getTodo(cloudItem.id);
+                                if (config.sqlite === 'todos') localItem = await repo.getTodo(cloudItemId);
                                 else if (config.sqlite === 'categories') {
                                     const cats = await repo.getCategories();
-                                    localItem = cats.find(c => c.id === cloudItem.id);
+                                    localItem = cats.find(c => c.id === cloudItemId);
                                 } else if (config.sqlite === 'srs_profiles') {
                                     const profiles = await repo.getSRSProfiles();
-                                    localItem = profiles.find(p => p.id === cloudItem.id);
+                                    localItem = profiles.find(p => p.id === cloudItemId);
                                 } else if (config.sqlite === 'sessions') {
                                     const sessions = await repo.getSessions();
-                                    localItem = sessions.find(s => s.id === cloudItem.id);
+                                    localItem = sessions.find(s => s.id === cloudItemId);
                                 }
 
-                                // Safely parse dates with validation
-                                const cloudDate = cloudItem.updatedAt ? new Date(cloudItem.updatedAt) : null;
-                                const localDate = localItem?.updatedAt ? new Date(localItem.updatedAt) : null;
-                                const cloudTime = (cloudDate && !isNaN(cloudDate.getTime())) ? cloudDate.getTime() : 0;
-                                const localTime = (localDate && !isNaN(localDate.getTime())) ? localDate.getTime() : 0;
+                                // Use shared compareDates utility
+                                const cloudUpdatedAt = rawCloudItem.updatedAt as Date | string | undefined;
+                                const localUpdatedAt = localItem?.updatedAt;
+                                const shouldUpdate = !localItem || compareDates(cloudUpdatedAt, localUpdatedAt) > 0;
 
-                                if (!localItem || cloudTime > localTime) {
-                                    console.log(`Mobile: Applying cloud update to ${config.sqlite}:`, cloudItem.id);
+                                if (shouldUpdate) {
+                                    console.log(`Mobile: Applying cloud update to ${config.sqlite}:`, cloudItemId);
                                     if (config.sqlite === 'todos') {
+                                        const cloudItem = rawCloudItem as unknown as Todo;
                                         if (!localItem) await repo.addTodo(cloudItem);
-                                        else await repo.updateTodo(cloudItem.id, cloudItem);
+                                        else await repo.updateTodo(cloudItemId, cloudItem);
                                     } else if (config.sqlite === 'categories') {
+                                        const cloudItem = rawCloudItem as unknown as Category;
                                         if (!localItem) await repo.addCategory(cloudItem);
-                                        else await repo.updateCategory(cloudItem.id, cloudItem);
+                                        else await repo.updateCategory(cloudItemId, cloudItem);
                                     } else if (config.sqlite === 'srs_profiles') {
+                                        const cloudItem = rawCloudItem as unknown as SRSProfile;
                                         if (!localItem) await repo.addSRSProfile(cloudItem);
-                                        else await repo.updateSRSProfile(cloudItem.id, cloudItem);
+                                        else await repo.updateSRSProfile(cloudItemId, cloudItem);
                                     } else if (config.sqlite === 'sessions') {
+                                        const cloudItem = rawCloudItem as unknown as Session;
                                         if (!localItem) await repo.addSession(cloudItem);
                                     }
                                 }
