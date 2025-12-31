@@ -49,3 +49,30 @@ isNaN(date.getTime())チェックを追加し、無効な場合は現在時刻�
 同期機能の堅牢化:
 - useMobileSync と useMobileRealtimeSync の日付比較ロジックにバリデーションを追加
 - mapper.ts と SQLiteRepository.ts で不正な日付データを安全に処理できるよう改善
+
+12/31〜1/1
+ドキュメント整理と自動スケジュール連携機能の実装を行った。
+
+docs/04_FUTURE.md の末尾に追記されていた未整理の項目を、「リファクタリング / 技術的負債」「機能アイデア」「今後の改善案」の各セクションに分類・統合した。
+
+自動スケジュール連携機能:
+- 時間指定付きTodoがスケジュールビューに自動反映される機能を実装
+- packages/shared に getTodoScheduleRange() ユーティリティを作成し、Web/Mobileで共通のロジックを使用できるようにした
+- 開始時間は dueTime ("HH:mm") を最優先、なければ dueDate の時間部分
+- 終了時間/期間は endTime > estimatedDuration > デフォルト30分 の順で決定
+- Web版(DaySchedule.tsx)とMobile版(DayScheduleWidget.tsx, DayScheduleMiniWidget.tsx)を共通ロジックに対応
+
+しかし、Mobile版のSQLiteRepositoryにdueTimeとendTimeカラムが存在しなかったため、終了時間が保存されないバグがあった。
+カラム追加とINSERT/UPDATEクエリの修正を行った際、fromDB関数の日付解析ロジックにバグを導入してしまい、
+Todoやセッションのデータ読み込みが壊れる問題を引き起こした。
+ISO形式("T"を含む長い文字列)のみDateに変換するよう修正して対応した。
+
+共有コードの大幅リファクタリング（別途実施）:
+- mapper, syncCore, date utils を packages/shared に統合
+- Mobile版のテストフレームワークをJestからVitestに移行
+
+開発方針の見直し:
+今後はWeb版とMobile版の並行開発ではなく、Web版を完成させてからMobile版の開発を進めることにした。
+同時開発による複雑性とデバッグの難しさが課題として浮き彫りになったため。
+
+
