@@ -27,6 +27,7 @@ description: モバイルアプリ（Expo）の起動方法
 
 3.  QRコードが表示されます。
     *   **Android**: Expo Goアプリを開き、「Scan QR Code」をタップしてQRコードを読み取ります。
+    *   **エミュレータ (実機なし)**: PCでAndroidエミュレータを起動し、ターミナルで `a` キーを押します。詳細は [ANDROID_TEST_SETUP.md](../../docs/ANDROID_TEST_SETUP.md) を参照してください。
     *   **iOS**: 標準のカメラアプリでQRコードを読み取り、Expo Goで開く通知をタップします。
 
 ## トラブルシューティング

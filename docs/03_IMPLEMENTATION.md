@@ -59,7 +59,7 @@
 *   **Database**: Dexie.js (Web), expo-sqlite (Mobile) - Abstracted via Repository Pattern
 *   **Architecture**: Monorepo (pnpm workspaces)
 *   **Testing**: Vitest (`shared`, `web`), Jest (`mobile`)
-    *   **Note**: `packages/shared` と `apps/web` は Vitest、`apps/mobile` は Expo 互換のため Jest を使用。
+    *   **Note**: `packages/shared` と `apps/web` は Vitest、`apps/mobile` は Expo 互換のため Jest を使用。実機がない場合のテスト手順は [ANDROID_TEST_SETUP.md](./ANDROID_TEST_SETUP.md) を参照。
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 
 ---
