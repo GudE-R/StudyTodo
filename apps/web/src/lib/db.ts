@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { Todo, Category, SRSProfile, Session } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, Session, mapper, allowedFieldsMap, supabaseTableMap } from '@pomarc/shared';
 import { generateId } from '@/lib/utils';
 
 export class PomArcDatabase extends Dexie {
@@ -36,19 +36,7 @@ export class PomArcDatabase extends Dexie {
 
     private setupHooks() {
         const tables = ['todos', 'categories', 'srsProfiles', 'sessions'];
-        const supabaseTableMap: Record<string, string> = {
-            'todos': 'todos',
-            'categories': 'categories',
-            'srsProfiles': 'srs_profiles',
-            'sessions': 'sessions'
-        };
-
-        const allowedFieldsMap: Record<string, string[]> = {
-            'todos': ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'],
-            'categories': ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'],
-            'srsProfiles': ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'],
-            'sessions': ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt']
-        };
+        // supabaseTableMap と allowedFieldsMap は @pomarc/shared からインポート
 
         tables.forEach(tableName => {
             // @ts-ignore
@@ -59,10 +47,9 @@ export class PomArcDatabase extends Dexie {
                 // Trigger async push (with offline queue fallback)
                 setTimeout(async () => {
                     const { supabase } = await import('./supabase');
-                    const { mapper } = await import('./mapper');
                     const { offlineQueue, isOnline } = await import('./offlineQueue');
 
-                    const mapped = mapper.toSupabase(obj, this.currentUserId!, allowedFieldsMap[tableName]);
+                    const mapped = mapper.toSupabase(obj as Record<string, unknown>, this.currentUserId!, allowedFieldsMap[tableName]);
 
                     if (!isOnline()) {
                         await offlineQueue.add({ table: tableName, operation: 'INSERT', data: obj });
@@ -85,10 +72,9 @@ export class PomArcDatabase extends Dexie {
                 const updatedObj = { ...obj, ...mods };
                 setTimeout(async () => {
                     const { supabase } = await import('./supabase');
-                    const { mapper } = await import('./mapper');
                     const { offlineQueue, isOnline } = await import('./offlineQueue');
 
-                    const mapped = mapper.toSupabase(updatedObj, this.currentUserId!, allowedFieldsMap[tableName]);
+                    const mapped = mapper.toSupabase(updatedObj as Record<string, unknown>, this.currentUserId!, allowedFieldsMap[tableName]);
 
                     if (!isOnline()) {
                         await offlineQueue.add({ table: tableName, operation: 'UPDATE', data: updatedObj });

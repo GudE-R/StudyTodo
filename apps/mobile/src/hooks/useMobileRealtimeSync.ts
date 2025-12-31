@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRepository } from '../providers/RepositoryProvider';
-import { mapper } from '../lib/mapper';
+import { mapper, allowedFieldsMap } from '@pomarc/shared';
 import { SQLiteRepository } from '../repositories/SQLiteRepository';
 import { offlineQueue } from '../repositories/OfflineQueueRepository';
 import * as Network from 'expo-network';
@@ -23,12 +23,7 @@ async function processOfflineQueue(userId: string): Promise<void> {
 
     console.log(`[MobileOfflineQueue] Processing ${items.length} queued items...`);
 
-    const allowedFieldsMap: Record<string, string[]> = {
-        'todos': ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'],
-        'categories': ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'],
-        'srs_profiles': ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'],
-        'sessions': ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt']
-    };
+    // allowedFieldsMap は @pomarc/shared からインポート
 
     for (const item of items) {
         try {
@@ -154,12 +149,8 @@ export function useMobileRealtimeSync(userId: string | undefined) {
 
             console.log(`Mobile: Local change detected in ${table}:`, type);
 
-            // Define allowed fields to match Supabase schema
-            let allowedFields: string[] | undefined;
-            if (table === 'todos') allowedFields = ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'];
-            else if (table === 'categories') allowedFields = ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'];
-            else if (table === 'srs_profiles') allowedFields = ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'];
-            else if (table === 'sessions') allowedFields = ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt'];
+            // allowedFieldsMap から取得
+            const allowedFields = allowedFieldsMap[table];
 
             try {
                 // Check network status

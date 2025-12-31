@@ -40,6 +40,8 @@ export class SQLiteRepository implements StorageInterface {
                 createdAt TEXT,
                 updatedAt TEXT,
                 dueDate TEXT,
+                dueTime TEXT,         -- Added
+                endTime TEXT,         -- Added
                 categoryId TEXT,
                 estimatedDuration INTEGER,
                 actualDuration INTEGER,
@@ -58,7 +60,7 @@ export class SQLiteRepository implements StorageInterface {
         `);
 
         // Migrations (Safe Mode) - using try/catch to ignore "duplicate column" errors
-        const todoMigrations = ['memo', 'range', 'srsInterval', 'description', 'srsGroupId'];
+        const todoMigrations = ['memo', 'range', 'srsInterval', 'description', 'srsGroupId', 'dueTime', 'endTime'];
         todoMigrations.forEach(col => {
             try { this.db.execSync(`ALTER TABLE todos ADD COLUMN ${col} TEXT;`); } catch (e) { }
         });
@@ -142,10 +144,19 @@ export class SQLiteRepository implements StorageInterface {
         obj.completed = !!obj.completed;
         obj.isDefault = !!obj.isDefault;
 
+        // Convert ISO date strings to Date objects
+        // Note: dueTime and endTime in Todos are "HH:mm" format strings, NOT dates
+        // But in Sessions table, startTime and endTime are ISO date strings
+        // We detect ISO format by checking if the string contains 'T' and is > 10 chars
         ['createdAt', 'updatedAt', 'dueDate', 'nextReviewDate', 'startTime', 'endTime'].forEach(key => {
-            if (obj[key]) {
-                const d = new Date(obj[key]);
-                obj[key] = !isNaN(d.getTime()) ? d : undefined;
+            if (obj[key] && typeof obj[key] === 'string') {
+                // Only parse as Date if it looks like an ISO string (has 'T' and is longer than "HH:mm")
+                // This preserves "HH:mm" strings for Todo.dueTime and Todo.endTime
+                if (obj[key].includes('T') || obj[key].length > 10) {
+                    const d = new Date(obj[key]);
+                    obj[key] = !isNaN(d.getTime()) ? d : undefined;
+                }
+                // If it's a short string like "11:00", leave it as-is
             }
         });
 
@@ -175,9 +186,9 @@ export class SQLiteRepository implements StorageInterface {
     async addTodo(todo: Todo): Promise<void> {
         const row = this.toDB(todo);
         await this.db.runAsync(
-            `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, categoryId, estimatedDuration, actualDuration, priority, notes, memo, range, srsInterval, tags, srsLevel, nextReviewDate, srsProfileId, reviewHistory)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.reviewHistory]
+            `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, dueTime, endTime, categoryId, estimatedDuration, actualDuration, priority, notes, memo, range, srsInterval, tags, srsLevel, nextReviewDate, srsProfileId, reviewHistory)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.dueTime, row.endTime, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.reviewHistory]
         );
         this.notifyChange('todos', 'INSERT', todo);
     }
@@ -189,7 +200,7 @@ export class SQLiteRepository implements StorageInterface {
         // Allowed columns in local DB
         const allowedColumns = [
             'title', 'description', 'completed', 'createdAt', 'updatedAt',
-            'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration',
+            'dueDate', 'dueTime', 'endTime', 'categoryId', 'estimatedDuration', 'actualDuration',
             'priority', 'notes', 'memo', 'range', 'srsInterval', 'tags',
             'srsLevel', 'nextReviewDate', 'srsProfileId', 'srsGroupId', 'reviewHistory'
         ];

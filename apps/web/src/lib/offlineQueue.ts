@@ -4,7 +4,7 @@
  */
 
 import Dexie, { Table } from 'dexie';
-import { SyncQueueItem, SyncQueueInterface, SyncOperationType } from '@pomarc/shared';
+import { SyncQueueItem, SyncQueueInterface, SyncOperationType, allowedFieldsMap, supabaseTableMap } from '@pomarc/shared';
 import { generateId } from '@/lib/utils';
 
 class OfflineQueueDB extends Dexie {
@@ -83,19 +83,7 @@ export async function processOfflineQueue(
 
     console.log(`[OfflineQueue] Processing ${items.length} queued items...`);
 
-    const supabaseTableMap: Record<string, string> = {
-        'todos': 'todos',
-        'categories': 'categories',
-        'srsProfiles': 'srs_profiles',
-        'sessions': 'sessions'
-    };
-
-    const allowedFieldsMap: Record<string, string[]> = {
-        'todos': ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'],
-        'categories': ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'],
-        'srsProfiles': ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'],
-        'sessions': ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt']
-    };
+    // allowedFieldsMap と supabaseTableMap は @pomarc/shared からインポート
 
     for (const item of items) {
         try {

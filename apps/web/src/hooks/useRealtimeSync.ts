@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { db } from '@/lib/db';
-import { mapper } from '@/lib/mapper';
+import { mapper, compareDates } from '@pomarc/shared';
 
 export function useRealtimeSync(userId: string | undefined) {
     useEffect(() => {
@@ -38,7 +38,10 @@ export function useRealtimeSync(userId: string | undefined) {
                             // @ts-ignore
                             const localItem = await db[table.dexie].get(cloudItem.id);
 
-                            if (!localItem || new Date(cloudItem.updatedAt || 0).getTime() > new Date(localItem.updatedAt || 0).getTime()) {
+                            const cloudUpdatedAt = (cloudItem as { updatedAt?: Date | string }).updatedAt;
+                            const localUpdatedAt = (localItem as { updatedAt?: Date | string } | undefined)?.updatedAt;
+
+                            if (!localItem || compareDates(cloudUpdatedAt, localUpdatedAt) > 0) {
                                 console.log(`Applying realtime update to ${table.dexie}:`, cloudItem.id);
                                 // @ts-ignore
                                 await db[table.dexie].put(cloudItem);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { db } from "@/lib/db";
-import { mapper } from "@/lib/mapper";
+import { mapper, allowedFieldsMap, compareDates } from "@pomarc/shared";
 import { useRealtimeSync } from "./useRealtimeSync";
 import { initNetworkListener, processOfflineQueue } from "@/lib/offlineQueue";
 
@@ -58,12 +58,13 @@ export function useSync() {
                     if (!localItem) {
                         toImport.push(cloudItem);
                     } else {
-                        const cloudTime = new Date(cloudItem.updatedAt || 0).getTime();
-                        const localTime = new Date(localItem.updatedAt || 0).getTime();
+                        const cloudUpdatedAt = (cloudItem as { updatedAt?: Date | string }).updatedAt;
+                        const localUpdatedAt = (localItem as { updatedAt?: Date | string }).updatedAt;
+                        const comparison = compareDates(cloudUpdatedAt, localUpdatedAt);
 
-                        if (cloudTime > localTime) {
+                        if (comparison > 0) {
                             toImport.push(cloudItem);
-                        } else if (localTime > cloudTime) {
+                        } else if (comparison < 0) {
                             toExport.push(localItem);
                         }
                     }

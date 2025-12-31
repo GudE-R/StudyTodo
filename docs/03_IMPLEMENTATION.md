@@ -58,8 +58,8 @@
 *   **Styling**: Tailwind CSS v4 (Web), StyleSheet (Mobile)
 *   **Database**: Dexie.js (Web), expo-sqlite (Mobile) - Abstracted via Repository Pattern
 *   **Architecture**: Monorepo (pnpm workspaces)
-*   **Testing**: Vitest (`shared`, `web`), Jest (`mobile`)
-    *   **Note**: `packages/shared` と `apps/web` は Vitest、`apps/mobile` は Expo 互換のため Jest を使用。実機がない場合のテスト手順は [ANDROID_TEST_SETUP.md](./ANDROID_TEST_SETUP.md) を参照。
+*   **Testing**: Vitest (全ワークスペース)
+    *   **Note**: 全ワークスペースで Vitest を使用。Mobile版のReact Nativeコンポーネントテストは環境制約から除外し、純粋なロジックテストのみ実行。実機がない場合のテスト手順は [ANDROID_TEST_SETUP.md](./ANDROID_TEST_SETUP.md) を参照。
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 
 ---
@@ -68,6 +68,23 @@
 
 これまでの主要な変更履歴です。
 
+### [Bug Prevention & Code Quality] - 2026-01-01
+#### 追加/変更 (Shared)
+- **共有コードの拡充**:
+    - `packages/shared/src/sync/mapper.ts`: Web/Mobile間で重複していた `mapper.ts` を統合。無効な日付の処理や `estimated_time → estimatedDuration` の特殊マッピングを含む。
+    - `packages/shared/src/sync/syncCore.ts`: 同期コアロジック (`processTableSync`) を共通化。`allowedFieldsMap` と `supabaseTableMap` も共有。
+    - `packages/shared/src/utils/date.ts`: 日付ユーティリティ (`parseDate`, `toISOString`, `compareDates`) を追加。
+- **テストカバレッジ向上**: 共有コードに対するユニットテストを追加（計54件）。
+- **旧コードの削除**: 各アプリの `lib/mapper.ts` を削除し、共有パッケージからインポートするよう変更。
+
+#### 追加/変更 (Testing)
+- **Vitest統一**: Mobile版のテストフレームワークをJestからVitestに移行。
+    - `apps/mobile/vitest.config.ts`: 新規作成
+    - `apps/mobile/vitest-setup.ts`: ネイティブモジュールのモック設定
+    - React Nativeコンポーネントテストは除外（Expo環境が必要なため）
+
+#### ドキュメント
+- **開発ガイドライン**: `docs/DEVELOPMENT_GUIDE.md` を新規作成。共有コードのルール、日付処理、テストガイドライン、PRチェックリストを記載。
 ### [Web UI Parity] - 2025-12-XX
 #### 修正/変更 (Web)
 - **Mobile版との同等性向上 (Layout & UX)**:
