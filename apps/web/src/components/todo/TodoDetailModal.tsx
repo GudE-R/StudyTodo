@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle, Save } from "lucide-react";
 import { format } from "date-fns";
-import { ja } from "date-fns/locale";
+import { useTranslations } from "next-intl";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { Todo, Category, SRSProfile } from "@pomarc/shared";
@@ -43,6 +43,9 @@ export function TodoDetailModal({
     // Existing states
     const [isRecording, setIsRecording] = useState(false);
     const [recordDuration, setRecordDuration] = useState("");
+
+    const t = useTranslations("todo");
+    const tc = useTranslations("common");
 
     // Initialize states when todo is opened
     React.useEffect(() => {
@@ -98,7 +101,7 @@ export function TodoDetailModal({
         }
 
         return {
-            title: effectiveTitle || "No Title",
+            title: effectiveTitle || t("noTitle"),
             notes: notes || undefined
         };
     };
@@ -106,9 +109,9 @@ export function TodoDetailModal({
     // 優先度の表示名とカラー
     const getPriorityDisplay = (priority?: string) => {
         switch (priority) {
-            case "high": return { label: "高", color: "text-red-500 bg-red-50 dark:bg-red-900/30" };
-            case "medium": return { label: "中", color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30" };
-            case "low": return { label: "低", color: "text-green-500 bg-green-50 dark:bg-green-900/30" };
+            case "high": return { label: t("priorityHigh"), color: "text-red-500 bg-red-50 dark:bg-red-900/30" };
+            case "medium": return { label: t("priorityMedium"), color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30" };
+            case "low": return { label: t("priorityLow"), color: "text-green-500 bg-green-50 dark:bg-green-900/30" };
             default: return null;
         }
     };
@@ -160,7 +163,7 @@ export function TodoDetailModal({
         if (!todo) return;
         const d = parseInt(recordDuration, 10);
         if (isNaN(d) || d <= 0) {
-            alert("有効な時間を入力してください");
+            alert(t("invalidDuration"));
             return;
         }
 
@@ -190,13 +193,13 @@ export function TodoDetailModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">タスク詳細・編集</h2>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t("detailTitle")}</h2>
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={handleUpdate}
                             className="text-sm font-bold text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-3 py-1 rounded-lg transition-colors"
                         >
-                            保存
+                            {tc("save")}
                         </button>
                         <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                             <X size={24} />
@@ -215,7 +218,7 @@ export function TodoDetailModal({
                             onChange={(e) => setCategoryId(e.target.value)}
                             className="flex-1 bg-gray-50 dark:bg-gray-800 text-sm p-2 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-400"
                         >
-                            <option value="">カテゴリなし</option>
+                            <option value="">{t("noCategory")}</option>
                             {categoryOptions.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
                             ))}
@@ -232,7 +235,7 @@ export function TodoDetailModal({
                             )}
                         </div>
                         <textarea
-                            placeholder="タスク名や範囲、メモを入力..."
+                            placeholder={t("contentPlaceholder")}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             rows={3}
@@ -272,7 +275,7 @@ export function TodoDetailModal({
                                 onChange={(e) => setSrsInterval(e.target.value)}
                                 className="bg-transparent text-sm w-full border-none outline-none"
                             >
-                                <option value="">SRSなし</option>
+                                <option value="">{t("noSrs")}</option>
                                 {srsProfiles.map(p => (
                                     <option key={p.id} value={p.name}>{p.name}</option>
                                 ))}
@@ -287,20 +290,20 @@ export function TodoDetailModal({
                                 onChange={(e) => setPriority(e.target.value as any)}
                                 className="bg-transparent text-sm w-full border-none outline-none"
                             >
-                                <option value="low">優先度：低</option>
-                                <option value="medium">優先度：中</option>
-                                <option value="high">優先度：高</option>
+                                <option value="low">{t("priorityLowLabel")}</option>
+                                <option value="medium">{t("priorityMediumLabel")}</option>
+                                <option value="high">{t("priorityHighLabel")}</option>
                             </select>
                         </div>
                     </div>
 
                     {/* Stats Summary (Learning History) */}
                     <div className="space-y-2 pt-2">
-                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">学習状況</div>
+                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
                         <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
                             <Clock className="text-blue-500" size={20} />
                             <div className="flex-1">
-                                <div className="text-xs text-gray-500 dark:text-gray-400">実績</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
                                 <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                                     {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
                                 </div>
@@ -318,7 +321,7 @@ export function TodoDetailModal({
                                 type="number"
                                 value={recordDuration}
                                 onChange={(e) => setRecordDuration(e.target.value)}
-                                placeholder="時間(分)"
+                                placeholder={t("durationPlaceholder")}
                                 className="flex-1 bg-gray-100 p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
                                 autoFocus
                             />
@@ -342,14 +345,14 @@ export function TodoDetailModal({
                                 className="flex items-center justify-center space-x-2 bg-green-100 text-green-600 hover:bg-green-200 py-3 rounded-xl font-bold transition-colors"
                             >
                                 <CheckCircle size={20} />
-                                <span>記録</span>
+                                <span>{t("record")}</span>
                             </button>
                             <button
                                 onClick={handleStartNow}
                                 className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-bold transition-colors"
                             >
                                 <Play size={20} />
-                                <span>開始</span>
+                                <span>{t("start")}</span>
                             </button>
                         </div>
                     )}
@@ -359,7 +362,7 @@ export function TodoDetailModal({
                             onClick={handleDelete}
                             className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
                         >
-                            このタスクを削除
+                            {t("deleteTask")}
                         </button>
                     )}
                 </div>

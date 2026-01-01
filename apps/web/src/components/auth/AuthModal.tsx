@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslations } from "next-intl";
 import { X, Mail, Lock, LogIn, UserPlus } from "lucide-react";
 
 interface AuthModalProps {
@@ -17,6 +18,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
+    const t = useTranslations("auth");
+
     if (!isOpen) return null;
 
     const handleAuth = async (e: React.FormEvent) => {
@@ -29,16 +32,16 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 // Login
                 const { error } = await signIn(email, password);
                 if (error) throw error;
-                setMessage({ text: "ログインに成功しました！", type: "success" });
+                setMessage({ text: t("loginSuccess"), type: "success" });
                 setTimeout(onClose, 1500);
             } else {
                 // Sign Up
                 const { error } = await signUp(email, password);
                 if (error) throw error;
-                setMessage({ text: "確認メールを送信しました。メールボックスを確認してください。", type: "success" });
+                setMessage({ text: t("checkEmail"), type: "success" });
             }
         } catch (error: any) {
-            setMessage({ text: error.message || "エラーが発生しました", type: "error" });
+            setMessage({ text: error.message || t("errorOccurred"), type: "error" });
         } finally {
             setLoading(false);
         }
@@ -56,12 +59,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         <X size={24} />
                     </button>
                     <h2 className="text-2xl font-bold text-white mb-2">
-                        {isLoginMode ? "おかえりなさい" : "アカウント作成"}
+                        {isLoginMode ? t("welcomeBack") : t("createAccount")}
                     </h2>
                     <p className="text-blue-100 text-sm">
                         {isLoginMode
-                            ? "データを同期して学習を継続しましょう"
-                            : "PomArcに参加して学習データをバックアップ"}
+                            ? t("signInDescription")
+                            : t("signUpDescription")}
                     </p>
                 </div>
 
@@ -76,7 +79,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         )}
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">メールアドレス</label>
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("email")}</label>
                             <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
@@ -91,7 +94,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">パスワード</label>
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("password")}</label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
@@ -116,7 +119,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             ) : (
                                 <>
                                     {isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
-                                    <span>{isLoginMode ? "ログイン" : "アカウント登録"}</span>
+                                    <span>{isLoginMode ? t("loginButton") : t("signUpButton")}</span>
                                 </>
                             )}
                         </button>
@@ -128,8 +131,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 underline transition-colors"
                         >
                             {isLoginMode
-                                ? "アカウントをお持ちでない方はこちら"
-                                : "すでにアカウントをお持ちの方はこちら"}
+                                ? t("noAccountLink")
+                                : t("haveAccountLink")}
                         </button>
                     </div>
                 </div>

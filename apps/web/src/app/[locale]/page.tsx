@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { isSameDay } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -34,6 +35,7 @@ import { useSync } from "@/hooks/useSync";
  */
 
 export default function Home() {
+  const t = useTranslations("common");
   const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"home" | "timer">("home");
@@ -287,7 +289,7 @@ export default function Home() {
           <div className="w-[30%] h-full border-r border-border flex flex-col transition-colors duration-300">
             {/* Header for Todo */}
             <div className="px-3 py-2 bg-background border-b border-border transition-colors duration-300">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Todo List</h3>
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t("todoList")}</h3>
             </div>
             <TodoList
               todos={todos.filter(t =>
@@ -306,7 +308,7 @@ export default function Home() {
           <div className="w-[30%] h-full border-r border-border bg-background flex flex-col transition-colors duration-300">
             {/* Header for Schedule */}
             <div className="px-3 py-2 bg-background border-b border-border transition-colors duration-300">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Schedule</h3>
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t("schedule")}</h3>
             </div>
             <DaySchedule
               keptTime={keptTime}

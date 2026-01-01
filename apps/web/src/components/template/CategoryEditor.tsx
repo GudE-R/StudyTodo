@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Category } from "@pomarc/shared";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -18,6 +19,8 @@ export function CategoryEditor() {
     const [inputName, setInputName] = useState("");
 
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    const t = useTranslations("category");
 
     const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
     const categories = buildCategoryTree(categoriesFlat);
@@ -67,7 +70,7 @@ export function CategoryEditor() {
             setInputName("");
         } catch (error) {
             console.error("Failed to add category", error);
-            alert("カテゴリの追加に失敗しました");
+            alert(t("addFailed"));
         }
     };
 
@@ -98,7 +101,7 @@ export function CategoryEditor() {
             setDeleteConfirmId(null);
         } catch (error) {
             console.error("Failed to delete category", error);
-            alert("カテゴリの削除に失敗しました");
+            alert(t("deleteFailed"));
         }
     };
 
@@ -110,15 +113,15 @@ export function CategoryEditor() {
                     value={inputName}
                     onChange={(e) => setInputName(e.target.value)}
                     className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
-                    placeholder="カテゴリ名"
+                    placeholder={t("placeholder")}
                     autoFocus
                     onKeyDown={(e) => {
                         if (e.key === "Enter") confirmAdding();
                         if (e.key === "Escape") cancelAdding();
                     }}
                 />
-                <button onClick={confirmAdding} className="text-blue-600 hover:text-blue-800 text-xs font-bold">追加</button>
-                <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs">キャンセル</button>
+                <button onClick={confirmAdding} className="text-blue-600 hover:text-blue-800 text-xs font-bold">{t("add")}</button>
+                <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs">{t("cancel")}</button>
             </div>
         );
     };
@@ -164,7 +167,7 @@ export function CategoryEditor() {
                                         <button
                                             onClick={() => startAdding(node.id, node.level === "large" ? "medium" : "small")}
                                             className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600"
-                                            title="子カテゴリを追加"
+                                            title={t("addChildTitle")}
                                         >
                                             <Plus size={14} />
                                         </button>
@@ -172,9 +175,9 @@ export function CategoryEditor() {
                                     <button
                                         onClick={() => handleDeleteClick(node.id)}
                                         className={`p-1 transition-colors ${isDeleting ? "text-red-600 bg-red-50 dark:bg-red-900/30 rounded px-2 text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-600"}`}
-                                        title="削除"
+                                        title={t("deleteTitle")}
                                     >
-                                        {isDeleting ? "削除する" : <Trash2 size={14} />}
+                                        {isDeleting ? t("deleteButton") : <Trash2 size={14} />}
                                     </button>
                                 </div>
                             </div>
@@ -196,21 +199,20 @@ export function CategoryEditor() {
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">カテゴリ構成</h3>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">{t("treeTitle")}</h3>
                 <button
                     onClick={() => startAdding(undefined, "large")}
                     className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
                 >
                     <Plus size={12} />
-                    <span>大カテゴリ追加</span>
+                    <span>{t("addLargeCategory")}</span>
                 </button>
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2">
                 {categories.length === 0 && !addingState ? (
-                    <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8">
-                        カテゴリがありません。<br />
-                        「大カテゴリ追加」から作成してください。
+                    <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8 whitespace-pre-wrap">
+                        {t("noCategory")}
                     </div>
                 ) : (
                     <>

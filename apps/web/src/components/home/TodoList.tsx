@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Circle, CheckCircle, GripVertical, PlayCircle } from "lucide-react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { Todo, Category } from "@pomarc/shared";
@@ -22,6 +23,7 @@ interface TodoListProps {
  * タップで詳細画面へ遷移、チェックで完了状態を切り替えます。
  */
 export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete, onReorder, onStart }: TodoListProps) {
+    const t = useTranslations("common");
     // カテゴリ名を取得するヘルパー関数
     const getCategoryName = (categoryId?: string) => {
         if (!categoryId) return null;
@@ -55,7 +57,7 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
             <div className="flex-1 overflow-y-auto p-2">
                 {todos.length === 0 ? (
                     <div className="text-center py-10 text-gray-400 dark:text-gray-500 text-xs">
-                        タスクがありません
+                        {t("noTasks")}
                     </div>
                 ) : (
                     <DragDropContext onDragEnd={handleDragEnd}>

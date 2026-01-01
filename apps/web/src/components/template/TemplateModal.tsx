@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { X, FolderTree, Repeat } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { CategoryEditor } from "./CategoryEditor";
 import { SRSEditor } from "./SRSEditor";
 
@@ -14,6 +15,9 @@ export function TemplateModal({
     isOpen,
     onClose,
 }: TemplateModalProps) {
+    const t = useTranslations("template");
+    const tc = useTranslations("common");
+
     const [activeTab, setActiveTab] = useState<"category" | "srs" | "theme">("category");
 
     if (!isOpen) return null;
@@ -24,7 +28,7 @@ export function TemplateModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">設定</h2>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{tc("settings")}</h2>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                         <X size={24} />
                     </button>
@@ -38,7 +42,7 @@ export function TemplateModal({
                             }`}
                     >
                         <FolderTree size={18} />
-                        <span>カテゴリ</span>
+                        <span>{t("categoryTab")}</span>
                         {activeTab === "category" && (
                             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
                         )}
@@ -49,7 +53,7 @@ export function TemplateModal({
                             }`}
                     >
                         <Repeat size={18} />
-                        <span>SRS</span>
+                        <span>{t("srsTab")}</span>
                         {activeTab === "srs" && (
                             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
                         )}

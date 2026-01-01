@@ -1,5 +1,4 @@
-"use client";
-
+import { useTranslations } from "next-intl";
 import { FolderTree, Plus, X, BarChart2 } from "lucide-react";
 
 interface BottomActionsProps {
@@ -10,10 +9,6 @@ interface BottomActionsProps {
     onOpenActivityModal: () => void;
 }
 
-/**
- * 下部アクションバー
- * isHighlightedがtrueの場合、Todo作成ボタンが強調表示されます（キープ機能連携時など）。
- */
 export function BottomActions({
     onOpenTodoModal,
     onOpenTemplateModal,
@@ -21,6 +16,7 @@ export function BottomActions({
     onResetKeep,
     onOpenActivityModal
 }: BottomActionsProps) {
+    const t = useTranslations("common");
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-8 py-3 flex justify-between items-center h-20 z-50 rounded-2xl shadow-2xl w-full max-w-lg transition-all duration-300 hover:scale-[1.02]">
             {/* テンプレート作成ボタン */}
@@ -31,7 +27,7 @@ export function BottomActions({
                 <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
                     <FolderTree size={24} />
                 </div>
-                <span className="text-xs font-medium">テンプレート</span>
+                <span className="text-xs font-medium">{t("template")}</span>
             </button>
 
             {/* Todo作成ボタン（強調表示） */}
@@ -70,7 +66,7 @@ export function BottomActions({
                 <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
                     <BarChart2 size={24} />
                 </div>
-                <span className="text-xs font-medium">Activity</span>
+                <span className="text-xs font-medium">{t("activity")}</span>
             </button>
         </div>
     );

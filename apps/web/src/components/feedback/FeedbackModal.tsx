@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { X, Send, MessageSquare, AlertCircle, Lightbulb, HelpCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Feedback } from "@pomarc/shared";
 import { generateId } from "@/lib/utils";
 
@@ -16,6 +17,8 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
     const [type, setType] = useState<Feedback["type"]>("request");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    const t = useTranslations("feedback");
 
     if (!isOpen) return null;
 
@@ -43,16 +46,16 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
             }, 2000);
         } catch (error) {
             console.error("Feedback submission failed:", error);
-            alert("送信に失敗しました。時間をおいて再度お試しください。");
+            alert(t("submitFailed"));
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const types: { id: Feedback["type"]; label: string; icon: any; color: string }[] = [
-        { id: "request", label: "要望・提案", icon: Lightbulb, color: "text-yellow-500" },
-        { id: "bug", label: "不具合報告", icon: AlertCircle, color: "text-red-500" },
-        { id: "other", label: "その他", icon: HelpCircle, color: "text-blue-500" },
+        { id: "request", label: t("typeRequest"), icon: Lightbulb, color: "text-yellow-500" },
+        { id: "bug", label: t("typeBug"), icon: AlertCircle, color: "text-red-500" },
+        { id: "other", label: t("typeOther"), icon: HelpCircle, color: "text-blue-500" },
     ];
 
     return (
@@ -62,7 +65,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                 <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                     <div className="flex items-center space-x-2">
                         <MessageSquare size={20} className="text-blue-500" />
-                        <h2 className="text-lg font-bold text-foreground">フィードバック</h2>
+                        <h2 className="text-lg font-bold text-foreground">{t("title")}</h2>
                     </div>
                     <button
                         onClick={onClose}
@@ -77,10 +80,9 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                         <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto">
                             <Send size={32} />
                         </div>
-                        <h3 className="text-xl font-bold text-foreground">送信完了！</h3>
+                        <h3 className="text-xl font-bold text-foreground">{t("successTitle")}</h3>
                         <p className="text-gray-500 dark:text-gray-400">
-                            フィードバックをありがとうございます。<br />
-                            より良いアプリ作りの参考にさせていただきます。
+                            {t("successMessage")}
                         </p>
                     </div>
                 ) : (
@@ -114,13 +116,13 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                         {/* Content */}
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-foreground block">
-                                内容 <span className="text-red-500">*</span>
+                                {t("contentLabel")} <span className="text-red-500">*</span>
                             </label>
                             <textarea
                                 required
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                placeholder="アプリの改善案や、見つけた不具合について教えてください"
+                                placeholder={t("placeholder")}
                                 className="w-full h-40 p-4 bg-background border border-border rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-sm text-foreground"
                             />
                         </div>
@@ -132,7 +134,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                                 onClick={onClose}
                                 className="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                             >
-                                キャンセル
+                                {t("cancel")}
                             </button>
                             <button
                                 type="submit"
@@ -147,7 +149,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                                 ) : (
                                     <>
                                         <Send size={18} />
-                                        <span>送信する</span>
+                                        <span>{t("submit")}</span>
                                     </>
                                 )}
                             </button>

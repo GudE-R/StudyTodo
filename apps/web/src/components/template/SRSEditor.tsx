@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Plus, Trash2, TrendingUp, Calendar } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { SRSProfile } from "@pomarc/shared";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -20,6 +21,9 @@ export function SRSEditor() {
 
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+    const t = useTranslations("srs");
+    const tc = useTranslations("common");
+
     const startAdding = () => {
         setIsAdding(true);
         setNewName("");
@@ -37,7 +41,7 @@ export function SRSEditor() {
 
         const intervals = newIntervals.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
         if (intervals.length === 0) {
-            alert("有効な数値が入力されませんでした");
+            alert(t("invalidInput"));
             return;
         }
 
@@ -57,7 +61,7 @@ export function SRSEditor() {
             setNewIntervals("");
         } catch (error) {
             console.error("Failed to add SRS profile", error);
-            alert("SRS設定の追加に失敗しました");
+            alert(t("addFailed"));
         }
     };
 
@@ -76,21 +80,21 @@ export function SRSEditor() {
             setDeleteConfirmId(null);
         } catch (error) {
             console.error("Failed to delete SRS profile", error);
-            alert("SRS設定の削除に失敗しました");
+            alert(t("deleteFailed"));
         }
     };
 
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">SRS設定リスト</h3>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">{t("listTitle")}</h3>
                 {!isAdding && (
                     <button
                         onClick={startAdding}
                         className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
                     >
                         <Plus size={12} />
-                        <span>新規作成</span>
+                        <span>{t("createNew")}</span>
                     </button>
                 )}
             </div>
@@ -104,7 +108,7 @@ export function SRSEditor() {
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
                                 className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
-                                placeholder="設定名（例: 短期集中）"
+                                placeholder={t("namePlaceholder")}
                                 autoFocus
                             />
                             <input
@@ -112,15 +116,15 @@ export function SRSEditor() {
                                 value={newIntervals}
                                 onChange={(e) => setNewIntervals(e.target.value)}
                                 className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
-                                placeholder="復習間隔（例: 1, 3, 7）"
+                                placeholder={t("intervalPlaceholder")}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") confirmAdding();
                                     if (e.key === "Escape") cancelAdding();
                                 }}
                             />
                             <div className="flex justify-end space-x-2 mt-2">
-                                <button onClick={cancelAdding} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">キャンセル</button>
-                                <button onClick={confirmAdding} className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">保存</button>
+                                <button onClick={cancelAdding} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">{tc("cancel")}</button>
+                                <button onClick={confirmAdding} className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">{tc("save")}</button>
                             </div>
                         </div>
                     </div>
@@ -137,7 +141,7 @@ export function SRSEditor() {
                                 )}
                                 <span className="font-bold text-gray-700 dark:text-gray-200">{profile.name}</span>
                                 {profile.isDefault && (
-                                    <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">デフォルト</span>
+                                    <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">{t("defaultBadge")}</span>
                                 )}
                             </div>
                             {!profile.isDefault && (
@@ -145,7 +149,7 @@ export function SRSEditor() {
                                     onClick={() => handleDeleteClick(profile.id)}
                                     className={`transition-colors ${deleteConfirmId === profile.id ? "text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-500"}`}
                                 >
-                                    {deleteConfirmId === profile.id ? "削除する" : <Trash2 size={16} />}
+                                    {deleteConfirmId === profile.id ? t("deleteButton") : <Trash2 size={16} />}
                                 </button>
                             )}
                         </div>
@@ -153,7 +157,7 @@ export function SRSEditor() {
                         <div className="flex flex-wrap gap-1">
                             {profile.intervals.map((days, i) => (
                                 <span key={i} className="text-xs bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-600">
-                                    {days}日後
+                                    {t("daysAfter", { days })}
                                 </span>
                             ))}
                         </div>

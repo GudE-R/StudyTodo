@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Sun, Moon, Monitor } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useTheme } from "@/contexts/ThemeContext";
 
 /**
@@ -11,19 +12,20 @@ import { useTheme } from "@/contexts/ThemeContext";
  */
 export function ThemeEditor() {
     const { theme, setTheme } = useTheme();
+    const t = useTranslations("theme");
 
     const themes = [
-        { id: "light" as const, label: "ライト", icon: Sun, description: "明るい背景" },
-        { id: "dark" as const, label: "ダーク", icon: Moon, description: "暗い背景" },
-        { id: "system" as const, label: "システム", icon: Monitor, description: "OSの設定に従う" },
+        { id: "light" as const, label: t("light"), icon: Sun, description: t("lightDesc") },
+        { id: "dark" as const, label: t("dark"), icon: Moon, description: t("darkDesc") },
+        { id: "system" as const, label: t("system"), icon: Monitor, description: t("systemDesc") },
     ];
 
     return (
         <div className="h-full flex flex-col">
             <div className="mb-4">
-                <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">テーマ</h3>
+                <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">{t("title")}</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    アプリの外観を選択してください
+                    {t("description")}
                 </p>
             </div>
 

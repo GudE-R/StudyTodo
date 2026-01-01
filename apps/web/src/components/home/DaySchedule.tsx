@@ -2,7 +2,8 @@
 
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import { format, addDays, subDays, isSameDay } from "date-fns";
-import { ja } from "date-fns/locale";
+import { useLocale, useTranslations } from "next-intl";
+import { getDateFnsLocale } from "@/lib/date-fns-locales";
 
 import { Todo, getTodoScheduleRange } from "@pomarc/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
@@ -34,6 +35,10 @@ export function DaySchedule({
     todos,
     onTodoClick
 }: DayScheduleProps) {
+    const locale = useLocale();
+    const t = useTranslations("common");
+    const dateFnsLocale = getDateFnsLocale(locale);
+
     // バッファサイズ（前後何日分を表示するか）
     // 60日分あれば、頻繁な再レンダリングを防げます
     const BUFFER_DAYS = 60;
@@ -222,7 +227,7 @@ export function DaySchedule({
                             {/* 日付ヘッダー */}
                             <div className="sticky top-0 bg-card/90 backdrop-blur-sm border-b border-border px-3 py-1 z-10 transition-colors duration-300">
                                 <span className={`text-xs font-bold ${isSameDay(day, new Date()) ? "text-blue-600" : "text-gray-600"}`}>
-                                    {format(day, "M月d日(EEE)", { locale: ja })}
+                                    {format(day, t("dateFormat"), { locale: dateFnsLocale })}
                                 </span>
                             </div>
 

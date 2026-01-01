@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
-import { ja } from "date-fns/locale";
+import { format, addDays, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
+import { useLocale, useTranslations, useFormatter } from "next-intl";
+import { getDateFnsLocale } from "@/lib/date-fns-locales";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Session, Todo } from "@pomarc/shared";
@@ -13,25 +14,23 @@ interface CalendarPaneProps {
     keptDate?: Date | null;
     onDateLongPress?: (date: Date) => void;
     sessions?: Session[];
-    todos?: Todo[]; // 新規追加: タスクデータ
+    todos?: Todo[];
     isExpanded?: boolean;
 }
 
-/**
- * カレンダーペインコンポーネント（月表示版・スクロール対応）
- * 
- * 画面下部（約1/3）に表示される月次カレンダーです。
- * - isExpanded propにより、グリッドの表示サイズや密度を調整可能にします（今回は単純にスクロール領域を広げるだけですが、将来的にWeekViewとの切り替え等もここで行えます）。
- */
 export function CalendarPane({
     selectedDate = new Date(),
     onDateChange,
     keptDate,
     onDateLongPress,
     sessions = [],
-    todos = [], // デフォルト値
+    todos = [],
     isExpanded = false
 }: CalendarPaneProps) {
+    const locale = useLocale();
+    const t = useTranslations("common");
+    const formatIntl = useFormatter();
+    const dateFnsLocale = getDateFnsLocale(locale);
     const [currentMonth, setCurrentMonth] = useState(selectedDate);
     const today = new Date();
 
@@ -76,22 +75,26 @@ export function CalendarPane({
     // カレンダーグリッドの生成
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
-    const calendarStart = startOfWeek(monthStart);
-    const calendarEnd = endOfWeek(monthEnd);
+    const calendarStart = startOfWeek(monthStart, { locale: dateFnsLocale });
+    const calendarEnd = endOfWeek(monthEnd, { locale: dateFnsLocale });
 
     const calendarDays = eachDayOfInterval({
         start: calendarStart,
         end: calendarEnd,
     });
 
-    const weekDays = ["日", "月", "火", "水", "木", "金", "土"];
+    // 曜日のリストを取得 (ロケールに合わせる)
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
+        const day = addDays(calendarStart, i);
+        return format(day, "EEEEEE", { locale: dateFnsLocale });
+    });
 
     const getActivityLevel = (totalDuration: number) => {
         if (totalDuration === 0) return 0;
-        if (totalDuration < 15 * 60) return 1; // 15分未満
-        if (totalDuration < 60 * 60) return 2; // 1時間未満
-        if (totalDuration < 2 * 60 * 60) return 3; // 2時間未満
-        return 4; // 2時間以上
+        if (totalDuration < 15 * 60) return 1;
+        if (totalDuration < 60 * 60) return 2;
+        if (totalDuration < 2 * 60 * 60) return 3;
+        return 4;
     };
 
     const getHeatmapColor = (level: number) => {
@@ -107,8 +110,8 @@ export function CalendarPane({
     const formatDuration = (seconds: number) => {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
-        if (h > 0) return `${h}時間${m}分`;
-        return `${m}分`;
+        if (h > 0) return `${h}${t("units.hours")}${m}${t("units.minutes")}`;
+        return `${m}${t("units.minutes")}`;
     };
 
     return (
@@ -123,7 +126,7 @@ export function CalendarPane({
                 </button>
 
                 <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
-                    {format(currentMonth, "yyyy年 M月", { locale: ja })}
+                    {formatIntl.dateTime(currentMonth, { year: 'numeric', month: 'long' })}
                 </span>
 
                 <button
@@ -165,13 +168,13 @@ export function CalendarPane({
                         const pendingTodos = dailyTodos.filter(t => !t.completed);
 
                         // Tooltip Text
-                        const dateStr = format(date, "M/d(E)", { locale: ja });
+                        const dateStr = format(date, t("dateFormat"), { locale: dateFnsLocale });
                         const statsStr = totalDuration > 0
-                            ? `学習: ${formatDuration(totalDuration)} (${dailySessions.length}回)`
-                            : "学習記録なし";
+                            ? `${t("study")}: ${formatDuration(totalDuration)} (${dailySessions.length}${t("times")})`
+                            : t("noStudyRecords");
                         const todoStr = dailyTodos.length > 0
-                            ? `タスク: ${dailyTodos.length}件 (完了: ${completedTodos.length} / 未完了: ${pendingTodos.length})`
-                            : "タスク予定なし";
+                            ? `${t("tasks")}: ${dailyTodos.length}${t("units.items")} (${t("completed")}: ${completedTodos.length} / ${t("pending")}: ${pendingTodos.length})`
+                            : t("taskPlanned");
                         const tooltipText = `${dateStr}\n${statsStr}\n${todoStr}`;
 
                         return (

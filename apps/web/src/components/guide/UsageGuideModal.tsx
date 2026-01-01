@@ -2,6 +2,7 @@
 
 import React from "react";
 import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface UsageGuideModalProps {
     isOpen: boolean;
@@ -14,48 +15,51 @@ interface UsageGuideModalProps {
  * PomArcの主要機能の使い方を説明します。
  */
 export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
+    const t = useTranslations("guide");
+    const tc = useTranslations("common");
+
     if (!isOpen) return null;
 
     const guides = [
         {
             icon: Play,
-            title: "タスクの作成と開始",
-            description: "画面下部の「＋」ボタンからタスクを作成できます。「今すぐ開始」で即座にタイマーを開始、「記録」で過去の学習を記録できます。"
+            title: t("createTaskTitle"),
+            description: t("createTaskDesc")
         },
         {
             icon: Timer,
-            title: "タイマー機能",
-            description: "ポモドーロ（25分集中→5分休憩）、カウントダウン、ストップウォッチの3つのモードを選択できます。タイマー完了後は自動的に記録されます。"
+            title: t("timerTitle"),
+            description: t("timerDesc")
         },
         {
             icon: Calendar,
-            title: "カレンダーとスケジュール",
-            description: "カレンダーで日付をタップして切り替え。スケジュール上で時間を長押しすると、その時刻でタスク作成モーダルが開きます。"
+            title: t("calendarTitle"),
+            description: t("calendarDesc")
         },
         {
             icon: Repeat,
-            title: "SRS（間隔反復）",
-            description: "設定画面でSRSプロファイルを作成。タスクに適用すると、効率的な復習スケジュールが自動で設定されます。"
+            title: t("srsTitle"),
+            description: t("srsDesc")
         },
         {
             icon: FolderTree,
-            title: "カテゴリ管理",
-            description: "設定画面でカテゴリを作成・編集。大分類→中分類→小分類の3階層で整理できます。"
+            title: t("categoryTitle"),
+            description: t("categoryDesc")
         },
         {
             icon: Palette,
-            title: "テーマ設定",
-            description: "設定画面（右上の歯車アイコン）から、ライト/ダーク/システムから選択できます。"
+            title: t("themeTitle"),
+            description: t("themeDesc")
         },
         {
             icon: Clock,
-            title: "学習履歴",
-            description: "画面下部の「活動」ボタンで、これまでの学習記録を確認できます。日別・週別の統計も表示されます。"
+            title: t("historyTitle"),
+            description: t("historyDesc")
         },
         {
             icon: BookOpen,
-            title: "タスク詳細",
-            description: "リストやスケジュール上のタスクをタップすると詳細画面が開きます。ここから「今すぐ開始」やタスクの削除ができます。"
+            title: t("detailTitle"),
+            description: t("detailDesc")
         }
     ];
 
@@ -65,7 +69,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">使い方ガイド</h2>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t("title")}</h2>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                         <X size={24} />
                     </button>
@@ -97,7 +101,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                         onClick={onClose}
                         className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold transition-colors"
                     >
-                        閉じる
+                        {tc("close")}
                     </button>
                 </div>
             </div>

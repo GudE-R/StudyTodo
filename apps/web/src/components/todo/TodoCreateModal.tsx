@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass } from "lucide-react";
 import { format } from "date-fns";
+import { useTranslations } from "next-intl";
 import { Todo, Category, SRSProfile } from "@pomarc/shared";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TimePicker } from "@/components/ui/TimePicker";
@@ -38,6 +39,9 @@ export function TodoCreateModal({
     const [srsInterval, setSrsInterval] = useState("");
     const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
     const [duration, setDuration] = useState<string>(""); // Duration in minutes
+
+    const t = useTranslations("todo");
+    const tc = useTranslations("common");
 
     // モーダルが開いた時に初期値を設定
     useEffect(() => {
@@ -91,7 +95,7 @@ export function TodoCreateModal({
         }
 
         return {
-            title: effectiveTitle || "No Title",
+            title: effectiveTitle || t("noTitle"),
             notes: notes || undefined
         };
     };
@@ -147,7 +151,7 @@ export function TodoCreateModal({
         const { title: parsedTitle, notes } = parseContent();
         const durationNum = parseInt(duration, 10);
         if (isNaN(durationNum) || durationNum <= 0) {
-            alert("有効な時間を入力してください");
+            alert(t("invalidDuration"));
             return;
         }
 
@@ -186,7 +190,7 @@ export function TodoCreateModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-gray-800">Todo作成</h2>
+                    <h2 className="text-lg font-bold text-gray-800">{t("createTitle")}</h2>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 rounded-full">
                         <X size={24} />
                     </button>
@@ -202,7 +206,7 @@ export function TodoCreateModal({
                             onChange={(e) => setCategoryId(e.target.value)}
                             className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 cursor-pointer"
                         >
-                            <option value="" className="text-gray-500">カテゴリなし</option>
+                            <option value="" className="text-gray-500">{t("noCategory")}</option>
                             {categoryOptions.map((opt) => (
                                 <option key={opt.value} value={opt.value} className="text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800">
                                     {opt.label}
@@ -214,7 +218,7 @@ export function TodoCreateModal({
                     {/* Content Input (Merged Title, Range, Memo) */}
                     <div>
                         <textarea
-                            placeholder="タスク名や範囲、メモを入力...&#10;(1行目がタスク名、2行目以降が詳細になります)"
+                            placeholder={t("contentPlaceholder")}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             rows={3}
@@ -228,7 +232,7 @@ export function TodoCreateModal({
                         <DatePicker
                             value={dueDate}
                             onChange={setDueDate}
-                            placeholder="[日付を選択]"
+                            placeholder={t("datePlaceholder")}
                         />
 
                         {/* Start Time */}
@@ -238,7 +242,7 @@ export function TodoCreateModal({
                                 setDueTime(val);
                                 if (!val) setEndTime(""); // Reset end time if start time cleared
                             }}
-                            placeholder="開始時間"
+                            placeholder={t("startTime")}
                             icon={<PlayCircle size={18} className="text-blue-500" />}
                         />
 
@@ -248,7 +252,7 @@ export function TodoCreateModal({
                             <input
                                 type="number"
                                 min="1"
-                                placeholder="所要時間(分)"
+                                placeholder={t("durationPlaceholder")}
                                 value={duration}
                                 onChange={(e) => setDuration(e.target.value)}
                                 className="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
@@ -259,7 +263,7 @@ export function TodoCreateModal({
                         <TimePicker
                             value={endTime}
                             onChange={setEndTime}
-                            placeholder="終了時間"
+                            placeholder={t("endTime")}
                             disabled={!dueTime}
                             defaultTime={dueTime}
                             icon={<StopCircle size={18} className="text-red-500" />}
@@ -273,7 +277,7 @@ export function TodoCreateModal({
                                 onChange={(e) => setSrsInterval(e.target.value)}
                                 className="bg-transparent text-sm w-full outline-none text-gray-700 appearance-none"
                             >
-                                <option value="">SRSなし</option>
+                                <option value="">{t("noSrs")}</option>
                                 {srsProfiles.map((profile) => (
                                     <option key={profile.id} value={profile.name}>
                                         {profile.name}
@@ -292,7 +296,7 @@ export function TodoCreateModal({
                             className="flex items-center justify-center space-x-1 bg-green-100 text-green-600 py-3 rounded-xl font-bold hover:bg-green-200 transition-colors"
                         >
                             <CheckCircle size={18} />
-                            <span className="text-sm">記録</span>
+                            <span className="text-sm">{t("record")}</span>
                         </button>
                         <button
                             type="button"
@@ -300,14 +304,14 @@ export function TodoCreateModal({
                             className="flex items-center justify-center space-x-1 bg-orange-100 text-orange-600 py-3 rounded-xl font-bold hover:bg-orange-200 transition-colors"
                         >
                             <Play size={18} fill="currentColor" />
-                            <span className="text-sm">開始</span>
+                            <span className="text-sm">{t("start")}</span>
                         </button>
                         <button
                             type="submit"
                             className="flex items-center justify-center space-x-1 bg-blue-100 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-200 transition-colors"
                         >
                             <Plus size={18} />
-                            <span className="text-sm">作成</span>
+                            <span className="text-sm">{t("create")}</span>
                         </button>
                     </div>
                 </form>

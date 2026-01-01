@@ -3,22 +3,21 @@
 import React from "react";
 import { Settings, ChevronLeft, ChevronRight, HelpCircle, MessageSquare } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
-import { ja } from "date-fns/locale";
+import { useLocale, useTranslations } from "next-intl";
+import { getDateFnsLocale } from "@/lib/date-fns-locales";
 
 interface DateBarProps {
     selectedDate?: Date;
     onDateChange?: (date: Date) => void;
     onSettingsClick?: () => void;
-    onGuideClick?: () => void; // Added for guide access
-    onFeedbackClick?: () => void; // Added for feedback access
+    onGuideClick?: () => void;
+    onFeedbackClick?: () => void;
 }
 
-/**
- * 日付ナビゲーションバーコンポーネント
- * 
- * 画面上部に配置され、日付の表示・切り替え、プロフィール、設定へのアクセスを提供します。
- */
 export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick, onGuideClick, onFeedbackClick }: DateBarProps) {
+    const locale = useLocale();
+    const t = useTranslations("common");
+    const dateFnsLocale = getDateFnsLocale(locale);
 
     const handlePrevDay = () => {
         if (onDateChange) {
@@ -44,7 +43,7 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                 </button>
                 <div className="text-center min-w-[140px]">
                     <div className="text-base font-bold text-gray-900 dark:text-gray-100">
-                        {format(selectedDate, "M月d日(EEE)", { locale: ja })}
+                        {format(selectedDate, t("dateFormat"), { locale: dateFnsLocale })}
                     </div>
                 </div>
                 <button
@@ -60,20 +59,21 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                 <button
                     onClick={onSettingsClick}
                     className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    title={t("settings")}
                 >
                     <Settings size={20} />
                 </button>
                 <button
                     onClick={onGuideClick}
                     className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                    title="使い方ガイド"
+                    title={t("usageGuide")}
                 >
                     <HelpCircle size={20} />
                 </button>
                 <button
                     onClick={onFeedbackClick}
                     className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                    title="フィードバックを送る"
+                    title={t("sendFeedback")}
                 >
                     <MessageSquare size={20} />
                 </button>
