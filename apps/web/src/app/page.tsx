@@ -277,9 +277,9 @@ export default function Home() {
         <div className="flex-1 flex overflow-hidden min-h-0 relative z-0">
 
           {/* Left: Todo List (30%) */}
-          <div className="w-[30%] h-full border-r border-gray-100 dark:border-gray-800 flex flex-col">
+          <div className="w-[30%] h-full border-r border-border flex flex-col transition-colors duration-300">
             {/* Header for Todo */}
-            <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+            <div className="px-3 py-2 bg-background border-b border-border transition-colors duration-300">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Todo List</h3>
             </div>
             <TodoList
@@ -296,9 +296,9 @@ export default function Home() {
           </div>
 
           {/* Center: Day Schedule (30%) */}
-          <div className="w-[30%] h-full border-r border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900 flex flex-col">
+          <div className="w-[30%] h-full border-r border-border bg-background flex flex-col transition-colors duration-300">
             {/* Header for Schedule */}
-            <div className="px-3 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+            <div className="px-3 py-2 bg-background border-b border-border transition-colors duration-300">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Schedule</h3>
             </div>
             <DaySchedule

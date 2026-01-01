@@ -61,8 +61,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
         // HTML要素にクラスを適用
         const root = document.documentElement;
+        const body = document.body;
+
         root.classList.remove("light", "dark");
         root.classList.add(effectiveTheme);
+
+        if (body) {
+            body.classList.remove("light", "dark");
+            body.classList.add(effectiveTheme);
+        }
     }, [theme, mounted]);
 
     // システムテーマ変更を監視
@@ -83,11 +90,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
     };
-
-    // SSR中は子要素のみ返す（Hydration対策）
-    if (!mounted) {
-        return <>{children}</>;
-    }
 
     return (
         <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>

@@ -12,12 +12,12 @@ interface AppShellProps {
  */
 export function AppShell({ children }: AppShellProps) {
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+        <div className="min-h-screen bg-background text-foreground font-sans transition-colors duration-300">
             {/* 
         上部バナー広告プレースホルダー 
         要件定義に基づき、画面最上部に固定表示されます。
       */}
-            <div className="h-[50px] bg-gray-200 w-full flex items-center justify-center text-xs text-gray-500 border-b border-gray-300 sticky top-0 z-50">
+            <div className="h-[50px] bg-gray-200 dark:bg-gray-800 w-full flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-300">
                 [Ad Banner Area]
             </div>
 
@@ -26,7 +26,7 @@ export function AppShell({ children }: AppShellProps) {
         PC向けフルスクリーンレイアウト。
         下部のボトムアクションバーのためにpb-20を設定しています。
       */}
-            <main className="w-full mx-auto bg-white dark:bg-gray-900 min-h-[calc(100vh-50px)] shadow-sm relative pb-20">
+            <main className="w-full mx-auto bg-card min-h-[calc(100vh-50px)] shadow-sm relative pb-20 transition-colors duration-300">
                 {children}
             </main>
         </div>

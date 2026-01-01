@@ -112,9 +112,9 @@ export function CalendarPane({
     };
 
     return (
-        <div className="h-full bg-white dark:bg-gray-900 flex flex-col">
+        <div className="h-full bg-card flex flex-col transition-colors duration-300">
             {/* ヘッダー: 年月表示とナビゲーション */}
-            <div className="px-4 py-2 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 flex-none">
+            <div className="px-4 py-2 flex items-center justify-between border-b border-border flex-none">
                 <button
                     onClick={prevMonth}
                     className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
@@ -137,7 +137,7 @@ export function CalendarPane({
             {/* カレンダー本体（スクロール可能領域） */}
             <div className="flex-1 flex flex-col p-2 overflow-y-auto min-h-0">
                 {/* 曜日ヘッダー */}
-                <div className="grid grid-cols-7 mb-1 flex-none sticky top-0 bg-white dark:bg-gray-900 z-10">
+                <div className="grid grid-cols-7 mb-1 flex-none sticky top-0 bg-card z-10">
                     {weekDays.map((day, i) => (
                         <div key={i} className="text-center text-[10px] text-gray-400 dark:text-gray-500 font-medium pb-1">
                             {day}

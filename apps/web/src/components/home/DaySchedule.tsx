@@ -195,7 +195,7 @@ export function DaySchedule({
     };
 
     return (
-        <div className="flex-1 flex flex-col h-full overflow-hidden border-l border-gray-100">
+        <div className="flex-1 flex flex-col h-full overflow-hidden border-l border-border transition-colors duration-300">
             {/* ヘッダー領域削除 (ExpandablePaneへ移動) */}
 
             {/* タイムライン領域（スクロール可能） */}
@@ -220,7 +220,7 @@ export function DaySchedule({
                             className="pb-8 relative"
                         >
                             {/* 日付ヘッダー */}
-                            <div className="sticky top-0 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-3 py-1 z-10">
+                            <div className="sticky top-0 bg-card/90 backdrop-blur-sm border-b border-border px-3 py-1 z-10 transition-colors duration-300">
                                 <span className={`text-xs font-bold ${isSameDay(day, new Date()) ? "text-blue-600" : "text-gray-600"}`}>
                                     {format(day, "M月d日(EEE)", { locale: ja })}
                                 </span>
@@ -239,9 +239,9 @@ export function DaySchedule({
                                         <div
                                             key={`${day.toISOString()}-${slot}`}
                                             className={`
-                                                flex h-6 relative group transition-colors duration-200 select-none border-gray-200
-                                                ${isHalfHour ? "border-t border-dashed border-gray-100" : "border-t border-solid border-gray-300"}
-                                                ${isKept ? "bg-orange-50" : "hover:bg-gray-50"}
+                                                flex h-6 relative group transition-colors duration-200 select-none border-border
+                                                ${isHalfHour ? "border-t border-dashed border-border/30" : "border-t border-solid border-border"}
+                                                ${isKept ? "bg-orange-50 dark:bg-orange-900/20" : "hover:bg-gray-50 dark:hover:bg-gray-800/50"}
                                             `}
                                             onMouseDown={() => handleTouchStart(day, slot)}
                                             onMouseUp={handleTouchEnd}
