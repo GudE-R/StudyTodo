@@ -1,14 +1,15 @@
 "use client";
 
 import React from "react";
-import { Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { Settings, ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
 import { ja } from "date-fns/locale";
 
 interface DateBarProps {
     selectedDate?: Date;
     onDateChange?: (date: Date) => void;
-    onSettingsClick?: () => void; // 設定ボタンのクリックハンドラ
+    onSettingsClick?: () => void;
+    onGuideClick?: () => void; // Added for guide access
 }
 
 /**
@@ -16,7 +17,7 @@ interface DateBarProps {
  * 
  * 画面上部に配置され、日付の表示・切り替え、プロフィール、設定へのアクセスを提供します。
  */
-export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick }: DateBarProps) {
+export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick, onGuideClick }: DateBarProps) {
 
     const handlePrevDay = () => {
         if (onDateChange) {
@@ -53,13 +54,22 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                 </button>
             </div>
 
-            {/* 設定アイコン（右端） */}
-            <button
-                onClick={onSettingsClick}
-                className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-            >
-                <Settings size={20} />
-            </button>
+            {/* アクションボタン（右端） */}
+            <div className="flex items-center space-x-1">
+                <button
+                    onClick={onSettingsClick}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                >
+                    <Settings size={20} />
+                </button>
+                <button
+                    onClick={onGuideClick}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    title="使い方ガイド"
+                >
+                    <HelpCircle size={20} />
+                </button>
+            </div>
         </div>
     );
 }

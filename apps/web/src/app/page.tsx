@@ -265,6 +265,7 @@ export default function Home() {
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
           onSettingsClick={() => setIsSettingsModalOpen(true)}
+          onGuideClick={() => setIsGuideModalOpen(true)}
         />
 
         {/* 
