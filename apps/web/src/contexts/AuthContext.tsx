@@ -31,11 +31,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         // 初期セッション取得
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
+        const getInitialSession = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                setSession(session);
+                setUser(session?.user ?? null);
+            } catch (error) {
+                console.warn("[AuthContext] Initial session fetch failed (possibly offline):", error);
+                setSession(null);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getInitialSession();
 
         // 認証状態の変更監視
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {

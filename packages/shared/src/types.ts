@@ -64,3 +64,16 @@ export interface Session {
     createdAt: Date;
     mode: "pomodoro" | "countdown" | "stopwatch";
 }
+
+/**
+ * ユーザーからのフィードバック
+ */
+export interface Feedback {
+    id: string;
+    userId?: string;
+    content: string;
+    type: "bug" | "request" | "other";
+    deviceInfo?: string;
+    version?: string;
+    createdAt: Date | string;
+}

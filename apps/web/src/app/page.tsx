@@ -19,7 +19,8 @@ import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { Todo } from "@pomarc/shared";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { Todo, Feedback } from "@pomarc/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
 import { useSync } from "@/hooks/useSync";
@@ -63,6 +64,7 @@ export default function Home() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [isTodoDetailOpen, setIsTodoDetailOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   // Sync Logic
   const { isSyncing } = useSync();
@@ -183,6 +185,10 @@ export default function Home() {
     });
   };
 
+  const handleFeedbackSubmit = async (feedback: Feedback) => {
+    await dataService.addFeedback(feedback);
+  };
+
   const handleRecordSession = async (todo: Todo, duration: number) => {
     await dataService.addSession({
       id: generateId(),
@@ -222,7 +228,7 @@ export default function Home() {
   };
 
   // Keyboard Shortcuts
-  const isAnyModalOpen = isTodoModalOpen || isTemplateModalOpen || isActivityModalOpen || isSettingsModalOpen || isGuideModalOpen || isTodoDetailOpen;
+  const isAnyModalOpen = isTodoModalOpen || isTemplateModalOpen || isActivityModalOpen || isSettingsModalOpen || isGuideModalOpen || isTodoDetailOpen || isFeedbackModalOpen;
 
   useKeyboardShortcuts({
     onNewTodo: () => {
@@ -266,6 +272,7 @@ export default function Home() {
           onDateChange={setSelectedDate}
           onSettingsClick={() => setIsSettingsModalOpen(true)}
           onGuideClick={() => setIsGuideModalOpen(true)}
+          onFeedbackClick={() => setIsFeedbackModalOpen(true)}
         />
 
         {/* 
@@ -388,6 +395,11 @@ export default function Home() {
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
+        />
+        <FeedbackModal
+          isOpen={isFeedbackModalOpen}
+          onClose={() => setIsFeedbackModalOpen(false)}
+          onSubmit={handleFeedbackSubmit}
         />
       </div>
     </AppShell>

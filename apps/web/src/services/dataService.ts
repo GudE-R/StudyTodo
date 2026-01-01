@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import { Todo, Session, Category, SRSProfile, mapper } from "@pomarc/shared";
+import { Todo, Session, Category, SRSProfile, Feedback, mapper } from "@pomarc/shared";
 import { addDays } from "date-fns";
 import { generateId } from "@/lib/utils";
 
@@ -98,6 +98,12 @@ export const dataService = {
     async addSession(session: Session) {
         await db.sessions.add(session);
         this.syncToCloud("sessions", session);
+    },
+
+    // --- Feedbacks ---
+    async addFeedback(feedback: Feedback) {
+        await db.feedbacks.add(feedback);
+        // Hooks in db.ts will handle cloud sync automatically
     },
 
     // --- Helper ---

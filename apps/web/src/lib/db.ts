@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { Todo, Category, SRSProfile, Session, mapper, allowedFieldsMap, supabaseTableMap } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, Session, Feedback, mapper, allowedFieldsMap, supabaseTableMap } from '@pomarc/shared';
 import { generateId } from '@/lib/utils';
 
 export class PomArcDatabase extends Dexie {
@@ -7,6 +7,7 @@ export class PomArcDatabase extends Dexie {
     categories!: Table<Omit<Category, 'children'>>;
     srsProfiles!: Table<SRSProfile>;
     sessions!: Table<Session>;
+    feedbacks!: Table<Feedback>;
 
     private currentUserId: string | null = null;
 
@@ -18,11 +19,12 @@ export class PomArcDatabase extends Dexie {
         super('PomArcDB_v2');
 
         // ... (stores configuration)
-        this.version(3).stores({
+        this.version(4).stores({
             todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt, srsGroupId',
             categories: 'id, parentId, order, createdAt, updatedAt',
             srsProfiles: 'id, isDefault, createdAt, updatedAt',
-            sessions: 'id, todoId, createdAt'
+            sessions: 'id, todoId, createdAt',
+            feedbacks: 'id, createdAt, type'
         });
 
         // Setup hooks for realtime push
@@ -35,7 +37,7 @@ export class PomArcDatabase extends Dexie {
     }
 
     private setupHooks() {
-        const tables = ['todos', 'categories', 'srsProfiles', 'sessions'];
+        const tables = ['todos', 'categories', 'srsProfiles', 'sessions', 'feedbacks'];
         // supabaseTableMap と allowedFieldsMap は @pomarc/shared からインポート
 
         tables.forEach(tableName => {

@@ -114,6 +114,8 @@
     - **AuthContext**: アプリケーション全体で認証状態を管理するContextを実装。
     - **AuthModal**: `useAuth` フックを利用するようにリファクタリングし、ログイン/サインアップ処理を共通化。
     - **SettingsModal**: ログイン状態に応じたUI切り替え（ユーザー情報表示、ログアウト）を実装。
+    - **Calendar visibility enhancement**: Added task volume indicators (dots) and detailed tooltips to the calendar. (2026-01-01)
+- **Feedback system**: Implemented an in-app feedback modal integrated with Dexie and Supabase for offline-aware data collection. (2026-01-01)
     - **Cloud Sync**: `useSync` フックと `mapper.ts` を強化し、Dexie.js (Web) と Supabase (Cloud) の双方向同期（Pull/Push, Merge）を実装。
 - **Mobile Sync**:
     - **Mobile版**: `useMobileSync.ts` による双方向同期、`mapper.ts` でデータ変換、設定画面に「Sync Now」ボタン追加

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Settings, ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
+import { Settings, ChevronLeft, ChevronRight, HelpCircle, MessageSquare } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
 import { ja } from "date-fns/locale";
 
@@ -10,6 +10,7 @@ interface DateBarProps {
     onDateChange?: (date: Date) => void;
     onSettingsClick?: () => void;
     onGuideClick?: () => void; // Added for guide access
+    onFeedbackClick?: () => void; // Added for feedback access
 }
 
 /**
@@ -17,7 +18,7 @@ interface DateBarProps {
  * 
  * 画面上部に配置され、日付の表示・切り替え、プロフィール、設定へのアクセスを提供します。
  */
-export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick, onGuideClick }: DateBarProps) {
+export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick, onGuideClick, onFeedbackClick }: DateBarProps) {
 
     const handlePrevDay = () => {
         if (onDateChange) {
@@ -68,6 +69,13 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                     title="使い方ガイド"
                 >
                     <HelpCircle size={20} />
+                </button>
+                <button
+                    onClick={onFeedbackClick}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    title="フィードバックを送る"
+                >
+                    <MessageSquare size={20} />
                 </button>
             </div>
         </div>

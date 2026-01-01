@@ -128,6 +128,9 @@ export const allowedFieldsMap: Record<string, string[]> = {
     sessions: [
         'id', 'todoId', 'todoTitle', 'startTime', 'endTime',
         'duration', 'mode', 'createdAt'
+    ],
+    feedbacks: [
+        'id', 'content', 'type', 'deviceInfo', 'version', 'createdAt'
     ]
 };
 
@@ -139,5 +142,6 @@ export const supabaseTableMap: Record<string, string> = {
     todos: 'todos',
     categories: 'categories',
     srsProfiles: 'srs_profiles',
-    sessions: 'sessions'
+    sessions: 'sessions',
+    feedbacks: 'feedbacks'
 };
