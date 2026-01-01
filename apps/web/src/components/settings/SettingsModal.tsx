@@ -21,7 +21,7 @@ interface SettingsModalProps {
  */
 export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: SettingsModalProps) {
     const { user, signOut } = useAuth();
-    const { sync, isSyncing, lastSyncTime } = useSync();
+    const { lastSyncTime } = useSync(); // Removed sync and isSyncing as they are no longer used for a "Sync Now" button
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
     useEffect(() => {
@@ -130,29 +130,23 @@ export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: Sett
                         )}
 
                         {userEmail && (
-                            <div className="space-y-2">
-                                <button
-                                    onClick={async () => {
-                                        if (user && !isSyncing) {
-                                            await sync(user.id);
-                                            alert("同期が完了しました！");
-                                        }
-                                    }}
-                                    disabled={isSyncing}
-                                    className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    <div className="flex flex-col items-start">
+                            <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex flex-col">
                                         <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                            {isSyncing ? "同期中..." : "今すぐ同期"}
+                                            クラウド同期
                                         </span>
-                                        <span className="text-xs text-gray-400">
-                                            {lastSyncTime
-                                                ? `最終同期: ${lastSyncTime.toLocaleTimeString()}`
-                                                : "データをクラウドと同期"}
+                                        <span className="text-xs text-green-500 dark:text-green-400 flex items-center mt-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></div>
+                                            有効 (リアルタイム)
                                         </span>
                                     </div>
-                                    <Database size={18} className={`text-gray-400 group-hover:text-blue-500 transition-colors ${isSyncing ? "animate-spin" : ""}`} />
-                                </button>
+                                    <div className="text-[10px] text-gray-400 bg-white dark:bg-gray-900 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-800">
+                                        {lastSyncTime
+                                            ? `最終同期: ${lastSyncTime.toLocaleTimeString()}`
+                                            : "同期済み"}
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
