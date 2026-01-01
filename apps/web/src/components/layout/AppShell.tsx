@@ -1,4 +1,4 @@
-import React from "react";
+import { AdBanner } from "../ads/AdBanner";
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -14,11 +14,11 @@ export function AppShell({ children }: AppShellProps) {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans transition-colors duration-300">
             {/* 
-        上部バナー広告プレースホルダー 
+        上部バナー広告
         要件定義に基づき、画面最上部に固定表示されます。
       */}
-            <div className="h-[50px] bg-gray-200 dark:bg-gray-800 w-full flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 border-b border-gray-300 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-300">
-                [Ad Banner Area]
+            <div className="h-[50px] w-full border-b border-border sticky top-0 z-50 transition-colors duration-300">
+                <AdBanner format="auto" />
             </div>
 
             {/* 
