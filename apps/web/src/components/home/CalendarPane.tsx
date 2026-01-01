@@ -5,7 +5,7 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInte
 import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Session } from "@pomarc/shared";
+import { Session, Todo } from "@pomarc/shared";
 
 interface CalendarPaneProps {
     selectedDate?: Date;
@@ -13,7 +13,8 @@ interface CalendarPaneProps {
     keptDate?: Date | null;
     onDateLongPress?: (date: Date) => void;
     sessions?: Session[];
-    isExpanded?: boolean; // 新規追加: 拡大状態
+    todos?: Todo[]; // 新規追加: タスクデータ
+    isExpanded?: boolean;
 }
 
 /**
@@ -28,6 +29,7 @@ export function CalendarPane({
     keptDate,
     onDateLongPress,
     sessions = [],
+    todos = [], // デフォルト値
     isExpanded = false
 }: CalendarPaneProps) {
     const [currentMonth, setCurrentMonth] = useState(selectedDate);
@@ -157,17 +159,25 @@ export function CalendarPane({
                         const activityLevel = getActivityLevel(totalDuration);
                         const heatmapClass = getHeatmapColor(activityLevel);
 
+                        // Todo Stats Calculation
+                        const dailyTodos = todos.filter(t => t.dueDate && isSameDay(new Date(t.dueDate), date));
+                        const completedTodos = dailyTodos.filter(t => t.completed);
+                        const pendingTodos = dailyTodos.filter(t => !t.completed);
+
                         // Tooltip Text
                         const dateStr = format(date, "M/d(E)", { locale: ja });
                         const statsStr = totalDuration > 0
-                            ? `${formatDuration(totalDuration)} / ${dailySessions.length}セッション`
+                            ? `学習: ${formatDuration(totalDuration)} (${dailySessions.length}回)`
                             : "学習記録なし";
-                        const tooltipText = `${dateStr}\n${statsStr}`;
+                        const todoStr = dailyTodos.length > 0
+                            ? `タスク: ${dailyTodos.length}件 (完了: ${completedTodos.length} / 未完了: ${pendingTodos.length})`
+                            : "タスク予定なし";
+                        const tooltipText = `${dateStr}\n${statsStr}\n${todoStr}`;
 
                         return (
                             <div key={i} className="flex flex-col items-center justify-center relative aspect-square">
                                 <button
-                                    title={tooltipText} // Tooltip
+                                    title={tooltipText}
                                     onMouseDown={() => handleTouchStart(date)}
                                     onMouseUp={handleTouchEnd}
                                     onMouseLeave={handleTouchEnd}
@@ -175,7 +185,7 @@ export function CalendarPane({
                                     onTouchEnd={handleTouchEnd}
                                     onClick={() => handleClick(date)}
                                     className={`
-                    w-full h-full rounded-sm flex items-center justify-center text-xs transition-all duration-200 z-0
+                    w-full h-full rounded-sm flex flex-col items-center justify-center text-xs transition-all duration-200 z-0 relative py-1
                     ${!isCurrentMonth ? "opacity-30 grayscale" : ""}
                     ${isSelected
                                             ? "ring-2 ring-blue-500 z-10"
@@ -194,6 +204,22 @@ export function CalendarPane({
                                     `}>
                                         {format(date, "d")}
                                     </span>
+
+                                    {/* Task Indicators (Dots) */}
+                                    {dailyTodos.length > 0 && (
+                                        <div className="flex justify-center space-x-0.5 mt-0.5 px-0.5 overflow-hidden w-full max-w-[24px]">
+                                            {/* Show up to 3 dots, then a special mark */}
+                                            {dailyTodos.slice(0, 3).map((t, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className={`w-1 h-1 rounded-full ${t.completed ? "bg-green-500" : "bg-blue-400 dark:bg-blue-500"}`}
+                                                />
+                                            ))}
+                                            {dailyTodos.length > 3 && (
+                                                <div className="text-[6px] leading-[4px] text-gray-400 font-bold">+</div>
+                                            )}
+                                        </div>
+                                    )}
                                 </button>
                             </div>
                         );

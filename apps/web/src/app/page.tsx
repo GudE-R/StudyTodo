@@ -321,6 +321,7 @@ export default function Home() {
                 keptDate={keptDate}
                 onDateLongPress={handleDateLongPress}
                 sessions={sessions}
+                todos={todos}
               />
             </div>
           </div>
