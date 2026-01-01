@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { X, Palette, BookOpen, Database, Download, Cloud, LogOut } from "lucide-react";
+import { X, Palette, Database, Download, Cloud, LogOut } from "lucide-react";
 import { ThemeEditor } from "../template/ThemeEditor";
 import { exportToJson, exportSessionsToCsv } from "@/lib/export";
 import { useSync } from "@/hooks/useSync";
@@ -10,7 +10,6 @@ import { useSync } from "@/hooks/useSync";
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onOpenGuide: () => void;
     onOpenAuth: () => void;
 }
 
@@ -19,7 +18,7 @@ interface SettingsModalProps {
  * 
  * テーマ設定と使用ガイドへのアクセスを提供します。
  */
-export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProps) {
     const { user, signOut } = useAuth();
     const { lastSyncTime } = useSync(); // Removed sync and isSyncing as they are no longer used for a "Sync Now" button
     const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -64,25 +63,6 @@ export function SettingsModal({ isOpen, onClose, onOpenGuide, onOpenAuth }: Sett
                         </div>
                     </div>
 
-                    {/* 使用ガイドセクション */}
-                    <div className="space-y-3">
-                        <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
-                            <BookOpen size={20} className="text-green-500" />
-                            <h3>サポート</h3>
-                        </div>
-                        <button
-                            onClick={() => {
-                                onClose();
-                                onOpenGuide();
-                            }}
-                            className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors group"
-                        >
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                使い方ガイドを見る
-                            </span>
-                            <BookOpen size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
-                        </button>
-                    </div>
 
                     {/* クラウド同期セクション */}
                     <div className="space-y-3">

@@ -379,7 +379,6 @@ export default function Home() {
         <SettingsModal
           isOpen={isSettingsModalOpen}
           onClose={() => setIsSettingsModalOpen(false)}
-          onOpenGuide={() => setIsGuideModalOpen(true)}
           onOpenAuth={() => setIsAuthModalOpen(true)}
         />
         <UsageGuideModal
