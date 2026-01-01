@@ -1,20 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle, Save } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { Todo, Category } from "@pomarc/shared";
+import { Todo, Category, SRSProfile } from "@pomarc/shared";
 
 interface TodoDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
     todo: Todo | null;
     categories: Category[];
+    srsProfiles?: SRSProfile[]; // Added for parity
     onStartNow: (todo: Todo) => void;
     onDelete: (todoId: string) => void;
+    onUpdate: (todo: Todo) => void; // Added for edit function
     onRecord: (todo: Todo, duration: number) => void;
 }
 
@@ -23,12 +25,39 @@ export function TodoDetailModal({
     onClose,
     todo,
     categories,
+    srsProfiles = [],
     onStartNow,
     onDelete,
+    onUpdate,
     onRecord
 }: TodoDetailModalProps) {
-    const [isRecording, setIsRecording] = React.useState(false);
-    const [recordDuration, setRecordDuration] = React.useState("");
+    // Edit States
+    const [content, setContent] = useState("");
+    const [dueDate, setDueDate] = useState<Date | null>(null);
+    const [dueTime, setDueTime] = useState("");
+    const [endTime, setEndTime] = useState("");
+    const [categoryId, setCategoryId] = useState("");
+    const [srsInterval, setSrsInterval] = useState("");
+    const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
+
+    // Existing states
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordDuration, setRecordDuration] = useState("");
+
+    // Initialize states when todo is opened
+    React.useEffect(() => {
+        if (todo && isOpen) {
+            // content = title + \n + memo
+            const initialContent = todo.memo ? `${todo.title}\n${todo.memo}` : todo.title;
+            setContent(initialContent);
+            setCategoryId(todo.categoryId || "");
+            setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
+            setDueTime(todo.dueTime || "");
+            setEndTime(todo.endTime || "");
+            setSrsInterval(todo.srsInterval || "");
+            setPriority(todo.priority || "medium");
+        }
+    }, [todo, isOpen]);
 
     const sessions = useLiveQuery(
         async () => {
@@ -40,23 +69,38 @@ export function TodoDetailModal({
 
     if (!isOpen || !todo) return null;
 
-    // カテゴリ名を取得するヘルパー関数
-    const getCategoryPath = (categoryId?: string): string => {
-        if (!categoryId) return "未設定";
-
-        const findCategory = (id: string, cats: Category[]): Category | null => {
-            for (const cat of cats) {
-                if (cat.id === id) return cat;
-                if (cat.children) {
-                    const found = findCategory(id, cat.children);
-                    if (found) return found;
-                }
-            }
-            return null;
+    // カテゴリ選択肢の平坦化
+    const getCategoryOptions = () => {
+        const options: { value: string; label: string }[] = [];
+        const traverse = (cats: Category[], prefix = "") => {
+            cats.forEach(cat => {
+                const label = prefix ? `${prefix} > ${cat.name}` : cat.name;
+                options.push({ value: cat.id, label });
+                if (cat.children) traverse(cat.children, label);
+            });
         };
+        traverse(categories);
+        return options;
+    };
 
-        const category = findCategory(categoryId, categories);
-        return category?.name || "未設定";
+    const categoryOptions = getCategoryOptions();
+
+    // 自由記述欄のパース（CreateModalと同じロジック）
+    const parseContent = () => {
+        const lines = content.split("\n");
+        const rawTitle = lines[0].trim();
+        const notes = lines.slice(1).join("\n").trim();
+
+        let effectiveTitle = rawTitle;
+        if (!effectiveTitle && categoryId) {
+            const cat = categoryOptions.find(c => c.value === categoryId);
+            if (cat) effectiveTitle = cat.label.split(" > ").pop() || cat.label;
+        }
+
+        return {
+            title: effectiveTitle || "No Title",
+            notes: notes || undefined
+        };
     };
 
     // 優先度の表示名とカラー
@@ -69,34 +113,76 @@ export function TodoDetailModal({
         }
     };
 
-    // 総学習時間を計算
-    const totalDuration = sessions.reduce((acc, s) => acc + s.duration, 0);
-    const hours = Math.floor(totalDuration / 3600);
-    const minutes = Math.floor((totalDuration % 3600) / 60);
+    const handleUpdate = () => {
+        if (!todo) return;
+        const { title: parsedTitle, notes } = parseContent();
+
+        onUpdate({
+            ...todo,
+            title: parsedTitle,
+            memo: notes,
+            categoryId: categoryId || undefined,
+            dueDate: dueDate || undefined,
+            dueTime: dueTime || undefined,
+            endTime: endTime || undefined,
+            srsInterval: srsInterval || undefined,
+            priority,
+            updatedAt: new Date(),
+        });
+        onClose();
+    };
 
     const handleStartNow = () => {
-        onStartNow(todo);
+        if (!todo) return;
+        const { title: parsedTitle, notes } = parseContent();
+        onStartNow({
+            ...todo,
+            title: parsedTitle,
+            memo: notes,
+            categoryId: categoryId || undefined,
+            dueDate: dueDate || undefined,
+            dueTime: dueTime || undefined,
+            endTime: endTime || undefined,
+            srsInterval: srsInterval || undefined,
+            priority,
+            updatedAt: new Date(),
+        });
         onClose();
     };
 
     const handleDelete = () => {
+        if (!todo) return;
         onDelete(todo.id);
         onClose();
     };
 
     const handleRecordSubmit = () => {
+        if (!todo) return;
         const d = parseInt(recordDuration, 10);
         if (isNaN(d) || d <= 0) {
             alert("有効な時間を入力してください");
             return;
         }
-        onRecord(todo, d * 60); // min -> sec
+
+        const { title: parsedTitle, notes } = parseContent();
+        onRecord({
+            ...todo,
+            title: parsedTitle,
+            memo: notes,
+            categoryId: categoryId || undefined,
+            dueDate: dueDate || undefined,
+            dueTime: dueTime || undefined,
+            endTime: endTime || undefined,
+            srsInterval: srsInterval || undefined,
+            priority,
+            updatedAt: new Date(),
+        }, d * 60); // min -> sec
+
         setRecordDuration("");
         setIsRecording(false);
         onClose();
     };
 
-    const priority = getPriorityDisplay(todo.priority);
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
@@ -104,64 +190,122 @@ export function TodoDetailModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">タスク詳細</h2>
-                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-                        <X size={24} />
-                    </button>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">タスク詳細・編集</h2>
+                    <div className="flex items-center space-x-2">
+                        <button
+                            onClick={handleUpdate}
+                            className="text-sm font-bold text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-3 py-1 rounded-lg transition-colors"
+                        >
+                            保存
+                        </button>
+                        <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+                            <X size={24} />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
 
-                    {/* Title */}
-                    <div className="flex items-start space-x-3">
-                        {todo.completed ? (
-                            <CheckCircle className="text-green-500 mt-0.5" size={24} />
-                        ) : (
-                            <div className="w-6 h-6 border-2 border-gray-300 dark:border-gray-600 rounded-full mt-0.5" />
-                        )}
-                        <h3 className={`text-xl font-bold ${todo.completed ? "text-gray-400 line-through" : "text-gray-800 dark:text-gray-100"}`}>
-                            {todo.title}
-                        </h3>
+                    {/* Category Selection */}
+                    <div className="flex items-center space-x-2">
+                        <Tag size={18} className="text-gray-400" />
+                        <select
+                            value={categoryId}
+                            onChange={(e) => setCategoryId(e.target.value)}
+                            className="flex-1 bg-gray-50 dark:bg-gray-800 text-sm p-2 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="">カテゴリなし</option>
+                            {categoryOptions.map(opt => (
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            ))}
+                        </select>
                     </div>
 
-                    {/* Info Cards */}
-                    <div className="space-y-3">
-                        {/* Session Count (SRS回数) */}
+                    {/* Merged Content Input (Title & Memo) */}
+                    <div className="flex items-start space-x-3">
+                        <div className="mt-2.5">
+                            {todo.completed ? (
+                                <CheckCircle className="text-green-500" size={24} />
+                            ) : (
+                                <div className="w-6 h-6 border-2 border-gray-300 dark:border-gray-600 rounded-full" />
+                            )}
+                        </div>
+                        <textarea
+                            placeholder="タスク名や範囲、メモを入力..."
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            rows={3}
+                            className={`flex-1 text-lg font-bold bg-transparent border-none outline-none resize-none py-1 placeholder-gray-300 ${todo.completed ? "text-gray-400 line-through" : "text-gray-800 dark:text-gray-100"}`}
+                        />
+                    </div>
+
+                    {/* Date/Time/SRS Grid (Compact like Create Modal) */}
+                    <div className="grid grid-cols-2 gap-3">
+                        {/* Due Date */}
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
+                            <Calendar size={18} className="text-blue-500" />
+                            <input
+                                type="date"
+                                value={dueDate ? format(dueDate, "yyyy-MM-dd") : ""}
+                                onChange={(e) => setDueDate(e.target.value ? new Date(e.target.value) : null)}
+                                className="bg-transparent text-sm w-full outline-none"
+                            />
+                        </div>
+
+                        {/* Start Time */}
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
+                            <Clock size={18} className="text-blue-500" />
+                            <input
+                                type="time"
+                                value={dueTime}
+                                onChange={(e) => setDueTime(e.target.value)}
+                                className="bg-transparent text-sm w-full outline-none"
+                            />
+                        </div>
+
+                        {/* SRS Profile */}
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
+                            <Repeat size={18} className="text-green-500" />
+                            <select
+                                value={srsInterval}
+                                onChange={(e) => setSrsInterval(e.target.value)}
+                                className="bg-transparent text-sm w-full border-none outline-none"
+                            >
+                                <option value="">SRSなし</option>
+                                {srsProfiles.map(p => (
+                                    <option key={p.id} value={p.name}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Priority */}
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
+                            <Flag size={18} className="text-orange-500" />
+                            <select
+                                value={priority}
+                                onChange={(e) => setPriority(e.target.value as any)}
+                                className="bg-transparent text-sm w-full border-none outline-none"
+                            >
+                                <option value="low">優先度：低</option>
+                                <option value="medium">優先度：中</option>
+                                <option value="high">優先度：高</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Stats Summary (Learning History) */}
+                    <div className="space-y-2 pt-2">
+                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">学習状況</div>
                         <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
                             <Clock className="text-blue-500" size={20} />
                             <div className="flex-1">
-                                <div className="text-xs text-gray-500 dark:text-gray-400">学習履歴</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">実績</div>
                                 <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    {sessions.length}回 ({hours > 0 ? `${hours}時間` : ""}{minutes}分)
+                                    {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
                                 </div>
                             </div>
                         </div>
-
-                        {/* Other cards like Category, Date, etc can remain here if wished, but for brevity rendering fewer */}
-                        {todo.srsInterval && (
-                            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <Repeat className="text-green-500" size={20} />
-                                <div className="flex-1">
-                                    <div className="text-xs text-gray-500 dark:text-gray-400">SRS設定</div>
-                                    <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                        {todo.srsInterval}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {todo.memo && (
-                            <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <FileText className="text-gray-400 mt-1" size={20} />
-                                <div className="flex-1">
-                                    <div className="text-xs text-gray-500 dark:text-gray-400">メモ / 範囲</div>
-                                    <div className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
-                                        {todo.memo}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                 </div>

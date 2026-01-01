@@ -104,6 +104,12 @@ export default function Home() {
     await dataService.updateTodo(todo.id, { completed: !todo.completed, updatedAt: new Date() });
   };
 
+  const handleUpdateTodo = async (updatedTodo: Todo) => {
+    const { id, ...updates } = updatedTodo;
+    await dataService.updateTodo(id, { ...updates, updatedAt: new Date() });
+    setIsTodoDetailOpen(false);
+  };
+
   const handleStartFromDetail = (todo: Todo) => {
     setActiveTodo(todo);
     setViewMode("timer");
@@ -362,8 +368,10 @@ export default function Home() {
           onClose={() => setIsTodoDetailOpen(false)}
           todo={selectedTodo}
           categories={categories}
+          srsProfiles={srsProfiles}
           onStartNow={handleStartFromDetail}
           onDelete={handleDeleteTodo}
+          onUpdate={handleUpdateTodo}
           onRecord={handleRecordSession}
         />
         <SettingsModal
