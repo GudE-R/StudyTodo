@@ -1,5 +1,6 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 import type { NextConfig } from "next";
+// Trigger restart
 
 const withNextIntl = createNextIntlPlugin();
 
