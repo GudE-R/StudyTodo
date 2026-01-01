@@ -142,10 +142,22 @@ export function TodoDetailModal({
                         {todo.srsInterval && (
                             <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
                                 <Repeat className="text-green-500" size={20} />
-                                <div>
+                                <div className="flex-1">
                                     <div className="text-xs text-gray-500 dark:text-gray-400">SRS設定</div>
                                     <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                                         {todo.srsInterval}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {todo.memo && (
+                            <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                                <FileText className="text-gray-400 mt-1" size={20} />
+                                <div className="flex-1">
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">メモ / 範囲</div>
+                                    <div className="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap leading-relaxed">
+                                        {todo.memo}
                                     </div>
                                 </div>
                             </div>

@@ -30,14 +30,12 @@ export function TodoCreateModal({
     initialDate,
     initialTime
 }: TodoCreateModalProps) {
-    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [dueTime, setDueTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [categoryId, setCategoryId] = useState(""); // Changed to categoryId
     const [srsInterval, setSrsInterval] = useState("");
-    const [range, setRange] = useState("");
-    const [memo, setMemo] = useState("");
     const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
     const [duration, setDuration] = useState<string>(""); // Duration in minutes
 
@@ -80,14 +78,22 @@ export function TodoCreateModal({
 
     const categoryOptions = getCategoryOptions();
 
-    const getEffectiveTitle = () => {
-        if (title.trim()) return title;
-        // Find category name by ID
-        if (categoryId) {
+    // 自由記述欄のパース（1行目: タイトル, 2行目以降: メモ）
+    const parseContent = () => {
+        const lines = content.split("\n");
+        const rawTitle = lines[0].trim();
+        const notes = lines.slice(1).join("\n").trim();
+
+        let effectiveTitle = rawTitle;
+        if (!effectiveTitle && categoryId) {
             const cat = categoryOptions.find(c => c.value === categoryId);
-            if (cat) return cat.label.split(" > ").pop() || cat.label;
+            if (cat) effectiveTitle = cat.label.split(" > ").pop() || cat.label;
         }
-        return "No Title";
+
+        return {
+            title: effectiveTitle || "No Title",
+            notes: notes || undefined
+        };
     };
 
     // 時間指定時の日付自動補完処理
@@ -101,18 +107,17 @@ export function TodoCreateModal({
     // フォーム送信時の処理
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const effectiveTitle = getEffectiveTitle();
+        const { title: parsedTitle, notes } = parseContent();
         const effectiveDate = ensureDateIfTimeSet();
 
         onCreate({
-            title: effectiveTitle,
+            title: parsedTitle,
             dueDate: effectiveDate || undefined,
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
             categoryId: categoryId || undefined, // Use categoryId
             srsInterval,
-            range,
-            memo,
+            memo: notes, // notes maps to memo/notes in shared
             priority,
             updatedAt: new Date(), // Added
         });
@@ -121,17 +126,16 @@ export function TodoCreateModal({
 
     // 「今すぐ開始」ボタンの処理
     const handleStartNow = () => {
-        const effectiveTitle = getEffectiveTitle();
+        const { title: parsedTitle, notes } = parseContent();
         const now = new Date();
         onStartNow({
-            title: effectiveTitle,
+            title: parsedTitle,
             dueDate: now,
             dueTime: format(now, "HH:mm"),
             // StartNow doesn't need endTime usually, as it's ongoing
             categoryId: categoryId || undefined, // Use categoryId
             srsInterval,
-            range,
-            memo,
+            memo: notes,
             priority,
             updatedAt: new Date(), // Added
         });
@@ -140,7 +144,7 @@ export function TodoCreateModal({
 
     // 「記録」ボタンの処理
     const handleRecord = () => {
-        const effectiveTitle = getEffectiveTitle();
+        const { title: parsedTitle, notes } = parseContent();
         const durationNum = parseInt(duration, 10);
         if (isNaN(durationNum) || durationNum <= 0) {
             alert("有効な時間を入力してください");
@@ -151,14 +155,13 @@ export function TodoCreateModal({
         const effectiveDate = ensureDateIfTimeSet();
 
         onRecord({
-            title: effectiveTitle,
+            title: parsedTitle,
             dueDate: effectiveDate || undefined,
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
             categoryId: categoryId || undefined, // Use categoryId
             srsInterval,
-            range,
-            memo,
+            memo: notes,
             priority,
             updatedAt: new Date(), // Added
         }, durationNum * 60); // Convert minutes to seconds
@@ -166,14 +169,12 @@ export function TodoCreateModal({
     };
 
     const resetForm = () => {
-        setTitle("");
+        setContent("");
         setDueDate(null);
         setDueTime("");
         setEndTime("");
         setCategoryId(""); // Reset categoryId
         setSrsInterval("");
-        setRange("");
-        setMemo("");
         setPriority("medium");
         setDuration("");
         onClose();
@@ -210,14 +211,14 @@ export function TodoCreateModal({
                         </select>
                     </div>
 
-                    {/* Title Input (Optional) */}
+                    {/* Content Input (Merged Title, Range, Memo) */}
                     <div>
-                        <input
-                            type="text"
-                            placeholder="タスク名 (任意)"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full text-xl font-medium border-b-2 border-blue-100 focus:border-blue-500 outline-none py-2 placeholder-gray-300"
+                        <textarea
+                            placeholder="タスク名や範囲、メモを入力...&#10;(1行目がタスク名、2行目以降が詳細になります)"
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            rows={3}
+                            className="w-full text-base font-medium border-b-2 border-blue-100 focus:border-blue-500 outline-none py-2 placeholder-gray-300 resize-none bg-transparent"
                         />
                     </div>
 
@@ -282,29 +283,6 @@ export function TodoCreateModal({
                         </div>
                     </div>
 
-                    {/* Range & Memo */}
-                    <div className="space-y-3">
-                        <div className="flex items-center space-x-2 border-b border-gray-100 py-1">
-                            <BookOpen size={18} className="text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="範囲 (例: p.10-20)"
-                                value={range}
-                                onChange={(e) => setRange(e.target.value)}
-                                className="flex-1 text-sm outline-none placeholder-gray-300"
-                            />
-                        </div>
-                        <div className="flex items-center space-x-2 border-b border-gray-100 py-1">
-                            <FileText size={18} className="text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="メモ"
-                                value={memo}
-                                onChange={(e) => setMemo(e.target.value)}
-                                className="flex-1 text-sm outline-none placeholder-gray-300"
-                            />
-                        </div>
-                    </div>
 
                     {/* Action Buttons (Reordered: Record -> Start -> Create) */}
                     <div className="grid grid-cols-3 gap-2 pt-2">
