@@ -1,23 +1,28 @@
-import { ja, enUS, de, fr, es, ko, zhCN, zhTW, ptBR, it, ru, vi, id, tr, nl } from "date-fns/locale";
+import { ja, enUS, de, fr, es, ko, zhCN, zhTW, ptBR, it, ru, vi, id, tr, nl, sv, nb, da, fi } from 'date-fns/locale';
+import { Locale } from 'date-fns';
 
-const localeMap: Record<string, any> = {
-    ja: ja,
+const locales: { [key: string]: Locale } = {
+    ja,
     en: enUS,
-    de: de,
-    fr: fr,
-    es: es,
-    ko: ko,
+    de,
+    fr,
+    es,
+    ko,
     'zh-CN': zhCN,
     'zh-TW': zhTW,
     'pt-BR': ptBR,
-    it: it,
-    ru: ru,
-    vi: vi,
-    id: id,
-    tr: tr,
-    nl: nl,
+    it,
+    ru,
+    vi,
+    id,
+    tr,
+    nl,
+    sv,
+    no: nb, // Norwegian Bokmål is commonly used for 'no'
+    da,
+    fi
 };
 
 export function getDateFnsLocale(locale: string) {
-    return localeMap[locale] || enUS;
+    return locales[locale] || enUS;
 }
