@@ -16,6 +16,9 @@ interface CalendarPaneProps {
     sessions?: Session[];
     todos?: Todo[];
     isExpanded?: boolean;
+    readOnly?: boolean;
+    hideHeader?: boolean;
+    className?: string;
 }
 
 export function CalendarPane({
@@ -25,7 +28,10 @@ export function CalendarPane({
     onDateLongPress,
     sessions = [],
     todos = [],
-    isExpanded = false
+    isExpanded = false,
+    readOnly = false,
+    hideHeader = false,
+    className = ""
 }: CalendarPaneProps) {
     const locale = useLocale();
     const t = useTranslations("common");
@@ -49,6 +55,7 @@ export function CalendarPane({
     const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
     const handleTouchStart = (date: Date) => {
+        if (readOnly) return;
         isLongPressRef.current = false;
         longPressTimerRef.current = setTimeout(() => {
             isLongPressRef.current = true;
@@ -60,6 +67,7 @@ export function CalendarPane({
     };
 
     const handleTouchEnd = () => {
+        if (readOnly) return;
         if (longPressTimerRef.current) {
             clearTimeout(longPressTimerRef.current);
             longPressTimerRef.current = null;
@@ -67,6 +75,7 @@ export function CalendarPane({
     };
 
     const handleClick = (date: Date) => {
+        if (readOnly) return;
         if (!isLongPressRef.current && onDateChange) {
             onDateChange(date);
         }
@@ -115,30 +124,32 @@ export function CalendarPane({
     };
 
     return (
-        <div className="h-full bg-card flex flex-col transition-colors duration-300">
+        <div className={`h-full bg-card flex flex-col transition-colors duration-300 ${className}`}>
             {/* ヘッダー: 年月表示とナビゲーション */}
-            <div className="px-4 py-2 flex items-center justify-between border-b border-border flex-none">
-                <button
-                    onClick={prevMonth}
-                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                >
-                    <ChevronLeft size={20} />
-                </button>
+            {!hideHeader && (
+                <div className="px-4 py-2 flex items-center justify-between border-b border-border flex-none">
+                    <button
+                        onClick={prevMonth}
+                        className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
 
-                <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
-                    {formatIntl.dateTime(currentMonth, { year: 'numeric', month: 'long' })}
-                </span>
+                    <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
+                        {formatIntl.dateTime(currentMonth, { year: 'numeric', month: 'long' })}
+                    </span>
 
-                <button
-                    onClick={nextMonth}
-                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                >
-                    <ChevronRight size={20} />
-                </button>
-            </div>
+                    <button
+                        onClick={nextMonth}
+                        className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
+            )}
 
             {/* カレンダー本体（スクロール可能領域） */}
-            <div className="flex-1 flex flex-col p-2 overflow-y-auto min-h-0">
+            <div className={`flex-1 flex flex-col p-2 min-h-0 ${readOnly ? "overflow-hidden" : "overflow-y-auto"}`}>
                 {/* 曜日ヘッダー */}
                 <div className="grid grid-cols-7 mb-1 flex-none sticky top-0 bg-card z-10">
                     {weekDays.map((day, i) => (
@@ -180,25 +191,26 @@ export function CalendarPane({
                         return (
                             <div key={i} className="flex flex-col items-center justify-center relative aspect-square">
                                 <button
-                                    title={tooltipText}
+                                    title={!readOnly ? tooltipText : undefined}
                                     onMouseDown={() => handleTouchStart(date)}
                                     onMouseUp={handleTouchEnd}
                                     onMouseLeave={handleTouchEnd}
                                     onTouchStart={() => handleTouchStart(date)}
                                     onTouchEnd={handleTouchEnd}
                                     onClick={() => handleClick(date)}
+                                    disabled={readOnly}
                                     className={`
                     w-full h-full rounded-sm flex flex-col items-center justify-center text-xs transition-all duration-200 z-0 relative py-1
                     ${!isCurrentMonth ? "opacity-30 grayscale" : ""}
-                    ${isSelected
+                    ${!readOnly && isSelected
                                             ? "ring-2 ring-blue-500 z-10"
-                                            : isToday
+                                            : !readOnly && isToday
                                                 ? "ring-1 ring-blue-400 dark:ring-blue-500"
-                                                : "hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-600"}
-                    ${isSelected || isToday ? "" : heatmapClass}
-                    ${isKept ? "ring-2 ring-orange-400 bg-orange-50 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400" : ""}
-                    ${(isSelected || isToday) && activityLevel > 0 ? heatmapClass : ""}
-                    ${(isSelected || isToday) && activityLevel === 0 ? "bg-white dark:bg-gray-800" : ""}
+                                                : !readOnly ? "hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-600" : ""}
+                    ${!readOnly && (isSelected || isToday) ? "" : heatmapClass}
+                    ${!readOnly && isKept ? "ring-2 ring-orange-400 bg-orange-50 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400" : ""}
+                    ${!readOnly && (isSelected || isToday) && activityLevel > 0 ? heatmapClass : ""}
+                    ${!readOnly && (isSelected || isToday) && activityLevel === 0 ? "bg-white dark:bg-gray-800" : ""}
                   `}
                                 >
                                     <span className={`

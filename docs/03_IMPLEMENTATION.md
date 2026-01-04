@@ -143,6 +143,17 @@
 - **Feedback system**: Implemented an in-app feedback modal integrated with Dexie and Supabase for offline-aware data collection. (2026-01-01)
 - **Web Ad Integration**: Created `AdBanner` component (Google AdSense compatible) and integrated it into `AppShell`. Set up environment-variable-driven script injection in `RootLayout`. (2026-01-01)
     - **Cloud Sync**: `useSync` フックと `mapper.ts` を強化し、Dexie.js (Web) と Supabase (Cloud) の双方向同期（Pull/Push, Merge）を実装。
+    
+### [Statistics & Viral Features] - 2026-01-05
+#### 追加/変更 (Web)
+- **統計機能の強化**:
+    - **Streak (連続達成)**: `lib/statistics.ts` にロジックを実装し、継続的な学習を可視化。
+    - **Growth Track**: 過去12日間の活動状況をヒートマップで表示するUIコンポーネントを実装。
+- **バイラル・シェア機能**:
+    - **ShareCard**: ユーザーの成果（時間、タスク数、ストリーク、カテゴリ分布）をリッチな画像として生成するコンポーネントを作成 (`html-to-image` 利用)。
+    - **SNS連携**: X (Twitter), Facebook, Reddit, Discord, Instagram へのシェアボタンを実装。クロスオリジン/ポップアップブロック対策済み。
+- **リワードシステム**:
+    - **広告非表示**: SNSシェアを行うと、24時間限定で広告が非表示になるインセンティブ機能を実装 (`localStorage` 管理)。
 - **Mobile Sync**:
     - **Mobile版**: `useMobileSync.ts` による双方向同期、`mapper.ts` でデータ変換、設定画面に「Sync Now」ボタン追加
     - **Supabaseスキーマ更新**: `migration_add_missing_columns.sql` で不足カラムを追加
