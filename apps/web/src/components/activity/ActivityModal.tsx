@@ -63,7 +63,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
     const handleBulkDeleteClick = async () => {
         if (selectedIds.size === 0) return;
-        if (confirm(tc("deleteTodoConfirm", { count: selectedIds.size }))) {
+        if (confirm(t("deleteTodoConfirm", { count: selectedIds.size }))) {
             try {
                 await onBulkDelete(Array.from(selectedIds));
                 setSelectedIds(new Set());
