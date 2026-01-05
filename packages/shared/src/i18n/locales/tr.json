@@ -75,7 +75,14 @@
         "haveAccountLink": "Zaten bir hesabınız var mı? Giriş yapın",
         "loginSuccess": "Başarıyla giriş yapıldı!",
         "checkEmail": "Doğrulama e-postası gönderildi. Lütfen gelen kutunuzu kontrol edin.",
-        "errorOccurred": "Bir hata oluştu"
+        "errorOccurred": "Bir hata oluştu",
+        "confirmPassword": "Şifreyi onayla",
+        "passwordHint": "En az 8 karakter, harf ve rakam içermeli",
+        "invalidEmail": "Geçerli bir e-posta adresi girin",
+        "weakPassword": "Şifre en az 8 karakter olmalı ve harf ile rakam içermelidir",
+        "passwordMismatch": "Şifreler eşleşmiyor",
+        "mustAgreeTerms": "Lütfen Şartları ve Gizlilik Politikasını kabul edin",
+        "termsAgreement": "<terms>Hizmet Şartları</terms> ve <privacy>Gizlilik Politikası</privacy>'nı kabul ediyorum"
     },
     "settings": {
         "title": "Ayarlar",

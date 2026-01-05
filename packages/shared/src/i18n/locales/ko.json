@@ -75,7 +75,14 @@
         "haveAccountLink": "이미 계정이 있으신가요?",
         "loginSuccess": "로그인에 성공했습니다!",
         "checkEmail": "확인 이메일을 보냈습니다. 받은 편지함을 확인해 주세요.",
-        "errorOccurred": "오류가 발생했습니다"
+        "errorOccurred": "오류가 발생했습니다",
+        "confirmPassword": "비밀번호 확인",
+        "passwordHint": "영문과 숫자를 포함한 8자 이상",
+        "invalidEmail": "유효한 이메일 주소를 입력해주세요",
+        "weakPassword": "비밀번호는 영문과 숫자를 포함한 8자 이상이어야 합니다",
+        "passwordMismatch": "비밀번호가 일치하지 않습니다",
+        "mustAgreeTerms": "이용약관 및 개인정보 처리방침에 동의해주세요",
+        "termsAgreement": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>에 동의합니다"
     },
     "settings": {
         "title": "설정",

@@ -75,7 +75,14 @@
         "haveAccountLink": "Heb je al een account? Log hier in",
         "loginSuccess": "Succesvol ingelogd!",
         "checkEmail": "Verificatie-e-mail verzonden. Controleer je inbox.",
-        "errorOccurred": "Er is een fout opgetreden"
+        "errorOccurred": "Er is een fout opgetreden",
+        "confirmPassword": "Bevestig wachtwoord",
+        "passwordHint": "Minimaal 8 tekens met letters en cijfers",
+        "invalidEmail": "Voer een geldig e-mailadres in",
+        "weakPassword": "Wachtwoord moet minimaal 8 tekens met letters en cijfers bevatten",
+        "passwordMismatch": "Wachtwoorden komen niet overeen",
+        "mustAgreeTerms": "Accepteer de Voorwaarden en het Privacybeleid",
+        "termsAgreement": "Ik ga akkoord met de <terms>Servicevoorwaarden</terms> en het <privacy>Privacybeleid</privacy>"
     },
     "settings": {
         "title": "Instellingen",

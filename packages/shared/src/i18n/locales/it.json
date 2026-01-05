@@ -75,7 +75,14 @@
         "haveAccountLink": "Hai già un account? Accedi qui",
         "loginSuccess": "Accesso effettuato!",
         "checkEmail": "Email di verifica inviata. Controlla la tua posta.",
-        "errorOccurred": "Si è verificato un errore"
+        "errorOccurred": "Si è verificato un errore",
+        "confirmPassword": "Conferma password",
+        "passwordHint": "Almeno 8 caratteri con lettere e numeri",
+        "invalidEmail": "Inserisci un indirizzo email valido",
+        "weakPassword": "La password deve avere almeno 8 caratteri con lettere e numeri",
+        "passwordMismatch": "Le password non corrispondono",
+        "mustAgreeTerms": "Accetta i Termini e l'Informativa sulla Privacy",
+        "termsAgreement": "Accetto i <terms>Termini di Servizio</terms> e l'<privacy>Informativa sulla Privacy</privacy>"
     },
     "settings": {
         "title": "Impostazioni",

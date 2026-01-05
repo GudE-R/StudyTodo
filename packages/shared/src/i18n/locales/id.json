@@ -75,7 +75,14 @@
         "haveAccountLink": "Sudah punya akun? Masuk",
         "loginSuccess": "Berhasil masuk!",
         "checkEmail": "Email verifikasi telah dikirim. Silakan periksa kotak masuk Anda.",
-        "errorOccurred": "Terjadi kesalahan"
+        "errorOccurred": "Terjadi kesalahan",
+        "confirmPassword": "Konfirmasi kata sandi",
+        "passwordHint": "Minimal 8 karakter dengan huruf dan angka",
+        "invalidEmail": "Masukkan alamat email yang valid",
+        "weakPassword": "Kata sandi harus minimal 8 karakter dengan huruf dan angka",
+        "passwordMismatch": "Kata sandi tidak cocok",
+        "mustAgreeTerms": "Harap setujui Ketentuan dan Kebijakan Privasi",
+        "termsAgreement": "Saya setuju dengan <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>"
     },
     "settings": {
         "title": "Pengaturan",

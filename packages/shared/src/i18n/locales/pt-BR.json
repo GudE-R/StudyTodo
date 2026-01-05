@@ -75,7 +75,14 @@
         "haveAccountLink": "Já tem uma conta? Entre aqui",
         "loginSuccess": "Login realizado com sucesso!",
         "checkEmail": "E-mail de verificação enviado. Verifique sua caixa de entrada.",
-        "errorOccurred": "Ocorreu um erro"
+        "errorOccurred": "Ocorreu um erro",
+        "confirmPassword": "Confirmar senha",
+        "passwordHint": "Pelo menos 8 caracteres com letras e números",
+        "invalidEmail": "Por favor, insira um endereço de e-mail válido",
+        "weakPassword": "A senha deve ter pelo menos 8 caracteres com letras e números",
+        "passwordMismatch": "As senhas não coincidem",
+        "mustAgreeTerms": "Por favor, aceite os Termos e a Política de Privacidade",
+        "termsAgreement": "Concordo com os <terms>Termos de Serviço</terms> e a <privacy>Política de Privacidade</privacy>"
     },
     "settings": {
         "title": "Ajustes",

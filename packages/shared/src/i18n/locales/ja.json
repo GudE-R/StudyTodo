@@ -69,13 +69,20 @@
         "signUpDescription": "PomArcに参加して学習データをバックアップ",
         "email": "メールアドレス",
         "password": "パスワード",
+        "confirmPassword": "パスワード（確認）",
+        "passwordHint": "8文字以上で、英字と数字の両方を含めてください",
         "loginButton": "ログイン",
         "signUpButton": "アカウント登録",
         "noAccountLink": "アカウントをお持ちでない方はこちら",
         "haveAccountLink": "すでにアカウントをお持ちの方はこちら",
         "loginSuccess": "ログインに成功しました！",
         "checkEmail": "確認メールを送信しました。メールボックスを確認してください。",
-        "errorOccurred": "エラーが発生しました"
+        "errorOccurred": "エラーが発生しました",
+        "invalidEmail": "有効なメールアドレスを入力してください",
+        "weakPassword": "パスワードは8文字以上で、英字と数字の両方を含める必要があります",
+        "passwordMismatch": "パスワードが一致しません",
+        "mustAgreeTerms": "利用規約とプライバシーポリシーに同意してください",
+        "termsAgreement": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意します"
     },
     "settings": {
         "title": "設定",

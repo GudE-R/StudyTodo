@@ -75,7 +75,14 @@
         "haveAccountLink": "Onko sinulla jo tili? Kirjaudu",
         "loginSuccess": "Kirjauduttu sisään!",
         "checkEmail": "Vahvistusviesti lähetetty. Tarkista postilaatikkosi.",
-        "errorOccurred": "Tapahtui virhe"
+        "errorOccurred": "Tapahtui virhe",
+        "confirmPassword": "Vahvista salasana",
+        "passwordHint": "Vähintään 8 merkkiä kirjaimia ja numeroita",
+        "invalidEmail": "Anna kelvollinen sähköpostiosoite",
+        "weakPassword": "Salasanassa on oltava vähintään 8 merkkiä kirjaimia ja numeroita",
+        "passwordMismatch": "Salasanat eivät täsmää",
+        "mustAgreeTerms": "Hyväksy ehdot ja tietosuojakäytäntö",
+        "termsAgreement": "Hyväksyn <terms>Käyttöehdot</terms> ja <privacy>Tietosuojakäytännön</privacy>"
     },
     "settings": {
         "title": "Asetukset",

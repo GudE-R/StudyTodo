@@ -75,7 +75,14 @@
         "haveAccountLink": "Bereits ein Konto? Hier anmelden",
         "loginSuccess": "Erfolgreich angemeldet!",
         "checkEmail": "Bestätigungs-E-Mail gesendet. Bitte prüfe dein Postfach.",
-        "errorOccurred": "Ein Fehler ist aufgetreten"
+        "errorOccurred": "Ein Fehler ist aufgetreten",
+        "confirmPassword": "Passwort bestätigen",
+        "passwordHint": "Mindestens 8 Zeichen mit Buchstaben und Zahlen",
+        "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+        "weakPassword": "Passwort muss mindestens 8 Zeichen mit Buchstaben und Zahlen haben",
+        "passwordMismatch": "Passwörter stimmen nicht überein",
+        "mustAgreeTerms": "Bitte stimmen Sie den Nutzungsbedingungen und der Datenschutzerklärung zu",
+        "termsAgreement": "Ich stimme den <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzerklärung</privacy> zu"
     },
     "settings": {
         "title": "Einstellungen",

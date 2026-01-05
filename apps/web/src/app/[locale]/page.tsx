@@ -21,6 +21,7 @@ import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Todo, Feedback } from "@pomarc/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
@@ -252,7 +253,12 @@ export default function Home() {
   });
 
   if (!isClient) {
-    return null;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <LoadingSpinner size={40} />
+        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading PomArc...</p>
+      </div>
+    );
   }
 
   if (viewMode === "timer" && activeTodo) {
@@ -275,6 +281,7 @@ export default function Home() {
           onSettingsClick={() => setIsSettingsModalOpen(true)}
           onGuideClick={() => setIsGuideModalOpen(true)}
           onFeedbackClick={() => setIsFeedbackModalOpen(true)}
+          isSyncing={isSyncing}
         />
 
         {/* 

@@ -75,7 +75,14 @@
         "haveAccountLink": "已有账号？点此登录",
         "loginSuccess": "登录成功！",
         "checkEmail": "验证邮件已发送，请检查收件箱。",
-        "errorOccurred": "发生错误"
+        "errorOccurred": "发生错误",
+        "confirmPassword": "确认密码",
+        "passwordHint": "至少8个字符，包含字母和数字",
+        "invalidEmail": "请输入有效的电子邮件地址",
+        "weakPassword": "密码必须至少8个字符，包含字母和数字",
+        "passwordMismatch": "密码不匹配",
+        "mustAgreeTerms": "请同意服务条款和隐私政策",
+        "termsAgreement": "我同意<terms>服务条款</terms>和<privacy>隐私政策</privacy>"
     },
     "settings": {
         "title": "设置",

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Settings, ChevronLeft, ChevronRight, HelpCircle, MessageSquare } from "lucide-react";
+import { Settings, ChevronLeft, ChevronRight, HelpCircle, MessageSquare, Cloud } from "lucide-react";
 import { format, addDays, subDays } from "date-fns";
 import { useLocale, useTranslations } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
@@ -12,9 +12,10 @@ interface DateBarProps {
     onSettingsClick?: () => void;
     onGuideClick?: () => void;
     onFeedbackClick?: () => void;
+    isSyncing?: boolean;
 }
 
-export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick, onGuideClick, onFeedbackClick }: DateBarProps) {
+export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsClick, onGuideClick, onFeedbackClick, isSyncing = false }: DateBarProps) {
     const locale = useLocale();
     const t = useTranslations("common");
     const dateFnsLocale = getDateFnsLocale(locale);
@@ -53,6 +54,14 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
                     <ChevronRight size={24} />
                 </button>
             </div>
+
+            {/* Sync Indicator */}
+            {isSyncing && (
+                <div className="flex items-center space-x-1 px-2 py-1 bg-blue-50 dark:bg-blue-900/30 rounded-full mr-2">
+                    <Cloud size={14} className="text-blue-500 animate-pulse" />
+                    <span className="text-xs text-blue-600 dark:text-blue-400">Syncing...</span>
+                </div>
+            )}
 
             {/* アクションボタン（右端） */}
             <div className="flex items-center space-x-1">

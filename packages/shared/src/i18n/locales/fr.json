@@ -75,7 +75,14 @@
         "haveAccountLink": "Déjà un compte ? Se connecter",
         "loginSuccess": "Connexion réussie !",
         "checkEmail": "E-mail de vérification envoyé. Veuillez vérifier votre boîte de réception.",
-        "errorOccurred": "Une erreur est survenue"
+        "errorOccurred": "Une erreur est survenue",
+        "confirmPassword": "Confirmer le mot de passe",
+        "passwordHint": "Au moins 8 caractères avec lettres et chiffres",
+        "invalidEmail": "Veuillez entrer une adresse email valide",
+        "weakPassword": "Le mot de passe doit contenir au moins 8 caractères avec lettres et chiffres",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "mustAgreeTerms": "Veuillez accepter les conditions et la politique de confidentialité",
+        "termsAgreement": "J'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>"
     },
     "settings": {
         "title": "Paramètres",

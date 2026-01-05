@@ -75,7 +75,14 @@
         "haveAccountLink": "Har du redan ett konto? Logga in",
         "loginSuccess": "Inloggad!",
         "checkEmail": "Verifieringsmail skickat. Kontrollera din inkorg.",
-        "errorOccurred": "Ett fel inträffade"
+        "errorOccurred": "Ett fel inträffade",
+        "confirmPassword": "Bekräfta lösenord",
+        "passwordHint": "Minst 8 tecken med bokstäver och siffror",
+        "invalidEmail": "Ange en giltig e-postadress",
+        "weakPassword": "Lösenordet måste ha minst 8 tecken med bokstäver och siffror",
+        "passwordMismatch": "Lösenorden matchar inte",
+        "mustAgreeTerms": "Acceptera villkoren och integritetspolicyn",
+        "termsAgreement": "Jag godkänner <terms>Användarvillkoren</terms> och <privacy>Integritetspolicyn</privacy>"
     },
     "settings": {
         "title": "Inställningar",

@@ -69,13 +69,20 @@
         "signUpDescription": "Join PomArc to backup your data",
         "email": "Email Address",
         "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "passwordHint": "At least 8 characters with letters and numbers",
         "loginButton": "Login",
         "signUpButton": "Sign Up",
         "noAccountLink": "Don't have an account? Create one",
         "haveAccountLink": "Already have an account? Login",
         "loginSuccess": "Logged in successfully!",
         "checkEmail": "Verification email sent. Please check your inbox.",
-        "errorOccurred": "An error occurred"
+        "errorOccurred": "An error occurred",
+        "invalidEmail": "Please enter a valid email address",
+        "weakPassword": "Password must be at least 8 characters with letters and numbers",
+        "passwordMismatch": "Passwords do not match",
+        "mustAgreeTerms": "Please agree to the Terms and Privacy Policy",
+        "termsAgreement": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>"
     },
     "settings": {
         "title": "Settings",

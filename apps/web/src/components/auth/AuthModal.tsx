@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslations } from "next-intl";
-import { X, Mail, Lock, LogIn, UserPlus } from "lucide-react";
+import { X, Mail, Lock, LogIn, UserPlus, CheckSquare, Square } from "lucide-react";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -15,6 +15,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
@@ -22,10 +24,47 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     if (!isOpen) return null;
 
+    // Email validation
+    const isValidEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    // Password validation (min 8 chars, at least one letter and one number)
+    const isValidPassword = (password: string): boolean => {
+        return password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
+    };
+
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setMessage(null);
+
+        // Validation
+        if (!isValidEmail(email)) {
+            setMessage({ text: t("invalidEmail"), type: "error" });
+            setLoading(false);
+            return;
+        }
+
+        if (!isLoginMode) {
+            // Sign Up specific validation
+            if (!isValidPassword(password)) {
+                setMessage({ text: t("weakPassword"), type: "error" });
+                setLoading(false);
+                return;
+            }
+            if (password !== confirmPassword) {
+                setMessage({ text: t("passwordMismatch"), type: "error" });
+                setLoading(false);
+                return;
+            }
+            if (!agreedToTerms) {
+                setMessage({ text: t("mustAgreeTerms"), type: "error" });
+                setLoading(false);
+                return;
+            }
+        }
 
         try {
             if (isLoginMode) {
@@ -100,14 +139,54 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                 <input
                                     type="password"
                                     required
-                                    minLength={6}
+                                    minLength={8}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="••••••••"
                                 />
                             </div>
+                            {!isLoginMode && (
+                                <p className="text-xs text-gray-500 dark:text-gray-400 ml-1">{t("passwordHint")}</p>
+                            )}
                         </div>
+
+                        {/* Confirm Password (Sign Up only) */}
+                        {!isLoginMode && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("confirmPassword")}</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                    <input
+                                        type="password"
+                                        required
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Terms Agreement (Sign Up only) */}
+                        {!isLoginMode && (
+                            <div className="flex items-start space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setAgreedToTerms(!agreedToTerms)}
+                                    className="mt-0.5 text-blue-600 dark:text-blue-400"
+                                >
+                                    {agreedToTerms ? <CheckSquare size={20} /> : <Square size={20} />}
+                                </button>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    {t.rich("termsAgreement", {
+                                        terms: (chunks) => <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{chunks}</a>,
+                                        privacy: (chunks) => <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{chunks}</a>,
+                                    })}
+                                </p>
+                            </div>
+                        )}
 
                         <button
                             type="submit"

@@ -75,7 +75,14 @@
         "haveAccountLink": "Har du allerede en konto? Logg inn",
         "loginSuccess": "Logget inn!",
         "checkEmail": "Verifiserings-e-post sendt. Sjekk innboksen din.",
-        "errorOccurred": "En feil oppstod"
+        "errorOccurred": "En feil oppstod",
+        "confirmPassword": "Bekreft passord",
+        "passwordHint": "Minst 8 tegn med bokstaver og tall",
+        "invalidEmail": "Vennligst skriv inn en gyldig e-postadresse",
+        "weakPassword": "Passordet må ha minst 8 tegn med bokstaver og tall",
+        "passwordMismatch": "Passordene samsvarer ikke",
+        "mustAgreeTerms": "Godta vilkårene og personvernerklæringen",
+        "termsAgreement": "Jeg godtar <terms>Tjenestevilkårene</terms> og <privacy>Personvernerklæringen</privacy>"
     },
     "settings": {
         "title": "Innstillinger",

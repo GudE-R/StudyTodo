@@ -75,7 +75,14 @@
         "haveAccountLink": "¿Ya tienes cuenta? Inicia sesión",
         "loginSuccess": "¡Sesión iniciada con éxito!",
         "checkEmail": "Correo de verificación enviado. Por favor, revisa tu bandeja de entrada.",
-        "errorOccurred": "Ha ocurrido un error"
+        "errorOccurred": "Ha ocurrido un error",
+        "confirmPassword": "Confirmar contraseña",
+        "passwordHint": "Al menos 8 caracteres con letras y números",
+        "invalidEmail": "Por favor ingrese un correo electrónico válido",
+        "weakPassword": "La contraseña debe tener al menos 8 caracteres con letras y números",
+        "passwordMismatch": "Las contraseñas no coinciden",
+        "mustAgreeTerms": "Por favor acepte los términos y la política de privacidad",
+        "termsAgreement": "Acepto los <terms>Términos de Servicio</terms> y la <privacy>Política de Privacidad</privacy>"
     },
     "settings": {
         "title": "Ajustes",

@@ -5,6 +5,7 @@ import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle
 import { Todo } from "@pomarc/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNotification } from "@/hooks/useNotification";
+import { InterstitialAd } from "@/components/ads/InterstitialAd";
 
 interface TimerViewProps {
     todo: Todo;
@@ -42,6 +43,9 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
     const [isRunning, setIsRunning] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
 
+    // Interstitial Ad State
+    const [showBreakAd, setShowBreakAd] = useState(false);
+
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     // 通知フック
@@ -61,7 +65,8 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         if (mode === "pomodoro" && status === "focus") {
             // 音声通知などもここで行う
             sendNotification("集中終了！", { body: "お疲れ様でした。休憩しましょう。" });
-            alert("お疲れ様でした！休憩しましょう。");
+            // Show interstitial ad during break
+            setShowBreakAd(true);
             setStatus("break");
         } else if (mode === "pomodoro" && status === "break") {
             sendNotification("休憩終了！", { body: "次のセッションを始めましょう。" });
@@ -367,6 +372,14 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     <span className="text-sm font-medium">記録のみ保存</span>
                 </button>
             </div>
+
+            {/* Interstitial Ad for Break Time */}
+            <InterstitialAd
+                isOpen={showBreakAd}
+                onClose={() => setShowBreakAd(false)}
+                message="休憩中 - お疲れ様でした！"
+                autoCloseSeconds={10}
+            />
         </div>
     );
 }
