@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen } from "lucide-react";
+import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, Lightbulb, Share2, Cloud, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface UsageGuideModalProps {
@@ -20,46 +20,42 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
 
     if (!isOpen) return null;
 
-    const guides = [
+    const guideCategories = [
         {
-            icon: Play,
-            title: t("createTaskTitle"),
-            description: t("createTaskDesc")
+            title: t("catIntro"),
+            items: [
+                { icon: Lightbulb, title: t("conceptTitle"), desc: t("conceptDesc") }
+            ]
         },
         {
-            icon: Timer,
-            title: t("timerTitle"),
-            description: t("timerDesc")
+            title: t("catBasic"),
+            items: [
+                { icon: Play, title: t("createTaskTitle"), desc: t("createTaskDesc") },
+                { icon: Timer, title: t("timerTitle"), desc: t("timerDesc") },
+                { icon: Calendar, title: t("calendarTitle"), desc: t("calendarDesc") }
+            ]
         },
         {
-            icon: Calendar,
-            title: t("calendarTitle"),
-            description: t("calendarDesc")
+            title: t("catEfficiency"),
+            items: [
+                { icon: Repeat, title: t("srsTitle"), desc: t("srsDesc") },
+                { icon: Clock, title: t("routineTitle"), desc: t("routineDesc") }
+            ]
         },
         {
-            icon: Repeat,
-            title: t("srsTitle"),
-            description: t("srsDesc")
+            title: t("catReview"),
+            items: [
+                { icon: BookOpen, title: t("historyTitle"), desc: t("historyDesc") },
+                { icon: Share2, title: t("shareTitle"), desc: t("shareDesc") }
+            ]
         },
         {
-            icon: FolderTree,
-            title: t("categoryTitle"),
-            description: t("categoryDesc")
-        },
-        {
-            icon: Palette,
-            title: t("themeTitle"),
-            description: t("themeDesc")
-        },
-        {
-            icon: Clock,
-            title: t("historyTitle"),
-            description: t("historyDesc")
-        },
-        {
-            icon: BookOpen,
-            title: t("detailTitle"),
-            description: t("detailDesc")
+            title: t("catOthers"),
+            items: [
+                { icon: FolderTree, title: t("categoryTitle"), desc: t("categoryDesc") },
+                { icon: Cloud, title: t("syncTitle"), desc: t("syncDesc") },
+                { icon: Palette, title: t("themeTitle"), desc: t("themeDesc") }
+            ]
         }
     ];
 
@@ -76,23 +72,32 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {guides.map((guide, index) => {
-                        const Icon = guide.icon;
-                        return (
-                            <div key={index} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <div className="flex items-center space-x-3 mb-2">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                                        <Icon className="text-blue-600 dark:text-blue-400" size={20} />
-                                    </div>
-                                    <h3 className="font-bold text-gray-800 dark:text-gray-100">{guide.title}</h3>
-                                </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                                    {guide.description}
-                                </p>
+                <div className="flex-1 overflow-y-auto p-4 space-y-8">
+                    {guideCategories.map((category, catIndex) => (
+                        <div key={catIndex} className="space-y-3">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 border-l-4 border-blue-500 pl-3">
+                                {category.title}
+                            </h3>
+                            <div className="space-y-3">
+                                {category.items.map((item, itemIndex) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <div key={itemIndex} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                                            <div className="flex items-center space-x-3 mb-2">
+                                                <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                                                    <Icon className="text-blue-600 dark:text-blue-400" size={20} />
+                                                </div>
+                                                <h4 className="font-bold text-gray-800 dark:text-gray-100">{item.title}</h4>
+                                            </div>
+                                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed ml-11">
+                                                {item.desc}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
                             </div>
-                        );
-                    })}
+                        </div>
+                    ))}
                 </div>
 
                 {/* Footer */}
