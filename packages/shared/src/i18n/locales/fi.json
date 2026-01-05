@@ -60,7 +60,10 @@
         "priorityHighLabel": "Prioriteetti: Korkea",
         "statsTitle": "Oppimistilastot",
         "results": "Tulokset",
-        "deleteTask": "Poista tämä tehtävä"
+        "deleteTask": "Poista tämä tehtävä",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Tervetuloa takaisin",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Kategoriat",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Mallit"
     }
 }

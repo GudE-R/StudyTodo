@@ -60,7 +60,10 @@
         "priorityHighLabel": "우선순위: 높음",
         "statsTitle": "학습 현황",
         "results": "실적",
-        "deleteTask": "이 태스크 삭제"
+        "deleteTask": "이 태스크 삭제",
+        "titleOrCategoryRequired": "작업 이름을 입력하거나 카테고리를 선택하세요",
+        "durationRecordOnly": "기록 모드에서 입력",
+        "recordConfirm": "확인"
     },
     "auth": {
         "welcomeBack": "다시 오신 것을 환영합니다",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "카테고리",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "템플릿"
     }
 }

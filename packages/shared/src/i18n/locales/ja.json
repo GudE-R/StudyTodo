@@ -60,7 +60,10 @@
         "priorityHighLabel": "優先度：高",
         "statsTitle": "学習状況",
         "results": "実績",
-        "deleteTask": "このタスクを削除"
+        "deleteTask": "このタスクを削除",
+        "titleOrCategoryRequired": "タスク名またはカテゴリを入力してください",
+        "durationRecordOnly": "記録モードで入力",
+        "recordConfirm": "記録する"
     },
     "auth": {
         "welcomeBack": "おかえりなさい",
@@ -172,6 +175,7 @@
         "systemDesc": "OSの設定に従う"
     },
     "template": {
+        "title": "テンプレート",
         "categoryTab": "カテゴリ",
         "srsTab": "SRS"
     }

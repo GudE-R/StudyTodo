@@ -60,7 +60,10 @@
         "priorityHighLabel": "Prioritet: Høy",
         "statsTitle": "Læringsstatistikk",
         "results": "Resultater",
-        "deleteTask": "Slett denne oppgaven"
+        "deleteTask": "Slett denne oppgaven",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Velkommen tilbake",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Kategorier",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Maler"
     }
 }

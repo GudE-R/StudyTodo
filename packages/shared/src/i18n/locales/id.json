@@ -60,7 +60,10 @@
         "priorityHighLabel": "Prioritas: Tinggi",
         "statsTitle": "Status Belajar",
         "results": "Hasil",
-        "deleteTask": "Hapus tugas ini"
+        "deleteTask": "Hapus tugas ini",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Selamat Datang Kembali",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Kategori",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Template"
     }
 }

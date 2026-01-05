@@ -60,7 +60,10 @@
         "priorityHighLabel": "Приоритет: Высокий",
         "statsTitle": "Статус обучения",
         "results": "Результаты",
-        "deleteTask": "Удалить эту задачу"
+        "deleteTask": "Удалить эту задачу",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "С возвращением",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Категории",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Шаблоны"
     }
 }

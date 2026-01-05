@@ -294,9 +294,6 @@ export function DaySchedule({
                                                 <div className="font-bold text-blue-800 dark:text-blue-200 truncate">
                                                     <TodoTitle title={todo.title} />
                                                 </div>
-                                                <div className="text-blue-600 dark:text-blue-300 text-[10px]">
-                                                    {todo.dueTime || format(new Date(todo.dueDate!), "HH:mm")} - {todo.endTime || "?"}
-                                                </div>
                                             </div>
                                         );
                                     })

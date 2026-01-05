@@ -60,7 +60,10 @@
         "priorityHighLabel": "Priorité : Haute",
         "statsTitle": "Statistiques d'apprentissage",
         "results": "Résultats",
-        "deleteTask": "Supprimer cette tâche"
+        "deleteTask": "Supprimer cette tâche",
+        "titleOrCategoryRequired": "Veuillez entrer un nom de tâche ou sélectionner une catégorie",
+        "durationRecordOnly": "Entrer en mode enregistrement",
+        "recordConfirm": "Confirmer"
     },
     "auth": {
         "welcomeBack": "Bon retour",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Catégories",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Modèles"
     }
 }

@@ -60,7 +60,10 @@
         "priorityHighLabel": "Priority: High",
         "statsTitle": "Learning Stats",
         "results": "Results",
-        "deleteTask": "Delete this task"
+        "deleteTask": "Delete this task",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Welcome Back",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Categories",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Templates"
     }
 }

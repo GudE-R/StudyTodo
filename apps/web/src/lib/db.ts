@@ -118,64 +118,47 @@ export class PomArcDatabase extends Dexie {
     async populateInitialData() {
         const now = new Date();
 
-        // Initial Categories
-        const rootId = generateId();
-        const subId1 = generateId();
-        const subId2 = generateId();
+        // Initial Categories (サンプル階層)
+        const largeId = generateId();
+        const mediumId = generateId();
+        const smallId = generateId();
 
         await this.categories.bulkAdd([
             {
-                id: rootId,
-                name: '学習',
+                id: largeId,
+                name: '大カテゴリサンプル',
                 level: 'large',
                 order: 0,
                 createdAt: now,
                 updatedAt: now
             },
             {
-                id: subId1,
-                name: '数学',
+                id: mediumId,
+                name: '中カテゴリサンプル',
                 level: 'medium',
-                parentId: rootId,
+                parentId: largeId,
                 order: 0,
                 createdAt: now,
                 updatedAt: now
             },
             {
-                id: subId2,
-                name: '英語',
-                level: 'medium',
-                parentId: rootId,
-                order: 1,
-                createdAt: now,
-                updatedAt: now
-            },
-            {
-                id: generateId(),
-                name: '青チャート',
+                id: smallId,
+                name: '小カテゴリサンプル',
                 level: 'small',
-                parentId: subId1,
+                parentId: mediumId,
                 order: 0,
                 createdAt: now,
                 updatedAt: now
             }
         ]);
 
-        // Initial SRS Profiles
+        // Initial SRS Profiles (忘却曲線のみ)
         await this.srsProfiles.bulkAdd([
             {
                 id: generateId(),
                 name: '忘却曲線 (標準)',
                 intervals: [1, 3, 7, 14, 30],
-                isDefault: true, // boolean
-                createdAt: now,
-                updatedAt: now
-            },
-            {
-                id: generateId(),
-                name: '短期集中',
-                intervals: [1, 2, 3, 5],
-                isDefault: false, // boolean
+                isDefault: true,
                 createdAt: now,
                 updatedAt: now
             }

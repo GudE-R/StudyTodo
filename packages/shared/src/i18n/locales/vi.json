@@ -60,7 +60,10 @@
         "priorityHighLabel": "Ưu tiên: Cao",
         "statsTitle": "Trạng thái học tập",
         "results": "Kết quả",
-        "deleteTask": "Xóa nhiệm vụ này"
+        "deleteTask": "Xóa nhiệm vụ này",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Chào mừng trở lại",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Danh mục",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Mẫu"
     }
 }

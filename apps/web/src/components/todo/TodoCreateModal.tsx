@@ -35,10 +35,11 @@ export function TodoCreateModal({
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [dueTime, setDueTime] = useState("");
     const [endTime, setEndTime] = useState("");
-    const [categoryId, setCategoryId] = useState(""); // Changed to categoryId
+    const [categoryId, setCategoryId] = useState("");
     const [srsInterval, setSrsInterval] = useState("");
     const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
-    const [duration, setDuration] = useState<string>(""); // Duration in minutes
+    const [duration, setDuration] = useState<string>("");
+    const [isRecordMode, setIsRecordMode] = useState(false);
 
     const t = useTranslations("todo");
     const tc = useTranslations("common");
@@ -95,80 +96,94 @@ export function TodoCreateModal({
         }
 
         return {
-            title: effectiveTitle || t("noTitle"),
+            title: effectiveTitle || "",
             notes: notes || undefined
         };
     };
 
+    // Validation: title or category must be provided
+    const isValid = () => {
+        const rawTitle = content.split("\n")[0].trim();
+        return rawTitle.length > 0 || categoryId.length > 0;
+    };
+
     // 時間指定時の日付自動補完処理
-    const ensureDateIfTimeSet = () => {
+    const ensureDateIfTimeSet = (): Date | undefined => {
         if (dueTime && !dueDate) {
             return new Date();
         }
-        return dueDate;
+        return dueDate ?? undefined;
     };
 
     // フォーム送信時の処理
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!isValid()) {
+            alert(t("titleOrCategoryRequired"));
+            return;
+        }
         const { title: parsedTitle, notes } = parseContent();
-        const effectiveDate = ensureDateIfTimeSet();
+        // Only set dueDate if time is also set, otherwise just add to todolist
+        const effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
 
         onCreate({
-            title: parsedTitle,
-            dueDate: effectiveDate || undefined,
+            title: parsedTitle || t("noTitle"),
+            dueDate: effectiveDate,
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
-            categoryId: categoryId || undefined, // Use categoryId
+            categoryId: categoryId || undefined,
             srsInterval,
-            memo: notes, // notes maps to memo/notes in shared
+            memo: notes,
             priority,
-            updatedAt: new Date(), // Added
+            updatedAt: new Date(),
         });
         resetForm();
     };
 
     // 「今すぐ開始」ボタンの処理
     const handleStartNow = () => {
+        if (!isValid()) {
+            alert(t("titleOrCategoryRequired"));
+            return;
+        }
         const { title: parsedTitle, notes } = parseContent();
         const now = new Date();
         onStartNow({
-            title: parsedTitle,
+            title: parsedTitle || t("noTitle"),
             dueDate: now,
             dueTime: format(now, "HH:mm"),
-            // StartNow doesn't need endTime usually, as it's ongoing
-            categoryId: categoryId || undefined, // Use categoryId
+            categoryId: categoryId || undefined,
             srsInterval,
             memo: notes,
             priority,
-            updatedAt: new Date(), // Added
+            updatedAt: new Date(),
         });
         resetForm();
     };
 
     // 「記録」ボタンの処理
     const handleRecord = () => {
-        const { title: parsedTitle, notes } = parseContent();
-        const durationNum = parseInt(duration, 10);
-        if (isNaN(durationNum) || durationNum <= 0) {
-            alert(t("invalidDuration"));
+        if (!isValid()) {
+            alert(t("titleOrCategoryRequired"));
             return;
         }
+        const { title: parsedTitle, notes } = parseContent();
+        const durationNum = parseInt(duration, 10) || 0;
 
         // Record uses the selected date/time if available
-        const effectiveDate = ensureDateIfTimeSet();
+        const effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
 
         onRecord({
-            title: parsedTitle,
-            dueDate: effectiveDate || undefined,
+            title: parsedTitle || t("noTitle"),
+            dueDate: effectiveDate,
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
-            categoryId: categoryId || undefined, // Use categoryId
+            categoryId: categoryId || undefined,
             srsInterval,
             memo: notes,
             priority,
-            updatedAt: new Date(), // Added
-        }, durationNum * 60); // Convert minutes to seconds
+            updatedAt: new Date(),
+        }, durationNum * 60);
         resetForm();
     };
 
@@ -177,10 +192,11 @@ export function TodoCreateModal({
         setDueDate(null);
         setDueTime("");
         setEndTime("");
-        setCategoryId(""); // Reset categoryId
+        setCategoryId("");
         setSrsInterval("");
         setPriority("medium");
         setDuration("");
+        setIsRecordMode(false);
         onClose();
     };
 
@@ -246,18 +262,26 @@ export function TodoCreateModal({
                             icon={<PlayCircle size={18} className="text-blue-500" />}
                         />
 
-                        {/* Duration (Record Only) - Swapped with EndTime */}
-                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
-                            <Hourglass size={18} className="text-orange-500" />
-                            <input
-                                type="number"
-                                min="1"
-                                placeholder={t("durationPlaceholder")}
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                                className="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
-                            />
-                        </div>
+                        {/* Duration (Record Only) */}
+                        {isRecordMode ? (
+                            <div className="flex items-center space-x-2 bg-green-50 p-2 rounded-lg border border-green-200">
+                                <Hourglass size={18} className="text-green-600" />
+                                <input
+                                    type="number"
+                                    min="0"
+                                    placeholder={t("durationPlaceholder")}
+                                    value={duration}
+                                    onChange={(e) => setDuration(e.target.value)}
+                                    className="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
+                                    autoFocus
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg opacity-50">
+                                <Hourglass size={18} className="text-gray-400" />
+                                <span className="text-sm text-gray-400">{t("durationRecordOnly")}</span>
+                            </div>
+                        )}
 
                         {/* End Time (Disabled if no start time) - Swapped with Duration */}
                         <TimePicker
@@ -292,11 +316,20 @@ export function TodoCreateModal({
                     <div className="grid grid-cols-3 gap-2 pt-2">
                         <button
                             type="button"
-                            onClick={handleRecord}
-                            className="flex items-center justify-center space-x-1 bg-green-100 text-green-600 py-3 rounded-xl font-bold hover:bg-green-200 transition-colors"
+                            onClick={() => {
+                                if (isRecordMode) {
+                                    handleRecord();
+                                } else {
+                                    setIsRecordMode(true);
+                                }
+                            }}
+                            className={`flex items-center justify-center space-x-1 py-3 rounded-xl font-bold transition-colors ${isRecordMode
+                                    ? "bg-green-600 text-white hover:bg-green-700"
+                                    : "bg-green-100 text-green-600 hover:bg-green-200"
+                                }`}
                         >
                             <CheckCircle size={18} />
-                            <span className="text-sm">{t("record")}</span>
+                            <span className="text-sm">{isRecordMode ? t("recordConfirm") : t("record")}</span>
                         </button>
                         <button
                             type="button"

@@ -28,7 +28,7 @@ export function TemplateModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
-                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{tc("settings")}</h2>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t("title")}</h2>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                         <X size={24} />
                     </button>

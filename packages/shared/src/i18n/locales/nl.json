@@ -60,7 +60,10 @@
         "priorityHighLabel": "Prioriteit: Hoog",
         "statsTitle": "Studiestatus",
         "results": "Resultaten",
-        "deleteTask": "Verwijder deze taak"
+        "deleteTask": "Verwijder deze taak",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Welkom terug",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Categorieën",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Sjablonen"
     }
 }

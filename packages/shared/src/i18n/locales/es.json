@@ -60,7 +60,10 @@
         "priorityHighLabel": "Prioridad: Alta",
         "statsTitle": "Estadísticas de aprendizaje",
         "results": "Resultados",
-        "deleteTask": "Eliminar esta tarea"
+        "deleteTask": "Eliminar esta tarea",
+        "titleOrCategoryRequired": "Por favor ingrese un nombre de tarea o seleccione una categoría",
+        "durationRecordOnly": "Ingresar en modo de registro",
+        "recordConfirm": "Confirmar"
     },
     "auth": {
         "welcomeBack": "Bienvenido de nuevo",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Categorías",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Plantillas"
     }
 }

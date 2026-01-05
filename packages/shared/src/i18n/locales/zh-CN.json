@@ -60,7 +60,10 @@
         "priorityHighLabel": "优先级：高",
         "statsTitle": "学习状况",
         "results": "业绩",
-        "deleteTask": "删除此任务"
+        "deleteTask": "删除此任务",
+        "titleOrCategoryRequired": "请输入任务名称或选择类别",
+        "durationRecordOnly": "在记录模式下输入",
+        "recordConfirm": "确认"
     },
     "auth": {
         "welcomeBack": "欢迎回来",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "分类",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "模板"
     }
 }

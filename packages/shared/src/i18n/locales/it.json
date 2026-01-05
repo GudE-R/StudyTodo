@@ -60,7 +60,10 @@
         "priorityHighLabel": "Priorità: Alta",
         "statsTitle": "Stato Studio",
         "results": "Risultati",
-        "deleteTask": "Elimina questa attività"
+        "deleteTask": "Elimina questa attività",
+        "titleOrCategoryRequired": "Please enter a task name or select a category",
+        "durationRecordOnly": "Enter in record mode",
+        "recordConfirm": "Confirm"
     },
     "auth": {
         "welcomeBack": "Bentornato",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Categorie",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Modelli"
     }
 }

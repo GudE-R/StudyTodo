@@ -60,7 +60,10 @@
         "priorityHighLabel": "Priorität: Hoch",
         "statsTitle": "Lernstatistik",
         "results": "Ergebnisse",
-        "deleteTask": "Diese Aufgabe löschen"
+        "deleteTask": "Diese Aufgabe löschen",
+        "titleOrCategoryRequired": "Bitte geben Sie einen Aufgabennamen ein oder wählen Sie eine Kategorie",
+        "durationRecordOnly": "Im Aufnahmemodus eingeben",
+        "recordConfirm": "Bestätigen"
     },
     "auth": {
         "welcomeBack": "Willkommen zurück",
@@ -173,6 +176,7 @@
     },
     "template": {
         "categoryTab": "Kategorien",
-        "srsTab": "SRS"
+        "srsTab": "SRS",
+        "title": "Vorlagen"
     }
 }
