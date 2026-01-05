@@ -146,7 +146,8 @@
         "deleteButton": "Xóa",
         "addChildTitle": "Thêm danh mục con",
         "addFailed": "Thêm danh mục thất bại",
-        "deleteFailed": "Xóa danh mục thất bại"
+        "deleteFailed": "Xóa danh mục thất bại",
+        "cancel": "Hủy"
     },
     "srs": {
         "listTitle": "Danh sách hồ sơ SRS",

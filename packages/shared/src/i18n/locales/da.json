@@ -146,7 +146,8 @@
         "deleteButton": "Slet",
         "addChildTitle": "Tilføj underkategori",
         "addFailed": "Kunne ikke tilføje kategori",
-        "deleteFailed": "Kunne ikke slette kategori"
+        "deleteFailed": "Kunne ikke slette kategori",
+        "cancel": "Annuller"
     },
     "srs": {
         "listTitle": "SRS-profiler",

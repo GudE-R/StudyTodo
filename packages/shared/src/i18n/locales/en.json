@@ -146,7 +146,8 @@
         "deleteButton": "Delete",
         "addChildTitle": "Add Sub-category",
         "addFailed": "Failed to add category",
-        "deleteFailed": "Failed to delete category"
+        "deleteFailed": "Failed to delete category",
+        "cancel": "Cancel"
     },
     "srs": {
         "listTitle": "SRS Profiles",

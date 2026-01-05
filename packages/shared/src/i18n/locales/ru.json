@@ -146,7 +146,8 @@
         "deleteButton": "Удалить",
         "addChildTitle": "Добавить подкатегорию",
         "addFailed": "Ошибка добавления категории",
-        "deleteFailed": "Ошибка удаления категории"
+        "deleteFailed": "Ошибка удаления категории",
+        "cancel": "Отмена"
     },
     "srs": {
         "listTitle": "Список профилей SRS",

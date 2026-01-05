@@ -146,7 +146,8 @@
         "deleteButton": "Ta bort",
         "addChildTitle": "Lägg till underkategori",
         "addFailed": "Misslyckades med att lägga till kategori",
-        "deleteFailed": "Misslyckades med att ta bort kategori"
+        "deleteFailed": "Misslyckades med att ta bort kategori",
+        "cancel": "Avbryt"
     },
     "srs": {
         "listTitle": "SRS-profiler",

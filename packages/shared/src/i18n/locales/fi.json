@@ -146,7 +146,8 @@
         "deleteButton": "Poista",
         "addChildTitle": "Lisää alakategoria",
         "addFailed": "Kategorian lisääminen epäonnistui",
-        "deleteFailed": "Kategorian poistaminen epäonnistui"
+        "deleteFailed": "Kategorian poistaminen epäonnistui",
+        "cancel": "Peruuta"
     },
     "srs": {
         "listTitle": "SRS-profiilit",

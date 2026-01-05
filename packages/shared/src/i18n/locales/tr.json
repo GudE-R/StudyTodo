@@ -146,7 +146,8 @@
         "deleteButton": "Sil",
         "addChildTitle": "Alt Kategori Ekle",
         "addFailed": "Kategori eklenemedi",
-        "deleteFailed": "Kategori silinemedi"
+        "deleteFailed": "Kategori silinemedi",
+        "cancel": "İptal"
     },
     "srs": {
         "listTitle": "SRS Profilleri",

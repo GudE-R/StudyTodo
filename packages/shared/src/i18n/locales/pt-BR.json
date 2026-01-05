@@ -146,7 +146,8 @@
         "deleteButton": "Excluir",
         "addChildTitle": "Adicionar Subcategoria",
         "addFailed": "Falha ao adicionar categoria",
-        "deleteFailed": "Falha ao excluir categoria"
+        "deleteFailed": "Falha ao excluir categoria",
+        "cancel": "Cancelar"
     },
     "srs": {
         "listTitle": "Lista de Perfis SRS",

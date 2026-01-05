@@ -146,7 +146,8 @@
         "deleteButton": "Verwijderen",
         "addChildTitle": "Subcategorie toevoegen",
         "addFailed": "Toevoegen categorie mislukt",
-        "deleteFailed": "Verwijderen categorie mislukt"
+        "deleteFailed": "Verwijderen categorie mislukt",
+        "cancel": "Annuleren"
     },
     "srs": {
         "listTitle": "Lijst met SRS-profielen",

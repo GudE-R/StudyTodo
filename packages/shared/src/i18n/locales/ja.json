@@ -142,6 +142,7 @@
         "noCategory": "カテゴリがありません。\n「大カテゴリ追加」から作成してください。",
         "placeholder": "カテゴリ名",
         "add": "追加",
+        "cancel": "キャンセル",
         "deleteTitle": "削除",
         "deleteButton": "削除する",
         "addChildTitle": "子カテゴリを追加",

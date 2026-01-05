@@ -146,7 +146,8 @@
         "deleteButton": "Hapus",
         "addChildTitle": "Tambah Sub-kategori",
         "addFailed": "Gagal menambah kategori",
-        "deleteFailed": "Gagal menghapus kategori"
+        "deleteFailed": "Gagal menghapus kategori",
+        "cancel": "Batal"
     },
     "srs": {
         "listTitle": "Daftar Profil SRS",

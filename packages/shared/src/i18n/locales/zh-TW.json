@@ -146,7 +146,8 @@
         "deleteButton": "確定刪除",
         "addChildTitle": "添加子類",
         "addFailed": "添加分類失敗",
-        "deleteFailed": "刪除分類失敗"
+        "deleteFailed": "刪除分類失敗",
+        "cancel": "取消"
     },
     "srs": {
         "listTitle": "SRS 配置列表",

@@ -146,7 +146,8 @@
         "deleteButton": "Löschen",
         "addChildTitle": "Unterkategorie hinzufügen",
         "addFailed": "Kategorie konnte nicht hinzugefügt werden",
-        "deleteFailed": "Kategorie konnte nicht gelöscht werden"
+        "deleteFailed": "Kategorie konnte nicht gelöscht werden",
+        "cancel": "Abbrechen"
     },
     "srs": {
         "listTitle": "SRS-Profile",
