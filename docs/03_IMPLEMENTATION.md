@@ -171,6 +171,10 @@
     - **Mobile版**: `OfflineQueueRepository.ts` 実装。SQLite `sync_queue` テーブルでキュー管理、`expo-network` でネットワーク検出。
     - [x] **自動リトライ**: アプリ起動時およびネットワーク復帰時にキューを処理。3回失敗で自動削除。
 
+### [Documentation Update] - 2026-01-05
+#### 変更
+- **ロードマップ整理**: `docs/04_FUTURE.md` を更新し、完了したフェーズの整理と、今後の計画（Webリリース、モバイル展開）を明確化。
+
 ### [Day Schedule Improvement] - 2025-12-30
 #### 修正/変更 (Web & Mobile)
     - 1時間ごとのラベル表示を維持しつつ、30分枠を点線で表現。
