@@ -254,7 +254,12 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             if (todo.srsGroupId) {
                 if (!seenGroups.has(todo.srsGroupId)) {
                     seenGroups.add(todo.srsGroupId);
-                    const groupTodos = filteredTodos.filter(t => t.srsGroupId === todo.srsGroupId);
+                    const groupTodos = filteredTodos.filter(t => t.srsGroupId === todo.srsGroupId)
+                        .sort((a, b) => {
+                            if (!a.dueDate) return 1;
+                            if (!b.dueDate) return -1;
+                            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+                        });
                     items.push({
                         type: 'group',
                         id: todo.srsGroupId,
