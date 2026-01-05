@@ -38,7 +38,8 @@
         "delete": "削除",
         "create": "作成",
         "update": "更新",
-        "close": "閉じる"
+        "close": "閉じる",
+        "clear": "クリア"
     },
     "home": {
         "title": "ホーム",
@@ -189,5 +190,26 @@
         "title": "テンプレート",
         "categoryTab": "カテゴリ",
         "srsTab": "SRS"
+    },
+    "activity": {
+        "analytics": "分析",
+        "history": "履歴",
+        "share": "シェア",
+        "tasks": "タスク",
+        "filters": "フィルタ:",
+        "allStatus": "全ステータス",
+        "allCategories": "全カテゴリ",
+        "completed": "完了",
+        "incomplete": "未完了",
+        "noTasksFound": "条件に一致するタスクが見つかりませんでした。",
+        "deleteSelected": "選択した項目を削除 ({count})",
+        "deleteGroupConfirm": "{count}件のグループタスクをすべて削除しますか？",
+        "deleteTodoConfirm": "{count}件のタスクを削除しますか？",
+        "shareTitle": "シェアカードを生成",
+        "selectCategory": "表示するカテゴリ",
+        "allActivities": "すべての活動",
+        "shareSocial": "SNSでシェア",
+        "shareSocialDesc": "シェアして24時間広告非表示をゲット！",
+        "downloadOnly": "画像のみダウンロード"
     }
 }

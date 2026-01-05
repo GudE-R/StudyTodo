@@ -30,6 +30,7 @@
         "create": "Create",
         "update": "Update",
         "close": "Close",
+        "clear": "Clear",
         "weekdays": {
             "0": "S",
             "1": "M",
@@ -187,5 +188,26 @@
         "categoryTab": "Categories",
         "srsTab": "SRS",
         "title": "Templates"
+    },
+    "activity": {
+        "analytics": "Analytics",
+        "history": "History",
+        "share": "Share",
+        "tasks": "Tasks",
+        "filters": "Filters:",
+        "allStatus": "All Status",
+        "allCategories": "All Categories",
+        "completed": "Completed",
+        "incomplete": "Incomplete",
+        "noTasksFound": "No tasks found matching your filters.",
+        "deleteSelected": "Delete selected items ({count})",
+        "deleteGroupConfirm": "Are you sure you want to delete all {count} group tasks?",
+        "deleteTodoConfirm": "Are you sure you want to delete {count} tasks?",
+        "shareTitle": "Generate Share Card",
+        "selectCategory": "Category to Display",
+        "allActivities": "All Activities",
+        "shareSocial": "Share to Social Media",
+        "shareSocialDesc": "Share to get Ad-Free for 24 Hours!",
+        "downloadOnly": "Download Image Only"
     }
 }

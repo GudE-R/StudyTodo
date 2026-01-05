@@ -349,7 +349,7 @@ export function TodoDetailModal({
                             </button>
                             <button
                                 onClick={handleStartNow}
-                                className="flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-bold transition-colors"
+                                className="flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-colors"
                             >
                                 <Play size={20} />
                                 <span>{t("start")}</span>

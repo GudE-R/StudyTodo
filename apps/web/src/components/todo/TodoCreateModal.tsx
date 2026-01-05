@@ -42,6 +42,7 @@ export function TodoCreateModal({
     const [duration, setDuration] = useState<string>("");
     const [isRecordMode, setIsRecordMode] = useState(false);
     const [routineDays, setRoutineDays] = useState<number[]>([]);
+    const [isRoutineOpen, setIsRoutineOpen] = useState(false);
 
     const t = useTranslations("todo");
     const tc = useTranslations("common");
@@ -297,40 +298,66 @@ export function TodoCreateModal({
                             icon={<StopCircle size={18} className="text-red-500" />}
                         />
 
-                        {/* SRS */}
-                        <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg col-span-2">
-                            <Repeat size={18} className="text-gray-500" />
-                            <select
-                                value={srsInterval}
-                                onChange={(e) => setSrsInterval(e.target.value)}
-                                className="bg-transparent text-sm w-full outline-none text-gray-700 appearance-none"
-                            >
-                                <option value="">{t("noSrs")}</option>
-                                {srsProfiles.map((profile) => (
-                                    <option key={profile.id} value={profile.name}>
-                                        {profile.name}
-                                    </option>
-                                ))}
-                            </select>
+                        {/* SRS & Routine Toggle */}
+                        <div className="flex flex-col col-span-2 space-y-2">
+                            <div className="flex items-center space-x-2">
+                                <div className="flex-1 flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
+                                    <Repeat size={18} className="text-gray-500" />
+                                    <select
+                                        value={srsInterval}
+                                        onChange={(e) => setSrsInterval(e.target.value)}
+                                        className="bg-transparent text-sm w-full outline-none text-gray-700 appearance-none"
+                                    >
+                                        <option value="">{t("noSrs")}</option>
+                                        {srsProfiles.map((profile) => (
+                                            <option key={profile.id} value={profile.name}>
+                                                {profile.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRoutineOpen(!isRoutineOpen)}
+                                    className={`p-2 rounded-lg transition-colors ${isRoutineOpen || routineDays.length > 0 ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                                    title={t("routineLabel")}
+                                >
+                                    <Calendar size={18} />
+                                </button>
+                            </div>
+
+                            {/* Expandable Weekday Routine */}
+                            {isRoutineOpen && (
+                                <div className="bg-gray-50 p-3 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center space-x-2">
+                                            <Calendar size={14} className="text-purple-500" />
+                                            <span className="text-xs font-bold text-gray-500">{t("routineLabel")}</span>
+                                        </div>
+                                        {routineDays.length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setRoutineDays([])}
+                                                className="text-[10px] text-gray-400 hover:text-red-500"
+                                            >
+                                                {tc("clear")}
+                                            </button>
+                                        )}
+                                    </div>
+                                    <WeekdayPicker
+                                        value={routineDays}
+                                        onChange={setRoutineDays}
+                                    />
+                                    {routineDays.length > 0 && (
+                                        <p className="text-[10px] text-purple-500 mt-2">
+                                            {t("routineHint", { count: routineDays.length })}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Weekday Routine */}
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="flex items-center space-x-2 mb-2">
-                            <Calendar size={16} className="text-purple-500" />
-                            <span className="text-xs font-bold text-gray-500">{t("routineLabel")}</span>
-                        </div>
-                        <WeekdayPicker
-                            value={routineDays}
-                            onChange={setRoutineDays}
-                        />
-                        {routineDays.length > 0 && (
-                            <p className="text-[10px] text-purple-500 mt-2">
-                                {t("routineHint", { count: routineDays.length })}
-                            </p>
-                        )}
-                    </div>
 
 
                     {/* Action Buttons (Reordered: Record -> Start -> Create) */}

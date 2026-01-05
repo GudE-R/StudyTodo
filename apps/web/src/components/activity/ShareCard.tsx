@@ -117,8 +117,8 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                             <div key={i} className="flex-1 flex flex-col items-center">
                                 <div
                                     className={`w-full h-8 rounded-lg ${hasActivity
-                                            ? 'bg-blue-500'
-                                            : 'bg-gray-100 border border-gray-200'
+                                        ? 'bg-green-500'
+                                        : 'bg-gray-100 border border-gray-200'
                                         }`}
                                 />
                                 <span className={`text-[10px] mt-1 ${isToday ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>

@@ -3,13 +3,14 @@
 import React, { useState } from "react";
 import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, eachDayOfInterval, eachMonthOfInterval, getMonth, getYear } from "date-fns";
 import { ja } from "date-fns/locale";
-import { X, BarChart2, History, Trash2, Filter, Share2, Download, Copy, Twitter, Facebook, Instagram, Hash } from "lucide-react";
+import { X, BarChart2, History, Trash2, Filter, Share2, Download, Copy, Twitter, Facebook, Instagram, Hash, ChevronDown, ChevronRight, Layers } from "lucide-react";
 import { Session, Todo, Category } from "@pomarc/shared";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 import { ShareCard } from "./ShareCard";
 import { generateAndCopyImage, downloadImage } from "@/lib/share-image";
 import { calculateStreak } from "@/lib/statistics";
+import { useTranslations } from "next-intl";
 
 interface ActivityModalProps {
     isOpen: boolean;
@@ -33,13 +34,17 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
     // Share Tab State
     const [targetShareCategory, setTargetShareCategory] = useState<string>("all");
     const [isSharing, setIsSharing] = useState(false);
     const shareCardRef = React.useRef<HTMLDivElement>(null);
 
-    if (!isOpen) return null;
+    const tc = useTranslations("common");
+    const t = useTranslations("activity");
+
+
 
     // Toggle Selection
     const toggleSelect = (id: string) => {
@@ -49,15 +54,22 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
         setSelectedIds(next);
     };
 
+    const toggleGroup = (groupId: string) => {
+        const next = new Set(expandedGroups);
+        if (next.has(groupId)) next.delete(groupId);
+        else next.add(groupId);
+        setExpandedGroups(next);
+    };
+
     const handleBulkDeleteClick = async () => {
         if (selectedIds.size === 0) return;
-        if (confirm(`${selectedIds.size}件のタスクを削除しますか？`)) {
+        if (confirm(tc("deleteTodoConfirm", { count: selectedIds.size }))) {
             try {
                 await onBulkDelete(Array.from(selectedIds));
                 setSelectedIds(new Set());
             } catch (e) {
                 console.error("Bulk delete failed", e);
-                alert("削除に失敗しました。更新して再度お試しください。");
+                alert(tc("errorOccurred"));
             }
         }
     };
@@ -234,6 +246,31 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
     const filteredTodos = getFilteredTodos();
 
+    const timelineItems = React.useMemo(() => {
+        const items: (Todo | { type: 'group', id: string, todos: Todo[], title: string, createdAt: Date, completedCount: number })[] = [];
+        const seenGroups = new Set<string>();
+
+        filteredTodos.forEach(todo => {
+            if (todo.srsGroupId) {
+                if (!seenGroups.has(todo.srsGroupId)) {
+                    seenGroups.add(todo.srsGroupId);
+                    const groupTodos = filteredTodos.filter(t => t.srsGroupId === todo.srsGroupId);
+                    items.push({
+                        type: 'group',
+                        id: todo.srsGroupId,
+                        todos: groupTodos,
+                        title: groupTodos[0].title, // Use first todo's title as group title
+                        createdAt: new Date(groupTodos[0].createdAt),
+                        completedCount: groupTodos.filter(t => t.completed).length
+                    });
+                }
+            } else {
+                items.push(todo);
+            }
+        });
+        return items;
+    }, [filteredTodos]);
+
     const handleDeleteClick = (id: string) => {
         if (deleteConfirmId === id) {
             onDeleteTodo(id);
@@ -359,46 +396,39 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
         }
     };
 
+    if (!isOpen) return null;
+
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity p-4">
             <div className="w-full max-w-4xl h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
-                    <div className="flex items-center space-x-4">
-                        <h2 className="text-xl font-bold text-gray-800">Activity</h2>
-                        <div className="flex bg-gray-100 rounded-lg p-1">
-                            <button
-                                onClick={() => setActiveTab("analytics")}
-                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "analytics" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <BarChart2 size={16} />
-                                    <span>Analytics</span>
-                                </div>
-                            </button>
-                            <button
-                                onClick={() => setActiveTab("history")}
-                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "history" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <History size={16} />
-                                    <span>History</span>
-                                </div>
-                            </button>
-                            <button
-                                onClick={() => setActiveTab("share")}
-                                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === "share" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <Share2 size={16} />
-                                    <span>Share</span>
-                                </div>
-                            </button>
-                        </div>
+                <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                    <div className="flex space-x-4">
+                        <button
+                            onClick={() => setActiveTab("analytics")}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "analytics" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600"}`}
+                        >
+                            <BarChart2 size={18} />
+                            <span className="text-sm font-bold">{t("analytics")}</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("history")}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "history" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600"}`}
+                        >
+                            <History size={18} />
+                            <span className="text-sm font-bold">{t("history")}</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab("share")}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "share" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600"}`}
+                        >
+                            <Share2 size={18} />
+                            <span className="text-sm font-bold">{t("share")}</span>
+                        </button>
                     </div>
-                    <button onClick={onClose} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
-                        <X size={20} className="text-gray-600" />
+                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 rounded-full">
+                        <X size={24} />
                     </button>
                 </div>
 
@@ -485,23 +515,23 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             <div className="flex items-center space-x-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                                 <div className="flex items-center space-x-2 text-gray-500">
                                     <Filter size={18} />
-                                    <span className="text-sm font-medium">Filters:</span>
+                                    <span className="text-sm font-medium">{t("filters")}</span>
                                 </div>
                                 <select
                                     value={filterStatus}
                                     onChange={(e) => setFilterStatus(e.target.value as "all" | "completed" | "incomplete")}
                                     className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                                 >
-                                    <option value="all">All Status</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="incomplete">Incomplete</option>
+                                    <option value="all">{t("allStatus")}</option>
+                                    <option value="completed">{t("completed")}</option>
+                                    <option value="incomplete">{t("incomplete")}</option>
                                 </select>
                                 <select
                                     value={filterCategory}
                                     onChange={(e) => setFilterCategory(e.target.value)}
                                     className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                                 >
-                                    <option value="all">All Categories</option>
+                                    <option value="all">{t("allCategories")}</option>
                                     {flatCategories.map(cat => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option> // Use cat.id
                                     ))}
@@ -510,20 +540,20 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
                             {/* Todo List Header with Bulk Actions */}
                             <div className="flex items-center justify-between mb-2">
-                                <h3 className="text-sm font-bold text-gray-700">Tasks</h3>
+                                <h3 className="text-sm font-bold text-gray-700">{t("tasks")}</h3>
                                 {selectedIds.size > 0 && (
                                     <div className="flex items-center space-x-2">
                                         <button
                                             onClick={() => setSelectedIds(new Set())}
                                             className="text-gray-500 text-xs font-bold hover:bg-gray-100 px-2 py-1 rounded transition-colors"
                                         >
-                                            キャンセル
+                                            {tc("cancel")}
                                         </button>
                                         <button
                                             onClick={handleBulkDeleteClick}
                                             className="text-red-500 text-xs font-bold hover:bg-red-50 px-2 py-1 rounded transition-colors"
                                         >
-                                            選択した項目を削除 ({selectedIds.size})
+                                            {t("deleteSelected", { count: selectedIds.size })}
                                         </button>
                                     </div>
                                 )}
@@ -531,40 +561,136 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
                             {/* Todo List */}
                             <div className="space-y-2">
-                                {filteredTodos.map(todo => (
-                                    <div key={todo.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
-                                        <div className="flex items-center space-x-3">
-                                            {/* Checkbox */}
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedIds.has(todo.id)}
-                                                onChange={() => toggleSelect(todo.id)}
-                                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
-                                            />
-                                            <div className={`w-2 h-12 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
-                                            <div>
-                                                <div className="font-bold text-gray-800">
-                                                    <TodoTitle title={todo.title} />
+                                {timelineItems.map(item => {
+                                    if ('type' in item && item.type === 'group') {
+                                        const isExpanded = expandedGroups.has(item.id);
+                                        const allCompleted = item.todos.every(t => t.completed);
+                                        const groupSelected = item.todos.length > 0 && item.todos.every(t => selectedIds.has(t.id));
+
+                                        return (
+                                            <div key={item.id} className="space-y-1">
+                                                {/* Group Header */}
+                                                <div className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                                                    <div className="flex items-center space-x-3 flex-1 overflow-hidden">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={groupSelected}
+                                                            onChange={() => {
+                                                                const next = new Set(selectedIds);
+                                                                if (groupSelected) {
+                                                                    item.todos.forEach(t => next.delete(t.id));
+                                                                } else {
+                                                                    item.todos.forEach(t => next.add(t.id));
+                                                                }
+                                                                setSelectedIds(next);
+                                                            }}
+                                                            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                                        />
+                                                        <div className={`w-2 h-12 rounded-full flex-shrink-0 ${allCompleted ? "bg-green-500" : "bg-gray-300"}`} />
+                                                        <button
+                                                            onClick={() => toggleGroup(item.id)}
+                                                            className="flex items-center space-x-3 text-left flex-1 overflow-hidden"
+                                                        >
+                                                            <div className="p-1 px-2 bg-purple-100 text-purple-600 rounded text-[10px] font-bold flex items-center space-x-1 shrink-0">
+                                                                <Layers size={10} />
+                                                                <span>{item.todos.length}</span>
+                                                            </div>
+                                                            <div className="overflow-hidden">
+                                                                <div className="font-bold text-gray-800 flex items-center truncate">
+                                                                    <TodoTitle title={item.title} />
+                                                                    {isExpanded ? <ChevronDown size={16} className="ml-1 shrink-0" /> : <ChevronRight size={16} className="ml-1 shrink-0" />}
+                                                                </div>
+                                                                <div className="text-[10px] text-gray-400 truncate">
+                                                                    {item.completedCount}/{item.todos.length} {tc("completed")} • {format(item.createdAt, "yyyy/MM/dd HH:mm")}
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm(tc("deleteGroupConfirm", { count: item.todos.length }))) {
+                                                                try {
+                                                                    await onBulkDelete(item.todos.map(t => t.id));
+                                                                } catch (e) {
+                                                                    console.error("Group delete failed", e);
+                                                                }
+                                                            }
+                                                        }}
+                                                        className="text-gray-400 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
                                                 </div>
-                                                <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
-                                                    <span className="bg-gray-100 px-2 py-0.5 rounded">
-                                                        {todo.categoryId ? (flatCategories.find(c => c.id === todo.categoryId)?.name || "Unknown") : "No Category"}
-                                                    </span>
-                                                    <span>{format(new Date(todo.createdAt), "yyyy/MM/dd HH:mm")}</span>
+
+                                                {/* Group Content (Accordion) */}
+                                                {isExpanded && (
+                                                    <div className="ml-8 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                        {item.todos.map(todo => (
+                                                            <div key={todo.id} className="bg-white/50 p-3 rounded-xl border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                                                                <div className="flex items-center space-x-3">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={selectedIds.has(todo.id)}
+                                                                        onChange={() => toggleSelect(todo.id)}
+                                                                        className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                                                    />
+                                                                    <div className={`w-1 h-8 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
+                                                                    <div>
+                                                                        <div className="text-sm font-medium text-gray-700">
+                                                                            {format(new Date(todo.dueDate || todo.createdAt), "MM/dd")} {todo.dueTime || ""}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <button
+                                                                    onClick={() => handleDeleteClick(todo.id)}
+                                                                    className={`p-1.5 rounded-full transition-colors ${deleteConfirmId === todo.id ? "bg-red-50 text-red-600 opacity-100" : "text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"}`}
+                                                                >
+                                                                    {deleteConfirmId === todo.id ? <Trash2 size={14} fill="currentColor" /> : <Trash2 size={14} />}
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    }
+
+                                    const todo = item as Todo;
+                                    return (
+                                        <div key={todo.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                                            <div className="flex items-center space-x-3">
+                                                {/* Checkbox */}
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.has(todo.id)}
+                                                    onChange={() => toggleSelect(todo.id)}
+                                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                                />
+                                                <div className={`w-2 h-12 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
+                                                <div>
+                                                    <div className="font-bold text-gray-800">
+                                                        <TodoTitle title={todo.title} />
+                                                    </div>
+                                                    <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                                                        <span className="bg-gray-100 px-2 py-0.5 rounded">
+                                                            {todo.categoryId ? (flatCategories.find(c => c.id === todo.categoryId)?.name || "Unknown") : "No Category"}
+                                                        </span>
+                                                        <span>{format(new Date(todo.createdAt), "yyyy/MM/dd HH:mm")}</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <button
+                                                onClick={() => handleDeleteClick(todo.id)}
+                                                className={`p-2 rounded-full transition-colors ${deleteConfirmId === todo.id ? "bg-red-50 text-red-600 opacity-100" : "text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"}`}
+                                            >
+                                                {deleteConfirmId === todo.id ? <Trash2 size={18} fill="currentColor" /> : <Trash2 size={18} />}
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => handleDeleteClick(todo.id)}
-                                            className={`p-2 rounded-full transition-colors ${deleteConfirmId === todo.id ? "bg-red-50 text-red-600 opacity-100" : "text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100"}`}
-                                        >
-                                            {deleteConfirmId === todo.id ? <Trash2 size={18} fill="currentColor" /> : <Trash2 size={18} />}
-                                        </button>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                                 {filteredTodos.length === 0 && (
                                     <div className="text-center py-12 text-gray-400">
-                                        No tasks found matching your filters.
+                                        {t("noTasksFound")}
                                     </div>
                                 )}
                             </div>
@@ -592,13 +718,13 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             {/* Right: Controls */}
                             <div className="w-full lg:w-80 flex flex-col space-y-6 flex-shrink-0">
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">Category to Display</label>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">{t("selectCategory")}</label>
                                     <select
                                         value={targetShareCategory}
                                         onChange={(e) => setTargetShareCategory(e.target.value)}
                                         className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3"
                                     >
-                                        <option value="all">All Activities</option>
+                                        <option value="all">{t("allActivities")}</option>
                                         {flatCategories.map(cat => (
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))}
@@ -606,8 +732,8 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 </div>
 
                                 <div className="space-y-3">
-                                    <h3 className="text-sm font-bold text-gray-700">Share to Social Media</h3>
-                                    <p className="text-xs text-gray-500">Share to get <span className="text-blue-600 font-bold">Ad-Free for 24 Hours!</span></p>
+                                    <h3 className="text-sm font-bold text-gray-700">{t("shareSocial")}</h3>
+                                    <p className="text-xs text-gray-500">{t("shareSocialDesc")}</p>
 
                                     <div className="grid grid-cols-2 gap-3">
                                         <button
@@ -663,7 +789,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                         className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 p-3 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
                                     >
                                         <Download size={20} />
-                                        <span>Download Image Only</span>
+                                        <span>{t("downloadOnly")}</span>
                                     </button>
                                 </div>
                             </div>
