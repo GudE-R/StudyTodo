@@ -63,7 +63,9 @@
         "deleteTask": "このタスクを削除",
         "titleOrCategoryRequired": "タスク名またはカテゴリを入力してください",
         "durationRecordOnly": "記録モードで入力",
-        "recordConfirm": "記録する"
+        "recordConfirm": "記録する",
+        "routineLabel": "ルーティーン（曜日指定）",
+        "routineHint": "{count}曜日に繰り返し作成されます"
     },
     "auth": {
         "welcomeBack": "おかえりなさい",

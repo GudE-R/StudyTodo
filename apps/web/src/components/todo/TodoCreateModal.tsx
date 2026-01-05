@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass } from "lucide-react";
+import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { Todo, Category, SRSProfile } from "@pomarc/shared";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TimePicker } from "@/components/ui/TimePicker";
+import { WeekdayPicker } from "@/components/ui/WeekdayPicker";
 
 interface TodoCreateModalProps {
     isOpen: boolean;
@@ -40,6 +41,7 @@ export function TodoCreateModal({
     const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
     const [duration, setDuration] = useState<string>("");
     const [isRecordMode, setIsRecordMode] = useState(false);
+    const [routineDays, setRoutineDays] = useState<number[]>([]);
 
     const t = useTranslations("todo");
     const tc = useTranslations("common");
@@ -135,6 +137,7 @@ export function TodoCreateModal({
             srsInterval,
             memo: notes,
             priority,
+            routineDays: routineDays.length > 0 ? routineDays : undefined,
             updatedAt: new Date(),
         });
         resetForm();
@@ -197,6 +200,7 @@ export function TodoCreateModal({
         setPriority("medium");
         setDuration("");
         setIsRecordMode(false);
+        setRoutineDays([]);
         onClose();
     };
 
@@ -311,6 +315,23 @@ export function TodoCreateModal({
                         </div>
                     </div>
 
+                    {/* Weekday Routine */}
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                        <div className="flex items-center space-x-2 mb-2">
+                            <Calendar size={16} className="text-purple-500" />
+                            <span className="text-xs font-bold text-gray-500">{t("routineLabel")}</span>
+                        </div>
+                        <WeekdayPicker
+                            value={routineDays}
+                            onChange={setRoutineDays}
+                        />
+                        {routineDays.length > 0 && (
+                            <p className="text-[10px] text-purple-500 mt-2">
+                                {t("routineHint", { count: routineDays.length })}
+                            </p>
+                        )}
+                    </div>
+
 
                     {/* Action Buttons (Reordered: Record -> Start -> Create) */}
                     <div className="grid grid-cols-3 gap-2 pt-2">
@@ -324,8 +345,8 @@ export function TodoCreateModal({
                                 }
                             }}
                             className={`flex items-center justify-center space-x-1 py-3 rounded-xl font-bold transition-colors ${isRecordMode
-                                    ? "bg-green-600 text-white hover:bg-green-700"
-                                    : "bg-green-100 text-green-600 hover:bg-green-200"
+                                ? "bg-green-600 text-white hover:bg-green-700"
+                                : "bg-green-100 text-green-600 hover:bg-green-200"
                                 }`}
                         >
                             <CheckCircle size={18} />

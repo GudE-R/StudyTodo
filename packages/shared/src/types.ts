@@ -23,6 +23,9 @@ export interface Todo {
     range?: string;
     memo?: string;
 
+    // Routine (Weekday repeat)
+    routineDays?: number[]; // 0=Sunday, 1=Monday, ..., 6=Saturday
+
     priority?: "high" | "medium" | "low";
     completed: boolean;
     createdAt: Date | string;
