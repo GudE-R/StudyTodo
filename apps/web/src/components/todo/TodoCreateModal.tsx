@@ -132,8 +132,8 @@ export function TodoCreateModal({
         onCreate({
             title: parsedTitle || t("noTitle"),
             dueDate: effectiveDate,
-            dueTime: dueTime || undefined,
-            endTime: endTime || undefined,
+            dueTime: dueTime || null,
+            endTime: endTime || null,
             categoryId: categoryId || undefined,
             srsInterval,
             memo: notes,

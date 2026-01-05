@@ -2,8 +2,8 @@ export interface Todo {
     id: string;
     title: string;
     dueDate?: Date | string; // Helper for serializing
-    dueTime?: string;
-    endTime?: string;
+    dueTime?: string | null;
+    endTime?: string | null;
     categoryId?: string;
 
     // Duration & Notes
