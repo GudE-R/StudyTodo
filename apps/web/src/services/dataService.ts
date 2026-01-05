@@ -60,6 +60,46 @@ export const dataService = {
         this.syncToCloud("todos", todosToAdd, "upsert");
     },
 
+    /**
+     * ルーティーン設定に基づいて、今後30日間のタスクを一括生成します。
+     */
+    async addRoutineTodos(baseTodo: Todo, routineDays: number[]) {
+        const groupId = generateId();
+        const now = new Date();
+        const todosToAdd: Todo[] = [];
+
+        // 30日分の日付をチェックして該当する曜日のタスクを作成
+        for (let i = 0; i < 30; i++) {
+            const date = addDays(now, i);
+            const dayOfWeek = date.getDay(); // 0:日, 1:月...
+
+            if (routineDays.includes(dayOfWeek)) {
+                const routineTodo: Todo = {
+                    ...baseTodo,
+                    id: generateId(),
+                    dueDate: date,
+                    completed: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    srsGroupId: groupId, // ルーティーンの一括削除等のためにグループIDとして使用
+                };
+                // 初回のみ id と groupId を一致させて「親」とする
+                if (todosToAdd.length === 0) {
+                    routineTodo.id = groupId;
+                }
+
+                todosToAdd.push(routineTodo);
+            }
+        }
+
+        if (todosToAdd.length > 0) {
+            await db.transaction('rw', db.todos, async () => {
+                await db.todos.bulkAdd(todosToAdd);
+            });
+            this.syncToCloud("todos", todosToAdd, "upsert");
+        }
+    },
+
     async updateTodo(id: string, updates: Partial<Todo>) {
         await db.todos.update(id, updates);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useTranslations } from "next-intl";
 
 interface WeekdayPickerProps {
     value: number[];
@@ -8,15 +8,7 @@ interface WeekdayPickerProps {
     disabled?: boolean;
 }
 
-const WEEKDAYS = [
-    { day: 0, label: "日", labelEn: "S" },
-    { day: 1, label: "月", labelEn: "M" },
-    { day: 2, label: "火", labelEn: "T" },
-    { day: 3, label: "水", labelEn: "W" },
-    { day: 4, label: "木", labelEn: "T" },
-    { day: 5, label: "金", labelEn: "F" },
-    { day: 6, label: "土", labelEn: "S" },
-];
+const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6];
 
 /**
  * 曜日選択ピッカー
@@ -25,6 +17,8 @@ const WEEKDAYS = [
  * 選択された曜日は配列として管理される（0=日曜、6=土曜）。
  */
 export function WeekdayPicker({ value, onChange, disabled = false }: WeekdayPickerProps) {
+    const t = useTranslations("common.weekdays");
+
     const toggleDay = (day: number) => {
         if (disabled) return;
 
@@ -37,7 +31,7 @@ export function WeekdayPicker({ value, onChange, disabled = false }: WeekdayPick
 
     return (
         <div className="flex items-center justify-between gap-1">
-            {WEEKDAYS.map(({ day, label }) => {
+            {WEEKDAYS.map((day) => {
                 const isSelected = value.includes(day);
                 const isWeekend = day === 0 || day === 6;
 
@@ -58,7 +52,7 @@ export function WeekdayPicker({ value, onChange, disabled = false }: WeekdayPick
                             ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
                         `}
                     >
-                        {label}
+                        {t(day.toString())}
                     </button>
                 );
             })}

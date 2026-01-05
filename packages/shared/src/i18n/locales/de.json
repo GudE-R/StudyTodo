@@ -29,7 +29,16 @@
         "delete": "Löschen",
         "create": "Erstellen",
         "update": "Aktualisieren",
-        "close": "Schließen"
+        "close": "Schließen",
+        "weekdays": {
+            "0": "S",
+            "1": "M",
+            "2": "D",
+            "3": "M",
+            "4": "D",
+            "5": "F",
+            "6": "S"
+        }
     },
     "home": {
         "title": "Startseite",

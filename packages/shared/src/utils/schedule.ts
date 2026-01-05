@@ -17,23 +17,13 @@ export const getTodoScheduleRange = (todo: Todo): { start: number; end: number }
         }
     }
 
-    // 2. dueDate が Date オブジェクトまたは ISO 文字列で以前時間が含まれている場合
-    // (通常は dueTime がセットされるはずだが、フォールバックとして)
+    // 2. dueDate fallback (Removed to fix 0:00 placement bug for date-only tasks)
+    // 明示的な時間指定(dueTime)がない場合はスケジュールには表示しない方針とする。
+    /*
     if (startMinutes === null && todo.dueDate) {
-        const date = new Date(todo.dueDate);
-        if (!isNaN(date.getTime())) {
-            // 時間が 00:00 でない場合のみ採用（日付のみ指定の場合は 00:00 になることが多いため要検討だが、
-            // Mobile版の実装では日付の時間を採用していたため、ここでも考慮する）
-            // ただし、明示的に 00:00 を指定したい場合と区別がつかないため、
-            // 明示的な時間指定は dueTime フィールドの使用を推奨する方針とする。
-            // ここでは、dueTimeがない場合の補助として扱う。
-            const h = getHours(date);
-            const m = getMinutes(date);
-            // 0:00 以外、または dueTime がないが dueDate に時間情報が含まれているとみなせる場合
-            // いったんそのまま計算する
-            startMinutes = h * 60 + m;
-        }
+        ...
     }
+    */
 
     // 時間が特定できない場合は null
     if (startMinutes === null) {

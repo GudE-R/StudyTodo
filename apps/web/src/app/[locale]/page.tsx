@@ -76,6 +76,18 @@ export default function Home() {
   const handleDeleteTodo = async (todoId: string) => await dataService.deleteTodo(todoId);
 
   const handleCreateTodo = async (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
+    // Check for Weekday Routine
+    if (todoData.routineDays && todoData.routineDays.length > 0) {
+      await dataService.addRoutineTodos({
+        ...todoData,
+        id: "", // Temporary, will be generated
+        createdAt: new Date(),
+        completed: false,
+      }, todoData.routineDays);
+      setIsTodoModalOpen(false);
+      return;
+    }
+
     // Check for SRS
     if (todoData.srsInterval && srsProfiles) {
       const profile = srsProfiles.find(p => p.name === todoData.srsInterval);
@@ -85,7 +97,7 @@ export default function Home() {
           id: generateId(),
           createdAt: new Date(),
           completed: false,
-        }, profile.intervals); // intervals number[]
+        }, profile.intervals);
         setIsTodoModalOpen(false);
         return;
       }
