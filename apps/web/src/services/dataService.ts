@@ -130,7 +130,7 @@ export const dataService = {
         if (user) {
             // Supabase 'in' query for bulk delete
             const { error } = await supabase.from("todos").delete().in("id", idsToDelete);
-            if (error) console.error("Cloud delete error", error);
+            if (error) console.error("Cloud delete error", { message: error.message, hint: error.hint, details: error.details, code: error.code });
         }
     },
 
