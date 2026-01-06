@@ -143,6 +143,18 @@
 - **Feedback system**: Implemented an in-app feedback modal integrated with Dexie and Supabase for offline-aware data collection. (2026-01-01)
 - **Web Ad Integration**: Created `AdBanner` component (Google AdSense compatible) and integrated it into `AppShell`. Set up environment-variable-driven script injection in `RootLayout`. (2026-01-01)
     - **Cloud Sync**: `useSync` フックと `mapper.ts` を強化し、Dexie.js (Web) と Supabase (Cloud) の双方向同期（Pull/Push, Merge）を実装。
+
+### [SEO Optimization] - 2026-01-06
+#### 追加/変更 (Web)
+- **SEO基盤の完全実装**:
+    - **robots.ts**: 動的robots.txt生成。クロール許可設定とサイトマップ参照を定義。
+    - **sitemap.ts**: 19言語分のサイトマップを動的生成。全言語ページのURLを検索エンジンに提供。
+    - **多言語メタデータ**: `generateMetadata`関数により、各ロケールに最適化されたタイトル・説明文を動的生成。
+    - **hreflangタグ**: 全19言語間の代替言語リンクを自動設定。検索エンジンが適切な言語ページを表示可能に。
+    - **Open Graph / Twitterカード**: SNSシェア時のリッチプレビュー対応。タイトル、説明、画像を含む。
+    - **構造化データ (JSON-LD)**: Schema.org準拠のWebApplicationスキーマを追加。リッチスニペット対応。
+    - **動的OGP画像**: `opengraph-image.tsx`により、各言語に対応したスタイリッシュなOGP画像を自動生成。
+    - **canonical URL**: 重複コンテンツ対策のための正規URL設定。
     
 ### [Statistics & Viral Features] - 2026-01-05
 #### 追加/変更 (Web)
