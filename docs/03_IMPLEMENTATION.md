@@ -88,6 +88,15 @@
 
 これまでの主要な変更履歴です。
 
+### [Sync Logic Robustness] - 2026-01-09
+#### 修正/変更 (Web)
+- **db.ts リファクタリング**:
+    - `@ts-ignore` を全て除去し、`ExtendedTransaction` インターフェースによる型安全な実装に変更。
+    - `setTimeout` を `queueMicrotask` に置き換え、より信頼性の高い非同期実行を実現。
+    - 同期ロジックを `pushToCloud` メソッドに集約し、エラーハンドリングを統一。
+- **offlineQueue.ts バグ修正**: `incrementRetry` の演算子優先順位バグを修正。
+- **useSync.ts**: `@ts-ignore` を除去し、適切な型アサーションに変更。
+
 ### [Bug Prevention & Code Quality] - 2026-01-01
 #### 追加/変更 (Shared)
 - **共有コードの拡充**:
