@@ -22,6 +22,7 @@ import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { Todo, Feedback } from "@pomarc/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
