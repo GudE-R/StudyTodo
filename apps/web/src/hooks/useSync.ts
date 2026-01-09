@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { mapper, allowedFieldsMap, compareDates } from "@pomarc/shared";
 import { useRealtimeSync } from "./useRealtimeSync";
 import { initNetworkListener, processOfflineQueue } from "@/lib/offlineQueue";
+import type { Table } from "dexie";
 
 /**
  * useSync Hook
@@ -79,10 +80,8 @@ export function useSync() {
                 // Apply changes using transaction with source='sync' to prevent loops
                 if (toImport.length > 0) {
                     await db.transaction('rw', db[tableName], (trans) => {
-                        // @ts-ignore
-                        trans.source = 'sync';
-                        // @ts-ignore
-                        return db[tableName].bulkPut(toImport);
+                        (trans as unknown as { source: string }).source = 'sync';
+                        return (db[tableName] as Table).bulkPut(toImport);
                     });
                 }
 

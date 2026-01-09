@@ -49,7 +49,8 @@ export const offlineQueue: SyncQueueInterface = {
     },
 
     async incrementRetry(id) {
-        await queueDb.syncQueue.update(id, { retryCount: (await queueDb.syncQueue.get(id))?.retryCount ?? 0 + 1 });
+        const item = await queueDb.syncQueue.get(id);
+        await queueDb.syncQueue.update(id, { retryCount: (item?.retryCount ?? 0) + 1 });
     }
 };
 

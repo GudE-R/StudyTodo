@@ -1,6 +1,18 @@
-import Dexie, { Table } from 'dexie';
-import { Todo, Category, SRSProfile, Session, Feedback, mapper, allowedFieldsMap, supabaseTableMap } from '@pomarc/shared';
+import Dexie, { Table, Transaction } from 'dexie';
+import { Todo, Category, SRSProfile, Session, Feedback, mapper, allowedFieldsMap, supabaseTableMap, SyncOperationType } from '@pomarc/shared';
 import { generateId } from '@/lib/utils';
+
+/**
+ * Extended transaction interface with sync source marker
+ */
+interface ExtendedTransaction extends Transaction {
+    source?: 'sync';
+}
+
+/**
+ * Table name type for type-safe dynamic access
+ */
+type TableName = 'todos' | 'categories' | 'srsProfiles' | 'sessions' | 'feedbacks';
 
 export class PomArcDatabase extends Dexie {
     todos!: Table<Todo>;
@@ -18,7 +30,6 @@ export class PomArcDatabase extends Dexie {
     constructor() {
         super('PomArcDB_v2');
 
-        // ... (stores configuration)
         this.version(4).stores({
             todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt, srsGroupId',
             categories: 'id, parentId, order, createdAt, updatedAt',
@@ -36,81 +47,74 @@ export class PomArcDatabase extends Dexie {
         });
     }
 
+    /**
+     * Push data to cloud with retry logic
+     */
+    private async pushToCloud(
+        operation: SyncOperationType,
+        tableName: string,
+        data: Record<string, unknown>
+    ): Promise<void> {
+        if (!this.currentUserId) return;
+
+        const { supabase } = await import('./supabase');
+        const { offlineQueue, isOnline } = await import('./offlineQueue');
+
+        const supabaseTable = supabaseTableMap[tableName] || tableName;
+        const mapped = mapper.toSupabase(data, this.currentUserId, allowedFieldsMap[tableName]);
+
+        if (!isOnline()) {
+            await offlineQueue.add({ table: tableName, operation, data });
+            return;
+        }
+
+        try {
+            if (operation === 'DELETE') {
+                const { error } = await supabase.from(supabaseTable).delete().eq('id', data.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase.from(supabaseTable).upsert(mapped);
+                if (error) throw error;
+            }
+        } catch (error) {
+            console.warn(`[db.ts] ${operation} failed, adding to offline queue:`, error);
+            await offlineQueue.add({ table: tableName, operation, data });
+        }
+    }
+
     private setupHooks() {
-        const tables = ['todos', 'categories', 'srsProfiles', 'sessions', 'feedbacks'];
-        // supabaseTableMap と allowedFieldsMap は @pomarc/shared からインポート
+        const tables: TableName[] = ['todos', 'categories', 'srsProfiles', 'sessions', 'feedbacks'];
 
-        tables.forEach(tableName => {
-            // @ts-ignore
-            this[tableName].hook('creating', (primKey, obj, trans) => {
-                // @ts-ignore
-                if (trans.source === 'sync' || !this.currentUserId) return;
+        tables.forEach((tableName) => {
+            const table = this[tableName] as Table;
 
-                // Trigger async push (with offline queue fallback)
-                setTimeout(async () => {
-                    const { supabase } = await import('./supabase');
-                    const { offlineQueue, isOnline } = await import('./offlineQueue');
+            table.hook('creating', (_primKey, obj, trans) => {
+                const extTrans = trans as ExtendedTransaction;
+                if (extTrans.source === 'sync' || !this.currentUserId) return;
 
-                    const mapped = mapper.toSupabase(obj as Record<string, unknown>, this.currentUserId!, allowedFieldsMap[tableName]);
-
-                    if (!isOnline()) {
-                        await offlineQueue.add({ table: tableName, operation: 'INSERT', data: obj });
-                        return;
-                    }
-
-                    const { error } = await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
-                    if (error) {
-                        console.warn('[db.ts] Push failed, adding to offline queue:', error.message);
-                        await offlineQueue.add({ table: tableName, operation: 'INSERT', data: obj });
-                    }
-                }, 0);
+                // Use queueMicrotask for more reliable async execution than setTimeout
+                queueMicrotask(() => {
+                    this.pushToCloud('INSERT', tableName, obj as Record<string, unknown>);
+                });
             });
 
-            // @ts-ignore
-            this[tableName].hook('updating', (mods, primKey, obj, trans) => {
-                // @ts-ignore
-                if (trans.source === 'sync' || !this.currentUserId) return;
+            table.hook('updating', (mods, _primKey, obj, trans) => {
+                const extTrans = trans as ExtendedTransaction;
+                if (extTrans.source === 'sync' || !this.currentUserId) return;
 
                 const updatedObj = { ...obj, ...mods };
-                setTimeout(async () => {
-                    const { supabase } = await import('./supabase');
-                    const { offlineQueue, isOnline } = await import('./offlineQueue');
-
-                    const mapped = mapper.toSupabase(updatedObj as Record<string, unknown>, this.currentUserId!, allowedFieldsMap[tableName]);
-
-                    if (!isOnline()) {
-                        await offlineQueue.add({ table: tableName, operation: 'UPDATE', data: updatedObj });
-                        return;
-                    }
-
-                    const { error } = await supabase.from(supabaseTableMap[tableName]).upsert(mapped);
-                    if (error) {
-                        console.warn('[db.ts] Push failed, adding to offline queue:', error.message);
-                        await offlineQueue.add({ table: tableName, operation: 'UPDATE', data: updatedObj });
-                    }
-                }, 0);
+                queueMicrotask(() => {
+                    this.pushToCloud('UPDATE', tableName, updatedObj as Record<string, unknown>);
+                });
             });
 
-            // @ts-ignore
-            this[tableName].hook('deleting', (primKey, obj, trans) => {
-                // @ts-ignore
-                if (trans.source === 'sync' || !this.currentUserId) return;
+            table.hook('deleting', (primKey, _obj, trans) => {
+                const extTrans = trans as ExtendedTransaction;
+                if (extTrans.source === 'sync' || !this.currentUserId) return;
 
-                setTimeout(async () => {
-                    const { supabase } = await import('./supabase');
-                    const { offlineQueue, isOnline } = await import('./offlineQueue');
-
-                    if (!isOnline()) {
-                        await offlineQueue.add({ table: tableName, operation: 'DELETE', data: { id: primKey } });
-                        return;
-                    }
-
-                    const { error } = await supabase.from(supabaseTableMap[tableName]).delete().eq('id', primKey);
-                    if (error) {
-                        console.warn('[db.ts] Delete failed, adding to offline queue:', error.message);
-                        await offlineQueue.add({ table: tableName, operation: 'DELETE', data: { id: primKey } });
-                    }
-                }, 0);
+                queueMicrotask(() => {
+                    this.pushToCloud('DELETE', tableName, { id: primKey });
+                });
             });
         });
     }
