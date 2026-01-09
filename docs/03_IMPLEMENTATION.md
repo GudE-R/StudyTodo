@@ -97,6 +97,12 @@
 - **offlineQueue.ts バグ修正**: `incrementRetry` の演算子優先順位バグを修正。
 - **useSync.ts**: `@ts-ignore` を除去し、適切な型アサーションに変更。
 
+### [Comprehensive Improvements] - 2026-01-09
+#### 追加/変更 (Web)
+- **環境設定**: `.env.local.example` テンプレートを追加し、Supabase設定の手順を明確化。
+- **ESLint設定修正**: ESLint 9 flat config形式に対応した新しい設定ファイルを作成。TypeScriptパーサーとReactプラグインを適切に設定。
+- **ErrorBoundary実装**: `ErrorBoundary.tsx` コンポーネントを追加し、Reactエラーのグレースフルなハンドリングを実現。開発モードではスタックトレースを表示。
+
 ### [Bug Prevention & Code Quality] - 2026-01-01
 #### 追加/変更 (Shared)
 - **共有コードの拡充**:
