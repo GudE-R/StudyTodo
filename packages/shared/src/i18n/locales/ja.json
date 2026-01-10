@@ -179,7 +179,9 @@
         "deleteButton": "削除する",
         "addChildTitle": "子カテゴリを追加",
         "addFailed": "カテゴリの追加に失敗しました",
-        "deleteFailed": "カテゴリの削除に失敗しました"
+        "deleteFailed": "カテゴリの削除に失敗しました",
+        "changeColor": "色を変更",
+        "noColor": "なし"
     },
     "srs": {
         "listTitle": "SRS設定リスト",

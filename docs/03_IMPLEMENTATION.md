@@ -117,6 +117,8 @@
     - 詳細画面の「開始」ボタンデザインを作成画面と統一。
 - **バグ修正**:
     - ActivityModal.tsx: `onBulkDelete` の型定義重複修正。
+    - TodoDetailModal.tsx: 保存時の変数宣言漏れ・JSX閉じタグ不整合の修正。
+    - page.tsx: `handleUpdateTodo` におけるSRS生成ロジックの呼び出し漏れを修正。
 
 ### [Sync Logic Robustness] - 2026-01-09
 #### 修正/変更 (Web)
@@ -269,7 +271,15 @@
 
 ### [Documentation Update] - 2026-01-05
 #### 変更
-- **ロードマップ整理**: `docs/04_FUTURE.md` を更新し、完了したフェーズの整理と、今後の計画（Webリリース、モバイル展開）を明確化。
+- **ロードマップ整理**: `docs/04_FUTURE.md` を更新し、完了したフェーズの整理と細かな改善だが、アプリの手触りが良くなっていると感じる。
+Web版リリースに向けて、こうした「使い勝手」の部分を詰め切っていきたい。
+
+**2026-01-10 (夜):**
+ビルドエラーとSRS連携が動かない問題に対処した。
+`replace_file_content` のミスで `TodoDetailModal.tsx` の構文が崩れていたのを修正。
+また、`page.tsx` の `handleUpdateTodo` で `onUpdate` の引数追加に対応できていなかったのを修正。
+これで既存TodoへのSRS後付け適用が完全に動作するようになった。
+開発効率を上げるために、一度の修正範囲を適切に管理することの重要性を再認識。
 
 ### [Day Schedule Improvement] - 2025-12-30
 #### 修正/変更 (Web & Mobile)

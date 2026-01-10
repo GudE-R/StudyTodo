@@ -229,8 +229,7 @@ export function CalendarPane({
                                             {/* Show up to 3 dots, then a special mark */}
                                             {dailyTodos.slice(0, 3).map((t, idx) => {
                                                 const category = categories?.find(c => c.id === t.categoryId);
-                                                // デフォルト色は完了状態で切り替えるが、カテゴリ色がある場合は優先
-                                                const dotColor = category?.color || (t.completed ? "#22c55e" : "#3b82f6");
+                                                const dotColor = category?.color ? category.color : (t.completed ? "#22c55e" : "#3b82f6");
 
                                                 return (
                                                     <div

@@ -21,7 +21,7 @@ const CATEGORY_COLORS = [
     "#6b7280", // グレー
 ];
 
-const DEFAULT_CATEGORY_COLOR = "#3b82f6";
+// const DEFAULT_CATEGORY_COLOR = "#3b82f6"; // 削除：デフォルトは透明（未設定）にする
 
 /**
  * カテゴリ編集コンポーネント
@@ -202,10 +202,14 @@ export function CategoryEditor() {
                                             e.stopPropagation();
                                             setColorPickerId(node.id);
                                         }}
-                                        className="w-3 h-3 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500"
-                                        style={{ backgroundColor: node.color || DEFAULT_CATEGORY_COLOR }}
+                                        className={`w-3 h-3 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 flex items-center justify-center overflow-hidden`}
+                                        style={{ backgroundColor: node.color || "transparent" }}
                                         title={t("changeColor")}
-                                    />
+                                    >
+                                        {!node.color && (
+                                            <div className="w-full h-[1px] bg-gray-300 dark:bg-gray-600 rotate-45" />
+                                        )}
+                                    </button>
 
                                     {colorPickerId === node.id && (
                                         <div
@@ -213,14 +217,24 @@ export function CategoryEditor() {
                                             className="absolute top-6 left-0 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-2 w-max animate-in fade-in zoom-in-95 duration-200"
                                             onClick={(e) => e.stopPropagation()}
                                         >
-                                            {CATEGORY_COLORS.map((color) => (
+                                            <div className="grid grid-cols-5 gap-2">
+                                                {/* なし（透明）オプション */}
                                                 <button
-                                                    key={color}
-                                                    onClick={() => handleColorChange(node.id, color)}
-                                                    className={`w-6 h-6 rounded-full border hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 ${node.color === color ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-transparent"}`}
-                                                    style={{ backgroundColor: color }}
-                                                />
-                                            ))}
+                                                    onClick={() => handleColorChange(node.id, "")}
+                                                    className={`w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 ${!node.color || node.color === "" ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-gray-200 dark:border-gray-700"}`}
+                                                    title={t("noColor")}
+                                                >
+                                                    <div className="w-full h-[1px] bg-red-400 rotate-45" />
+                                                </button>
+                                                {CATEGORY_COLORS.map((color) => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() => handleColorChange(node.id, color)}
+                                                        className={`w-6 h-6 rounded-full border hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 ${node.color === color ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-transparent"}`}
+                                                        style={{ backgroundColor: color }}
+                                                    />
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                 </div>

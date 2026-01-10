@@ -284,7 +284,10 @@ export function DaySchedule({
                                         const height = Math.max(duration * 0.8, 24); // Min height 30 mins visual
 
                                         const category = categories?.find(c => c.id === todo.categoryId);
-                                        const baseColor = category?.color || "#3b82f6";
+                                        const baseColor = category?.color;
+                                        const effectiveBorderColor = baseColor || "rgba(156, 163, 175, 0.5)"; // gray-400 equivalent
+                                        const effectiveBgColor = baseColor ? `${baseColor}20` : "rgba(243, 244, 246, 0.5)"; // gray-100 equivalent
+                                        const effectiveTextColor = baseColor || "rgba(75, 85, 99, 1)"; // gray-600 equivalent
 
                                         return (
                                             <div
@@ -294,12 +297,12 @@ export function DaySchedule({
                                                 style={{
                                                     top: `${top}px`,
                                                     height: `${height}px`,
-                                                    borderColor: baseColor,
-                                                    backgroundColor: `${baseColor}20`, // 12% opacity
-                                                    color: baseColor, // テキストも同色に
+                                                    borderColor: effectiveBorderColor,
+                                                    backgroundColor: effectiveBgColor,
+                                                    color: effectiveTextColor,
                                                 }}
                                             >
-                                                <div className="font-bold truncate" style={{ color: baseColor }}>
+                                                <div className="font-bold truncate" style={{ color: effectiveTextColor }}>
                                                     <TodoTitle title={todo.title} />
                                                 </div>
                                             </div>
