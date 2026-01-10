@@ -75,7 +75,8 @@
         "durationRecordOnly": "記録モードで入力",
         "recordConfirm": "記録する",
         "routineLabel": "ルーティーン（曜日指定）",
-        "routineHint": "{count}曜日に繰り返し作成されます"
+        "routineHint": "{count}曜日に繰り返し作成されます",
+        "postpone": "明日へ移動"
     },
     "auth": {
         "welcomeBack": "おかえりなさい",

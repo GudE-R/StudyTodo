@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle, Save } from "lucide-react";
-import { format } from "date-fns";
+import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle, Save, CalendarRange } from "lucide-react";
+import { format, addDays } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -162,6 +162,14 @@ export function TodoDetailModal({
             priority,
             updatedAt: new Date(),
         });
+        onClose();
+    };
+
+    const handlePostpone = () => {
+        if (!todo) return;
+        const currentDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
+        const nextDate = addDays(currentDate, 1);
+        onUpdate({ ...todo, dueDate: nextDate });
         onClose();
     };
 
@@ -357,12 +365,21 @@ export function TodoDetailModal({
                     )}
 
                     {!isRecording && (
-                        <button
-                            onClick={handleDelete}
-                            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
-                        >
-                            {t("deleteTask")}
-                        </button>
+                        <div className="pt-2 flex space-x-2">
+                            <button
+                                onClick={handlePostpone}
+                                className="flex-1 flex items-center justify-center space-x-2 bg-gray-100 text-gray-600 hover:bg-gray-200 py-2 rounded-xl text-sm font-medium transition-colors"
+                            >
+                                <CalendarRange size={16} />
+                                <span>{t("postpone")}</span>
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="flex-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors border border-transparent hover:border-red-100"
+                            >
+                                {t("deleteTask")}
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -92,6 +92,10 @@
   - Implemented Pie Chart for category distribution in Analytics tab
   - Added Donut Chart in Share Card preview for visual breakdown
   - Expanded activity track in Share Card to cover the last 14 days
+### [Todo Postpone] - 2026-01-10
+  - Added "Move to Tomorrow" button in TodoDetailModal
+  - Implemented logic to increment dueDate by 1 day
+  - Handled SRS and Routine tasks by shifting individual instances
 #### 追加/変更 (Shared & Web)
 - **カテゴリ色設定機能**:
     - **UI**: カテゴリ編集画面 (`CategoryEditor`) で9色のパレットから色を選択可能に。
