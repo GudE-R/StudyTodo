@@ -88,6 +88,10 @@
 
 これまでの主要な変更履歴です。
 
+### [Usage Guide Update] - 2026-01-10
+  - Removed "PomArc Concept" from the introduction
+  - Added "Feedback Request" to encourage user engagement
+  - Updated icons and translations for the guide
 ### [Activity Analytics] - 2026-01-10
   - Implemented Pie Chart for category distribution in Analytics tab
   - Added Donut Chart in Share Card preview for visual breakdown
