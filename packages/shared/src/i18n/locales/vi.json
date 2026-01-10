@@ -72,7 +72,8 @@
         "deleteTask": "Xóa nhiệm vụ này",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Chào mừng trở lại",
@@ -146,7 +147,14 @@
         "historyTitle": "Lịch sử học tập",
         "historyDesc": "Xem thống kê hàng ngày và hàng tuần qua nút 'Hoạt động'.",
         "detailTitle": "Chi tiết nhiệm vụ",
-        "detailDesc": "Chạm vào nhiệm vụ để xem chi tiết, chỉnh sửa, bắt đầu hoặc xóa."
+        "detailDesc": "Chạm vào nhiệm vụ để xem chi tiết, chỉnh sửa, bắt đầu hoặc xóa.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Cấu trúc danh mục",

@@ -72,7 +72,8 @@
         "deleteTask": "Bu görevi sil",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Tekrar Hoş Geldiniz",
@@ -146,7 +147,14 @@
         "historyTitle": "Çalışma Geçmişi",
         "historyDesc": "'Aktivite' butonu ile günlük ve haftalık istatistikleri görün.",
         "detailTitle": "Görev Detayı",
-        "detailDesc": "Detayları görmek, düzenlemek, başlatmak veya silmek için göreve tıklayın."
+        "detailDesc": "Detayları görmek, düzenlemek, başlatmak veya silmek için göreve tıklayın.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Kategori Yapısı",

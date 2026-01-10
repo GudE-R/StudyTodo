@@ -73,7 +73,8 @@
         "deleteTask": "Delete this task",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Welcome Back",
@@ -139,8 +140,8 @@
         "catEfficiency": "Efficiency",
         "catReview": "Review & Share",
         "catOthers": "Other Features",
-        "conceptTitle": "Concept of PomArc",
-        "conceptDesc": "A blend of Pomodoro (Focus) + Forgetting Curve (Review). We maximize retention by helping you 'focus on work and review at the optimal time'.",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen.",
         "createTaskTitle": "Create Tasks",
         "createTaskDesc": "Create from the '+' button. Line 1 is the title, line 2+ are notes. Apply Routine or SRS settings to automate your learning schedule.",
         "timerTitle": "Timer & Recording",

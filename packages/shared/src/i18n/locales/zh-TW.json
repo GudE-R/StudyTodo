@@ -72,7 +72,8 @@
         "deleteTask": "刪除此任務",
         "titleOrCategoryRequired": "請輸入任務名稱或選擇類別",
         "durationRecordOnly": "在記錄模式下輸入",
-        "recordConfirm": "確認"
+        "recordConfirm": "確認",
+        "postpone": "移至明天"
     },
     "auth": {
         "welcomeBack": "歡迎回來",
@@ -146,7 +147,14 @@
         "historyTitle": "學習歷史",
         "historyDesc": "點擊底部の「活動」按鈕查看學習紀錄，支持日、週統計。",
         "detailTitle": "任務詳情",
-        "detailDesc": "在列表或日程中點擊任務可打開詳情。可直接開始計時或刪除任務。"
+        "detailDesc": "在列表或日程中點擊任務可打開詳情。可直接開始計時或刪除任務。",
+        "catIntro": "入門",
+        "catBasic": "基礎用法",
+        "catEfficiency": "高效學習",
+        "catReview": "複習與分享",
+        "catOthers": "其他功能",
+        "feedbackTitle": "回饋請求",
+        "feedbackDesc": "PomArc 隨使用者聲音共同進化。歡迎透過主螢幕右上角的「回饋」向我們發送錯誤報告或功能請求。"
     },
     "category": {
         "treeTitle": "分類結構",

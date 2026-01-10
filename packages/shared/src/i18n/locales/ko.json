@@ -72,7 +72,8 @@
         "deleteTask": "이 태스크 삭제",
         "titleOrCategoryRequired": "작업 이름을 입력하거나 카테고리를 선택하세요",
         "durationRecordOnly": "기록 모드에서 입력",
-        "recordConfirm": "확인"
+        "recordConfirm": "확인",
+        "postpone": "내일로 이동"
     },
     "auth": {
         "welcomeBack": "다시 오신 것을 환영합니다",
@@ -146,7 +147,14 @@
         "historyTitle": "학습 이력",
         "historyDesc": "화면 하단의 '활동' 버튼으로 지금까지의 학습 기록을 확인할 수 있습니다. 일별, 주별 통계도 표시됩니다.",
         "detailTitle": "태스크 상세",
-        "detailDesc": "리스트나 스케줄에서 태스크를 탭하면 상세 화면이 열립니다. 여기서 '지금 시작'이나 삭제를 할 수 있습니다."
+        "detailDesc": "리스트나 스케줄에서 태스크를 탭하면 상세 화면이 열립니다. 여기서 '지금 시작'이나 삭제를 할 수 있습니다.",
+        "catIntro": "시작하기",
+        "catBasic": "기본 사용법",
+        "catEfficiency": "효율적인 학습",
+        "catReview": "복습 및 공유",
+        "catOthers": "기타 기능",
+        "feedbackTitle": "피드백 요청",
+        "feedbackDesc": "PomArc는 사용자 여러분의 의견과 함께 진화합니다. 버그 보고나 기능 요청은 홈 화면 우측 상단의 '피드백'을 통해 보내주세요."
     },
     "category": {
         "treeTitle": "카테고리 구성",

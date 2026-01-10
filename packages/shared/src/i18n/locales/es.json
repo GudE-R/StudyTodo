@@ -72,7 +72,8 @@
         "deleteTask": "Eliminar esta tarea",
         "titleOrCategoryRequired": "Por favor ingrese un nombre de tarea o seleccione una categoría",
         "durationRecordOnly": "Ingresar en modo de registro",
-        "recordConfirm": "Confirmar"
+        "recordConfirm": "Confirmar",
+        "postpone": "Mover a mañana"
     },
     "auth": {
         "welcomeBack": "Bienvenido de nuevo",
@@ -146,7 +147,14 @@
         "historyTitle": "Historial de aprendizaje",
         "historyDesc": "Consulta tu progreso con el botón 'Actividad'. Mira estadísticas diarias y semanales.",
         "detailTitle": "Detalles de la tarea",
-        "detailDesc": "Toca tareas en listas o en el horario para ver detalles, empezar ahora o eliminarlas."
+        "detailDesc": "Toca tareas en listas o en el horario para ver detalles, empezar ahora o eliminarlas.",
+        "catIntro": "Introducción",
+        "catBasic": "Uso básico",
+        "catEfficiency": "Aprendizaje eficiente",
+        "catReview": "Revisión y compartir",
+        "catOthers": "Otras funciones",
+        "feedbackTitle": "Solicitud de feedback",
+        "feedbackDesc": "PomArc evoluciona con vuestras opiniones. Podéis enviarnos informes de errores o sugerencias a través de 'Feedback' en la parte superior derecha de la pantalla de inicio."
     },
     "category": {
         "treeTitle": "Categorías",

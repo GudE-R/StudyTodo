@@ -72,7 +72,8 @@
         "deleteTask": "Supprimer cette tâche",
         "titleOrCategoryRequired": "Veuillez entrer un nom de tâche ou sélectionner une catégorie",
         "durationRecordOnly": "Entrer en mode enregistrement",
-        "recordConfirm": "Confirmer"
+        "recordConfirm": "Confirmer",
+        "postpone": "Reporter à demain"
     },
     "auth": {
         "welcomeBack": "Bon retour",
@@ -146,7 +147,14 @@
         "historyTitle": "Historique d'apprentissage",
         "historyDesc": "Vérifiez vos progrès avec le bouton 'Activité'. Consultez les statistiques quotidiennes et hebdomadaires.",
         "detailTitle": "Détails de la tâche",
-        "detailDesc": "Appuyez sur les tâches dans les listes ou l'emploi du temps pour voir les détails, démarrer maintenant ou les supprimer."
+        "detailDesc": "Appuyez sur les tâches dans les listes ou l'emploi du temps pour voir les détails, démarrer maintenant ou les supprimer.",
+        "catIntro": "Introduction",
+        "catBasic": "Utilisation de base",
+        "catEfficiency": "Apprentissage efficace",
+        "catReview": "Révision et partage",
+        "catOthers": "Autres fonctions",
+        "feedbackTitle": "Demande de feedback",
+        "feedbackDesc": "PomArc évolue avec vos retours. N'hésitez pas à nous envoyer des rapports de bugs ou des suggestions via 'Feedback' en haut à droite de l'écran d'accueil."
     },
     "category": {
         "treeTitle": "Catégories",

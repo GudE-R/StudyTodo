@@ -72,7 +72,8 @@
         "deleteTask": "Verwijder deze taak",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Welkom terug",
@@ -146,7 +147,14 @@
         "historyTitle": "Studiegeschiedenis",
         "historyDesc": "Bekijk dagelijkse en wekelijkse statistieken via de knop 'Activiteit'.",
         "detailTitle": "Taakdetails",
-        "detailDesc": "Tik op een taak voor details, bewerken, starten of verwijderen."
+        "detailDesc": "Tik op een taak voor details, bewerken, starten of verwijderen.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Categoriestructuur",

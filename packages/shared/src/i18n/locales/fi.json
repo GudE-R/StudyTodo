@@ -72,7 +72,8 @@
         "deleteTask": "Poista tämä tehtävä",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Tervetuloa takaisin",
@@ -146,7 +147,14 @@
         "historyTitle": "Oppimishistoria",
         "historyDesc": "Tarkista edistymisesi 'Toiminta'-painikkeella. Näytä päivittäiset ja viikoittaiset tilastot.",
         "detailTitle": "Tehtävän tiedot",
-        "detailDesc": "Napauta tehtäviä listoissa tai aikataulussa nähdäksesi tiedot, aloittaaksesi heti tai poistaaksesi ne."
+        "detailDesc": "Napauta tehtäviä listoissa tai aikataulussa nähdäksesi tiedot, aloittaaksesi heti tai poistaaksesi ne.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Kategoriat",

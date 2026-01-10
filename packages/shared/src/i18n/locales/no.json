@@ -72,7 +72,8 @@
         "deleteTask": "Slett denne oppgaven",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Velkommen tilbake",
@@ -146,7 +147,14 @@
         "historyTitle": "Læringshistorikk",
         "historyDesc": "Sjekk fremgangen din med 'Aktivitet'-knappen. Se daglig og ukentlig statistikk.",
         "detailTitle": "Oppgavedetaljer",
-        "detailDesc": "Trykk på oppgaver i lister eller tidsplanen for å se detaljer, starte nå eller slette dem."
+        "detailDesc": "Trykk på oppgaver i lister eller tidsplanen for å se detaljer, starte nå eller slette dem.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Kategorier",

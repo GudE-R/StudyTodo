@@ -72,7 +72,8 @@
         "deleteTask": "Удалить эту задачу",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "С возвращением",
@@ -146,7 +147,14 @@
         "historyTitle": "История обучения",
         "historyDesc": "Смотрите дневную и недельную статистику в разделе 'Активность'.",
         "detailTitle": "Детали задачи",
-        "detailDesc": "Нажмите на задачу для просмотра деталей, редактирования, запуска или удаления."
+        "detailDesc": "Нажмите на задачу для просмотра деталей, редактирования, запуска или удаления.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Структура категорий",

@@ -72,7 +72,8 @@
         "deleteTask": "Ta bort denna uppgift",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
-        "recordConfirm": "Confirm"
+        "recordConfirm": "Confirm",
+        "postpone": "Move to Tomorrow"
     },
     "auth": {
         "welcomeBack": "Välkommen tillbaka",
@@ -146,7 +147,14 @@
         "historyTitle": "Inlärningshistorik",
         "historyDesc": "Kontrollera dina framsteg med 'Aktivitet'-knappen. Visa daglig och veckovis statistik.",
         "detailTitle": "Uppgiftsdetaljer",
-        "detailDesc": "Tryck på uppgifter i listor eller schemat för att se detaljer, starta nu eller ta bort dem."
+        "detailDesc": "Tryck på uppgifter i listor eller schemat för att se detaljer, starta nu eller ta bort dem.",
+        "catIntro": "Introduction",
+        "catBasic": "Basics",
+        "catEfficiency": "Efficiency",
+        "catReview": "Review & Share",
+        "catOthers": "Other Features",
+        "feedbackTitle": "Request for Feedback",
+        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Kategorier",
