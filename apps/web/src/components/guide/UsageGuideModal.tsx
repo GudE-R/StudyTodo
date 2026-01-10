@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, Lightbulb, Share2, Cloud, Sparkles } from "lucide-react";
+import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, Lightbulb, Share2, Cloud, Sparkles, Pin, PaintBucket } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface UsageGuideModalProps {
@@ -39,7 +39,8 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
             title: t("catEfficiency"),
             items: [
                 { icon: Repeat, title: t("srsTitle"), desc: t("srsDesc") },
-                { icon: Clock, title: t("routineTitle"), desc: t("routineDesc") }
+                { icon: Clock, title: t("routineTitle"), desc: t("routineDesc") },
+                { icon: Pin, title: t("keepTitle"), desc: t("keepDesc") }
             ]
         },
         {
@@ -54,7 +55,8 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
             items: [
                 { icon: FolderTree, title: t("categoryTitle"), desc: t("categoryDesc") },
                 { icon: Cloud, title: t("syncTitle"), desc: t("syncDesc") },
-                { icon: Palette, title: t("themeTitle"), desc: t("themeDesc") }
+                { icon: Palette, title: t("themeTitle"), desc: t("themeDesc") },
+                { icon: PaintBucket, title: t("catColorTitle"), desc: t("catColorDesc") }
             ]
         }
     ];
