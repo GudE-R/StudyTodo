@@ -416,6 +416,7 @@ export default function Home() {
           onDeleteTodo={handleDeleteTodo}
           onBulkDelete={handleBulkDelete}
           categories={categories}
+          onOpenTodoDetail={handleOpenTodoDetail}
         />
         <TodoDetailModal
           isOpen={isTodoDetailOpen}

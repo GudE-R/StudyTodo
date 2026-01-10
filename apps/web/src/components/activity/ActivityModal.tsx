@@ -20,12 +20,13 @@ interface ActivityModalProps {
     onDeleteTodo: (todoId: string) => void;
     onBulkDelete: (ids: string[]) => Promise<void>;
     categories: Category[];
+    onOpenTodoDetail: (todo: Todo) => void;
 }
 
 type Tab = "analytics" | "history" | "share";
 type Range = "week" | "month" | "year" | "all";
 
-export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, onBulkDelete, categories }: ActivityModalProps) {
+export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, onBulkDelete, categories, onOpenTodoDetail }: ActivityModalProps) {
     const [activeTab, setActiveTab] = useState<Tab>("analytics");
     const [range, setRange] = useState<Range>("week");
     const [analyticsCategory, setAnalyticsCategory] = useState<string>("all");
@@ -593,7 +594,10 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                         />
                                                         <div className={`w-2 h-12 rounded-full flex-shrink-0 ${allCompleted ? "bg-green-500" : "bg-gray-300"}`} />
                                                         <button
-                                                            onClick={() => toggleGroup(item.id)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Parent checks group toggle if wrapped, here used for group toggle
+                                                                toggleGroup(item.id);
+                                                            }}
                                                             className="flex items-center space-x-3 text-left flex-1 overflow-hidden"
                                                         >
                                                             <div className="p-1 px-2 bg-purple-100 text-purple-600 rounded text-[10px] font-bold flex items-center space-x-1 shrink-0">
@@ -640,8 +644,14 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                                         className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
                                                                     />
                                                                     <div className={`w-1 h-8 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
-                                                                    <div>
+                                                                    <div
+                                                                        onClick={() => onOpenTodoDetail(todo)}
+                                                                        className="cursor-pointer hover:underline decoration-blue-500"
+                                                                    >
                                                                         <div className="text-sm font-medium text-gray-700">
+                                                                            <TodoTitle title={todo.title} />
+                                                                        </div>
+                                                                        <div className="text-xs text-gray-400">
                                                                             {format(new Date(todo.dueDate || todo.createdAt), "MM/dd")} {todo.dueTime || ""}
                                                                         </div>
                                                                     </div>
@@ -672,8 +682,11 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                     className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
                                                 />
                                                 <div className={`w-2 h-12 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
-                                                <div>
-                                                    <div className="font-bold text-gray-800">
+                                                <div
+                                                    onClick={() => onOpenTodoDetail(todo)}
+                                                    className="cursor-pointer flex-1 min-w-0" // Add flex-1 min-w-0 for truncating if needed
+                                                >
+                                                    <div className="font-bold text-gray-800 hover:text-blue-600 transition-colors">
                                                         <TodoTitle title={todo.title} />
                                                     </div>
                                                     <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">

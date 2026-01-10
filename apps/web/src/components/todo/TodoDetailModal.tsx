@@ -16,7 +16,7 @@ interface TodoDetailModalProps {
     srsProfiles?: SRSProfile[]; // Added for parity
     onStartNow: (todo: Todo) => void;
     onDelete: (todoId: string) => void;
-    onUpdate: (todo: Todo) => void; // Added for edit function
+    onUpdate: (todo: Todo, options?: { applySrs?: boolean }) => void; // Added options for SRS generation
     onRecord: (todo: Todo, duration: number) => void;
 }
 
@@ -38,6 +38,7 @@ export function TodoDetailModal({
     const [endTime, setEndTime] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [srsInterval, setSrsInterval] = useState("");
+    // Priority removed from UI but kept in state/logic if needed, or default to medium
     const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
 
     // Existing states
@@ -131,7 +132,18 @@ export function TodoDetailModal({
             srsInterval: srsInterval || undefined,
             priority,
             updatedAt: new Date(),
-        });
+        };
+
+        // SRS Logic: Check if newly added
+        let applySrs = false;
+        if (srsInterval && !todo.srsInterval && srsInterval !== "") {
+            // New SRS set
+            if (window.confirm("SRSプロファイルが設定されました。\n自動的に復習スケジュール(タスク)を生成しますか？")) {
+                applySrs = true;
+            }
+        }
+
+        onUpdate(updated, { applySrs });
         onClose();
     };
 
@@ -282,91 +294,82 @@ export function TodoDetailModal({
                             </select>
                         </div>
 
-                        {/* Priority */}
-                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
-                            <Flag size={18} className="text-orange-500" />
-                            <select
-                                value={priority}
-                                onChange={(e) => setPriority(e.target.value as any)}
-                                className="bg-transparent text-sm w-full border-none outline-none"
-                            >
-                                <option value="low">{t("priorityLowLabel")}</option>
-                                <option value="medium">{t("priorityMediumLabel")}</option>
-                                <option value="high">{t("priorityHighLabel")}</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Stats Summary (Learning History) */}
-                    <div className="space-y-2 pt-2">
-                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
-                        <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                            <Clock className="text-blue-500" size={20} />
-                            <div className="flex-1">
-                                <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
-                                <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    </select>
                 </div>
 
-                {/* Actions */}
-                <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
-                    {isRecording ? (
-                        <div className="flex items-center space-x-2 animate-in slide-in-from-bottom duration-300">
-                            <input
-                                type="number"
-                                value={recordDuration}
-                                onChange={(e) => setRecordDuration(e.target.value)}
-                                placeholder={t("durationPlaceholder")}
-                                className="flex-1 bg-gray-100 p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
-                                autoFocus
-                            />
-                            <button
-                                onClick={handleRecordSubmit}
-                                className="bg-green-500 text-white p-3 rounded-xl font-bold"
-                            >
-                                <Save size={20} />
-                            </button>
-                            <button
-                                onClick={() => setIsRecording(false)}
-                                className="bg-gray-200 text-gray-500 p-3 rounded-xl font-bold"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 gap-2">
-                            <button
-                                onClick={() => setIsRecording(true)}
-                                className="flex items-center justify-center space-x-2 bg-green-100 text-green-600 hover:bg-green-200 py-3 rounded-xl font-bold transition-colors"
-                            >
-                                <CheckCircle size={20} />
-                                <span>{t("record")}</span>
-                            </button>
-                            <button
-                                onClick={handleStartNow}
-                                className="flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-colors"
-                            >
-                                <Play size={20} />
-                                <span>{t("start")}</span>
-                            </button>
-                        </div>
-                    )}
+                {/* Priority removed */}
+            </div>
 
-                    {!isRecording && (
-                        <button
-                            onClick={handleDelete}
-                            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
-                        >
-                            {t("deleteTask")}
-                        </button>
-                    )}
+            {/* Stats Summary (Learning History) */}
+            <div className="space-y-2 pt-2">
+                <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
+                <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
+                    <Clock className="text-blue-500" size={20} />
+                    <div className="flex-1">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
+                        <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                            {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
+
+                {/* Actions */ }
+    <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
+        {isRecording ? (
+            <div className="flex items-center space-x-2 animate-in slide-in-from-bottom duration-300">
+                <input
+                    type="number"
+                    value={recordDuration}
+                    onChange={(e) => setRecordDuration(e.target.value)}
+                    placeholder={t("durationPlaceholder")}
+                    className="flex-1 bg-gray-100 p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
+                    autoFocus
+                />
+                <button
+                    onClick={handleRecordSubmit}
+                    className="bg-green-500 text-white p-3 rounded-xl font-bold"
+                >
+                    <Save size={20} />
+                </button>
+                <button
+                    onClick={() => setIsRecording(false)}
+                    className="bg-gray-200 text-gray-500 p-3 rounded-xl font-bold"
+                >
+                    <X size={20} />
+                </button>
+            </div>
+        ) : (
+            <div className="grid grid-cols-2 gap-2">
+                <button
+                    onClick={() => setIsRecording(true)}
+                    className="flex items-center justify-center space-x-2 bg-green-100 text-green-600 hover:bg-green-200 py-3 rounded-xl font-bold transition-colors"
+                >
+                    <CheckCircle size={20} />
+                    <span>{t("record")}</span>
+                </button>
+                <button
+                    onClick={handleStartNow}
+                    className="flex items-center justify-center space-x-1 bg-orange-100 text-orange-600 hover:bg-orange-200 py-3 rounded-xl font-bold transition-colors"
+                >
+                    <Play size={18} fill="currentColor" />
+                    <span>{t("start")}</span>
+                </button>
+            </div>
+        )}
+
+        {!isRecording && (
+            <button
+                onClick={handleDelete}
+                className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
+            >
+                {t("deleteTask")}
+            </button>
+        )}
+    </div>
+            </div >
+        </div >
     );
 }
