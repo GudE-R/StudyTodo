@@ -38,11 +38,36 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
-    // Growth track - last 7 days for simpler display
     const growthTrackDays = eachDayOfInterval({
         start: subDays(today, 6),
         end: today
     });
+
+    // Category Distribution logic for Pie Chart
+    const getPieData = () => {
+        const distribution: { [key: string]: { name: string, value: number, color: string } } = {};
+        sessions.forEach(session => {
+            const todo = todos.find(t => t.id === session.todoId);
+            const catId = todo?.categoryId || "none";
+            const category = categories.find(c => c.id === catId);
+            const name = category?.name || (catId === "none" ? "No Category" : "Unknown");
+            const color = category?.color || "#9ca3af";
+
+            if (!distribution[catId]) distribution[catId] = { name, value: 0, color };
+            distribution[catId].value += session.duration;
+        });
+        return Object.values(distribution).sort((a, b) => b.value - a.value);
+    };
+    const pieData = getPieData();
+    const totalPieValue = pieData.reduce((acc, d) => acc + d.value, 0);
+
+    // Simple SVG Donut helper
+    let cumulativePercent = 0;
+    const getCoordinatesForPercent = (percent: number) => {
+        const x = Math.cos(2 * Math.PI * percent);
+        const y = Math.sin(2 * Math.PI * percent);
+        return [x, y];
+    };
 
     return (
         <div
@@ -106,27 +131,71 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                 </div>
             </div>
 
-            {/* Activity Track */}
-            <div className="mb-6">
-                <div className="text-xs text-gray-500 mb-2">過去7日間の活動</div>
-                <div className="flex justify-between gap-1">
-                    {growthTrackDays.map((day, i) => {
-                        const hasActivity = sessions.some(s => isSameDay(new Date(s.createdAt), day));
-                        const isToday = isSameDay(day, today);
-                        return (
-                            <div key={i} className="flex-1 flex flex-col items-center">
-                                <div
-                                    className={`w-full h-8 rounded-lg ${hasActivity
-                                        ? 'bg-green-500'
-                                        : 'bg-gray-100 border border-gray-200'
-                                        }`}
-                                />
-                                <span className={`text-[10px] mt-1 ${isToday ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
-                                    {format(day, "E").charAt(0)}
-                                </span>
-                            </div>
-                        );
-                    })}
+            {/* Activity & Pie Layout */}
+            <div className="grid grid-cols-2 gap-4 mb-6 flex-1 min-h-0">
+                {/* Activity Track */}
+                <div className="flex flex-col">
+                    <div className="text-[10px] text-gray-500 mb-2">過去7日間の活動</div>
+                    <div className="flex flex-wrap gap-1">
+                        {growthTrackDays.map((day, i) => {
+                            const hasActivity = sessions.some(s => isSameDay(new Date(s.createdAt), day));
+                            const isToday = isSameDay(day, today);
+                            return (
+                                <div key={i} className="w-[calc(25%-4px)] flex flex-col items-center">
+                                    <div
+                                        className={`w-full h-8 rounded-lg ${hasActivity
+                                            ? 'bg-green-500'
+                                            : 'bg-gray-100 border border-gray-200'
+                                            }`}
+                                    />
+                                    <span className={`text-[10px] mt-1 ${isToday ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
+                                        {format(day, "E").charAt(0)}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Pie Chart */}
+                <div className="flex flex-col">
+                    <div className="text-[10px] text-gray-500 mb-2">カテゴリ別配分</div>
+                    <div className="flex-1 flex items-center justify-center relative">
+                        {totalPieValue > 0 ? (
+                            <>
+                                <svg viewBox="-1 -1 2 2" className="w-24 h-24 -rotate-90">
+                                    {pieData.map((slice, i) => {
+                                        const startPercent = cumulativePercent;
+                                        const slicePercent = slice.value / totalPieValue;
+                                        cumulativePercent += slicePercent;
+
+                                        const [startX, startY] = getCoordinatesForPercent(startPercent);
+                                        const [endX, endY] = getCoordinatesForPercent(cumulativePercent);
+                                        const largeArcFlag = slicePercent > 0.5 ? 1 : 0;
+                                        const pathData = [
+                                            `M ${startX} ${startY}`,
+                                            `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+                                            `L 0 0`,
+                                        ].join(' ');
+
+                                        return <path key={i} d={pathData} fill={slice.color} />;
+                                    })}
+                                    <circle r="0.6" fill="white" />
+                                </svg>
+                                {/* Mini Legend (Top 3) */}
+                                <div className="ml-4 flex flex-col space-y-1">
+                                    {pieData.slice(0, 3).map((d, i) => (
+                                        <div key={i} className="flex items-center space-x-1">
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
+                                            <span className="text-[8px] text-gray-600 truncate max-w-[50px]">{d.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-[10px] text-gray-400">データなし</div>
+                        )}
+                    </div>
                 </div>
             </div>
 

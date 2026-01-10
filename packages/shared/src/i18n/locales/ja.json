@@ -229,7 +229,15 @@
         "allActivities": "すべての活動",
         "shareSocial": "SNSでシェア",
         "shareSocialDesc": "シェアして24時間広告非表示をゲット！",
-        "downloadOnly": "画像のみダウンロード"
+        "downloadOnly": "画像のみダウンロード",
+        "focusTrend": "集中時間の推移 (分)",
+        "categoryDistribution": "カテゴリ別配分",
+        "noData": "表示するデータがありません",
+        "timeMin": "時間 (分)",
+        "totalFocusTime": "総集中時間",
+        "completedTasks": "完了タスク",
+        "tasksUnit": "件",
+        "last7Days": "過去7日間の活動"
     },
     "welcome": {
         "subtitle": "ポモドーロと忘却曲線で学習を最大化",

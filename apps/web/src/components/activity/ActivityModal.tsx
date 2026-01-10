@@ -5,7 +5,7 @@ import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, st
 import { ja } from "date-fns/locale";
 import { X, BarChart2, History, Trash2, Filter, Share2, Download, Copy, Twitter, Facebook, Instagram, Hash, ChevronDown, ChevronRight, Layers } from "lucide-react";
 import { Session, Todo, Category } from "@pomarc/shared";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 import { ShareCard } from "./ShareCard";
 import { generateAndCopyImage, downloadImage } from "@/lib/share-image";
@@ -233,6 +233,30 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
     };
 
     const chartData = getChartData();
+
+    // Pie Chart Data Aggregation
+    const getPieData = () => {
+        const distribution: { [key: string]: { name: string, value: number, color: string } } = {};
+
+        filteredSessions.forEach(session => {
+            const todo = todos.find(t => t.id === session.todoId);
+            const catId = todo?.categoryId || "none";
+            const category = flatCategories.find(c => c.id === catId);
+            const name = category?.name || (catId === "none" ? "No Category" : "Unknown");
+            const color = category?.color || "#9ca3af"; // gray-400
+
+            if (!distribution[catId]) {
+                distribution[catId] = { name, value: 0, color };
+            }
+            distribution[catId].value += session.duration / 60;
+        });
+
+        // Filter out zero values and sort
+        return Object.values(distribution)
+            .filter(d => d.value > 0)
+            .sort((a, b) => b.value - a.value);
+    };
+    const pieData = getPieData();
 
     // --- History Logic ---
     const getFilteredTodos = () => {
@@ -474,14 +498,14 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             {/* Summary Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                                    <div className="text-sm text-gray-500 font-medium mb-1">Total Focus Time</div>
+                                    <div className="text-sm text-gray-500 font-medium mb-1">{t("totalFocusTime")}</div>
                                     <div className="text-3xl font-bold text-gray-800">
                                         {totalDurationHours}<span className="text-lg font-normal text-gray-500 ml-1">h</span>
                                         {totalDurationMinutes}<span className="text-lg font-normal text-gray-500 ml-1">m</span>
                                     </div>
                                 </div>
                                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                                    <div className="text-sm text-gray-500 font-medium mb-1">Completed Todos</div>
+                                    <div className="text-sm text-gray-500 font-medium mb-1">{t("completedTasks")}</div>
                                     <div className="text-3xl font-bold text-gray-800">
                                         {/* Count completed todos matching filter */}
                                         {todos.filter(t => t.completed && (analyticsCategory === "all" || t.categoryId === analyticsCategory) && // Use categoryId
@@ -491,27 +515,65 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                         range === "year" ? isWithinInterval(new Date(t.createdAt), { start: startOfYear(new Date()), end: endOfYear(new Date()) }) : true
                                             )
                                         ).length}
-                                        <span className="text-lg font-normal text-gray-500 ml-1">tasks</span>
+                                        <span className="text-lg font-normal text-gray-500 ml-1">{t("tasksUnit")}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Charts */}
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 flex flex-col">
-                                <h3 className="text-lg font-bold text-gray-800 mb-4">Focus Time Trend (min)</h3>
-                                <div className="flex-1 min-h-0">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={chartData}>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                            <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} />
-                                            <YAxis axisLine={false} tickLine={false} fontSize={12} />
-                                            <Tooltip
-                                                cursor={{ fill: '#f3f4f6' }}
-                                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                            />
-                                            <Bar dataKey="time" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Time (min)" />
-                                        </BarChart>
-                                    </ResponsiveContainer>
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {/* Bar Chart: Trend */}
+                                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 flex flex-col">
+                                    <h3 className="text-lg font-bold text-gray-800 mb-4">{t("focusTrend")}</h3>
+                                    <div className="flex-1 min-h-0">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={chartData}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} />
+                                                <YAxis axisLine={false} tickLine={false} fontSize={12} />
+                                                <Tooltip
+                                                    cursor={{ fill: '#f3f4f6' }}
+                                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                />
+                                                <Bar dataKey="time" fill="#3b82f6" radius={[4, 4, 0, 0]} name={t("timeMin")} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                {/* Pie Chart: Distribution */}
+                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 flex flex-col">
+                                    <h3 className="text-lg font-bold text-gray-800 mb-4">{t("categoryDistribution")}</h3>
+                                    <div className="flex-1 min-h-0 relative">
+                                        {pieData.length > 0 ? (
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart>
+                                                    <Pie
+                                                        data={pieData}
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        innerRadius={60}
+                                                        outerRadius={80}
+                                                        paddingAngle={5}
+                                                        dataKey="value"
+                                                    >
+                                                        {pieData.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                                        ))}
+                                                    </Pie>
+                                                    <Tooltip
+                                                        formatter={(value: number) => [`${Math.round(value)} min`, t("timeMin")]}
+                                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                    />
+                                                    <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                                                {t("noData")}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
