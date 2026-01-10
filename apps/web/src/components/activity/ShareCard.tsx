@@ -39,7 +39,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
     const minutes = totalMinutes % 60;
 
     const growthTrackDays = eachDayOfInterval({
-        start: subDays(today, 6),
+        start: subDays(today, 13),
         end: today
     });
 
@@ -133,24 +133,29 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
 
             {/* Activity & Pie Layout */}
             <div className="grid grid-cols-2 gap-4 mb-6 flex-1 min-h-0">
-                {/* Activity Track */}
+                {/* Activity Track (14 days, 2 rows of 7) */}
                 <div className="flex flex-col">
-                    <div className="text-[10px] text-gray-500 mb-2">過去7日間の活動</div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="text-[10px] text-gray-500 mb-2">直近14日間の活動</div>
+                    <div className="grid grid-cols-7 gap-1">
                         {growthTrackDays.map((day, i) => {
                             const hasActivity = sessions.some(s => isSameDay(new Date(s.createdAt), day));
                             const isToday = isSameDay(day, today);
+                            const dayOfWeek = format(day, "E").charAt(0);
+
                             return (
-                                <div key={i} className="w-[calc(25%-4px)] flex flex-col items-center">
+                                <div key={i} className="flex flex-col items-center">
                                     <div
-                                        className={`w-full h-8 rounded-lg ${hasActivity
+                                        className={`w-full h-5 rounded-sm ${hasActivity
                                             ? 'bg-green-500'
                                             : 'bg-gray-100 border border-gray-200'
-                                            }`}
+                                            } ${isToday ? 'ring-1 ring-blue-500 ring-offset-1' : ''}`}
                                     />
-                                    <span className={`text-[10px] mt-1 ${isToday ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
-                                        {format(day, "E").charAt(0)}
-                                    </span>
+                                    {/* Show label only for the bottom row (last 7 days) to save space */}
+                                    {i >= 7 && (
+                                        <span className={`text-[8px] mt-0.5 ${isToday ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
+                                            {dayOfWeek}
+                                        </span>
+                                    )}
                                 </div>
                             );
                         })}
@@ -163,7 +168,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                     <div className="flex-1 flex items-center justify-center relative">
                         {totalPieValue > 0 ? (
                             <>
-                                <svg viewBox="-1 -1 2 2" className="w-24 h-24 -rotate-90">
+                                <svg viewBox="-1 -1 2 2" className="w-20 h-20 -rotate-90">
                                     {pieData.map((slice, i) => {
                                         const startPercent = cumulativePercent;
                                         const slicePercent = slice.value / totalPieValue;
@@ -182,12 +187,12 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                                     })}
                                     <circle r="0.6" fill="white" />
                                 </svg>
-                                {/* Mini Legend (Top 3) */}
-                                <div className="ml-4 flex flex-col space-y-1">
-                                    {pieData.slice(0, 3).map((d, i) => (
+                                {/* Mini Legend (Top 2) to fit space better with 14d heatmap */}
+                                <div className="ml-2 flex flex-col space-y-1">
+                                    {pieData.slice(0, 2).map((d, i) => (
                                         <div key={i} className="flex items-center space-x-1">
-                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
-                                            <span className="text-[8px] text-gray-600 truncate max-w-[50px]">{d.name}</span>
+                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
+                                            <span className="text-[7px] text-gray-600 truncate max-w-[40px]">{d.name}</span>
                                         </div>
                                     ))}
                                 </div>

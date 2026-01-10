@@ -88,9 +88,10 @@
 
 これまでの主要な変更履歴です。
 
-### [Category Colors] - 2026-01-10
-- Default category color changed to transparent
-- Added 'None' option in Category Editor color palette
+### [Activity Analytics] - 2026-01-10
+  - Implemented Pie Chart for category distribution in Analytics tab
+  - Added Donut Chart in Share Card preview for visual breakdown
+  - Expanded activity track in Share Card to cover the last 14 days
 #### 追加/変更 (Shared & Web)
 - **カテゴリ色設定機能**:
     - **UI**: カテゴリ編集画面 (`CategoryEditor`) で9色のパレットから色を選択可能に。
