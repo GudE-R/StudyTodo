@@ -121,7 +121,7 @@ export function TodoDetailModal({
         if (!todo) return;
         const { title: parsedTitle, notes } = parseContent();
 
-        onUpdate({
+        const updated: Todo = {
             ...todo,
             title: parsedTitle,
             memo: notes,
@@ -136,9 +136,9 @@ export function TodoDetailModal({
 
         // SRS Logic: Check if newly added
         let applySrs = false;
-        if (srsInterval && !todo.srsInterval && srsInterval !== "") {
-            // New SRS set
-            if (window.confirm("SRSプロファイルが設定されました。\n自動的に復習スケジュール(タスク)を生成しますか？")) {
+        if (srsInterval && srsInterval !== todo.srsInterval && srsInterval !== "") {
+            // SRS changed or set
+            if (window.confirm("SRSプロファイルが設定・変更されました。\n復習スケジュール(タスク)を生成しますか？")) {
                 applySrs = true;
             }
         }
@@ -293,83 +293,79 @@ export function TodoDetailModal({
                                 ))}
                             </select>
                         </div>
+                        {/* Priority removed */}
+                    </div>
 
-                    </select>
-                </div>
-
-                {/* Priority removed */}
-            </div>
-
-            {/* Stats Summary (Learning History) */}
-            <div className="space-y-2 pt-2">
-                <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
-                <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                    <Clock className="text-blue-500" size={20} />
-                    <div className="flex-1">
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
-                        <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                            {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
+                    {/* Stats Summary (Learning History) */}
+                    <div className="space-y-2 pt-2">
+                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
+                        <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
+                            <Clock className="text-blue-500" size={20} />
+                            <div className="flex-1">
+                                <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
+                                <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                </div>
+
+                {/* Actions */}
+                <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
+                    {isRecording ? (
+                        <div className="flex items-center space-x-2 animate-in slide-in-from-bottom duration-300">
+                            <input
+                                type="number"
+                                value={recordDuration}
+                                onChange={(e) => setRecordDuration(e.target.value)}
+                                placeholder={t("durationPlaceholder")}
+                                className="flex-1 bg-gray-100 p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
+                                autoFocus
+                            />
+                            <button
+                                onClick={handleRecordSubmit}
+                                className="bg-green-500 text-white p-3 rounded-xl font-bold"
+                            >
+                                <Save size={20} />
+                            </button>
+                            <button
+                                onClick={() => setIsRecording(false)}
+                                className="bg-gray-200 text-gray-500 p-3 rounded-xl font-bold"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={() => setIsRecording(true)}
+                                className="flex items-center justify-center space-x-2 bg-green-100 text-green-600 hover:bg-green-200 py-3 rounded-xl font-bold transition-colors"
+                            >
+                                <CheckCircle size={20} />
+                                <span>{t("record")}</span>
+                            </button>
+                            <button
+                                onClick={handleStartNow}
+                                className="flex items-center justify-center space-x-1 bg-orange-100 text-orange-600 hover:bg-orange-200 py-3 rounded-xl font-bold transition-colors"
+                            >
+                                <Play size={18} fill="currentColor" />
+                                <span>{t("start")}</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {!isRecording && (
+                        <button
+                            onClick={handleDelete}
+                            className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
+                        >
+                            {t("deleteTask")}
+                        </button>
+                    )}
                 </div>
             </div>
-
         </div>
-
-                {/* Actions */ }
-    <div className="p-4 border-t border-gray-100 dark:border-gray-800 space-y-2">
-        {isRecording ? (
-            <div className="flex items-center space-x-2 animate-in slide-in-from-bottom duration-300">
-                <input
-                    type="number"
-                    value={recordDuration}
-                    onChange={(e) => setRecordDuration(e.target.value)}
-                    placeholder={t("durationPlaceholder")}
-                    className="flex-1 bg-gray-100 p-3 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
-                    autoFocus
-                />
-                <button
-                    onClick={handleRecordSubmit}
-                    className="bg-green-500 text-white p-3 rounded-xl font-bold"
-                >
-                    <Save size={20} />
-                </button>
-                <button
-                    onClick={() => setIsRecording(false)}
-                    className="bg-gray-200 text-gray-500 p-3 rounded-xl font-bold"
-                >
-                    <X size={20} />
-                </button>
-            </div>
-        ) : (
-            <div className="grid grid-cols-2 gap-2">
-                <button
-                    onClick={() => setIsRecording(true)}
-                    className="flex items-center justify-center space-x-2 bg-green-100 text-green-600 hover:bg-green-200 py-3 rounded-xl font-bold transition-colors"
-                >
-                    <CheckCircle size={20} />
-                    <span>{t("record")}</span>
-                </button>
-                <button
-                    onClick={handleStartNow}
-                    className="flex items-center justify-center space-x-1 bg-orange-100 text-orange-600 hover:bg-orange-200 py-3 rounded-xl font-bold transition-colors"
-                >
-                    <Play size={18} fill="currentColor" />
-                    <span>{t("start")}</span>
-                </button>
-            </div>
-        )}
-
-        {!isRecording && (
-            <button
-                onClick={handleDelete}
-                className="w-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 py-2 rounded-xl text-sm font-medium transition-colors"
-            >
-                {t("deleteTask")}
-            </button>
-        )}
-    </div>
-            </div >
-        </div >
     );
 }

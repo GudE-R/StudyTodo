@@ -127,9 +127,18 @@ export default function Home() {
     await dataService.updateTodo(todo.id, { completed: !todo.completed, updatedAt: new Date() });
   };
 
-  const handleUpdateTodo = async (updatedTodo: Todo) => {
+  const handleUpdateTodo = async (updatedTodo: Todo, options?: { applySrs?: boolean }) => {
     const { id, ...updates } = updatedTodo;
     await dataService.updateTodo(id, { ...updates, updatedAt: new Date() });
+
+    // SRS Generation Check
+    if (options?.applySrs && updatedTodo.srsInterval) {
+      const profile = srsProfiles.find(p => p.name === updatedTodo.srsInterval);
+      if (profile) {
+        await dataService.applySrsToExistingTodo(updatedTodo, profile.intervals);
+      }
+    }
+
     setIsTodoDetailOpen(false);
   };
 
