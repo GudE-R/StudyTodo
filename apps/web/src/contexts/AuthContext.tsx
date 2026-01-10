@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { User, Session, Provider } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
 interface AuthContextType {
@@ -10,6 +10,7 @@ interface AuthContextType {
     loading: boolean;
     signIn: (email: string, password: string) => Promise<{ error: any }>;
     signUp: (email: string, password: string) => Promise<{ error: any }>;
+    signInWithProvider: (provider: Provider) => Promise<{ error: any }>;
     signOut: () => Promise<{ error: any }>;
 }
 
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     signIn: async () => ({ error: null }),
     signUp: async () => ({ error: null }),
+    signInWithProvider: async () => ({ error: null }),
     signOut: async () => ({ error: null }),
 });
 
@@ -65,12 +67,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return await supabase.auth.signUp({ email, password });
     };
 
+    const signInWithProvider = async (provider: Provider) => {
+        return await supabase.auth.signInWithOAuth({
+            provider,
+            options: {
+                redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
+            },
+        });
+    };
+
     const signOut = async () => {
         return await supabase.auth.signOut();
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signInWithProvider, signOut }}>
             {children}
         </AuthContext.Provider>
     );

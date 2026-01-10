@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import { isSameDay } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -20,6 +21,7 @@ import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { WelcomeScreen } from "@/components/onboarding/WelcomeScreen";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
@@ -66,6 +68,7 @@ export default function Home() {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [isTodoDetailOpen, setIsTodoDetailOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
@@ -271,6 +274,24 @@ export default function Home() {
         <LoadingSpinner size={40} />
         <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading PomArc...</p>
       </div>
+    );
+  }
+
+  // 初回アクセス判定: 未ログイン & データが空の場合にウェルカム画面を表示
+  const isFirstTimeUser = todos.length === 0 && sessions.length === 0;
+  const locale = useLocale();
+  const router = useRouter();
+
+  if (showWelcome && isFirstTimeUser) {
+    return (
+      <WelcomeScreen
+        onGetStarted={() => {
+          router.push(`/${locale}/auth`);
+        }}
+        onLogin={() => {
+          router.push(`/${locale}/auth`);
+        }}
+      />
     );
   }
 

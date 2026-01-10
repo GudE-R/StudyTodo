@@ -95,7 +95,9 @@
         "weakPassword": "Password must be at least 8 characters with letters and numbers",
         "passwordMismatch": "Passwords do not match",
         "mustAgreeTerms": "Please agree to the Terms and Privacy Policy",
-        "termsAgreement": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>"
+        "termsAgreement": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>",
+        "orContinueWith": "or continue with",
+        "backToApp": "Back"
     },
     "settings": {
         "title": "Settings",
@@ -220,5 +222,19 @@
         "shareSocial": "Share to Social Media",
         "shareSocialDesc": "Share to get Ad-Free for 24 Hours!",
         "downloadOnly": "Download Image Only"
+    },
+    "welcome": {
+        "subtitle": "Maximize learning with Pomodoro and spaced repetition",
+        "getStarted": "Get Started",
+        "alreadyHaveAccount": "Login",
+        "footerTagline": "Focus × Review = Growth",
+        "featureTimer": "Pomodoro Timer",
+        "featureTimerDesc": "Boost productivity with focus and break cycles",
+        "featureSrs": "Spaced Repetition",
+        "featureSrsDesc": "Optimal review timing based on forgetting curves",
+        "featureAnalytics": "Learning Analytics",
+        "featureAnalyticsDesc": "Visualize growth with graphs and heatmaps",
+        "featureSync": "Cloud Sync",
+        "featureSyncDesc": "Real-time sync across all your devices"
     }
 }
