@@ -40,6 +40,8 @@ import { useSync } from "@/hooks/useSync";
 
 export default function Home() {
   const t = useTranslations("common");
+  const locale = useLocale();
+  const router = useRouter();
   const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"home" | "timer">("home");
@@ -279,8 +281,6 @@ export default function Home() {
 
   // 初回アクセス判定: 未ログイン & データが空の場合にウェルカム画面を表示
   const isFirstTimeUser = todos.length === 0 && sessions.length === 0;
-  const locale = useLocale();
-  const router = useRouter();
 
   if (showWelcome && isFirstTimeUser) {
     return (
@@ -358,6 +358,7 @@ export default function Home() {
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
               todos={todos}
+              categories={categoriesFlat}
               onTodoClick={handleOpenTodoDetail}
             />
           </div>
@@ -372,6 +373,7 @@ export default function Home() {
                 onDateLongPress={handleDateLongPress}
                 sessions={sessions}
                 todos={todos}
+                categories={categoriesFlat}
               />
             </div>
           </div>

@@ -25,11 +25,12 @@ interface TodoListProps {
 export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete, onReorder, onStart }: TodoListProps) {
     const t = useTranslations("common");
     // カテゴリ名を取得するヘルパー関数
-    const getCategoryName = (categoryId?: string) => {
+    // カテゴリを取得するヘルパー関数
+    const getCategory = (categoryId?: string) => {
         if (!categoryId) return null;
-        const findCat = (cats: Category[]): string | undefined => {
+        const findCat = (cats: Category[]): Category | undefined => {
             for (const cat of cats) {
-                if (cat.id === categoryId) return cat.name;
+                if (cat.id === categoryId) return cat;
                 if (cat.children) {
                     const found = findCat(cat.children);
                     if (found) return found;
@@ -69,7 +70,7 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                     className="space-y-2"
                                 >
                                     {todos.map((todo, index) => {
-                                        const categoryName = getCategoryName(todo.categoryId);
+                                        const category = getCategory(todo.categoryId);
                                         return (
                                             <Draggable key={todo.id} draggableId={todo.id} index={index}>
                                                 {(provided, snapshot) => (
@@ -127,9 +128,15 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                                         {todo.dueTime}
                                                                     </span>
                                                                 )}
-                                                                {categoryName && (
-                                                                    <span className="text-[10px] text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">
-                                                                        {categoryName}
+                                                                {category && (
+                                                                    <span className="flex items-center space-x-1 text-[10px] text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">
+                                                                        {category.color && (
+                                                                            <span
+                                                                                className="w-1.5 h-1.5 rounded-full"
+                                                                                style={{ backgroundColor: category.color }}
+                                                                            />
+                                                                        )}
+                                                                        <span>{category.name}</span>
                                                                     </span>
                                                                 )}
                                                             </div>

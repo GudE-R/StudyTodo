@@ -6,7 +6,7 @@ import { useLocale, useTranslations, useFormatter } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Session, Todo } from "@pomarc/shared";
+import { Session, Todo, Category } from "@pomarc/shared";
 
 interface CalendarPaneProps {
     selectedDate?: Date;
@@ -15,6 +15,7 @@ interface CalendarPaneProps {
     onDateLongPress?: (date: Date) => void;
     sessions?: Session[];
     todos?: Todo[];
+    categories?: Category[];
     isExpanded?: boolean;
     readOnly?: boolean;
     hideHeader?: boolean;
@@ -28,6 +29,7 @@ export function CalendarPane({
     onDateLongPress,
     sessions = [],
     todos = [],
+    categories = [],
     isExpanded = false,
     readOnly = false,
     hideHeader = false,
@@ -107,12 +109,13 @@ export function CalendarPane({
     };
 
     const getHeatmapColor = (level: number) => {
+        // 枠のみ（ボーダー）に変更し、背景は塗らない
         switch (level) {
-            case 1: return "bg-green-200 dark:bg-green-900/60 border border-green-300 dark:border-green-800";
-            case 2: return "bg-green-300 dark:bg-green-800/70 border border-green-400 dark:border-green-700";
-            case 3: return "bg-green-400 dark:bg-green-700/80 border border-green-500 dark:border-green-600";
-            case 4: return "bg-green-500 dark:bg-green-600 border border-green-600 dark:border-green-500";
-            default: return "bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800";
+            case 1: return "border border-green-300 dark:border-green-800";
+            case 2: return "border-2 border-green-400 dark:border-green-700";
+            case 3: return "border-[3px] border-green-500 dark:border-green-600";
+            case 4: return "border-[4px] border-green-600 dark:border-green-500";
+            default: return "border border-gray-100 dark:border-gray-800";
         }
     };
 
@@ -214,8 +217,8 @@ export function CalendarPane({
                   `}
                                 >
                                     <span className={`
-                                        ${activityLevel > 2 ? "text-white drop-shadow-md font-medium" : "text-gray-700 dark:text-gray-300"}
-                                        ${!isCurrentMonth ? "text-gray-400 dark:text-gray-600" : ""}
+                                        font-medium
+                                        ${!isCurrentMonth ? "text-gray-400 dark:text-gray-600" : "text-gray-700 dark:text-gray-300"}
                                     `}>
                                         {format(date, "d")}
                                     </span>
@@ -224,12 +227,19 @@ export function CalendarPane({
                                     {dailyTodos.length > 0 && (
                                         <div className="flex justify-center space-x-0.5 mt-0.5 px-0.5 overflow-hidden w-full max-w-[24px]">
                                             {/* Show up to 3 dots, then a special mark */}
-                                            {dailyTodos.slice(0, 3).map((t, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className={`w-1 h-1 rounded-full ${t.completed ? "bg-green-500" : "bg-blue-400 dark:bg-blue-500"}`}
-                                                />
-                                            ))}
+                                            {dailyTodos.slice(0, 3).map((t, idx) => {
+                                                const category = categories?.find(c => c.id === t.categoryId);
+                                                // デフォルト色は完了状態で切り替えるが、カテゴリ色がある場合は優先
+                                                const dotColor = category?.color || (t.completed ? "#22c55e" : "#3b82f6");
+
+                                                return (
+                                                    <div
+                                                        key={idx}
+                                                        className="w-1.5 h-1.5 rounded-full"
+                                                        style={{ backgroundColor: dotColor }}
+                                                    />
+                                                );
+                                            })}
                                             {dailyTodos.length > 3 && (
                                                 <div className="text-[6px] leading-[4px] text-gray-400 font-bold">+</div>
                                             )}

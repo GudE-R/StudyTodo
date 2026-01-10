@@ -5,7 +5,7 @@ import { format, addDays, subDays, isSameDay } from "date-fns";
 import { useLocale, useTranslations } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
 
-import { Todo, getTodoScheduleRange } from "@pomarc/shared";
+import { Todo, Category, getTodoScheduleRange } from "@pomarc/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface DayScheduleProps {
@@ -15,6 +15,7 @@ interface DayScheduleProps {
     selectedDate: Date;
     onDateChange: (date: Date) => void;
     todos: Todo[];
+    categories?: Category[];
     onTodoClick?: (todo: Todo) => void; // Todo詳細への遷移用
 }
 
@@ -33,6 +34,7 @@ export function DaySchedule({
     selectedDate,
     onDateChange,
     todos,
+    categories = [],
     onTodoClick
 }: DayScheduleProps) {
     const locale = useLocale();
@@ -281,17 +283,23 @@ export function DaySchedule({
                                         const top = startMinutes * 0.8;
                                         const height = Math.max(duration * 0.8, 24); // Min height 30 mins visual
 
+                                        const category = categories?.find(c => c.id === todo.categoryId);
+                                        const baseColor = category?.color || "#3b82f6";
+
                                         return (
                                             <div
                                                 key={todo.id}
                                                 onClick={() => onTodoClick?.(todo)}
-                                                className="absolute left-14 right-2 rounded-md bg-blue-100/80 dark:bg-blue-900/40 border-l-4 border-blue-500 p-1 text-xs overflow-hidden z-10 cursor-pointer hover:bg-blue-200/80 dark:hover:bg-blue-800/50 transition-colors"
+                                                className="absolute left-14 right-2 rounded-md border-l-4 p-1 text-xs overflow-hidden z-10 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-sm"
                                                 style={{
                                                     top: `${top}px`,
                                                     height: `${height}px`,
+                                                    borderColor: baseColor,
+                                                    backgroundColor: `${baseColor}20`, // 12% opacity
+                                                    color: baseColor, // テキストも同色に
                                                 }}
                                             >
-                                                <div className="font-bold text-blue-800 dark:text-blue-200 truncate">
+                                                <div className="font-bold truncate" style={{ color: baseColor }}>
                                                     <TodoTitle title={todo.title} />
                                                 </div>
                                             </div>

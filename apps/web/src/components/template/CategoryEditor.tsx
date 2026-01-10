@@ -1,12 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File, Palette } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Category } from "@pomarc/shared";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { generateId, buildCategoryTree } from "@/lib/utils";
+
+// カラーパレット定義
+const CATEGORY_COLORS = [
+    "#ef4444", // 赤
+    "#f97316", // オレンジ
+    "#eab308", // 黄
+    "#22c55e", // 緑
+    "#14b8a6", // ティール
+    "#3b82f6", // 青
+    "#8b5cf6", // 紫
+    "#ec4899", // ピンク
+    "#6b7280", // グレー
+];
+
+const DEFAULT_CATEGORY_COLOR = "#3b82f6";
 
 /**
  * カテゴリ編集コンポーネント
@@ -17,13 +32,37 @@ export function CategoryEditor() {
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
     const [addingState, setAddingState] = useState<{ parentId: string | undefined, level: "large" | "medium" | "small" } | null>(null);
     const [inputName, setInputName] = useState("");
-
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+    const [colorPickerId, setColorPickerId] = useState<string | null>(null);
+    const colorPickerRef = useRef<HTMLDivElement>(null);
 
     const t = useTranslations("category");
 
     const categoriesFlat = useLiveQuery(() => db.categories.orderBy("order").toArray()) || [];
     const categories = buildCategoryTree(categoriesFlat);
+
+    // カラーピッカー外クリック検出
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+                setColorPickerId(null);
+            }
+        };
+        if (colorPickerId) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [colorPickerId]);
+
+    // 色変更ハンドラー
+    const handleColorChange = async (categoryId: string, color: string) => {
+        try {
+            await db.categories.update(categoryId, { color, updatedAt: new Date() });
+            setColorPickerId(null);
+        } catch (error) {
+            console.error("Failed to update category color", error);
+        }
+    };
 
     const toggleExpand = (id: string) => {
         const newExpanded = new Set(expandedIds);
@@ -152,12 +191,42 @@ export function CategoryEditor() {
                                 )}
 
                                 {/* アイコン */}
-                                <span className="mr-2 text-blue-500">
+                                <span className="mr-1 text-gray-400 dark:text-gray-500">
                                     {isSmall ? <File size={16} /> : isExpanded ? <FolderOpen size={16} /> : <Folder size={16} />}
                                 </span>
 
+                                {/* カラーインジケーター & ピッカー */}
+                                <div className="relative mx-2">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setColorPickerId(node.id);
+                                        }}
+                                        className="w-3 h-3 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500"
+                                        style={{ backgroundColor: node.color || DEFAULT_CATEGORY_COLOR }}
+                                        title={t("changeColor")}
+                                    />
+
+                                    {colorPickerId === node.id && (
+                                        <div
+                                            ref={colorPickerRef}
+                                            className="absolute top-6 left-0 z-50 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-2 w-max animate-in fade-in zoom-in-95 duration-200"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            {CATEGORY_COLORS.map((color) => (
+                                                <button
+                                                    key={color}
+                                                    onClick={() => handleColorChange(node.id, color)}
+                                                    className={`w-6 h-6 rounded-full border hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 ${node.color === color ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-transparent"}`}
+                                                    style={{ backgroundColor: color }}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
                                 {/* カテゴリ名 */}
-                                <span className="flex-1 text-sm text-gray-700 dark:text-gray-200 font-medium py-1">
+                                <span className="flex-1 text-sm text-gray-700 dark:text-gray-200 font-medium py-1 truncate">
                                     {node.name}
                                 </span>
 
