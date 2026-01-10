@@ -88,6 +88,8 @@
 
 これまでの主要な変更履歴です。
 
+### [Activity Analytics Fix] - 2026-01-11
+  - Fixed type error in ActivityModal.tsx (Tooltip formatter value type)
 ### [Usage Guide Update] - 2026-01-10
   - Removed "PomArc Concept" from the introduction
   - Added "Feedback Request" to encourage user engagement

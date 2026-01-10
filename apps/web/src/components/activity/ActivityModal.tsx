@@ -562,7 +562,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                         ))}
                                                     </Pie>
                                                     <Tooltip
-                                                        formatter={(value: number) => [`${Math.round(value)} min`, t("timeMin")]}
+                                                        formatter={(value: any) => [`${Math.round(Number(value))} min`, t("timeMin")]}
                                                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                                     />
                                                     <Legend verticalAlign="bottom" height={36} iconType="circle" />
