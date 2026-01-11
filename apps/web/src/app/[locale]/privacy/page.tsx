@@ -46,7 +46,7 @@ export default function PrivacyPage() {
                                 2. 個人情報の利用目的
                             </h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                当社が個人情報を収集・利用する目的は，以下のとおりです。
+                                当チームが個人情報を収集・利用する目的は，以下のとおりです。
                             </p>
                             <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
                                 <li>本サービスの提供・運営のため</li>
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                         <section className="mb-12">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">3. 個人情報の第三者提供</h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                当社は，次に掲げる場合を除いて，あらかじめユーザーの同意を得ることなく，第三者に個人情報を提供することはありません。
+                                当チームは，次に掲げる場合を除いて，あらかじめユーザーの同意を得ることなく，第三者に個人情報を提供することはありません。
                             </p>
                             <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
                                 <li>人の生命，身体または財産の保護のために必要がある場合であって，本人の同意を得ることが困難であるとき</li>
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
                         </section>
 
                         <section className="mb-12 border-t border-gray-100 dark:border-gray-800 pt-8 text-center text-sm text-gray-500">
-                            <p>このプライバシーポリシーはサンプルです。実際の運営にあたっては，適切なリーガルチェックを受けることをお勧めします。</p>
+                            <p>PomArcは個人開発／有志チームによるプロジェクトです。法人ではありません。</p>
                         </section>
                     </div>
                 </div>

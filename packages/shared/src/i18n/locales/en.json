@@ -25,6 +25,7 @@
             "items": " items"
         },
         "dateFormat": "MMM d (EEE)",
+        "back": "Back",
         "cancel": "Cancel",
         "delete": "Delete",
         "create": "Create",

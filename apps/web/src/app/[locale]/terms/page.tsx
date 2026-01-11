@@ -26,7 +26,7 @@ export default function TermsPage() {
                             <Scale size={32} />
                         </div>
                         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4">利用規約</h1>
-                        <p className="text-blue-100">最終更新日: 2026年1月11日</p>
+                        <p className="text-blue-100">効力発生日: 2026年1月11日</p>
                     </div>
 
                     <div className="p-8 sm:p-12 prose prose-blue dark:prose-invert max-w-none">
@@ -36,14 +36,14 @@ export default function TermsPage() {
                                 第1条（はじめに）
                             </h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                この利用規約（以下，「本規約」といいます。）は，PomArc（以下，「本サービス」といいます。）の利用条件を定めるものです。ユーザーの皆さまには，本規約に従って，本サービスをご利用いただきます。
+                                この利用規約（以下，「本規約」といいます。）は，PomArc運営チーム（以下，「当チーム」といいます。）の利用条件を定めるものです。ユーザーの皆さまには，本規約に従って，本サービスをご利用いただきます。
                             </p>
                         </section>
 
                         <section className="mb-12">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">第2条（利用登録）</h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                本サービスにおいては，登録希望者が本規約に同意の上，当社の定める方法によって利用登録を申請し，当社がこれを承認することによって，利用登録が完了するものとします。
+                                本サービスにおいては，登録希望者が本規約に同意の上，当チームの定める方法によって利用登録を申請し，当チームがこれを承認することによって，利用登録が完了するものとします。
                             </p>
                         </section>
 
@@ -58,31 +58,31 @@ export default function TermsPage() {
                                 <li>本サービスの内容等，本サービスに含まれる著作権，商標権ほか知的財産権を侵害する行為</li>
                                 <li>本サービスのサーバーまたはネットワークの機能を破壊したり，妨害したりする行為</li>
                                 <li>本サービスによって得られた情報を商業的に利用する行為</li>
-                                <li>当社のサービスの運営を妨害するおそれのある行為</li>
+                                <li>当チームのサービスの運営を妨害するおそれのある行為</li>
                             </ul>
                         </section>
 
                         <section className="mb-12">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">第4条（本サービスの提供の停止等）</h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                当社は，以下のいずれかの事由があると判断した場合，ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
+                                当チームは，以下のいずれかの事由があると判断した場合，ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
                             </p>
                             <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
                                 <li>本サービスにかかるコンピュータシステムの保守点検または更新を行う場合</li>
                                 <li>地震，落雷，火災，停電または天災などの不可抗力により，本サービスの提供が困難となった場合</li>
-                                <li>その他，当社が本サービスの提供が困難と判断した場合</li>
+                                <li>その他，当チームが本サービスの提供が困難と判断した場合</li>
                             </ul>
                         </section>
 
                         <section className="mb-12">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">第5条（保証の否認および免責事項）</h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                当社は，本サービスに事実上または法律上の瑕疵がないことを明示的にも黙示的にも保証しておりません。当社は，本サービスに起因してユーザーに生じたあらゆる損害について一切の責任を負いません。
+                                当チームは，本サービスに事実上または法律上の瑕疵がないことを明示的にも黙示的にも保証しておりません。当チームは，本サービスに起因してユーザーに生じたあらゆる損害について一切の責任を負いません。
                             </p>
                         </section>
 
                         <section className="mb-12 border-t border-gray-100 dark:border-gray-800 pt-8 text-center text-sm text-gray-500">
-                            <p>この利用規約はサンプルです。実際の運営にあたっては，適切なリーガルチェックを受けることをお勧めします。</p>
+                            <p>PomArcは個人開発／有志チームによるプロジェクトです。法人ではありません。</p>
                         </section>
                     </div>
                 </div>

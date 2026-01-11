@@ -34,6 +34,7 @@
             "6": "土"
         },
         "dateFormat": "M月d日(EEE)",
+        "back": "戻る",
         "cancel": "キャンセル",
         "delete": "削除",
         "create": "作成",
