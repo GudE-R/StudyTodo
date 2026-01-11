@@ -4,21 +4,21 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Shield, Lock, Eye } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 
 export default function PrivacyPage() {
-    const router = useRouter();
     const t = useTranslations("common");
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
-                <button
-                    onClick={() => router.back()}
-                    className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-8 transition-colors group"
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-8 transition-colors group"
                 >
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     <span>{t("back") || "Back"}</span>
-                </button>
+                </Link>
 
                 <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
                     <div className="bg-gradient-to-r from-green-600 to-emerald-700 p-8 sm:p-12 text-white">
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
                                 2. 個人情報の利用目的
                             </h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                当チームが個人情報を収集・利用する目的は，以下のとおりです。
+                                管理者が個人情報を収集・利用する目的は，以下のとおりです。
                             </p>
                             <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
                                 <li>本サービスの提供・運営のため</li>
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                         <section className="mb-12">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">3. 個人情報の第三者提供</h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                当チームは，次に掲げる場合を除いて，あらかじめユーザーの同意を得ることなく，第三者に個人情報を提供することはありません。
+                                管理者は，次に掲げる場合を除いて，あらかじめユーザーの同意を得ることなく，第三者に個人情報を提供することはありません。
                             </p>
                             <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
                                 <li>人の生命，身体または財産の保護のために必要がある場合であって，本人の同意を得ることが困難であるとき</li>
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
                         </section>
 
                         <section className="mb-12 border-t border-gray-100 dark:border-gray-800 pt-8 text-center text-sm text-gray-500">
-                            <p>PomArcは個人開発／有志チームによるプロジェクトです。法人ではありません。</p>
+                            <p>PomArcは個人開発によるプロジェクトです。法人ではありません。</p>
                         </section>
                     </div>
                 </div>

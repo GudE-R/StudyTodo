@@ -93,6 +93,8 @@
   - Created reusable EmptyState component for empty list/data views
   - Created **Terms of Service** and **Privacy Policy** pages with premium design
   - Updated `sitemap.ts` and `auth/page.tsx` for legal pages localization
+  - Refined legal pages for **personal development** (changed 'Team' to 'Admin')
+  - Fixed 'Back' button in legal pages using localized `Link` to home
 ### [Activity Analytics Fix] - 2026-01-11
   - Fixed type error in ActivityModal.tsx (Tooltip formatter value type)
 ### [Usage Guide Update] - 2026-01-10
