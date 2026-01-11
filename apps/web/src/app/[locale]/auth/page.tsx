@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Timer, Mail, Lock, LogIn, UserPlus, CheckSquare, Square, ArrowLeft } from "lucide-react";
+import { Link } from "@/i18n/routing";
 
 export default function AuthPage() {
     const { user, signIn, signUp, signInWithProvider } = useAuth();
@@ -295,8 +296,8 @@ export default function AuthPage() {
                                     </button>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
                                         {t.rich("termsAgreement", {
-                                            terms: (chunks) => <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{chunks}</a>,
-                                            privacy: (chunks) => <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{chunks}</a>,
+                                            terms: (chunks) => <Link href="/terms" target="_blank" className="text-blue-600 hover:underline">{chunks}</Link>,
+                                            privacy: (chunks) => <Link href="/privacy" target="_blank" className="text-blue-600 hover:underline">{chunks}</Link>,
                                         })}
                                     </p>
                                 </div>

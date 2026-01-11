@@ -9,13 +9,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pomarc.app';
     const lastModified = new Date();
 
-    // 各ロケールのメインページをサイトマップに追加
-    const localePages = routing.locales.map((locale) => ({
-        url: `${baseUrl}/${locale}`,
-        lastModified,
-        changeFrequency: 'weekly' as const,
-        priority: locale === routing.defaultLocale ? 1.0 : 0.9,
-    }));
+    // 各ロケールのメインページ、利用規約、プライバシーポリシーをサイトマップに追加
+    const localePages = routing.locales.flatMap((locale) => [
+        {
+            url: `${baseUrl}/${locale}`,
+            lastModified,
+            changeFrequency: 'weekly' as const,
+            priority: locale === routing.defaultLocale ? 1.0 : 0.9,
+        },
+        {
+            url: `${baseUrl}/${locale}/terms`,
+            lastModified,
+            changeFrequency: 'monthly' as const,
+            priority: 0.3,
+        },
+        {
+            url: `${baseUrl}/${locale}/privacy`,
+            lastModified,
+            changeFrequency: 'monthly' as const,
+            priority: 0.3,
+        }
+    ]);
 
     // ルートページ（リダイレクト先）
     const rootPage = {
