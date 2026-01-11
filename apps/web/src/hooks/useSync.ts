@@ -20,7 +20,6 @@ export function useSync() {
     const sync = async (uId: string) => {
         if (isSyncing) return;
         setIsSyncing(true);
-        console.log("Starting Full Sync...");
 
         // Set userId for DB hooks
         db.setUserId(uId);
@@ -111,7 +110,6 @@ export function useSync() {
             await processTable(localTodos, cloudTodos, 'todos', 'todos');
             await processTable(localSessions, cloudSessions, 'sessions', 'sessions');
 
-            console.log("Full Sync Complete.");
             setLastSyncTime(new Date());
 
         } catch (error) {

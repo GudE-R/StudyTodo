@@ -155,7 +155,6 @@ export function DaySchedule({
                         // 親の状態を更新する前に、これが現在のselectedDateと違うか確認
                         if (!isSameDay(date, selectedDate)) {
                             isUserScrollingRef.current = true;
-                            console.log('[DaySchedule] Scroll trigger: Changing date from', selectedDate.toISOString(), 'to', date.toISOString());
                             onDateChange(date);
 
                             if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);

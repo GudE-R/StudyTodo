@@ -31,7 +31,6 @@ export const offlineQueue: SyncQueueInterface = {
             retryCount: 0
         };
         await queueDb.syncQueue.add(queueItem);
-        console.log('[OfflineQueue] Added item:', queueItem.id, item.table, item.operation);
     },
 
     async getAll() {
@@ -40,12 +39,10 @@ export const offlineQueue: SyncQueueInterface = {
 
     async remove(id) {
         await queueDb.syncQueue.delete(id);
-        console.log('[OfflineQueue] Removed item:', id);
     },
 
     async clear() {
         await queueDb.syncQueue.clear();
-        console.log('[OfflineQueue] Cleared all items');
     },
 
     async incrementRetry(id) {
@@ -61,7 +58,6 @@ export function initNetworkListener(processQueue: () => Promise<void>) {
     if (typeof window === 'undefined') return;
 
     window.addEventListener('online', async () => {
-        console.log('[OfflineQueue] Network restored, processing queue...');
         await processQueue();
     });
 
@@ -81,8 +77,6 @@ export async function processOfflineQueue(
 ): Promise<void> {
     const items = await offlineQueue.getAll();
     if (items.length === 0) return;
-
-    console.log(`[OfflineQueue] Processing ${items.length} queued items...`);
 
     // allowedFieldsMap と supabaseTableMap は @pomarc/shared からインポート
 
