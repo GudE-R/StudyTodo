@@ -300,3 +300,32 @@ Web版リリースに向けた本番環境の構築と検証を行った。
 - ブラウザで動作確認を実施し、タスク削除が正常に動作することを確認。
 - 以前発生していたエラーが発生しなくなったことを確認。
 
+**Supabase SQLスキーマの整理:**
+複数のSQLファイルに分散していた定義を整理した。
+- `supabase_schema.sql`: 新規セットアップ用の完全なスキーマ定義に書き直し
+- `migration_v2.sql`: 既存DB更新用のマイグレーションを作成
+- 古い `migration_add_missing_columns.sql` を削除
+
+**Supabase CLI の導入:**
+Supabase操作をローカルから行えるようにCLIをセットアップした。
+- `~/.local/bin/supabase` にインストール（v2.72.7）
+- `supabase init` でプロジェクト構造を初期化
+- `supabase link` でリモートプロジェクトをリンク
+- `supabase db push` でマイグレーションを適用可能に
+
+これにより、今後はSQLファイルを作成して `supabase db push` するだけでDBスキーマを更新できる。
+
+**データベースのリセットと再構築:**
+テーブル内が煩雑になっていたため、すべて削除して一から再作成した。
+- `uuid_generate_v4()` を `gen_random_uuid()` に変更（Supabase推奨）
+- 5テーブル（categories, srs_profiles, todos, sessions, feedbacks）を再構築
+- RLSポリシーとインデックスを適切に設定
+
+**スキーマ最適化:**
+1. `feedbacks.id` に `DEFAULT gen_random_uuid()` を追加
+2. `updated_at` 自動更新トリガーを全テーブルに設定
+   - レコード更新時に自動でタイムスタンプが更新される
+
+最適化では `memo` と `notes` の統合も検討したが、両方とも使用中のためスキップした。
+現在のスキーマは最適な状態になっている。
+
