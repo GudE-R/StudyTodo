@@ -88,6 +88,15 @@
 
 これまでの主要な変更履歴です。
 
+
+### [Production Verification] - 2026-01-16
+#### 検証
+- **Web版本番ビルド検証**:
+    - `.env.production` の作成と環境変数設定。
+    - `npm run build:web` によるビルド成功確認。
+    - ローカルでの本番サーバー起動 (`next start`) とブラウザ検証。
+    - ログインページ、ホーム画面の正常動作を確認。
+
 ### [Quality Improvement] - 2026-01-11
   - Removed all console.log statements from production code (14 instances)
   - Created reusable EmptyState component for empty list/data views
