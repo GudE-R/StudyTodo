@@ -98,32 +98,11 @@ Auth Google Github
 Web版のリリース前に以下のことを行う
 動作確認、バグ修正、本番環境構築、動作の軽量化、コードの堅牢性の向上
 
-### 本番環境: feedbacks テーブルのセットアップ
-Supabaseの SQL Editor で以下を実行してください：
+### 本番環境: 新規プロジェクト / マイグレーション
 
-```sql
--- feedbacksテーブルの作成
-create table public.feedbacks (
-  id uuid not null primary key,
-  user_id uuid references auth.users not null,
-  type text not null,
-  content text not null,
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
-);
+**新規セットアップ**: [supabase_schema.sql](file:///home/tatsuya/PomArc/docs/supabase_schema.sql) を実行
 
--- RLSを有効化
-alter table public.feedbacks enable row level security;
-
--- ポリシー設定
-create policy "Users can insert their own feedbacks"
-  on public.feedbacks for insert
-  with check (auth.uid() = user_id);
-
-create policy "Users can view their own feedbacks"
-  on public.feedbacks for select
-  using (auth.uid() = user_id);
-```
+**既存DBの更新**: [migration_v2.sql](file:///home/tatsuya/PomArc/docs/migration_v2.sql) を実行
 
 
 

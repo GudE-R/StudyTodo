@@ -1,85 +1,158 @@
+-- ============================================================
+-- PomArc Supabase Schema (Complete)
+-- Version: 2.0 (2026-01-17)
+-- Description: 完全なデータベーススキーマ定義
+-- ============================================================
+
 -- Enable UUID extension
-create extension if not exists "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 1. Categories Table
-create table public.categories (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references auth.users not null,
-  name text not null,
-  color text,
-  "order" integer default 0,
-  parent_id uuid references public.categories(id),
-  level text, -- Added
-  is_default boolean default false, -- Added
-  icon text, -- Added
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null -- Added
+-- ============================================================
+-- 1. Categories Table (カテゴリ管理)
+-- ============================================================
+-- 大・中・小カテゴリの階層構造を持つタスク分類
+CREATE TABLE public.categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  name TEXT NOT NULL,
+  level TEXT NOT NULL CHECK (level IN ('large', 'medium', 'small')),
+  parent_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
+  icon TEXT,                          -- Lucide icon name (e.g., 'Book', 'Code')
+  color TEXT,                         -- HEX color (e.g., '#3b82f6')
+  "order" INTEGER DEFAULT 0,          -- 表示順序
+  is_default BOOLEAN DEFAULT false,   -- デフォルトカテゴリフラグ
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
-alter table public.categories enable row level security;
-create policy "Users can CRUD their own categories" on public.categories
-  for all using (auth.uid() = user_id);
 
--- 2. SRS Profiles Table
-create table public.srs_profiles (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references auth.users not null,
-  name text not null,
-  intervals jsonb not null, -- Array of numbers
-  is_default boolean default false, -- Added
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null -- Added
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can CRUD their own categories" ON public.categories
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE INDEX categories_user_id_idx ON public.categories(user_id);
+CREATE INDEX categories_parent_id_idx ON public.categories(parent_id);
+
+-- ============================================================
+-- 2. SRS Profiles Table (間隔反復プロファイル)
+-- ============================================================
+-- 忘却曲線に基づく復習スケジュールの設定
+CREATE TABLE public.srs_profiles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  name TEXT NOT NULL,
+  intervals JSONB NOT NULL,           -- Array of days [1, 3, 7, 14, 30]
+  is_default BOOLEAN DEFAULT false,   -- デフォルトプロファイルフラグ
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
-alter table public.srs_profiles enable row level security;
-create policy "Users can CRUD their own SRS profiles" on public.srs_profiles
-  for all using (auth.uid() = user_id);
 
--- 3. Todos Table
-create table public.todos (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references auth.users not null,
-  title text not null,
-  description text,
-  completed boolean default false,
-  due_date timestamp with time zone,
-  priority text default 'medium',
-  estimated_duration integer, -- minutes
-  category_id uuid references public.categories(id),
-  srs_profile_id uuid references public.srs_profiles(id),
-  srs_level integer default 0,
-  next_review_date timestamp with time zone,
-  -- Added Columns
-  memo text,
-  range text,
-  srs_interval text,
-  actual_duration integer default 0,
-  tags jsonb,
-  review_history jsonb,
-  srs_group_id uuid,
+ALTER TABLE public.srs_profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can CRUD their own SRS profiles" ON public.srs_profiles
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE INDEX srs_profiles_user_id_idx ON public.srs_profiles(user_id);
+
+-- ============================================================
+-- 3. Todos Table (タスク管理)
+-- ============================================================
+-- メインのタスクテーブル。SRS、ルーティーン機能を含む
+CREATE TABLE public.todos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
   
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+  -- 基本情報
+  title TEXT NOT NULL,
+  completed BOOLEAN DEFAULT false,
+  priority TEXT DEFAULT 'medium' CHECK (priority IN ('high', 'medium', 'low')),
+  
+  -- 日時情報
+  due_date TIMESTAMPTZ,               -- 期限日時
+  due_time TEXT,                      -- 開始時間 (HH:mm format)
+  end_time TEXT,                      -- 終了時間 (HH:mm format)
+  
+  -- 所要時間
+  estimated_duration INTEGER,         -- 見積もり時間 (分)
+  actual_duration INTEGER DEFAULT 0,  -- 実績時間 (分)
+  
+  -- カテゴリ・メモ
+  category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
+  notes TEXT,                         -- メモ/詳細
+  tags JSONB,                         -- タグ配列 ["tag1", "tag2"]
+  
+  -- SRS (間隔反復) 関連
+  srs_profile_id UUID REFERENCES public.srs_profiles(id) ON DELETE SET NULL,
+  srs_level INTEGER DEFAULT 0,        -- 現在のSRSレベル
+  srs_interval TEXT,                  -- SRSプロファイル名のキャッシュ
+  srs_group_id UUID,                  -- SRS/ルーティーングループのルートID
+  next_review_date TIMESTAMPTZ,       -- 次回復習日
+  review_history JSONB,               -- 復習履歴 [{date, correct}]
+  
+  -- レガシーフィールド（Web互換）
+  memo TEXT,                          -- メモ（notes と統合予定）
+  range TEXT,                         -- 範囲指定
+  
+  -- タイムスタンプ
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
-alter table public.todos enable row level security;
-create policy "Users can CRUD their own todos" on public.todos
-  for all using (auth.uid() = user_id);
 
--- 4. Sessions Table (Learning Records)
-create table public.sessions (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references auth.users not null,
-  todo_id uuid references public.todos(id), -- Nullable if todo is deleted? Let's keep referential integrity or set null
-  todo_title text, -- Snapshot of title
-  duration integer not null, -- seconds
-  mode text default 'pomodoro',
-  start_time timestamp with time zone, -- Added
-  end_time timestamp with time zone, -- Added
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+ALTER TABLE public.todos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can CRUD their own todos" ON public.todos
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE INDEX todos_user_id_idx ON public.todos(user_id);
+CREATE INDEX todos_category_id_idx ON public.todos(category_id);
+CREATE INDEX todos_srs_group_id_idx ON public.todos(srs_group_id);
+CREATE INDEX todos_due_date_idx ON public.todos(due_date);
+
+-- ============================================================
+-- 4. Sessions Table (学習セッション記録)
+-- ============================================================
+-- ポモドーロ/カウントダウン/ストップウォッチの記録
+CREATE TABLE public.sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users NOT NULL,
+  todo_id UUID REFERENCES public.todos(id) ON DELETE SET NULL,
+  todo_title TEXT,                    -- タイトルのスナップショット
+  duration INTEGER NOT NULL,          -- 学習時間 (秒)
+  mode TEXT DEFAULT 'pomodoro' CHECK (mode IN ('pomodoro', 'countdown', 'stopwatch')),
+  start_time TIMESTAMPTZ,             -- 開始時刻
+  end_time TIMESTAMPTZ,               -- 終了時刻
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
-alter table public.sessions enable row level security;
-create policy "Users can CRUD their own sessions" on public.sessions
-  for all using (auth.uid() = user_id);
 
--- 5. Indexes for performance
-create index categories_user_id_idx on public.categories(user_id);
-create index todos_user_id_idx on public.todos(user_id);
-create index sessions_user_id_idx on public.sessions(user_id);
+ALTER TABLE public.sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can CRUD their own sessions" ON public.sessions
+  FOR ALL USING (auth.uid() = user_id);
+
+CREATE INDEX sessions_user_id_idx ON public.sessions(user_id);
+CREATE INDEX sessions_todo_id_idx ON public.sessions(todo_id);
+CREATE INDEX sessions_created_at_idx ON public.sessions(created_at);
+
+-- ============================================================
+-- 5. Feedbacks Table (フィードバック収集)
+-- ============================================================
+-- ユーザーからのバグ報告・機能要望
+CREATE TABLE public.feedbacks (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES auth.users NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('bug', 'request', 'other')),
+  content TEXT NOT NULL,
+  device_info TEXT,                   -- デバイス情報
+  version TEXT,                       -- アプリバージョン
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can insert their own feedbacks" ON public.feedbacks
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can view their own feedbacks" ON public.feedbacks
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE INDEX feedbacks_user_id_idx ON public.feedbacks(user_id);
+
+-- ============================================================
+-- Note: このスキーマは新規プロジェクトのセットアップ用です。
+-- 既存のデータベースを更新する場合は migration_v2.sql を使用してください。
+-- ============================================================
