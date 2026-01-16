@@ -5,14 +5,13 @@
 -- ============================================================
 
 -- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
 -- 1. Categories Table (カテゴリ管理)
 -- ============================================================
 -- 大・中・小カテゴリの階層構造を持つタスク分類
 CREATE TABLE public.categories (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users NOT NULL,
   name TEXT NOT NULL,
   level TEXT NOT NULL CHECK (level IN ('large', 'medium', 'small')),
@@ -37,7 +36,7 @@ CREATE INDEX categories_parent_id_idx ON public.categories(parent_id);
 -- ============================================================
 -- 忘却曲線に基づく復習スケジュールの設定
 CREATE TABLE public.srs_profiles (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users NOT NULL,
   name TEXT NOT NULL,
   intervals JSONB NOT NULL,           -- Array of days [1, 3, 7, 14, 30]
@@ -57,7 +56,7 @@ CREATE INDEX srs_profiles_user_id_idx ON public.srs_profiles(user_id);
 -- ============================================================
 -- メインのタスクテーブル。SRS、ルーティーン機能を含む
 CREATE TABLE public.todos (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users NOT NULL,
   
   -- 基本情報
@@ -110,7 +109,7 @@ CREATE INDEX todos_due_date_idx ON public.todos(due_date);
 -- ============================================================
 -- ポモドーロ/カウントダウン/ストップウォッチの記録
 CREATE TABLE public.sessions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users NOT NULL,
   todo_id UUID REFERENCES public.todos(id) ON DELETE SET NULL,
   todo_title TEXT,                    -- タイトルのスナップショット
