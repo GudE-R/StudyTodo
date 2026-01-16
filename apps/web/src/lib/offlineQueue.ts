@@ -75,6 +75,13 @@ export async function processOfflineQueue(
     supabase: any,
     mapper: any
 ): Promise<void> {
+    // 認証状態を確認
+    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    if (authError || !session) {
+        console.warn('[OfflineQueue] No active session, skipping queue processing');
+        return;
+    }
+
     const items = await offlineQueue.getAll();
     if (items.length === 0) return;
 
@@ -95,7 +102,13 @@ export async function processOfflineQueue(
 
             await offlineQueue.remove(item.id);
         } catch (err) {
-            console.error('[OfflineQueue] Failed to process item:', item.id, err);
+            const error = err as { message?: string; code?: string; details?: string; hint?: string };
+            console.error('[OfflineQueue] Failed to process item:', item.id, {
+                message: error?.message || 'Unknown error',
+                code: error?.code,
+                details: error?.details,
+                hint: error?.hint,
+            });
             await offlineQueue.incrementRetry(item.id);
 
             // 3回以上リトライ失敗したらスキップ
