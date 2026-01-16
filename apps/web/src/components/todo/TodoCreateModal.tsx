@@ -207,12 +207,12 @@ export function TodoCreateModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
-            <div className="w-full max-w-md bg-white rounded-t-2xl sm:rounded-2xl p-4 shadow-2xl animate-in slide-in-from-bottom duration-300">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl p-4 shadow-2xl animate-in slide-in-from-bottom duration-300">
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-gray-800">{t("createTitle")}</h2>
-                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 rounded-full">
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t("createTitle")}</h2>
+                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                         <X size={24} />
                     </button>
                 </div>
@@ -220,12 +220,12 @@ export function TodoCreateModal({
                 <form onSubmit={handleSubmit} className="space-y-4">
 
                     {/* Category (Moved to top) */}
-                    <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
+                    <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
                         <Tag size={18} className="text-gray-500" />
                         <select
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 cursor-pointer"
+                            className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 dark:bg-gray-700 cursor-pointer"
                         >
                             <option value="" className="text-gray-500">{t("noCategory")}</option>
                             {categoryOptions.map((opt) => (
@@ -243,7 +243,7 @@ export function TodoCreateModal({
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             rows={3}
-                            className="w-full text-base font-medium border-b-2 border-blue-100 focus:border-blue-500 outline-none py-2 placeholder-gray-300 resize-none bg-transparent"
+                            className="w-full text-base font-medium border-b-2 border-blue-100 dark:border-gray-600 focus:border-blue-500 outline-none py-2 placeholder-gray-300 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 resize-none bg-transparent"
                         />
                     </div>
 
@@ -269,7 +269,7 @@ export function TodoCreateModal({
 
                         {/* Duration (Record Only) */}
                         {isRecordMode ? (
-                            <div className="flex items-center space-x-2 bg-green-50 p-2 rounded-lg border border-green-200">
+                            <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-900/30 p-2 rounded-lg border border-green-200 dark:border-green-700">
                                 <Hourglass size={18} className="text-green-600" />
                                 <input
                                     type="number"
@@ -277,14 +277,14 @@ export function TodoCreateModal({
                                     placeholder={t("durationPlaceholder")}
                                     value={duration}
                                     onChange={(e) => setDuration(e.target.value)}
-                                    className="bg-transparent text-sm w-full outline-none text-gray-700 placeholder-gray-400"
+                                    className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                                     autoFocus
                                 />
                             </div>
                         ) : (
-                            <div className="flex items-center space-x-2 bg-gray-100 p-2 rounded-lg opacity-50">
+                            <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg opacity-50">
                                 <Hourglass size={18} className="text-gray-400" />
-                                <span className="text-sm text-gray-400">{t("durationRecordOnly")}</span>
+                                <span className="text-sm text-gray-400 dark:text-gray-500">{t("durationRecordOnly")}</span>
                             </div>
                         )}
 
@@ -301,12 +301,12 @@ export function TodoCreateModal({
                         {/* SRS & Routine Toggle */}
                         <div className="flex flex-col col-span-2 space-y-2">
                             <div className="flex items-center space-x-2">
-                                <div className="flex-1 flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
+                                <div className="flex-1 flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg">
                                     <Repeat size={18} className="text-gray-500" />
                                     <select
                                         value={srsInterval}
                                         onChange={(e) => setSrsInterval(e.target.value)}
-                                        className="bg-transparent text-sm w-full outline-none text-gray-700 appearance-none"
+                                        className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 appearance-none"
                                     >
                                         <option value="">{t("noSrs")}</option>
                                         {srsProfiles.map((profile) => (
@@ -319,7 +319,7 @@ export function TodoCreateModal({
                                 <button
                                     type="button"
                                     onClick={() => setIsRoutineOpen(!isRoutineOpen)}
-                                    className={`p-2 rounded-lg transition-colors ${isRoutineOpen || routineDays.length > 0 ? "bg-purple-100 text-purple-600" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                                    className={`p-2 rounded-lg transition-colors ${isRoutineOpen || routineDays.length > 0 ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400" : "bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600"}`}
                                     title={t("routineLabel")}
                                 >
                                     <Calendar size={18} />
@@ -328,11 +328,11 @@ export function TodoCreateModal({
 
                             {/* Expandable Weekday Routine */}
                             {isRoutineOpen && (
-                                <div className="bg-gray-50 p-3 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center space-x-2">
                                             <Calendar size={14} className="text-purple-500" />
-                                            <span className="text-xs font-bold text-gray-500">{t("routineLabel")}</span>
+                                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400">{t("routineLabel")}</span>
                                         </div>
                                         {routineDays.length > 0 && (
                                             <button

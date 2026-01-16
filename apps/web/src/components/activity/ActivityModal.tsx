@@ -430,50 +430,50 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity p-4">
-            <div className="w-full max-w-4xl h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="w-full max-w-4xl h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
 
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
                     <div className="flex space-x-4">
                         <button
                             onClick={() => setActiveTab("analytics")}
-                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "analytics" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600"}`}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "analytics" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
                         >
                             <BarChart2 size={18} />
                             <span className="text-sm font-bold">{t("analytics")}</span>
                         </button>
                         <button
                             onClick={() => setActiveTab("history")}
-                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "history" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600"}`}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "history" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
                         >
                             <History size={18} />
                             <span className="text-sm font-bold">{t("history")}</span>
                         </button>
                         <button
                             onClick={() => setActiveTab("share")}
-                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "share" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600"}`}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "share" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
                         >
                             <Share2 size={18} />
                             <span className="text-sm font-bold">{t("share")}</span>
                         </button>
                     </div>
-                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 rounded-full">
+                    <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                         <X size={24} />
                     </button>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6 min-h-0">
+                <div className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-900/50 p-6 min-h-0">
                     {activeTab === "analytics" ? (
                         <div className="space-y-6">
                             {/* Controls: Range Picker & Category Filter */}
                             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                                <div className="flex bg-white rounded-full shadow-sm border border-gray-200 p-1">
+                                <div className="flex bg-white dark:bg-gray-700 rounded-full shadow-sm border border-gray-200 dark:border-gray-600 p-1">
                                     {(["week", "month", "year", "all"] as Range[]).map((r) => (
                                         <button
                                             key={r}
                                             onClick={() => setRange(r)}
-                                            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${range === r ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-50"}`}
+                                            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${range === r ? "bg-blue-600 text-white" : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600"}`}
                                         >
                                             {r}
                                         </button>
@@ -485,7 +485,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                     <select
                                         value={analyticsCategory}
                                         onChange={(e) => setAnalyticsCategory(e.target.value)}
-                                        className="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"
+                                        className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"
                                     >
                                         <option value="all">All Categories</option>
                                         {flatCategories.map(cat => (
@@ -497,16 +497,16 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
                             {/* Summary Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                                    <div className="text-sm text-gray-500 font-medium mb-1">{t("totalFocusTime")}</div>
-                                    <div className="text-3xl font-bold text-gray-800">
+                                <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600">
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">{t("totalFocusTime")}</div>
+                                    <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">
                                         {totalDurationHours}<span className="text-lg font-normal text-gray-500 ml-1">h</span>
                                         {totalDurationMinutes}<span className="text-lg font-normal text-gray-500 ml-1">m</span>
                                     </div>
                                 </div>
-                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                                    <div className="text-sm text-gray-500 font-medium mb-1">{t("completedTasks")}</div>
-                                    <div className="text-3xl font-bold text-gray-800">
+                                <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600">
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">{t("completedTasks")}</div>
+                                    <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">
                                         {/* Count completed todos matching filter */}
                                         {todos.filter(t => t.completed && (analyticsCategory === "all" || t.categoryId === analyticsCategory) && // Use categoryId
                                             (range === "all" ? true :
@@ -523,8 +523,8 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             {/* Charts */}
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Bar Chart: Trend */}
-                                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 flex flex-col">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4">{t("focusTrend")}</h3>
+                                <div className="lg:col-span-2 bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 h-80 flex flex-col">
+                                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{t("focusTrend")}</h3>
                                     <div className="flex-1 min-h-0">
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={chartData}>
@@ -542,8 +542,8 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 </div>
 
                                 {/* Pie Chart: Distribution */}
-                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-80 flex flex-col">
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4">{t("categoryDistribution")}</h3>
+                                <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 h-80 flex flex-col">
+                                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">{t("categoryDistribution")}</h3>
                                     <div className="flex-1 min-h-0 relative">
                                         {pieData.length > 0 ? (
                                             <ResponsiveContainer width="100%" height="100%">
@@ -580,7 +580,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                     ) : activeTab === "history" ? (
                         <div className="space-y-4">
                             {/* Filters */}
-                            <div className="flex items-center space-x-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div className="flex items-center space-x-4 bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600">
                                 <div className="flex items-center space-x-2 text-gray-500">
                                     <Filter size={18} />
                                     <span className="text-sm font-medium">{t("filters")}</span>
@@ -588,7 +588,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 <select
                                     value={filterStatus}
                                     onChange={(e) => setFilterStatus(e.target.value as "all" | "completed" | "incomplete")}
-                                    className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                                    className="bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                                 >
                                     <option value="all">{t("allStatus")}</option>
                                     <option value="completed">{t("completed")}</option>
@@ -597,7 +597,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 <select
                                     value={filterCategory}
                                     onChange={(e) => setFilterCategory(e.target.value)}
-                                    className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                                    className="bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                                 >
                                     <option value="all">{t("allCategories")}</option>
                                     {flatCategories.map(cat => (
@@ -608,7 +608,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
                             {/* Todo List Header with Bulk Actions */}
                             <div className="flex items-center justify-between mb-2">
-                                <h3 className="text-sm font-bold text-gray-700">{t("tasks")}</h3>
+                                <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">{t("tasks")}</h3>
                                 {selectedIds.size > 0 && (
                                     <div className="flex items-center space-x-2">
                                         <button
@@ -638,7 +638,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                         return (
                                             <div key={item.id} className="space-y-1">
                                                 {/* Group Header */}
-                                                <div className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                                                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-between group hover:border-blue-200 dark:hover:border-blue-500 transition-colors">
                                                     <div className="flex items-center space-x-3 flex-1 overflow-hidden">
                                                         <input
                                                             type="checkbox"
@@ -662,12 +662,12 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                             }}
                                                             className="flex items-center space-x-3 text-left flex-1 overflow-hidden"
                                                         >
-                                                            <div className="p-1 px-2 bg-purple-100 text-purple-600 rounded text-[10px] font-bold flex items-center space-x-1 shrink-0">
+                                                            <div className="p-1 px-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded text-[10px] font-bold flex items-center space-x-1 shrink-0">
                                                                 <Layers size={10} />
                                                                 <span>{item.todos.length}</span>
                                                             </div>
                                                             <div className="overflow-hidden">
-                                                                <div className="font-bold text-gray-800 flex items-center truncate">
+                                                                <div className="font-bold text-gray-800 dark:text-gray-100 flex items-center truncate">
                                                                     <TodoTitle title={item.title} />
                                                                     {isExpanded ? <ChevronDown size={16} className="ml-1 shrink-0" /> : <ChevronRight size={16} className="ml-1 shrink-0" />}
                                                                 </div>
@@ -697,7 +697,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                 {isExpanded && (
                                                     <div className="ml-8 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
                                                         {item.todos.map(todo => (
-                                                            <div key={todo.id} className="bg-white/50 p-3 rounded-xl border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                                                            <div key={todo.id} className="bg-white/50 dark:bg-gray-600/50 p-3 rounded-xl border border-gray-100 dark:border-gray-500 flex items-center justify-between group hover:border-blue-200 dark:hover:border-blue-500 transition-colors">
                                                                 <div className="flex items-center space-x-3">
                                                                     <input
                                                                         type="checkbox"
@@ -710,7 +710,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                                         onClick={() => onOpenTodoDetail(todo)}
                                                                         className="cursor-pointer hover:underline decoration-blue-500"
                                                                     >
-                                                                        <div className="text-sm font-medium text-gray-700">
+                                                                        <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                                                                             <TodoTitle title={todo.title} />
                                                                         </div>
                                                                         <div className="text-xs text-gray-400">
@@ -734,7 +734,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
                                     const todo = item as Todo;
                                     return (
-                                        <div key={todo.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                                        <div key={todo.id} className="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-between group hover:border-blue-200 dark:hover:border-blue-500 transition-colors">
                                             <div className="flex items-center space-x-3">
                                                 {/* Checkbox */}
                                                 <input
@@ -748,11 +748,11 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                                     onClick={() => onOpenTodoDetail(todo)}
                                                     className="cursor-pointer flex-1 min-w-0" // Add flex-1 min-w-0 for truncating if needed
                                                 >
-                                                    <div className="font-bold text-gray-800 hover:text-blue-600 transition-colors">
+                                                    <div className="font-bold text-gray-800 dark:text-gray-100 hover:text-blue-600 transition-colors">
                                                         <TodoTitle title={todo.title} />
                                                     </div>
-                                                    <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
-                                                        <span className="bg-gray-100 px-2 py-0.5 rounded">
+                                                    <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                        <span className="bg-gray-100 dark:bg-gray-600 px-2 py-0.5 rounded">
                                                             {todo.categoryId ? (flatCategories.find(c => c.id === todo.categoryId)?.name || "Unknown") : "No Category"}
                                                         </span>
                                                         <span>{format(new Date(todo.createdAt), "yyyy/MM/dd HH:mm")}</span>
@@ -779,7 +779,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                         // --- Share Tab ---
                         <div className="flex flex-col lg:flex-row gap-8 h-full">
                             {/* Left: Preview */}
-                            <div className="flex-1 flex flex-col items-center justify-center bg-gray-100 rounded-xl p-4 overflow-hidden min-h-[400px]">
+                            <div className="flex-1 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-xl p-4 overflow-hidden min-h-[400px]">
                                 <div className="scale-50 sm:scale-75 md:scale-90 transform-origin-center transition-transform">
                                     <ShareCard
                                         ref={shareCardRef}
@@ -798,11 +798,11 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             {/* Right: Controls */}
                             <div className="w-full lg:w-80 flex flex-col space-y-6 flex-shrink-0">
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">{t("selectCategory")}</label>
+                                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{t("selectCategory")}</label>
                                     <select
                                         value={targetShareCategory}
                                         onChange={(e) => setTargetShareCategory(e.target.value)}
-                                        className="w-full bg-white border border-gray-200 text-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3"
+                                        className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 block p-3"
                                     >
                                         <option value="all">{t("allActivities")}</option>
                                         {flatCategories.map(cat => (
@@ -812,8 +812,8 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                 </div>
 
                                 <div className="space-y-3">
-                                    <h3 className="text-sm font-bold text-gray-700">{t("shareSocial")}</h3>
-                                    <p className="text-xs text-gray-500">{t("shareSocialDesc")}</p>
+                                    <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">{t("shareSocial")}</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{t("shareSocialDesc")}</p>
 
                                     <div className="grid grid-cols-2 gap-3">
                                         <button

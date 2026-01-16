@@ -329,3 +329,20 @@ Supabase操作をローカルから行えるようにCLIをセットアップし
 最適化では `memo` と `notes` の統合も検討したが、両方とも使用中のためスキップした。
 現在のスキーマは最適な状態になっている。
 
+**ダークモード未対応コンポーネントの修正:**
+多くのモーダル・UIコンポーネントでダークモード対応が不十分だったため修正した。
+
+修正対象:
+- `TodoCreateModal.tsx`: モーダル背景、テキスト、入力フィールド、ボタン
+- `ActivityModal.tsx`: 全3タブ（分析、履歴、シェア）のカード、フィルター、リスト
+- `DatePicker.tsx`: ボタン、カレンダードロップダウン
+- `TimePicker.tsx`: ボタン、時間選択ドロップダウン
+
+修正パターン:
+- `bg-white` → `bg-white dark:bg-gray-800`
+- `bg-gray-50` → `bg-gray-50 dark:bg-gray-700`
+- `text-gray-800` → `text-gray-800 dark:text-gray-100`
+- `border-gray-100` → `border-gray-100 dark:border-gray-700`
+
+これにより、ダークモード時の視認性が大幅に向上した。
+

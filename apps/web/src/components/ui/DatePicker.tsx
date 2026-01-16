@@ -72,27 +72,27 @@ export function DatePicker({ value, onChange, placeholder = "日付を選択" }:
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
-          w-full flex items-center space-x-2 bg-gray-50 p-2 rounded-lg text-sm outline-none transition-colors
-          ${isOpen ? "ring-2 ring-blue-100 bg-white" : "hover:bg-gray-100"}
+          w-full flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg text-sm outline-none transition-colors
+          ${isOpen ? "ring-2 ring-blue-100 bg-white dark:bg-gray-600" : "hover:bg-gray-100 dark:hover:bg-gray-600"}
         `}
             >
                 <CalendarIcon size={18} className="text-gray-500" />
-                <span className={value ? "text-gray-700" : "text-gray-400"}>
+                <span className={value ? "text-gray-700 dark:text-gray-200" : "text-gray-400 dark:text-gray-500"}>
                     {value ? format(value, "yyyy年 M月d日(E)", { locale: ja }) : placeholder}
                 </span>
             </button>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-2">
-                        <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded-full text-gray-500">
+                        <button onClick={prevMonth} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 dark:text-gray-400">
                             <ChevronLeft size={18} />
                         </button>
-                        <span className="text-sm font-bold text-gray-700">
+                        <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
                             {format(currentMonth, "yyyy年 M月", { locale: ja })}
                         </span>
-                        <button onClick={nextMonth} className="p-1 hover:bg-gray-100 rounded-full text-gray-500">
+                        <button onClick={nextMonth} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full text-gray-500 dark:text-gray-400">
                             <ChevronRight size={18} />
                         </button>
                     </div>
@@ -119,8 +119,8 @@ export function DatePicker({ value, onChange, placeholder = "日付を選択" }:
                                     onClick={() => handleDateClick(date)}
                                     className={`
                     h-8 w-8 rounded-full flex items-center justify-center text-xs transition-colors
-                    ${!isCurrentMonth ? "text-gray-300" : "text-gray-700"}
-                    ${isSelected ? "bg-blue-600 text-white font-bold shadow-md" : isToday ? "bg-orange-100 text-orange-600 font-bold" : "hover:bg-gray-100"}
+                    ${!isCurrentMonth ? "text-gray-300 dark:text-gray-600" : "text-gray-700 dark:text-gray-200"}
+                    ${isSelected ? "bg-blue-600 text-white font-bold shadow-md" : isToday ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 font-bold" : "hover:bg-gray-100 dark:hover:bg-gray-700"}
                   `}
                                 >
                                     {format(date, "d")}
