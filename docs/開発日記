@@ -346,3 +346,13 @@ Supabase操作をローカルから行えるようにCLIをセットアップし
 
 これにより、ダークモード時の視認性が大幅に向上した。
 
+**フィードバック同期機能の修正:**
+フィードバック送信時にSupabaseに保存されない問題を修正した。
+
+1. `dataService.ts`の`addFeedback`関数で`syncToCloud`呼び出しが欠けていた
+2. `feedbacks`テーブルにUPDATEポリシーがなかったため、upsert操作がRLS違反でブロックされていた
+
+修正内容:
+- `addFeedback`関数に`this.syncToCloud("feedbacks", feedback)`を追加
+- `feedbacks`テーブルにUPDATE用のRLSポリシーを追加
+
