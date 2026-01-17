@@ -183,7 +183,7 @@ export const dataService = {
     // --- Feedbacks ---
     async addFeedback(feedback: Feedback) {
         await db.feedbacks.add(feedback);
-        // Hooks in db.ts will handle cloud sync automatically
+        this.syncToCloud("feedbacks", feedback);
     },
 
     // --- Helper ---
