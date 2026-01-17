@@ -113,7 +113,13 @@ export function useSync() {
             setLastSyncTime(new Date());
 
         } catch (error) {
-            console.error("Sync Error:", error);
+            const e = error as { message?: string; code?: string; details?: string; hint?: string };
+            console.error("Sync Error:", {
+                message: e.message || "Unknown error",
+                code: e.code,
+                details: e.details,
+                hint: e.hint
+            });
         } finally {
             setIsSyncing(false);
         }
