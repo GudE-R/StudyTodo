@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: ['@pomarc/shared'],
 };
 
 export default withNextIntl(nextConfig);
