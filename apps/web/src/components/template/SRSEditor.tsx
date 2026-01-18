@@ -144,14 +144,12 @@ export function SRSEditor() {
                                     <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">{t("defaultBadge")}</span>
                                 )}
                             </div>
-                            {!profile.isDefault && (
-                                <button
-                                    onClick={() => handleDeleteClick(profile.id)}
-                                    className={`transition-colors ${deleteConfirmId === profile.id ? "text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-500"}`}
-                                >
-                                    {deleteConfirmId === profile.id ? t("deleteButton") : <Trash2 size={16} />}
-                                </button>
-                            )}
+                            <button
+                                onClick={() => handleDeleteClick(profile.id)}
+                                className={`transition-colors ${deleteConfirmId === profile.id ? "text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded text-xs font-bold" : "text-gray-400 dark:text-gray-500 hover:text-red-500"}`}
+                            >
+                                {deleteConfirmId === profile.id ? t("deleteButton") : <Trash2 size={16} />}
+                            </button>
                         </div>
 
                         <div className="flex flex-wrap gap-1">
