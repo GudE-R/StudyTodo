@@ -29,6 +29,7 @@ import { Todo, Feedback } from "@pomarc/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
 import { useSync } from "@/hooks/useSync";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 /**
@@ -77,6 +78,9 @@ export default function Home() {
 
   // Sync Logic
   const { isSyncing } = useSync();
+
+  // Auth State
+  const { user, loading: authLoading } = useAuth();
 
   // --- Handlers ---
   const handleDeleteTodo = async (todoId: string) => await dataService.deleteTodo(todoId);
@@ -289,7 +293,8 @@ export default function Home() {
   }
 
   // 初回アクセス判定: 未ログイン & データが空の場合にウェルカム画面を表示
-  const isFirstTimeUser = todos.length === 0 && sessions.length === 0;
+  // 認証ロード中は判定をスキップ（ちらつき防止）
+  const isFirstTimeUser = !authLoading && !user && todos.length === 0 && sessions.length === 0;
 
   if (showWelcome && isFirstTimeUser) {
     return (
