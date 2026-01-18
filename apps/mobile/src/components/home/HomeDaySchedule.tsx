@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, SectionList, SectionListData, ViewToken, TouchableOpacity } from 'react-native';
 import { addDays, format, startOfDay, isSameDay } from 'date-fns';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface HomeDayScheduleProps {
     currentDate?: Date;
@@ -14,6 +15,7 @@ const SLOT_HEIGHT = 30;
 const DAY_HEIGHT = SLOT_HEIGHT * 48;
 
 export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: HomeDayScheduleProps) => {
+    const { colors } = useThemeColors();
     const listRef = useRef<SectionList<Date, { title: Date }>>(null);
     const isProgrammaticScroll = useRef(false);
 
@@ -33,37 +35,47 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
         return result;
     }, [initialDate]);
 
-    // Initial load scroll
+    // Track whether a date change is coming from scroll
+    const isScrollDateChange = useRef(false);
+    const lastExternalDate = useRef(currentDate);
+
+    // Initial load scroll and external date changes
     useEffect(() => {
-        // Find index of currentDate in data
-        // For simplicity in this specialized -30/+30 list:
-        // Index 30 is initialDate (today).
-        // Difference in days = index - 30.
+        // Skip if the change came from our own scroll
+        if (isScrollDateChange.current) {
+            isScrollDateChange.current = false;
+            return;
+        }
 
-        // However, if currentDate changes from outside (Calendar/Header), we should scroll there.
-        // We need to avoid loops: Scroll causes onDateChange -> Parent updates prop status -> useEffect scrolls again.
-
-        if (isProgrammaticScroll.current) return;
+        // Only scroll if the date actually changed from outside
+        if (isSameDay(lastExternalDate.current, currentDate)) {
+            return;
+        }
+        lastExternalDate.current = currentDate;
 
         const diffTime = startOfDay(currentDate).getTime() - initialDate.getTime();
         const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
         const index = diffDays + 30;
 
         if (index >= 0 && index < sections.length) {
+            isProgrammaticScroll.current = true;
             listRef.current?.scrollToLocation({
                 sectionIndex: index,
                 itemIndex: 0,
                 animated: true,
                 viewOffset: 0
             });
+            // Reset the flag after animation completes
+            setTimeout(() => { isProgrammaticScroll.current = false; }, 600);
         }
     }, [currentDate, initialDate, sections]);
 
     const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+        // Skip if this is a programmatic scroll (from useEffect)
+        if (isProgrammaticScroll.current) return;
+
         if (viewableItems.length > 0) {
             const firstItem = viewableItems[0];
-            // In SectionList, item might be null for headers, but my items are Dates.
-            // SectionList ViewToken has `section` property.
             const itemDate = firstItem.item as Date | undefined;
             const section = firstItem.section as any;
 
@@ -71,9 +83,10 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 const targetDate = itemDate || section?.title;
                 if (!targetDate) return;
 
-                isProgrammaticScroll.current = true;
+                // Mark this as a scroll-initiated change to prevent useEffect from scrolling back
+                isScrollDateChange.current = true;
+                lastExternalDate.current = targetDate;
                 onDateChange(targetDate);
-                setTimeout(() => { isProgrammaticScroll.current = false; }, 500);
             }
         }
     }).current;
@@ -83,14 +96,13 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
     }).current;
 
     const renderSectionHeader = ({ section }: { section: SectionListData<Date, { title: Date }> }) => (
-        <View style={styles.dayHeader}>
-            <Text style={styles.dayTitle}>{format(section.title, 'MMM d (EEE)')}</Text>
+        <View style={[styles.dayHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <Text style={[styles.dayTitle, { color: colors.text }]}>{format(section.title, 'MMM d (EEE)')}</Text>
         </View>
     );
 
     const renderItem = ({ item }: { item: Date }) => (
-        <View style={[styles.dayContainer, { height: DAY_HEIGHT }]}>
-            {/* Timeline Slots */}
+        <View style={[styles.dayContainer, { height: DAY_HEIGHT, backgroundColor: colors.background, borderColor: colors.border }]}>
             {Array.from({ length: 48 }).map((_, slotIndex) => {
                 const hour = Math.floor(slotIndex / 2);
                 const minutes = (slotIndex % 2) * 30;
@@ -109,22 +121,20 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                         activeOpacity={1}
                         onLongPress={() => onTimeLongPress?.(item, timeStr)}
                     >
-                        <Text style={[styles.hourText, isKept && styles.keptText]}>
+                        <Text style={[styles.hourText, { color: colors.textMuted }, isKept && styles.keptText]}>
                             {!isHalfHour || isKept ? timeStr : ''}
                         </Text>
                         <View style={[
                             styles.hourLine,
                             isHalfHour ? {
-                                // 3:30 slot -> This line is the 3:30 line (dashed)
                                 backgroundColor: 'transparent',
                                 borderBottomWidth: 1,
                                 borderStyle: 'dashed',
-                                borderColor: '#d0d0d0', // Slightly darker than before for visibility
+                                borderColor: colors.border,
                                 height: 1,
                                 top: 0,
                             } : {
-                                // 3:00 slot -> This line is the 3:00 line (solid)
-                                backgroundColor: '#bbb', // Darker for full hour
+                                backgroundColor: colors.border,
                                 height: 1.5,
                                 top: 0,
                             }
@@ -133,7 +143,6 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 );
             })}
 
-            {/* Current Time Indicator (only if today) */}
             {isSameDay(item, new Date()) && (
                 <CurrentTimeIndicator />
             )}
@@ -165,7 +174,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <SectionList
                 ref={listRef}
                 sections={sections}
@@ -214,26 +223,20 @@ const CurrentTimeIndicator = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     dayContainer: {
         width: '100%',
-        backgroundColor: '#fff',
         borderBottomWidth: 1,
-        borderColor: '#ccc'
     },
     dayHeader: {
         height: 44,
         paddingHorizontal: 10,
         justifyContent: 'center',
-        backgroundColor: '#f8fafc',
         borderBottomWidth: 1,
-        borderColor: '#eee',
     },
     dayTitle: {
         fontWeight: 'bold',
         fontSize: 16,
-        color: '#333',
     },
     hourSlot: {
         flexDirection: 'row',

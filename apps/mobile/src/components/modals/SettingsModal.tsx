@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndica
 import { X, Moon, Sun, Monitor, BookOpen, RefreshCw } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { AuthModal } from './AuthModal';
-import { useThemeColors } from '../../hooks/useThemeColors';
+import { useTheme, ThemeMode } from '../../providers/ThemeProvider';
 import { useMobileSync } from '../../hooks/useMobileSync';
 
 interface SettingsModalProps {
@@ -12,30 +12,33 @@ interface SettingsModalProps {
 }
 
 export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
-    // Note: Theme switching logic is not fully implemented in valid React Native without a Context.
-    // For now, this is UI only.
-    const { colors, isDark } = useThemeColors();
+    const { colors, isDark, themeMode, setThemeMode } = useTheme();
     const { user, signOut } = useAuth();
     const [showAuthModal, setShowAuthModal] = React.useState(false);
     const { isSyncing, lastSyncTime, sync } = useMobileSync();
 
-    const renderThemeOption = (label: string, icon: any, selected: boolean) => (
-        <TouchableOpacity
-            style={[
-                styles.themeOption,
-                selected && { borderColor: '#3b82f6', backgroundColor: isDark ? '#1e3a8a' : '#eff6ff' }
-            ]}
-        >
-            {icon}
-            <Text style={[styles.themeText, selected && { color: '#3b82f6' }]}>{label}</Text>
-        </TouchableOpacity>
-    );
+    const renderThemeOption = (label: string, icon: any, mode: ThemeMode) => {
+        const selected = themeMode === mode;
+        return (
+            <TouchableOpacity
+                style={[
+                    styles.themeOption,
+                    { borderColor: colors.border },
+                    selected && { borderColor: colors.primary, backgroundColor: colors.primaryLight }
+                ]}
+                onPress={() => setThemeMode(mode)}
+            >
+                {icon}
+                <Text style={[styles.themeText, { color: selected ? colors.primary : colors.textSecondary }]}>{label}</Text>
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
-                    <View style={styles.header}>
+                    <View style={[styles.header, { borderBottomColor: colors.border }]}>
                         <Text style={[styles.title, { color: colors.text }]}>Settings</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                             <X size={24} color={colors.text} />
@@ -46,9 +49,9 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                         {/* Theme Settings */}
                         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Theme Settings</Text>
                         <View style={styles.themeRow}>
-                            {renderThemeOption("Light", <Sun size={24} color={isDark ? '#fff' : '#000'} />, !isDark)}
-                            {renderThemeOption("Dark", <Moon size={24} color={isDark ? '#fff' : '#000'} />, isDark)}
-                            {renderThemeOption("System", <Monitor size={24} color={isDark ? '#fff' : '#000'} />, false)}
+                            {renderThemeOption("Light", <Sun size={24} color={themeMode === 'light' ? colors.primary : colors.icon} />, 'light')}
+                            {renderThemeOption("Dark", <Moon size={24} color={themeMode === 'dark' ? colors.primary : colors.icon} />, 'dark')}
+                            {renderThemeOption("System", <Monitor size={24} color={themeMode === 'system' ? colors.primary : colors.icon} />, 'system')}
                         </View>
 
                         {/* Cloud Sync / Account */}

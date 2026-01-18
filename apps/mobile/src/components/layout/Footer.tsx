@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FolderTree, BarChart2, X } from 'lucide-react-native';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface FooterProps {
     onOpenTemplate: () => void;
@@ -11,11 +12,13 @@ interface FooterProps {
 }
 
 export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted, onResetKeep }: FooterProps) => {
+    const { colors } = useThemeColors();
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <TouchableOpacity style={styles.button} onPress={onOpenTemplate}>
-                <FolderTree size={20} color="#555" />
-                <Text style={styles.label}>Template</Text>
+                <FolderTree size={20} color={colors.icon} />
+                <Text style={[styles.label, { color: colors.textSecondary }]}>Template</Text>
             </TouchableOpacity>
 
             <View style={styles.centerContainer}>
@@ -33,8 +36,8 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted
             </View>
 
             <TouchableOpacity style={styles.button} onPress={onOpenReport}>
-                <BarChart2 size={20} color="#555" />
-                <Text style={styles.label}>Report</Text>
+                <BarChart2 size={20} color={colors.icon} />
+                <Text style={[styles.label, { color: colors.textSecondary }]}>Report</Text>
             </TouchableOpacity>
         </View>
     );
@@ -44,17 +47,15 @@ const styles = StyleSheet.create({
     container: {
         height: 50,
         flexDirection: 'row',
-        backgroundColor: '#fff',
         justifyContent: 'space-around',
         alignItems: 'center',
         borderTopWidth: 1,
-        borderColor: '#eee',
     },
     centerContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: -15,
-        width: 80, // Space for reset button interaction
+        width: 80,
         height: 50,
     },
     button: {
@@ -63,14 +64,13 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 10,
-        color: '#555',
         marginTop: 2,
     },
     mainButton: {
         width: 44,
         height: 44,
         borderRadius: 22,
-        backgroundColor: '#007AFF', // Blue
+        backgroundColor: '#007AFF',
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: "#000",
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     mainButtonHighlighted: {
-        backgroundColor: '#f97316', // Orange
+        backgroundColor: '#f97316',
     },
     mainButtonText: {
         color: '#fff',
@@ -107,3 +107,4 @@ const styles = StyleSheet.create({
         zIndex: 2,
     }
 });
+

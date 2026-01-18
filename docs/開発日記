@@ -376,3 +376,35 @@ Web版をVercelにデプロイすることに成功した。
 
 **公開URL:** https://pom-arc-web-wx4z.vercel.app/
 
+**モバイル版開発開始:**
+Web版のデプロイが完了したため、モバイル版の開発に着手した。
+`feature/mobile-development`ブランチを作成し、Web版に影響を与えないよう分離して開発を進めることにした。
+
+**日付切り替えバグの修正:**
+カレンダーとヘッダーで2日以上先の日付に移動できないバグを修正した。
+
+原因:
+- `HomeCalendar.tsx`のuseEffectで`currentDate`が変更されるたびに月表示がリセットされていた
+- `HomeDaySchedule.tsx`のスクロールによる日付変更と外部からの日付変更が競合していた
+
+修正内容:
+- カレンダーのuseEffect（月を強制リセットする処理）を削除
+- DayScheduleに`isScrollDateChange`フラグを追加し、スクロール起因の日付変更を追跡
+- `lastExternalDate`で外部からの日付変更のみをスクロールに反映
+
+**ダークモード基盤の実装:**
+モバイル版にダークモード切り替え機能を実装した。
+
+新規作成:
+- `ThemeProvider.tsx`: テーマ状態管理、Light/Dark/System切り替え、AsyncStorageで永続化
+
+更新したコンポーネント:
+- `App.tsx`: ThemeProviderを追加、StatusBarをテーマに連動
+- `SettingsModal.tsx`: テーマ選択UIを機能させるよう更新
+- `MainLayout_Safe.tsx`: 背景色・ボーダー色をテーマに連動
+- `Header.tsx`, `Footer.tsx`: ナビゲーションUIをダークモード対応
+- `HomeCalendar.tsx`, `HomeDaySchedule.tsx`, `HomeTodoList.tsx`: コンテンツ表示をダークモード対応
+
+依存パッケージ:
+- `@react-native-async-storage/async-storage`を追加
+

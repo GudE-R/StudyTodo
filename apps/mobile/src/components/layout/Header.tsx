@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Settings as SettingsIcon, ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { format, addDays, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface HeaderProps {
     date?: Date;
@@ -12,30 +13,28 @@ interface HeaderProps {
 }
 
 export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
-    // Validate date to prevent RangeError
+    const { colors } = useThemeColors();
     const safeDate = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
     const formattedDate = format(safeDate, 'M月d日(EEE)', { locale: ja });
 
     return (
-        <View style={styles.container}>
-            <View style={styles.leftContainer}>
-                {/* Profile or Menu could go here, for now empty or minimal */}
-            </View>
+        <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            <View style={styles.leftContainer} />
 
             <View style={styles.centerContainer}>
                 <TouchableOpacity onPress={onPrevDate} style={styles.navBtn}>
-                    <ChevronLeft size={24} color="#333" />
+                    <ChevronLeft size={24} color={colors.text} />
                 </TouchableOpacity>
 
-                <Text style={styles.dateText}>{formattedDate}</Text>
+                <Text style={[styles.dateText, { color: colors.text }]}>{formattedDate}</Text>
 
                 <TouchableOpacity onPress={onNextDate} style={styles.navBtn}>
-                    <ChevronRight size={24} color="#333" />
+                    <ChevronRight size={24} color={colors.text} />
                 </TouchableOpacity>
             </View>
 
             <TouchableOpacity onPress={onOpenSettings} style={styles.settingsBtn}>
-                <SettingsIcon size={20} color="#555" />
+                <SettingsIcon size={20} color={colors.icon} />
             </TouchableOpacity>
         </View>
     );
@@ -43,14 +42,11 @@ export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date
 
 const styles = StyleSheet.create({
     container: {
-        // Let's keep it compact but usable. 44px is standard.
         height: 44,
         flexDirection: 'row',
-        backgroundColor: '#fff',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderColor: '#eee',
         paddingHorizontal: 10,
     },
     leftContainer: {
@@ -76,3 +72,4 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     }
 });
+

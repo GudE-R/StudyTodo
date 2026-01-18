@@ -19,6 +19,7 @@ import { MobileTimerView } from '../timer/MobileTimerView'; // Import Timer
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
+import { useThemeColors } from '../../providers/ThemeProvider';
 import { Todo, generateId } from '@pomarc/shared'; // Utils
 
 export const MainLayout = () => {
@@ -27,6 +28,7 @@ export const MainLayout = () => {
     const { categories, refreshCategories } = useMobileCategories();
     const { addTodo } = useMobileTodos();
     const { addSession } = useMobileSessions();
+    const { colors, isDark } = useThemeColors();
 
     const [viewMode, setViewMode] = useState<"home" | "timer">("home");
     const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
@@ -104,7 +106,7 @@ export const MainLayout = () => {
     }
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
             <AdBanner />
             <Header
                 date={currentDate}
@@ -124,12 +126,12 @@ export const MainLayout = () => {
             />
 
             {/* Simple Flex Layout */}
-            <View style={styles.mainContent}>
+            <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
                 <View style={styles.splitRow}>
-                    <View style={styles.paneHalf}>
+                    <View style={[styles.paneHalf, { borderColor: colors.border }]}>
                         <HomeTodoList date={currentDate} />
                     </View>
-                    <View style={styles.paneHalf}>
+                    <View style={[styles.paneHalf, { borderColor: colors.border }]}>
                         <HomeDaySchedule
                             currentDate={currentDate}
                             onDateChange={setCurrentDate}
@@ -139,7 +141,7 @@ export const MainLayout = () => {
                         />
                     </View>
                 </View>
-                <View style={styles.calendarPane}>
+                <View style={[styles.calendarPane, { borderColor: colors.border }]}>
                     <HomeCalendar
                         currentDate={currentDate}
                         onDateSelect={setCurrentDate}
@@ -187,7 +189,6 @@ export const MainLayout = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     mainContent: {
         flex: 1,
@@ -199,11 +200,10 @@ const styles = StyleSheet.create({
     paneHalf: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#eee',
     },
     calendarPane: {
         height: 150,
         borderTopWidth: 1,
-        borderColor: '#eee',
     }
 });
+

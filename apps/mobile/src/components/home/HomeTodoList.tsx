@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Todo } from '@pomarc/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { isSameDay } from 'date-fns';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface HomeTodoListProps {
     date?: Date;
@@ -10,21 +11,15 @@ interface HomeTodoListProps {
 
 export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
     const { todos, loading, refreshTodos, updateTodo } = useMobileTodos();
+    const { colors } = useThemeColors();
 
-    // Load and Subscribe
     useEffect(() => {
         refreshTodos();
     }, [refreshTodos]);
 
-    // Filter todos for the selected date
     const filteredTodos = todos.filter(todo => {
         if (todo.completed) return false;
-
-        if (!todo.dueDate) {
-            // If no due date, show it in the list for now
-            return true;
-        }
-        // Ensure we compare Date objects
+        if (!todo.dueDate) return true;
         const todoDate = todo.dueDate instanceof Date ? todo.dueDate : new Date(todo.dueDate);
         return isSameDay(todoDate, date);
     });
@@ -37,18 +32,18 @@ export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
     };
 
     const renderItem = ({ item }: { item: Todo }) => (
-        <TouchableOpacity style={styles.item} onPress={() => handleToggle(item)}>
-            <View style={[styles.checkbox, item.completed && styles.checked]}>
+        <TouchableOpacity style={[styles.item, { borderBottomColor: colors.border }]} onPress={() => handleToggle(item)}>
+            <View style={[styles.checkbox, { borderColor: colors.primary }, item.completed && { backgroundColor: colors.primary }]}>
                 {item.completed && <Text style={styles.checkmark}>✓</Text>}
             </View>
             <View style={styles.content}>
-                <Text style={[styles.title, item.completed && styles.completedText]}>
+                <Text style={[styles.title, { color: colors.text }, item.completed && { color: colors.textMuted, textDecorationLine: 'line-through' }]}>
                     {item.title}
                 </Text>
                 {item.dueDate && (() => {
                     const d = new Date(item.dueDate);
                     return !isNaN(d.getTime()) ? (
-                        <Text style={styles.time}>{d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                        <Text style={[styles.time, { color: colors.textSecondary }]}>{d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                     ) : null;
                 })()}
             </View>
@@ -57,26 +52,26 @@ export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
 
     if (loading && todos.length === 0) {
         return (
-            <View style={styles.container}>
-                <Text style={styles.emptyText}>Loading...</Text>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
+                <Text style={[styles.emptyText, { color: colors.textMuted }]}>Loading...</Text>
             </View>
         );
     }
 
     if (filteredTodos.length === 0) {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>No tasks for this day</Text>
+                    <Text style={[styles.emptyText, { color: colors.textMuted }]}>No tasks for this day</Text>
                 </View>
             </View>
         );
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.debugHeader}>
-                <Text style={styles.debugText}>Tasks: {filteredTodos.length} / {todos.length}</Text>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <View style={[styles.debugHeader, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.debugText, { color: colors.textSecondary }]}>Tasks: {filteredTodos.length} / {todos.length}</Text>
             </View>
             <FlatList
                 data={filteredTodos}
@@ -91,16 +86,13 @@ export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     debugHeader: {
         paddingHorizontal: 12,
         paddingTop: 4,
-        backgroundColor: '#f8fafc',
     },
     debugText: {
         fontSize: 10,
-        color: '#64748b',
         fontWeight: 'bold',
     },
     list: {
@@ -113,7 +105,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     emptyText: {
-        color: '#aaa',
         fontSize: 14,
     },
     item: {
@@ -122,20 +113,15 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
     },
     checkbox: {
         width: 22,
         height: 22,
         borderRadius: 11,
         borderWidth: 2,
-        borderColor: '#3b82f6',
         marginRight: 10,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    checked: {
-        backgroundColor: '#3b82f6',
     },
     checkmark: {
         color: 'white',
@@ -147,16 +133,11 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 15,
-        color: '#1e293b',
         fontWeight: '500',
-    },
-    completedText: {
-        textDecorationLine: 'line-through',
-        color: '#94a3b8',
     },
     time: {
         fontSize: 11,
-        color: '#64748b',
         marginTop: 2,
     }
 });
+

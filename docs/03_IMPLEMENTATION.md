@@ -89,6 +89,16 @@
 これまでの主要な変更履歴です。
 
 
+### [Mobile Dark Mode & Bug Fixes] - 2026-01-18
+#### 修正 (Mobile)
+- **日付切り替えバグ修正**: カレンダーとヘッダーで2日以上先の日付に移動できない問題を修正。
+    - `HomeCalendar.tsx`: 月表示を強制リセットするuseEffectを削除。
+    - `HomeDaySchedule.tsx`: スクロール起因の日付変更と外部からの日付変更を区別するフラグを追加。
+- **ダークモード基盤実装**: ThemeProviderを新規作成し、Light/Dark/Systemの3モード切り替えを実装。
+    - AsyncStorageでテーマ設定を永続化。
+    - 主要コンポーネント（Header, Footer, HomeCalendar, HomeDaySchedule, HomeTodoList, MainLayout, SettingsModal）をダークモード対応に更新。
+    - 依存パッケージ: `@react-native-async-storage/async-storage`を追加。
+
 ### [Offline Queue Error Fix] - 2026-01-17
 #### 修正 (Web)
 - **オフラインキューのエラーログ改善**:

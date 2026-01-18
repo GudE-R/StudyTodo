@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface HomeCalendarProps {
     currentDate?: Date;
@@ -11,42 +12,28 @@ interface HomeCalendarProps {
 }
 
 export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: HomeCalendarProps) => {
-    // Validate currentDate to prevent RangeError
+    const { colors, isDark } = useThemeColors();
     const safeCurrentDate = (currentDate instanceof Date && !isNaN(currentDate.getTime())) ? currentDate : new Date();
-
     const [viewingMonth, setViewingMonth] = useState(safeCurrentDate);
 
-    useEffect(() => {
-        if (!isSameMonth(safeCurrentDate, viewingMonth)) {
-            setViewingMonth(safeCurrentDate);
-        }
-    }, [safeCurrentDate]);
-
-    const handlePrevMonth = () => {
-        setViewingMonth(subMonths(viewingMonth, 1));
-    };
-
-    const handleNextMonth = () => {
-        setViewingMonth(addMonths(viewingMonth, 1));
-    };
+    const handlePrevMonth = () => setViewingMonth(subMonths(viewingMonth, 1));
+    const handleNextMonth = () => setViewingMonth(addMonths(viewingMonth, 1));
 
     const monthStart = startOfMonth(viewingMonth);
     const monthEnd = endOfMonth(viewingMonth);
     const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-
     const startDayOfWeek = monthStart.getDay();
     const paddedDays = Array.from({ length: startDayOfWeek }).fill(null).concat(days);
 
     return (
-        <View style={styles.container}>
-            {/* Compact Header */}
-            <View style={styles.header}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                 <TouchableOpacity onPress={handlePrevMonth} style={styles.navBtn}>
-                    <ChevronLeft size={20} color="#555" />
+                    <ChevronLeft size={20} color={colors.icon} />
                 </TouchableOpacity>
-                <Text style={styles.monthTitle}>{format(viewingMonth, 'yyyy年 M月')}</Text>
+                <Text style={[styles.monthTitle, { color: colors.text }]}>{format(viewingMonth, 'yyyy年 M月')}</Text>
                 <TouchableOpacity onPress={handleNextMonth} style={styles.navBtn}>
-                    <ChevronRight size={20} color="#555" />
+                    <ChevronRight size={20} color={colors.icon} />
                 </TouchableOpacity>
             </View>
 
@@ -54,7 +41,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                 <View style={styles.grid}>
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
                         <View key={i} style={styles.headerCell}>
-                            <Text style={styles.headerText}>{d}</Text>
+                            <Text style={[styles.headerText, { color: colors.textMuted }]}>{d}</Text>
                         </View>
                     ))}
 
@@ -68,13 +55,18 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                         return (
                             <TouchableOpacity
                                 key={(day instanceof Date && !isNaN(day.getTime())) ? day.toISOString() : index.toString()}
-                                style={[styles.dayCell, isKept && styles.keptDayCell]}
+                                style={styles.dayCell}
                                 onPress={() => onDateSelect?.(day)}
                                 onLongPress={() => onDateLongPress?.(day)}
                             >
-                                <View style={[styles.dateCircle, isSelected && styles.selectedDay, isKept && !isSelected && styles.keptDayCircle]}>
+                                <View style={[
+                                    styles.dateCircle,
+                                    isSelected && styles.selectedDay,
+                                    isKept && !isSelected && [styles.keptDayCircle, { backgroundColor: isDark ? colors.surface : '#fff' }]
+                                ]}>
                                     <Text style={[
                                         styles.dayText,
+                                        { color: colors.text },
                                         isSelected && styles.selectedDayText,
                                         isKept && !isSelected && styles.keptDayText
                                     ]}>
@@ -93,31 +85,27 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'center', // Center navigation
-        alignItems: 'center', // Reduced height
-        paddingVertical: 4, // Minimal padding
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 4,
         gap: 20,
         borderBottomWidth: 1,
-        borderColor: '#f0f0f0',
-        backgroundColor: '#f8fafc',
     },
     navBtn: {
         padding: 2,
     },
     monthTitle: {
-        fontSize: 14, // Smaller font
+        fontSize: 14,
         fontWeight: 'bold',
-        color: '#333',
     },
     scrollContainer: {
         flex: 1,
     },
     scrollContent: {
-        padding: 5, // Reduced padding
+        padding: 5,
     },
     grid: {
         flexDirection: 'row',
@@ -126,13 +114,12 @@ const styles = StyleSheet.create({
     },
     headerCell: {
         width: '14.28%',
-        height: 20, // Reduced height
+        height: 20,
         justifyContent: 'center',
         alignItems: 'center',
     },
     headerText: {
         fontSize: 10,
-        color: '#999',
     },
     dayCell: {
         width: '14.28%',
@@ -141,7 +128,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dateCircle: {
-        width: 30, // Slightly smaller
+        width: 30,
         height: 30,
         borderRadius: 15,
         justifyContent: 'center',
@@ -151,23 +138,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#3b82f6',
     },
     dayText: {
-        color: '#333',
-        fontSize: 12, // Smaller font for days
+        fontSize: 12,
     },
     selectedDayText: {
         color: '#fff',
         fontWeight: 'bold',
     },
-    keptDayCell: {
-        // Option to highlight entire cell bg if needed
-    },
     keptDayCircle: {
         borderWidth: 2,
-        borderColor: '#f97316', // Orange border
-        backgroundColor: '#fff',
+        borderColor: '#f97316',
     },
     keptDayText: {
         color: '#f97316',
         fontWeight: 'bold',
     }
 });
+
