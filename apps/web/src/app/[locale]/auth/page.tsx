@@ -8,7 +8,7 @@ import { Timer, Mail, Lock, LogIn, UserPlus, CheckSquare, Square, ArrowLeft } fr
 import { Link } from "@/i18n/routing";
 
 export default function AuthPage() {
-    const { user, signIn, signUp, signInWithProvider } = useAuth();
+    const { user, loading: authLoading, signIn, signUp, signInWithProvider } = useAuth();
     const router = useRouter();
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [email, setEmail] = useState("");
@@ -21,12 +21,12 @@ export default function AuthPage() {
     const t = useTranslations("auth");
     const tWelcome = useTranslations("welcome");
 
-    // Redirect if already logged in
+    // Redirect if already logged in (only after auth state is determined)
     useEffect(() => {
-        if (user) {
+        if (!authLoading && user?.id) {
             router.push("/");
         }
-    }, [user, router]);
+    }, [user, authLoading, router]);
 
     const isValidEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
