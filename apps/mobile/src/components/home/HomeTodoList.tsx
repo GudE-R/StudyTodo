@@ -1,21 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Todo } from '@pomarc/shared';
+import { Todo, Category } from '@pomarc/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
+import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { isSameDay } from 'date-fns';
 import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface HomeTodoListProps {
     date?: Date;
+    onTodoPress?: (todo: Todo) => void;
 }
 
-export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
+export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListProps) => {
     const { todos, loading, refreshTodos, updateTodo } = useMobileTodos();
+    const { categories } = useMobileCategories();
     const { colors } = useThemeColors();
 
     useEffect(() => {
         refreshTodos();
     }, [refreshTodos]);
+
+    // Flatten categories for quick lookup
+    const categoryMap = useMemo(() => {
+        const map = new Map<string, Category>();
+        const traverse = (cats: Category[]) => {
+            cats.forEach(cat => {
+                map.set(cat.id, cat);
+                if (cat.children) traverse(cat.children);
+            });
+        };
+        traverse(categories);
+        return map;
+    }, [categories]);
+
+    const getCategoryColor = (categoryId?: string): string | null => {
+        if (!categoryId) return null;
+        const category = categoryMap.get(categoryId);
+        return category?.color || null;
+    };
 
     const filteredTodos = todos.filter(todo => {
         if (todo.completed) return false;
@@ -31,24 +53,35 @@ export const HomeTodoList = ({ date = new Date() }: HomeTodoListProps) => {
         });
     };
 
-    const renderItem = ({ item }: { item: Todo }) => (
-        <TouchableOpacity style={[styles.item, { borderBottomColor: colors.border }]} onPress={() => handleToggle(item)}>
-            <View style={[styles.checkbox, { borderColor: colors.primary }, item.completed && { backgroundColor: colors.primary }]}>
-                {item.completed && <Text style={styles.checkmark}>✓</Text>}
-            </View>
-            <View style={styles.content}>
-                <Text style={[styles.title, { color: colors.text }, item.completed && { color: colors.textMuted, textDecorationLine: 'line-through' }]}>
-                    {item.title}
-                </Text>
-                {item.dueDate && (() => {
-                    const d = new Date(item.dueDate);
-                    return !isNaN(d.getTime()) ? (
-                        <Text style={[styles.time, { color: colors.textSecondary }]}>{d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-                    ) : null;
-                })()}
-            </View>
-        </TouchableOpacity>
-    );
+    const renderItem = ({ item }: { item: Todo }) => {
+        const categoryColor = getCategoryColor(item.categoryId);
+        return (
+            <TouchableOpacity
+                style={[styles.item, { borderBottomColor: colors.border }]}
+                onPress={() => onTodoPress?.(item)}
+            >
+                {/* Category Color Indicator */}
+                <View style={[
+                    styles.categoryIndicator,
+                    { backgroundColor: categoryColor || 'transparent' }
+                ]} />
+                <TouchableOpacity
+                    style={[styles.checkbox, { borderColor: categoryColor || colors.primary }, item.completed && { backgroundColor: categoryColor || colors.primary }]}
+                    onPress={() => handleToggle(item)}
+                >
+                    {item.completed && <Text style={styles.checkmark}>✓</Text>}
+                </TouchableOpacity>
+                <View style={styles.content}>
+                    <Text style={[styles.title, { color: colors.text }, item.completed && { color: colors.textMuted, textDecorationLine: 'line-through' }]}>
+                        {item.title}
+                    </Text>
+                    {item.dueTime && (
+                        <Text style={[styles.time, { color: colors.textSecondary }]}>{item.dueTime}</Text>
+                    )}
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     if (loading && todos.length === 0) {
         return (
@@ -113,6 +146,12 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 12,
         borderBottomWidth: 1,
+    },
+    categoryIndicator: {
+        width: 4,
+        height: '80%',
+        borderRadius: 2,
+        marginRight: 10,
     },
     checkbox: {
         width: 22,

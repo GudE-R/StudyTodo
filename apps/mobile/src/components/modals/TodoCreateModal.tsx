@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     View,
     Text,
@@ -9,15 +9,17 @@ import {
     Platform,
     ScrollView,
     KeyboardAvoidingView,
-    ActionSheetIOS,
+    Alert,
 } from 'react-native';
-import { X, Calendar, PlayCircle, StopCircle, Hourglass, Repeat, BookOpen, FileText, CheckCircle, Play, Plus, Tag, ChevronDown } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Category, generateId, SRSProfile, Todo } from '@pomarc/shared';
-import { useMobileTodos } from '../../hooks/useMobileTodos';
-import { useMobileSRS } from '../../hooks/useMobileSRS';
+import { X, Tag, Repeat, Play, CheckCircle, Plus, Calendar, Clock, Hourglass, CalendarDays } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { Todo, Category, SRSProfile, generateId } from '@pomarc/shared';
+import { useMobileTodos } from '../../hooks/useMobileTodos';
+import { useMobileSRS } from '../../hooks/useMobileSRS';
+import { useMobileSessions } from '../../hooks/useMobileSessions';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface TodoCreateModalProps {
     visible: boolean;
@@ -28,485 +30,621 @@ interface TodoCreateModalProps {
     onStartNow?: (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => void;
 }
 
-export const TodoCreateModal = ({ visible, onClose, categories, initialDate, initialTime, onStartNow }: TodoCreateModalProps) => {
+export const TodoCreateModal = ({
+    visible,
+    onClose,
+    categories,
+    initialDate,
+    initialTime,
+    onStartNow
+}: TodoCreateModalProps) => {
+    const { colors, isDark } = useThemeColors();
     const { addTodo } = useMobileTodos();
-    const { profiles: srsProfiles, refreshProfiles } = useMobileSRS();
+    const { profiles: srsProfiles } = useMobileSRS();
+    const { addSession } = useMobileSessions();
 
-    // Refresh SRS on open
-    React.useEffect(() => {
+    // States matching web version
+    const [content, setContent] = useState('');
+    const [dueDate, setDueDate] = useState<Date | null>(null);
+    const [dueTime, setDueTime] = useState('');
+    const [endTime, setEndTime] = useState('');
+    const [categoryId, setCategoryId] = useState('');
+    const [srsInterval, setSrsInterval] = useState('');
+    const [duration, setDuration] = useState('');
+    const [isRecordMode, setIsRecordMode] = useState(false);
+    const [routineDays, setRoutineDays] = useState<number[]>([]);
+    const [isRoutineOpen, setIsRoutineOpen] = useState(false);
+
+    // Picker states
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState<'start' | 'end' | null>(null);
+    const [showCategoryPicker, setShowCategoryPicker] = useState(false);
+    const [showSRSPicker, setShowSRSPicker] = useState(false);
+
+    // Initialize on open
+    useEffect(() => {
         if (visible) {
-            refreshProfiles();
-            // Apply Keep defaults if provided, else reset
-            if (initialDate) setDueDate(initialDate);
-            if (initialTime) setStartTime(new Date(`${format(initialDate || new Date(), 'yyyy-MM-dd')}T${initialTime}`));
+            setDueDate(initialDate || null);
+            setDueTime(initialTime || '');
+            setEndTime('');
         }
-    }, [visible, refreshProfiles, initialDate, initialTime]);
+    }, [visible, initialDate, initialTime]);
 
-    // State
-    const [title, setTitle] = useState("");
-    const [categoryId, setCategoryId] = useState<string>("");
-
-    // Options
-    const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
-    const [startTime, setStartTime] = useState<Date | undefined>(undefined);
-    const [endTime, setEndTime] = useState<Date | undefined>(undefined);
-    const [durationStr, setDurationStr] = useState("");
-    const [srsProfileId, setSrsProfileId] = useState<string>("");
-    const [range, setRange] = useState("");
-    const [memo, setMemo] = useState("");
-
-    // DatePicker Control
-    const [pickerMode, setPickerMode] = useState<"date" | "time">("date");
-    const [currentPickerTarget, setCurrentPickerTarget] = useState<"due" | "start" | "end" | null>(null);
-
-    // Helpers
+    // Flatten categories
     const categoryOptions = useMemo(() => {
         const options: { value: string; label: string }[] = [];
-        const traverse = (cats: Category[], prefix = "") => {
-            cats.forEach(c => {
-                const label = prefix ? `${prefix} > ${c.name}` : c.name;
-                options.push({ value: c.id, label });
-                if (c.children) traverse(c.children, label);
+        const traverse = (cats: Category[], prefix = '') => {
+            cats.forEach(cat => {
+                const label = prefix ? `${prefix} > ${cat.name}` : cat.name;
+                options.push({ value: cat.id, label });
+                if (cat.children) traverse(cat.children, label);
             });
         };
         traverse(categories);
         return options;
     }, [categories]);
 
-    const activeCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || "カテゴリなし";
-    const activeSrsLabel = srsProfiles.find(p => p.id === srsProfileId)?.name || "SRSなし";
+    if (!visible) return null;
+
+    // Parse content (1st line = title, rest = memo)
+    const parseContent = () => {
+        const lines = content.split('\n');
+        const rawTitle = lines[0].trim();
+        const notes = lines.slice(1).join('\n').trim();
+
+        let effectiveTitle = rawTitle;
+        if (!effectiveTitle && categoryId) {
+            const cat = categoryOptions.find(c => c.value === categoryId);
+            if (cat) effectiveTitle = cat.label.split(' > ').pop() || cat.label;
+        }
+
+        return {
+            title: effectiveTitle || '',
+            notes: notes || undefined
+        };
+    };
+
+    // Validation
+    const isValid = () => {
+        const rawTitle = content.split('\n')[0].trim();
+        return rawTitle.length > 0 || categoryId.length > 0;
+    };
+
+    // Auto-fill date if time is set
+    const ensureDateIfTimeSet = (): Date | undefined => {
+        if (dueTime && !dueDate) {
+            return new Date();
+        }
+        return dueDate ?? undefined;
+    };
+
+    // Build todo data
+    const buildTodoData = (): Omit<Todo, 'id' | 'createdAt' | 'completed'> => {
+        const { title, notes } = parseContent();
+        const effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
+
+        return {
+            title: title || '無題',
+            dueDate: effectiveDate,
+            dueTime: dueTime || undefined,
+            endTime: endTime || undefined,
+            categoryId: categoryId || undefined,
+            srsInterval: srsInterval || undefined,
+            memo: notes,
+            priority: 'medium',
+            routineDays: routineDays.length > 0 ? routineDays : undefined,
+            updatedAt: new Date(),
+        };
+    };
+
+    // Create handler
+    const handleCreate = async () => {
+        if (!isValid()) {
+            Alert.alert('エラー', 'タイトルまたはカテゴリを入力してください');
+            return;
+        }
+        const todoData = buildTodoData();
+        await addTodo({
+            ...todoData,
+            id: generateId(),
+            createdAt: new Date(),
+            completed: false,
+        });
+        resetForm();
+    };
+
+    // Start now handler
+    const handleStartNow = () => {
+        if (!isValid()) {
+            Alert.alert('エラー', 'タイトルまたはカテゴリを入力してください');
+            return;
+        }
+        const { title, notes } = parseContent();
+        const now = new Date();
+        const todoData: Omit<Todo, 'id' | 'createdAt' | 'completed'> = {
+            title: title || '無題',
+            dueDate: now,
+            dueTime: format(now, 'HH:mm'),
+            categoryId: categoryId || undefined,
+            srsInterval: srsInterval || undefined,
+            memo: notes,
+            priority: 'medium',
+            updatedAt: new Date(),
+        };
+        if (onStartNow) {
+            onStartNow(todoData);
+        }
+        resetForm();
+    };
+
+    // Record handler
+    const handleRecord = async () => {
+        if (!isValid()) {
+            Alert.alert('エラー', 'タイトルまたはカテゴリを入力してください');
+            return;
+        }
+        const durationNum = parseInt(duration, 10) || 0;
+        if (durationNum <= 0) {
+            Alert.alert('エラー', '時間を入力してください');
+            return;
+        }
+        const todoData = buildTodoData();
+        const newTodo: Todo = {
+            ...todoData,
+            id: generateId(),
+            createdAt: new Date(),
+            completed: true,
+        };
+        await addTodo(newTodo);
+        await addSession({
+            id: generateId(),
+            todoId: newTodo.id,
+            todoTitle: newTodo.title,
+            duration: durationNum * 60,
+            mode: 'pomodoro',
+            createdAt: new Date(),
+        });
+        resetForm();
+    };
 
     const resetForm = () => {
-        setTitle("");
-        setCategoryId("");
-        setDueDate(undefined);
-        setStartTime(undefined);
-        setEndTime(undefined);
-        setDurationStr("");
-        setSrsProfileId("");
-        setRange("");
-        setMemo("");
+        setContent('');
+        setDueDate(null);
+        setDueTime('');
+        setEndTime('');
+        setCategoryId('');
+        setSrsInterval('');
+        setDuration('');
+        setIsRecordMode(false);
+        setRoutineDays([]);
+        setIsRoutineOpen(false);
         onClose();
     };
 
-    const handleCreate = async () => {
-        if (!title.trim() && !categoryId) return; // Allow if category selected (title auto-fill logic?) Web does this.
-
-        try {
-            const finalTitle = title.trim() || activeCategoryLabel.split(' > ').pop() || "No Title";
-
-            const newTodo: Todo = {
-                id: generateId(),
-                title: finalTitle,
-                categoryId: categoryId || undefined,
-                priority: 'medium',
-                dueDate: dueDate,
-                dueTime: startTime ? format(startTime, 'HH:mm') : undefined,
-                endTime: endTime ? format(endTime, 'HH:mm') : undefined,
-                estimatedDuration: durationStr ? parseInt(durationStr, 10) : undefined,
-                srsProfileId: srsProfileId || undefined, // using ID instead of 'srsInterval' string for robustness in V3? 
-                // Web logic maps 'srsInterval' to profile NAME usually? 
-                // Wait, Web used `srsInterval` string state = profile.name.
-                // Let's match Web exactly? Mobile repo uses `srsProfileId`. 
-                // Shared types have both `srsProfileId` and `srsInterval`.
-                // I'll stick to `srsProfileId` for better data integrity, 
-                // but populate `srsInterval` as name if needed for legacy.
-                srsInterval: srsProfiles.find(p => p.id === srsProfileId)?.name,
-                srsLevel: srsProfileId ? 0 : undefined,
-                range,
-                memo, // Mapped to notes? or 'memo' column we added.
-                notes: memo, // Sync both for safety
-                completed: false,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            };
-
-            await addTodo(newTodo);
-            resetForm();
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const handleRecord = async () => {
-        // Implement Session logging + Todo creation
-        // For now, just create todo as completed? Or just create todo.
-        // Web: onRecord -> create todo + log session.
-        // We lack session hook in this file. 
-        // Just calling handleCreate for now, todo: add session logic later.
-        await handleCreate();
-    };
-
-    const handleStartNow = async () => {
-        if (!title.trim() && !categoryId) return;
-        const finalTitle = title.trim() || activeCategoryLabel.split(' > ').pop() || "No Title";
-
-        if (onStartNow) {
-            onStartNow({
-                title: finalTitle,
-                categoryId: categoryId || undefined,
-                priority: 'medium',
-                dueDate: dueDate,
-                dueTime: startTime ? format(startTime, 'HH:mm') : undefined,
-                endTime: endTime ? format(endTime, 'HH:mm') : undefined,
-                estimatedDuration: durationStr ? parseInt(durationStr, 10) : undefined,
-                srsProfileId: srsProfileId || undefined,
-                srsInterval: srsProfiles.find(p => p.id === srsProfileId)?.name,
-                srsLevel: srsProfileId ? 0 : undefined,
-                range,
-                memo,
-                notes: memo,
-                updatedAt: new Date(),
-            });
-            resetForm();
-        } else {
-            // Fallback if no prop provided (e.g. older usage)
-            await handleCreate();
-        }
-    };
-
-    // Picker Handling
-    const showPicker = (target: "due" | "start" | "end", mode: "date" | "time") => {
-        setCurrentPickerTarget(target);
-        setPickerMode(mode);
-    };
-
-    const onPickerChange = (event: any, selectedDate?: Date) => {
-        if (Platform.OS === 'android') {
-            setCurrentPickerTarget(null); // Close dialog on Android
-        }
-
-        if (event.type === 'dismissed') return;
-
-        if (selectedDate && currentPickerTarget) {
-            if (currentPickerTarget === 'due') {
-                setDueDate(selectedDate);
-            }
-            if (currentPickerTarget === 'start') {
-                setStartTime(selectedDate);
-                // Web Parity: Auto-set due date if empty
-                if (!dueDate) setDueDate(new Date());
-            }
-            if (currentPickerTarget === 'end') {
-                setEndTime(selectedDate);
-            }
-        }
-    };
-
-    const [isCategoryPickerVisible, setCategoryPickerVisible] = useState(false);
-    const [isSRSPickerVisible, setSRSPickerVisible] = useState(false);
+    const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || 'カテゴリなし';
 
     return (
-        <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.overlay}>
-                <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
-
-                <View style={[styles.container, (currentPickerTarget && Platform.OS === 'ios') ? { paddingBottom: 250 } : {}]}>
+        <Modal visible={visible} animationType="slide" transparent>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.overlay}>
+                <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
-                    <View style={styles.header}>
-                        <Text style={styles.headerTitle}>Todo作成</Text>
+                    <View style={[styles.header, { borderBottomColor: colors.border }]}>
+                        <Text style={[styles.headerTitle, { color: colors.text }]}>タスク作成</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                            <X size={24} color="#888" />
+                            <X size={24} color={colors.text} />
                         </TouchableOpacity>
                     </View>
 
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-
-                        {/* 1. Category Row */}
-                        <TouchableOpacity style={styles.categoryRow} onPress={() => setCategoryPickerVisible(true)}>
-                            <Tag size={18} color="#666" />
-                            <Text style={[styles.categoryText, !categoryId && styles.placeholderText]}>
-                                {activeCategoryLabel}
-                            </Text>
-                            <ChevronDown size={16} color="#999" style={{ marginLeft: 'auto' }} />
+                    <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+                        {/* Category Selection (Top) */}
+                        <TouchableOpacity
+                            style={[styles.optionRow, { backgroundColor: colors.surface }]}
+                            onPress={() => setShowCategoryPicker(true)}
+                        >
+                            <Tag size={18} color={colors.icon} />
+                            <Text style={[styles.optionText, { color: colors.text }]}>{selectedCategoryLabel}</Text>
                         </TouchableOpacity>
 
-                        {/* 2. Title Input */}
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                style={styles.titleInput}
-                                placeholder="タスク名 (任意)"
-                                value={title}
-                                onChangeText={setTitle}
-                                placeholderTextColor="#ccc"
-                            />
-                        </View>
+                        {/* Content Input (Title + Memo) */}
+                        <TextInput
+                            style={[styles.contentInput, { color: colors.text, borderColor: colors.primary }]}
+                            value={content}
+                            onChangeText={setContent}
+                            placeholder="タイトル&#10;メモ（2行目以降）"
+                            placeholderTextColor={colors.textMuted}
+                            multiline
+                            numberOfLines={3}
+                        />
 
-                        {/* 3. Grid Options */}
-                        <View style={styles.grid}>
-                            {/* Date */}
-                            <TouchableOpacity style={styles.gridItem} onPress={() => showPicker('due', 'date')}>
-                                <Calendar size={18} color="#3b82f6" />
-                                <Text style={styles.gridText}>
-                                    {dueDate ? format(dueDate, 'MM/dd(EEE)', { locale: ja }) : '日付'}
+                        {/* Date & Time Grid */}
+                        <View style={styles.gridRow}>
+                            <TouchableOpacity
+                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                onPress={() => setShowDatePicker(true)}
+                            >
+                                <Calendar size={18} color={colors.primary} />
+                                <Text style={[styles.gridText, { color: colors.text }]}>
+                                    {dueDate ? format(dueDate, 'M/d (EEE)', { locale: ja }) : '日付'}
                                 </Text>
                             </TouchableOpacity>
 
-                            {/* Start Time */}
-                            <TouchableOpacity style={styles.gridItem} onPress={() => showPicker('start', 'time')}>
-                                <PlayCircle size={18} color="#3b82f6" />
-                                <Text style={styles.gridText}>
-                                    {startTime ? format(startTime, 'HH:mm') : '開始'}
+                            <TouchableOpacity
+                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                onPress={() => setShowTimePicker('start')}
+                            >
+                                <Clock size={18} color={colors.primary} />
+                                <Text style={[styles.gridText, { color: colors.text }]}>
+                                    {dueTime || '開始時間'}
                                 </Text>
-                            </TouchableOpacity>
-
-                            {/* Duration */}
-                            <View style={styles.gridItem}>
-                                <Hourglass size={18} color="#f97316" />
-                                <TextInput
-                                    style={styles.inlineInput}
-                                    placeholder="分"
-                                    keyboardType="numeric"
-                                    value={durationStr}
-                                    onChangeText={setDurationStr}
-                                />
-                            </View>
-
-                            {/* End Time */}
-                            <TouchableOpacity style={styles.gridItem} onPress={() => showPicker('end', 'time')}>
-                                <StopCircle size={18} color="#ef4444" />
-                                <Text style={styles.gridText}>
-                                    {endTime ? format(endTime, 'HH:mm') : '終了'}
-                                </Text>
-                            </TouchableOpacity>
-
-                            {/* SRS */}
-                            <TouchableOpacity style={[styles.gridItem, styles.colSpan2]} onPress={() => setSRSPickerVisible(true)}>
-                                <Repeat size={18} color="#888" />
-                                <Text style={styles.gridText}>{activeSrsLabel}</Text>
-                                <ChevronDown size={14} color="#ccc" style={{ marginLeft: 'auto' }} />
                             </TouchableOpacity>
                         </View>
 
-                        {/* 4. Extra Info */}
-                        <View style={styles.extraContainer}>
-                            <View style={styles.extraRow}>
-                                <BookOpen size={18} color="#999" />
-                                <TextInput
-                                    style={styles.extraInput}
-                                    placeholder="範囲 (例: p.10-20)"
-                                    value={range}
-                                    onChangeText={setRange}
-                                />
-                            </View>
-                            <View style={styles.extraRow}>
-                                <FileText size={18} color="#999" />
-                                <TextInput
-                                    style={styles.extraInput}
-                                    placeholder="メモ"
-                                    value={memo}
-                                    onChangeText={setMemo}
-                                />
-                            </View>
+                        <View style={styles.gridRow}>
+                            {/* Duration (Record mode only) */}
+                            {isRecordMode ? (
+                                <View style={[styles.gridItem, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: colors.success, borderWidth: 1 }]}>
+                                    <Hourglass size={18} color={colors.success} />
+                                    <TextInput
+                                        style={[styles.durationInput, { color: colors.text }]}
+                                        value={duration}
+                                        onChangeText={setDuration}
+                                        placeholder="分数"
+                                        placeholderTextColor={colors.textMuted}
+                                        keyboardType="numeric"
+                                    />
+                                </View>
+                            ) : (
+                                <View style={[styles.gridItem, { backgroundColor: colors.surface, opacity: 0.5 }]}>
+                                    <Hourglass size={18} color={colors.textMuted} />
+                                    <Text style={[styles.gridText, { color: colors.textMuted }]}>記録時のみ</Text>
+                                </View>
+                            )}
+
+                            <TouchableOpacity
+                                style={[styles.gridItem, { backgroundColor: colors.surface, opacity: dueTime ? 1 : 0.5 }]}
+                                onPress={() => dueTime && setShowTimePicker('end')}
+                                disabled={!dueTime}
+                            >
+                                <Clock size={18} color={dueTime ? colors.danger : colors.textMuted} />
+                                <Text style={[styles.gridText, { color: dueTime ? colors.text : colors.textMuted }]}>
+                                    {endTime || '終了時間'}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
 
+                        {/* SRS Profile & Routine Row */}
+                        <View style={styles.srsRoutineRow}>
+                            <TouchableOpacity
+                                style={[styles.srsBtn, { backgroundColor: colors.surface }]}
+                                onPress={() => setShowSRSPicker(true)}
+                            >
+                                <Repeat size={18} color={colors.success} />
+                                <Text style={[styles.srsBtnText, { color: colors.text }]} numberOfLines={1}>
+                                    {srsInterval || 'SRSなし'}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.routineToggle,
+                                    { backgroundColor: isRoutineOpen || routineDays.length > 0 ? 'rgba(168, 85, 247, 0.1)' : colors.surface }
+                                ]}
+                                onPress={() => setIsRoutineOpen(!isRoutineOpen)}
+                            >
+                                <CalendarDays size={18} color={isRoutineOpen || routineDays.length > 0 ? '#a855f7' : colors.icon} />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Routine Weekday Picker (Expandable) */}
+                        {isRoutineOpen && (
+                            <View style={[styles.routineContainer, { backgroundColor: colors.surface }]}>
+                                <View style={styles.routineHeader}>
+                                    <View style={styles.routineLabelRow}>
+                                        <CalendarDays size={14} color="#a855f7" />
+                                        <Text style={[styles.routineLabel, { color: colors.textSecondary }]}>ルーティン</Text>
+                                    </View>
+                                    {routineDays.length > 0 && (
+                                        <TouchableOpacity onPress={() => setRoutineDays([])}>
+                                            <Text style={styles.routineClear}>クリア</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                                <View style={styles.weekdayRow}>
+                                    {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => {
+                                        const isSelected = routineDays.includes(index);
+                                        const isWeekend = index === 0 || index === 6;
+                                        return (
+                                            <TouchableOpacity
+                                                key={index}
+                                                style={[
+                                                    styles.weekdayBtn,
+                                                    isSelected && styles.weekdayBtnActive,
+                                                    !isSelected && { backgroundColor: colors.background }
+                                                ]}
+                                                onPress={() => {
+                                                    if (isSelected) {
+                                                        setRoutineDays(routineDays.filter(d => d !== index));
+                                                    } else {
+                                                        setRoutineDays([...routineDays, index].sort((a, b) => a - b));
+                                                    }
+                                                }}
+                                            >
+                                                <Text style={[
+                                                    styles.weekdayText,
+                                                    isSelected && styles.weekdayTextActive,
+                                                    !isSelected && isWeekend && { color: colors.textMuted }
+                                                ]}>
+                                                    {day}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
+                                {routineDays.length > 0 && (
+                                    <Text style={styles.routineHint}>
+                                        選択した{routineDays.length}曜日にタスクが繰り返されます
+                                    </Text>
+                                )}
+                            </View>
+                        )}
                     </ScrollView>
 
-                    {/* 5. Action Buttons */}
-                    <View style={styles.actionsRow}>
-                        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#dcfce7' }]} onPress={handleRecord}>
-                            <CheckCircle size={18} color="#16a34a" />
-                            <Text style={[styles.actionText, { color: '#16a34a' }]}>記録</Text>
+                    {/* Action Buttons (3-column: Record, Start, Create) */}
+                    <View style={[styles.actions, { borderTopColor: colors.border }]}>
+                        <TouchableOpacity
+                            style={[styles.actionBtn, isRecordMode ? styles.actionBtnRecordActive : styles.actionBtnRecord]}
+                            onPress={() => isRecordMode ? handleRecord() : setIsRecordMode(true)}
+                        >
+                            <CheckCircle size={18} color={isRecordMode ? '#fff' : colors.success} />
+                            <Text style={[styles.actionBtnText, { color: isRecordMode ? '#fff' : colors.success }]}>
+                                {isRecordMode ? '確定' : '記録'}
+                            </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#ffedd5' }]} onPress={handleStartNow}>
+                        <TouchableOpacity style={styles.actionBtnStart} onPress={handleStartNow}>
                             <Play size={18} color="#ea580c" fill="#ea580c" />
-                            <Text style={[styles.actionText, { color: '#ea580c' }]}>開始</Text>
+                            <Text style={[styles.actionBtnText, { color: '#ea580c' }]}>開始</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#dbeafe' }]} onPress={handleCreate}>
-                            <Plus size={18} color="#2563eb" />
-                            <Text style={[styles.actionText, { color: '#2563eb' }]}>作成</Text>
+                        <TouchableOpacity style={styles.actionBtnCreate} onPress={handleCreate}>
+                            <Plus size={18} color={colors.primary} />
+                            <Text style={[styles.actionBtnText, { color: colors.primary }]}>作成</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-
-                {/* Overlays for Pickers */}
-                {isCategoryPickerVisible && (
-                    <SelectionModal
-                        title="カテゴリ選択"
-                        options={categoryOptions}
-                        onSelect={(val: string) => { setCategoryId(val); setCategoryPickerVisible(false); }}
-                        onClose={() => setCategoryPickerVisible(false)}
-                    />
-                )}
-                {isSRSPickerVisible && (
-                    <SelectionModal
-                        title="SRS設定"
-                        options={[{ value: '', label: 'SRSなし' }, ...srsProfiles.map(p => ({ value: p.id, label: p.name }))]}
-                        onSelect={(val: string) => { setSrsProfileId(val); setSRSPickerVisible(false); }}
-                        onClose={() => setSRSPickerVisible(false)}
-                    />
-                )}
-
-                {/* iOS Picker (Bottom Sheet Style) */}
-                {Platform.OS === 'ios' && currentPickerTarget && (
-                    <View style={styles.iosPickerContainer}>
-                        <View style={styles.iosPickerHeader}>
-                            <TouchableOpacity onPress={() => setCurrentPickerTarget(null)}>
-                                <Text style={styles.pickerDoneText}>完了</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <DateTimePicker
-                            value={
-                                (currentPickerTarget === 'due' ? dueDate :
-                                    currentPickerTarget === 'start' ? startTime : endTime) || new Date()
-                            }
-                            mode={pickerMode}
-                            display="spinner"
-                            onChange={onPickerChange}
-                            style={styles.iosPicker}
-                            textColor="#000000"
-                        />
-                    </View>
-                )}
-
-                {/* Android Picker (Dialog) - Rendered conditionally but without wrapper */}
-                {Platform.OS === 'android' && currentPickerTarget && (
-                    <DateTimePicker
-                        value={
-                            (currentPickerTarget === 'due' ? dueDate :
-                                currentPickerTarget === 'start' ? startTime : endTime) || new Date()
-                        }
-                        mode={pickerMode}
-                        display="default"
-                        onChange={onPickerChange}
-                    />
-                )}
-
             </KeyboardAvoidingView>
+
+            {/* Date Picker Modal */}
+            {showDatePicker && (
+                Platform.OS === 'ios' ? (
+                    <Modal visible={showDatePicker} transparent animationType="fade">
+                        <View style={styles.datePickerOverlay}>
+                            <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
+                                <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>日付を選択</Text>
+                                    <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>完了</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <DateTimePicker
+                                    value={dueDate || new Date()}
+                                    mode="date"
+                                    display="spinner"
+                                    onChange={(event, date) => {
+                                        if (date) setDueDate(date);
+                                    }}
+                                    style={styles.datePickerSpinner}
+                                />
+                            </View>
+                        </View>
+                    </Modal>
+                ) : (
+                    <DateTimePicker
+                        value={dueDate || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, date) => {
+                            setShowDatePicker(false);
+                            if (date) setDueDate(date);
+                        }}
+                    />
+                )
+            )}
+
+            {/* Time Picker Modal */}
+            {showTimePicker && (
+                Platform.OS === 'ios' ? (
+                    <Modal visible={!!showTimePicker} transparent animationType="fade">
+                        <View style={styles.datePickerOverlay}>
+                            <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
+                                <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>
+                                        {showTimePicker === 'start' ? '開始時間' : '終了時間'}
+                                    </Text>
+                                    <TouchableOpacity onPress={() => {
+                                        setShowTimePicker(null);
+                                    }}>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>完了</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <DateTimePicker
+                                    value={showTimePicker === 'start' && dueTime
+                                        ? new Date(`2000-01-01T${dueTime}`)
+                                        : showTimePicker === 'end' && endTime
+                                            ? new Date(`2000-01-01T${endTime}`)
+                                            : new Date()}
+                                    mode="time"
+                                    display="spinner"
+                                    minuteInterval={5}
+                                    onChange={(event, date) => {
+                                        if (date) {
+                                            const timeStr = format(date, 'HH:mm');
+                                            if (showTimePicker === 'start') {
+                                                setDueTime(timeStr);
+                                            } else {
+                                                setEndTime(timeStr);
+                                            }
+                                        }
+                                    }}
+                                    style={styles.datePickerSpinner}
+                                />
+                            </View>
+                        </View>
+                    </Modal>
+                ) : (
+                    <DateTimePicker
+                        value={showTimePicker === 'start' && dueTime
+                            ? new Date(`2000-01-01T${dueTime}`)
+                            : showTimePicker === 'end' && endTime
+                                ? new Date(`2000-01-01T${endTime}`)
+                                : new Date()}
+                        mode="time"
+                        display="default"
+                        minuteInterval={5}
+                        onChange={(event, date) => {
+                            const pickerType = showTimePicker;
+                            setShowTimePicker(null);
+                            if (date) {
+                                const timeStr = format(date, 'HH:mm');
+                                if (pickerType === 'start') {
+                                    setDueTime(timeStr);
+                                    if (!timeStr) setEndTime('');
+                                } else {
+                                    setEndTime(timeStr);
+                                }
+                            }
+                        }}
+                    />
+                )
+            )}
+
+            {/* Category Picker Modal */}
+            <Modal visible={showCategoryPicker} transparent animationType="fade">
+                <TouchableOpacity style={styles.pickerOverlay} onPress={() => setShowCategoryPicker(false)}>
+                    <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
+                        <Text style={[styles.pickerTitle, { color: colors.text }]}>カテゴリを選択</Text>
+                        <ScrollView style={styles.pickerScroll}>
+                            <TouchableOpacity
+                                style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                onPress={() => { setCategoryId(''); setShowCategoryPicker(false); }}
+                            >
+                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>カテゴリなし</Text>
+                            </TouchableOpacity>
+                            {categoryOptions.map(opt => (
+                                <TouchableOpacity
+                                    key={opt.value}
+                                    style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                    onPress={() => { setCategoryId(opt.value); setShowCategoryPicker(false); }}
+                                >
+                                    <Text style={[styles.pickerItemText, { color: colors.text }]}>{opt.label}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            {/* SRS Picker Modal */}
+            <Modal visible={showSRSPicker} transparent animationType="fade">
+                <TouchableOpacity style={styles.pickerOverlay} onPress={() => setShowSRSPicker(false)}>
+                    <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
+                        <Text style={[styles.pickerTitle, { color: colors.text }]}>SRSプロファイルを選択</Text>
+                        <ScrollView style={styles.pickerScroll}>
+                            <TouchableOpacity
+                                style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                onPress={() => { setSrsInterval(''); setShowSRSPicker(false); }}
+                            >
+                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>SRSなし</Text>
+                            </TouchableOpacity>
+                            {srsProfiles.map(p => (
+                                <TouchableOpacity
+                                    key={p.id}
+                                    style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                    onPress={() => { setSrsInterval(p.name); setShowSRSPicker(false); }}
+                                >
+                                    <Text style={[styles.pickerItemText, { color: colors.text }]}>{p.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </Modal>
     );
 };
 
-// Helper Component for Selection
-const SelectionModal = ({ title, options, onSelect, onClose }: any) => (
-    <Modal visible transparent animationType="fade">
-        <TouchableOpacity style={styles.selectionBackdrop} onPress={onClose}>
-            <View style={styles.selectionContainer}>
-                <View style={styles.selectionHeader}>
-                    <Text style={styles.selectionTitle}>{title}</Text>
-                    <TouchableOpacity onPress={onClose}><X size={20} color="#888" /></TouchableOpacity>
-                </View>
-                <ScrollView style={{ maxHeight: 300 }}>
-                    {options.map((opt: any) => (
-                        <TouchableOpacity key={opt.value} style={styles.optionItem} onPress={() => onSelect(opt.value)}>
-                            <Text style={styles.optionLabel}>{opt.label}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            </View>
-        </TouchableOpacity>
-    </Modal>
-);
-
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
     },
-    backdrop: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
     container: {
-        backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        padding: 20,
-        paddingBottom: 40,
         maxHeight: '90%',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 15,
+        padding: 16,
+        borderBottomWidth: 1,
     },
     headerTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
     },
     closeBtn: {
-        padding: 5,
+        padding: 4,
     },
-    scrollContent: {
-        paddingBottom: 20,
+    content: {
+        padding: 16,
     },
-    categoryRow: {
+    optionRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f8fafc',
         padding: 12,
-        borderRadius: 10,
-        marginBottom: 15,
-    },
-    categoryText: {
-        marginLeft: 10,
-        fontSize: 14,
-        color: '#333',
-    },
-    placeholderText: {
-        color: '#888',
-    },
-    inputContainer: {
-        marginBottom: 20,
-        borderBottomWidth: 1,
-        borderColor: '#e2e8f0',
-    },
-    titleInput: {
-        fontSize: 20, // Large font
-        paddingVertical: 10,
-        fontWeight: '500',
-    },
-    grid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        borderRadius: 12,
         gap: 10,
-        marginBottom: 20,
+        marginBottom: 12,
+    },
+    optionText: {
+        flex: 1,
+        fontSize: 14,
+    },
+    contentInput: {
+        borderBottomWidth: 2,
+        paddingVertical: 12,
+        fontSize: 16,
+        fontWeight: '500',
+        minHeight: 80,
+        textAlignVertical: 'top',
+        marginBottom: 16,
+    },
+    gridRow: {
+        flexDirection: 'row',
+        gap: 10,
+        marginBottom: 12,
     },
     gridItem: {
-        width: '48%', // Approx 2 col
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        padding: 12,
         borderRadius: 12,
-        backgroundColor: '#f8fafc',
         gap: 8,
     },
-    colSpan2: {
-        width: '100%',
-    },
     gridText: {
-        fontSize: 13,
-        color: '#333',
+        fontSize: 14,
     },
-    inlineInput: {
-        flex: 1,
-        fontSize: 13,
-        color: '#333',
-    },
-    extraContainer: {
-        gap: 10,
-        marginBottom: 20,
-    },
-    extraRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        borderBottomWidth: 1,
-        borderColor: '#f1f5f9',
-        paddingVertical: 5,
-    },
-    extraInput: {
+    durationInput: {
         flex: 1,
         fontSize: 14,
-        color: '#333',
     },
-    actionsRow: {
+    actions: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        padding: 16,
+        borderTopWidth: 1,
         gap: 10,
     },
     actionBtn: {
@@ -514,78 +652,182 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 12,
+        padding: 14,
         borderRadius: 12,
-        gap: 5,
+        gap: 6,
     },
-    actionText: {
+    actionBtnRecord: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 14,
+        borderRadius: 12,
+        gap: 6,
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    },
+    actionBtnRecordActive: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 14,
+        borderRadius: 12,
+        gap: 6,
+        backgroundColor: '#22c55e',
+    },
+    actionBtnStart: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 14,
+        borderRadius: 12,
+        gap: 6,
+        backgroundColor: 'rgba(234, 88, 12, 0.1)',
+    },
+    actionBtnCreate: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 14,
+        borderRadius: 12,
+        gap: 6,
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    },
+    actionBtnText: {
+        fontWeight: 'bold',
         fontSize: 13,
-        fontWeight: 'bold',
     },
-    // Picker specific
-    pickerDoneBtn: {
-        alignItems: 'flex-end',
-        padding: 10,
-        backgroundColor: '#f0f0f0',
-    },
-    pickerDoneText: {
-        color: '#007AFF',
-        fontWeight: 'bold',
-    },
-    // Selection Modal
-    selectionBackdrop: {
+    pickerOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
     },
-    selectionContainer: {
-        backgroundColor: '#fff',
-        width: '100%',
-        borderRadius: 15,
-        padding: 15,
-        maxHeight: 400,
+    pickerContainer: {
+        width: '80%',
+        maxHeight: '60%',
+        borderRadius: 16,
+        padding: 16,
     },
-    selectionHeader: {
+    pickerTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 12,
+    },
+    pickerScroll: {
+        maxHeight: 300,
+    },
+    pickerItem: {
+        paddingVertical: 14,
+        borderBottomWidth: 1,
+    },
+    pickerItemText: {
+        fontSize: 15,
+    },
+    // Routine styles
+    srsRoutineRow: {
+        flexDirection: 'row',
+        gap: 10,
+        marginBottom: 12,
+    },
+    srsBtn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 12,
+        gap: 8,
+    },
+    srsBtnText: {
+        flex: 1,
+        fontSize: 14,
+    },
+    routineToggle: {
+        padding: 12,
+        borderRadius: 12,
+    },
+    routineContainer: {
+        padding: 12,
+        borderRadius: 12,
+        marginBottom: 12,
+    },
+    routineHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 10,
-        borderBottomWidth: 1,
-        borderColor: '#eee',
-        paddingBottom: 10,
     },
-    selectionTitle: {
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    optionLabel: {
-        fontSize: 16,
-        color: '#333',
-    },
-    // iOS Picker Styles
-    iosPickerContainer: {
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100, // Ensure on top
-    },
-    iosPickerHeader: {
+    routineLabelRow: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        padding: 10,
-        backgroundColor: '#f8fafc',
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        alignItems: 'center',
+        gap: 6,
     },
-    iosPicker: {
-        backgroundColor: '#d1d5db', // Contrast background for white spinner text? Or just white. 
-        // Typically system picker is transparent/white. 
-        // If we force text color black, white bg is fine.
-        backgroundColor: '#fff',
-    }
+    routineLabel: {
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    routineClear: {
+        fontSize: 10,
+        color: '#ef4444',
+    },
+    weekdayRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 4,
+    },
+    weekdayBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    weekdayBtnActive: {
+        backgroundColor: '#3b82f6',
+    },
+    weekdayText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: '#6b7280',
+    },
+    weekdayTextActive: {
+        color: '#fff',
+    },
+    routineHint: {
+        fontSize: 10,
+        color: '#a855f7',
+        marginTop: 8,
+    },
+    // DateTimePicker Modal styles
+    datePickerOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end',
+    },
+    datePickerContainer: {
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingBottom: 30,
+    },
+    datePickerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+        borderBottomWidth: 1,
+    },
+    datePickerTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    datePickerDone: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    datePickerSpinner: {
+        height: 200,
+    },
 });

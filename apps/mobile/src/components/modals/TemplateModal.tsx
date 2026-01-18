@@ -18,7 +18,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
                 <View style={styles.container}>
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={styles.title}>Templates & Categories</Text>
+                        <Text style={styles.title}>Templates</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                             <X size={24} color="#333" />
                         </TouchableOpacity>

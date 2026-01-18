@@ -37,7 +37,7 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted
 
             <TouchableOpacity style={styles.button} onPress={onOpenReport}>
                 <BarChart2 size={20} color={colors.icon} />
-                <Text style={[styles.label, { color: colors.textSecondary }]}>Report</Text>
+                <Text style={[styles.label, { color: colors.textSecondary }]}>Activity</Text>
             </TouchableOpacity>
         </View>
     );

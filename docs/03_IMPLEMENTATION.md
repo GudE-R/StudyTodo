@@ -89,6 +89,23 @@
 これまでの主要な変更履歴です。
 
 
+### [Mobile Feature Parity] - 2026-01-18
+#### 追加/変更 (Mobile)
+- **ActivityModalの機能強化**:
+    - **円グラフ実装**: `react-native-svg`を使用し、学習時間のカテゴリ分布を表示する円グラフを追加（Analyticsタブ）。
+    - **カテゴリフィルタ**: AnalyticsとHistoryの両方で、カテゴリによる絞り込み機能を追加。
+    - **履歴グルーピング**: SRSやルーティンで一括生成されたタスクをグループ化して表示する機能を実装（アコーディオンUI）。
+    - **ステータスフィルタ**: 履歴タブに完了/未完了のステータスフィルタを追加。
+- **CategoryEditorの色選択機能**:
+    - カテゴリ作成・編集時に9色から色を選択できるUIを追加。
+    - Web版と同等のカラーパレットを採用。
+- **UIラベルの統一**:
+    - Footerの「Report」を「Activity」に変更。
+    - TemplateModalのタイトルを「Templates」に変更し、Web版との用語統一を図った。
+- **Todo機能の改善**:
+    - `TodoDetailModal.tsx`を新規作成し、モバイル版でのタスク詳細確認・編集を可能に（Web版相当）。
+    - `useMobileSync.ts`の型定義エラーを修正し、`TodoCreateModal`との連携を強化。
+
 ### [Mobile Dark Mode & Bug Fixes] - 2026-01-18
 #### 修正 (Mobile)
 - **日付切り替えバグ修正**: カレンダーとヘッダーで2日以上先の日付に移動できない問題を修正。
@@ -98,6 +115,24 @@
     - AsyncStorageでテーマ設定を永続化。
     - 主要コンポーネント（Header, Footer, HomeCalendar, HomeDaySchedule, HomeTodoList, MainLayout, SettingsModal）をダークモード対応に更新。
     - 依存パッケージ: `@react-native-async-storage/async-storage`を追加。
+
+### [Mobile Feature Parity] - 2026-01-18
+#### 追加/変更 (Mobile)
+- **ActivityModalの機能強化**:
+    - **円グラフ実装**: `react-native-svg`を使用し、学習時間のカテゴリ分布を表示する円グラフを追加（Analyticsタブ）。
+    - **カテゴリフィルタ**: AnalyticsとHistoryの両方で、カテゴリによる絞り込み機能を追加。
+    - **履歴グルーピング**: SRSやルーティンで一括生成されたタスクをグループ化して表示する機能を実装（アコーディオンUI）。
+    - **ステータスフィルタ**: 履歴タブに完了/未完了のステータスフィルタを追加。
+- **CategoryEditorの色選択機能**:
+    - カテゴリ作成・編集時に9色から色を選択できるUIを追加。
+    - Web版と同等のカラーパレットを採用。
+- **UIラベルの統一**:
+    - Footerの「Report」を「Activity」に変更。
+    - TemplateModalのタイトルを「Templates」に変更し、Web版との用語統一を図った。
+- **Todo機能の改善**:
+    - `TodoDetailModal.tsx`を新規作成し、モバイル版でのタスク詳細確認・編集を可能に（Web版相当）。
+    - `useMobileSync.ts`の型定義エラーを修正し、`TodoCreateModal`との連携を強化。
+
 
 ### [Offline Queue Error Fix] - 2026-01-17
 #### 修正 (Web)

@@ -6,6 +6,19 @@ import { Category } from '@pomarc/shared';
 import { generateId } from '../../lib/utils';
 
 
+// カラーパレット定義（Web版と統一）
+const CATEGORY_COLORS = [
+    "#ef4444", // 赤
+    "#f97316", // オレンジ
+    "#eab308", // 黄
+    "#22c55e", // 緑
+    "#14b8a6", // ティール
+    "#3b82f6", // 青
+    "#8b5cf6", // 紫
+    "#ec4899", // ピンク
+    "#6b7280", // グレー
+];
+
 // Utility to build tree
 const buildCategoryTree = (categories: Category[]): Category[] => {
     const map = new Map<string, Category>();
@@ -22,7 +35,7 @@ const buildCategoryTree = (categories: Category[]): Category[] => {
 };
 
 export const CategoryEditor = () => {
-    const { categories, addCategory, deleteCategory } = useMobileCategories();
+    const { categories, addCategory, updateCategory, deleteCategory } = useMobileCategories();
     const tree = useMemo(() => buildCategoryTree(categories || []), [categories]);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -31,11 +44,19 @@ export const CategoryEditor = () => {
     const [addingLevel, setAddingLevel] = useState<'large' | 'medium' | 'small' | null>(null);
     const [inputName, setInputName] = useState("");
 
+    // Color Picker state
+    const [colorPickerId, setColorPickerId] = useState<string | null>(null);
+
     const toggleExpand = (id: string) => {
         const newSet = new Set(expandedIds);
         if (newSet.has(id)) newSet.delete(id);
         else newSet.add(id);
         setExpandedIds(newSet);
+    };
+
+    const handleColorSelect = async (categoryId: string, color: string) => {
+        await updateCategory(categoryId, { color: color || undefined, updatedAt: new Date() });
+        setColorPickerId(null);
     };
 
     const startAdding = (parentId: string | undefined, level: 'large' | 'medium' | 'small') => {
@@ -85,6 +106,7 @@ export const CategoryEditor = () => {
         const isExpanded = expandedIds.has(node.id);
         const hasChildren = node.children && node.children.length > 0;
         const isSmall = node.level === 'small';
+        const isPickingColor = colorPickerId === node.id;
 
         return (
             <View key={node.id}>
@@ -97,8 +119,15 @@ export const CategoryEditor = () => {
                         {!isSmall && (isExpanded ? <ChevronDown size={20} color="#666" /> : <ChevronRight size={20} color="#666" />)}
                     </TouchableOpacity>
 
+                    <TouchableOpacity
+                        style={[styles.colorIndicator, { backgroundColor: node.color || 'transparent', borderColor: node.color ? 'transparent' : '#ccc' }]}
+                        onPress={() => setColorPickerId(isPickingColor ? null : node.id)}
+                    >
+                        {!node.color && <View style={styles.noColorLine} />}
+                    </TouchableOpacity>
+
                     <View style={styles.iconContainer}>
-                        {isSmall ? <File size={18} color="#3b82f6" /> : <Folder size={18} color="#f59e0b" />}
+                        {isSmall ? <File size={18} color={node.color || "#3b82f6"} /> : <Folder size={18} color={node.color || "#f59e0b"} />}
                     </View>
 
                     <Text style={styles.nodeText}>{node.name}</Text>
@@ -117,6 +146,26 @@ export const CategoryEditor = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
+
+                {/* Color Picker Palette */}
+                {isPickingColor && (
+                    <View style={[styles.colorPalette, { marginLeft: depth * 20 + 40 }]}>
+                        {/* Clear Color Option */}
+                        <TouchableOpacity
+                            style={[styles.colorOption, { borderColor: '#ccc', borderWidth: 1 }]}
+                            onPress={() => handleColorSelect(node.id, "")}
+                        >
+                            <View style={[styles.noColorLine, { backgroundColor: '#ef4444' }]} />
+                        </TouchableOpacity>
+                        {CATEGORY_COLORS.map(color => (
+                            <TouchableOpacity
+                                key={color}
+                                style={[styles.colorOption, { backgroundColor: color }]}
+                                onPress={() => handleColorSelect(node.id, color)}
+                            />
+                        ))}
+                    </View>
+                )}
 
                 {isExpanded && node.children && node.children.map(child => renderNode(child, depth + 1))}
 
@@ -284,5 +333,39 @@ const styles = StyleSheet.create({
     cancelText: {
         color: '#64748b',
         fontSize: 12,
+    },
+    // Color Picker Styles
+    colorIndicator: {
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        marginRight: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+    },
+    noColorLine: {
+        width: '140%',
+        height: 1,
+        backgroundColor: '#ef4444',
+        transform: [{ rotate: '45deg' }],
+    },
+    colorPalette: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        padding: 8,
+        backgroundColor: '#f8fafc',
+        borderRadius: 8,
+        marginBottom: 8,
+    },
+    colorOption: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
     },
 });

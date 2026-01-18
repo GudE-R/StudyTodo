@@ -11,6 +11,7 @@ import { HomeCalendar } from '../home/HomeCalendar';
 
 // Modals
 import { TodoCreateModal } from '../modals/TodoCreateModal';
+import { TodoDetailModal } from '../modals/TodoDetailModal';
 import { SettingsModal } from '../modals/SettingsModal';
 import { TemplateModal } from '../modals/TemplateModal';
 import { ActivityModal } from '../modals/ActivityModal';
@@ -26,7 +27,7 @@ export const MainLayout = () => {
     // Basic Layout without Reanimated
     const [currentDate, setCurrentDate] = useState(new Date());
     const { categories, refreshCategories } = useMobileCategories();
-    const { addTodo } = useMobileTodos();
+    const { addTodo, updateTodo, deleteTodo } = useMobileTodos();
     const { addSession } = useMobileSessions();
     const { colors, isDark } = useThemeColors();
 
@@ -38,6 +39,8 @@ export const MainLayout = () => {
     const [keptTime, setKeptTime] = useState<string | null>(null);
 
     const [isTodoModalVisible, setTodoModalVisible] = useState(false);
+    const [isDetailModalVisible, setDetailModalVisible] = useState(false);
+    const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
     const [isSettingsModalVisible, setSettingsModalVisible] = useState(false);
     const [isTemplateModalVisible, setTemplateModalVisible] = useState(false);
     const [isActivityModalVisible, setActivityModalVisible] = useState(false);
@@ -79,6 +82,37 @@ export const MainLayout = () => {
         setActiveTodo(newTodo);
         setViewMode("timer");
         setTodoModalVisible(false);
+    };
+
+    // TodoDetailModal handlers
+    const handleTodoPress = (todo: Todo) => {
+        setSelectedTodo(todo);
+        setDetailModalVisible(true);
+    };
+
+    const handleTodoStartNow = (todo: Todo) => {
+        setActiveTodo(todo);
+        setViewMode("timer");
+    };
+
+    const handleTodoUpdate = async (todo: Todo) => {
+        await updateTodo(todo.id, todo);
+    };
+
+    const handleTodoDelete = async (todoId: string) => {
+        await deleteTodo(todoId);
+    };
+
+    const handleTodoRecord = async (todo: Todo, duration: number) => {
+        await updateTodo(todo.id, { ...todo, completed: true });
+        await addSession({
+            id: generateId(),
+            todoId: todo.id,
+            todoTitle: todo.title,
+            duration: duration,
+            mode: 'pomodoro',
+            createdAt: new Date(),
+        });
     };
 
     if (viewMode === "timer" && activeTodo) {
@@ -129,7 +163,7 @@ export const MainLayout = () => {
             <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
                 <View style={styles.splitRow}>
                     <View style={[styles.paneHalf, { borderColor: colors.border }]}>
-                        <HomeTodoList date={currentDate} />
+                        <HomeTodoList date={currentDate} onTodoPress={handleTodoPress} />
                     </View>
                     <View style={[styles.paneHalf, { borderColor: colors.border }]}>
                         <HomeDaySchedule
@@ -181,6 +215,15 @@ export const MainLayout = () => {
             <ActivityModal
                 visible={isActivityModalVisible}
                 onClose={() => setActivityModalVisible(false)}
+            />
+            <TodoDetailModal
+                visible={isDetailModalVisible}
+                onClose={() => setDetailModalVisible(false)}
+                todo={selectedTodo}
+                onStartNow={handleTodoStartNow}
+                onDelete={handleTodoDelete}
+                onUpdate={handleTodoUpdate}
+                onRecord={handleTodoRecord}
             />
         </SafeAreaView>
     );
