@@ -41,6 +41,36 @@ export function useSync() {
             const localCategories = await db.categories.toArray();
             const localSrs = await db.srsProfiles.toArray();
 
+            // クラウドにデータがある場合、ローカルのサンプルデータ（名前でマッチ）を削除して重複を防ぐ
+            if (cloudCategories && cloudCategories.length > 0) {
+                const sampleCategoryNames = ['大カテゴリサンプル', '中カテゴリサンプル', '小カテゴリサンプル'];
+                const sampleCategoryIds = localCategories
+                    .filter(c => sampleCategoryNames.includes(c.name))
+                    .map(c => c.id);
+                if (sampleCategoryIds.length > 0) {
+                    await db.transaction('rw', db.categories, (trans) => {
+                        (trans as unknown as { source: string }).source = 'sync';
+                        return db.categories.bulkDelete(sampleCategoryIds);
+                    });
+                }
+            }
+
+            if (cloudSrs && cloudSrs.length > 0) {
+                const defaultSrsIds = localSrs
+                    .filter(s => s.name === '忘却曲線 (標準)' && !cloudSrs.some(cs => cs.id === s.id))
+                    .map(s => s.id);
+                if (defaultSrsIds.length > 0) {
+                    await db.transaction('rw', db.srsProfiles, (trans) => {
+                        (trans as unknown as { source: string }).source = 'sync';
+                        return db.srsProfiles.bulkDelete(defaultSrsIds);
+                    });
+                }
+            }
+
+            // 削除後の最新データを取得
+            const filteredLocalCategories = await db.categories.toArray();
+            const filteredLocalSrs = await db.srsProfiles.toArray();
+
             const processTable = async (
                 localItems: any[],
                 cloudItems: any[],
@@ -105,8 +135,8 @@ export function useSync() {
                 return { imported: toImport.length, exported: toExport.length };
             };
 
-            await processTable(localCategories, cloudCategories, 'categories', 'categories');
-            await processTable(localSrs, cloudSrs, 'srsProfiles', 'srs_profiles');
+            await processTable(filteredLocalCategories, cloudCategories, 'categories', 'categories');
+            await processTable(filteredLocalSrs, cloudSrs, 'srsProfiles', 'srs_profiles');
             await processTable(localTodos, cloudTodos, 'todos', 'todos');
             await processTable(localSessions, cloudSessions, 'sessions', 'sessions');
 
