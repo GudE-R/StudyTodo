@@ -40,7 +40,18 @@
         "create": "作成",
         "update": "更新",
         "close": "閉じる",
-        "clear": "クリア"
+        "clear": "クリア",
+        "error": "エラー",
+        "done": "完了",
+        "title": "タイトル",
+        "syncing": "同期中...",
+        "select": "選択",
+        "todo": "未完了",
+        "period": {
+            "week": "週間",
+            "month": "月間",
+            "year": "年間"
+        }
     },
     "home": {
         "title": "ホーム",
@@ -52,7 +63,10 @@
         "detailTitle": "タスク詳細・編集",
         "noCategory": "カテゴリなし",
         "contentPlaceholder": "タスク名や範囲、メモを入力... (1行目がタスク名、2行目以降が詳細になります)",
+        "titleLabel": "タスク名",
+        "memoLabel": "メモ",
         "datePlaceholder": "[日付を選択]",
+        "selectDate": "日付を選択",
         "startTime": "開始時間",
         "endTime": "終了時間",
         "durationPlaceholder": "所要時間(分)",
@@ -62,6 +76,7 @@
         "create": "作成",
         "noTitle": "No Title",
         "invalidDuration": "有効な時間を入力してください",
+        "inputDuration": "時間を入力してください",
         "priority": "優先度",
         "priorityHigh": "高",
         "priorityMedium": "中",
@@ -72,7 +87,9 @@
         "statsTitle": "学習状況",
         "results": "実績",
         "deleteTask": "このタスクを削除",
+        "deleteConfirm": "このタスクを削除しますか？",
         "titleOrCategoryRequired": "タスク名またはカテゴリを入力してください",
+        "inputTitleOrCategory": "タイトルまたはカテゴリを入力してください",
         "durationRecordOnly": "記録モードで入力",
         "recordConfirm": "記録する",
         "routineLabel": "ルーティーン（曜日指定）",
@@ -105,6 +122,7 @@
     },
     "settings": {
         "title": "設定",
+        "language": "言語",
         "appearance": "表示設定",
         "cloudSync": "クラウド同期",
         "loggedInAs": "ログイン中",
@@ -112,6 +130,7 @@
         "loginToBackup": "ログイン / アカウント作成",
         "backupCloudDescription": "データをクラウドにバックアップ・同期",
         "syncEnabled": "有効 (リアルタイム)",
+        "syncNow": "今すぐ同期",
         "lastSynced": "最終同期",
         "justSynced": "同期済み",
         "dataManagement": "データ管理",
@@ -178,12 +197,14 @@
         "add": "追加",
         "cancel": "キャンセル",
         "deleteTitle": "削除",
+        "deleteConfirm": "本当に削除しますか？サブカテゴリもすべて削除されます。",
         "deleteButton": "削除する",
         "addChildTitle": "子カテゴリを追加",
         "addFailed": "カテゴリの追加に失敗しました",
         "deleteFailed": "カテゴリの削除に失敗しました",
         "changeColor": "色を変更",
-        "noColor": "なし"
+        "noColor": "なし",
+        "selectCategory": "カテゴリを選択"
     },
     "srs": {
         "listTitle": "SRS設定リスト",
@@ -195,7 +216,15 @@
         "daysAfter": "{days}日後",
         "invalidInput": "有効な数値が入力されませんでした",
         "addFailed": "SRS設定の追加に失敗しました",
-        "deleteFailed": "SRS設定の削除に失敗しました"
+        "deleteFailed": "SRS設定の削除に失敗しました",
+        "validationError": "入力エラー",
+        "enterBoth": "名前と間隔の両方を入力してください。",
+        "validIntervals": "間隔にはカンマ区切りの数値を入力してください（例：1, 3, 7）。",
+        "cannotDelete": "削除できません",
+        "defaultDeleteError": "デフォルト設定は削除できません。",
+        "deleteProfile": "SRS設定の削除",
+        "deleteConfirm": "本当に削除しますか？",
+        "selectProfile": "SRS設定を選択"
     },
     "theme": {
         "title": "テーマ",

@@ -89,6 +89,13 @@
 これまでの主要な変更履歴です。
 
 
+### [Mobile Internationalization] - 2026-01-18
+#### 追加/変更 (Mobile)
+- **多言語対応 (i18n) 完了**:
+    - **Modals対応**: `TodoCreateModal`, `TodoDetailModal`, `SettingsModal`, `ActivityModal`, `CategoryEditor`, `SRSEditor`, `TemplateModal` の全文字列を翻訳キーに置換。
+    - **ロケールファイル拡充**: `ja.json`, `en.json` に不足していた翻訳キー（同期ステータス、アクティビティ、設定など）を網羅的に追加。
+    - **日付フォーマット**: `date-fns` のロケール (`ja`, `en-US`) をユーザー言語設定に応じて動的適用。
+
 ### [Mobile Feature Parity] - 2026-01-18
 #### 追加/変更 (Mobile)
 - **ActivityModalの機能強化**:

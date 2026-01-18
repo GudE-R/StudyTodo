@@ -435,3 +435,16 @@ SRSEditor, CategoryEditor, TemplateModal, ActivityModalのダークモード対�
 次はシェア機能や多言語対応だが、まずはここで一区切りとする。
 
 
+
+1/18 (続き3)
+**モバイル版の多言語化完了:**
+主要なモーダル（Settings, Activity, TodoCreate, TodoDetail, Category/SRS Editor, Template）の国際化（i18n）対応を完了した。
+Web版で整備した `ja.json`, `en.json` を活用し、モバイルアプリ内でも言語設定に応じて表示が切り替わるようになった。
+
+実装のポイント:
+- **SettingsModal**: 言語切り替えUIの実装と、設定項目の全翻訳。「今すぐ同期」等のステータス表示も対応。
+- **ActivityModal**: チャートの日付（MMM, EEE）を `date-fns` のロケールで動的フォーマット。履歴フィルタやバッジも翻訳。
+- **Editors**: カテゴリやSRSの編集画面、アラートメッセージ（削除確認など）も全て日本語化。
+
+これで、見た目・機能・言語の面でWeb版とのパリティ（等価性）がほぼ達成された。
+残るはホーム画面の一部コンポーネントのみだが、主要なUXは既に日本語で利用可能になっている。

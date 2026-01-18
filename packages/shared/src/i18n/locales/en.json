@@ -40,6 +40,17 @@
             "4": "T",
             "5": "F",
             "6": "S"
+        },
+        "error": "Error",
+        "done": "Done",
+        "title": "Title",
+        "syncing": "Syncing...",
+        "select": "Select",
+        "todo": "Todo",
+        "period": {
+            "week": "Week",
+            "month": "Month",
+            "year": "Year"
         }
     },
     "home": {
@@ -52,6 +63,8 @@
         "detailTitle": "Task Details / Edit",
         "noCategory": "No Category",
         "contentPlaceholder": "Enter task name, range, or notes... (1st line is title, 2nd+ lines are details)",
+        "titleLabel": "Task Title",
+        "memoLabel": "Memo",
         "datePlaceholder": "Select Date",
         "startTime": "Start Time",
         "endTime": "End Time",
@@ -72,10 +85,14 @@
         "statsTitle": "Learning Stats",
         "results": "Results",
         "deleteTask": "Delete this task",
+        "deleteConfirm": "Are you sure you want to delete this task?",
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
         "recordConfirm": "Confirm",
-        "postpone": "Move to Tomorrow"
+        "postpone": "Move to Tomorrow",
+        "inputTitleOrCategory": "Please enter a title or select a category",
+        "inputDuration": "Please enter a duration",
+        "selectDate": "Select Date"
     },
     "auth": {
         "welcomeBack": "Welcome Back",
@@ -103,6 +120,7 @@
     },
     "settings": {
         "title": "Settings",
+        "language": "Language",
         "appearance": "Appearance",
         "cloudSync": "Cloud Sync",
         "loggedInAs": "Logged in as",
@@ -110,6 +128,7 @@
         "loginToBackup": "Login / Create Account",
         "backupCloudDescription": "Backup and sync data to cloud",
         "syncEnabled": "Enabled (Real-time)",
+        "syncNow": "Sync Now",
         "lastSynced": "Last Synced",
         "justSynced": "Synced",
         "dataManagement": "Data Management",
@@ -164,31 +183,6 @@
         "themeTitle": "Theme Settings",
         "themeDesc": "Full Light/Dark mode support. Select 'System' to match your OS settings for your preferred environment."
     },
-    "category": {
-        "treeTitle": "Categories",
-        "addLargeCategory": "Add Large Category",
-        "noCategory": "No categories yet.\nCreate one from 'Add Large Category'.",
-        "placeholder": "Category Name",
-        "add": "Add",
-        "deleteTitle": "Delete",
-        "deleteButton": "Delete",
-        "addChildTitle": "Add Sub-category",
-        "addFailed": "Failed to add category",
-        "deleteFailed": "Failed to delete category",
-        "cancel": "Cancel"
-    },
-    "srs": {
-        "listTitle": "SRS Profiles",
-        "createNew": "Create New",
-        "namePlaceholder": "Name (e.g., Intensive)",
-        "intervalPlaceholder": "Intervals (e.g., 1, 3, 7)",
-        "defaultBadge": "Default",
-        "deleteButton": "Delete",
-        "daysAfter": "{days} days later",
-        "invalidInput": "No valid values were entered",
-        "addFailed": "Failed to add SRS profile",
-        "deleteFailed": "Failed to delete SRS profile"
-    },
     "theme": {
         "title": "Theme",
         "description": "Choose the appearance of the app",
@@ -203,6 +197,41 @@
         "categoryTab": "Categories",
         "srsTab": "SRS",
         "title": "Templates"
+    },
+    "category": {
+        "treeTitle": "Categories",
+        "addLargeCategory": "Add Large Category",
+        "noCategory": "No categories yet.\nCreate one from 'Add Large Category'.",
+        "placeholder": "Category Name",
+        "add": "Add",
+        "deleteTitle": "Delete Category",
+        "deleteConfirm": "Are you sure? Sub-categories will also be deleted.",
+        "deleteButton": "Delete",
+        "addChildTitle": "Add Sub-category",
+        "addFailed": "Failed to add category",
+        "deleteFailed": "Failed to delete category",
+        "cancel": "Cancel",
+        "selectCategory": "Select Category"
+    },
+    "srs": {
+        "listTitle": "SRS Profiles",
+        "createNew": "Create New",
+        "namePlaceholder": "Name (e.g., Intensive)",
+        "intervalPlaceholder": "Intervals (e.g., 1, 3, 7)",
+        "defaultBadge": "Default",
+        "deleteButton": "Delete",
+        "daysAfter": "{days} days later",
+        "invalidInput": "No valid values were entered",
+        "addFailed": "Failed to add SRS profile",
+        "deleteFailed": "Failed to delete SRS profile",
+        "validationError": "Validation Error",
+        "enterBoth": "Please enter both name and intervals.",
+        "validIntervals": "Please enter valid comma-separated numbers for intervals (e.g., 1, 3, 7).",
+        "cannotDelete": "Cannot Delete",
+        "defaultDeleteError": "The default profile cannot be deleted.",
+        "deleteProfile": "Delete SRS Profile",
+        "deleteConfirm": "Are you sure?",
+        "selectProfile": "Select SRS Profile"
     },
     "activity": {
         "analytics": "Analytics",

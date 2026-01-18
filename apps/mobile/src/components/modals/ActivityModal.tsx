@@ -4,6 +4,8 @@ import { X, BarChart2, History, Filter, Trash2, ChevronDown, ChevronRight, Layer
 import { Svg, Rect, Text as SvgText, G, Path } from 'react-native-svg';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, eachDayOfInterval, eachMonthOfInterval, isWithinInterval, isSameDay, getMonth, getYear } from 'date-fns';
 import { ja } from 'date-fns/locale';
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { useTranslation } from 'react-i18next';
 import { Session, Todo, Category } from '@pomarc/shared';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
@@ -35,6 +37,8 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     const { categories } = useMobileCategories();
     const { colors, isDark } = useTheme();
     const { width } = useWindowDimensions();
+    const { t, i18n } = useTranslation();
+    const locale = getDateFnsLocale(i18n.language);
 
     const [activeTab, setActiveTab] = useState<Tab>("analytics");
     const [range, setRange] = useState<Range>("week");
@@ -79,7 +83,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
             start = startOfWeek(now, { weekStartsOn: 1 });
             end = endOfWeek(now, { weekStartsOn: 1 });
             const days = eachDayOfInterval({ start, end });
-            data = days.map(d => ({ label: format(d, 'EEE', { locale: ja }), value: 0, date: d }));
+            data = days.map(d => ({ label: format(d, 'EEE', { locale }), value: 0, date: d }));
         } else if (range === "month") {
             start = startOfMonth(now);
             end = endOfMonth(now);
@@ -90,7 +94,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
             start = startOfYear(now);
             end = endOfYear(now);
             const months = eachMonthOfInterval({ start, end });
-            data = months.map(d => ({ label: format(d, 'M月'), value: 0, date: d }));
+            data = months.map(d => ({ label: format(d, 'MMM', { locale }), value: 0, date: d }));
         }
 
         sessions.forEach(session => {
@@ -106,7 +110,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                 const idx = getMonth(date);
                 if (data[idx]) data[idx].value += session.duration / 60;
             } else {
-                const dayLabel = range === "week" ? format(date, 'EEE', { locale: ja }) : format(date, 'd');
+                const dayLabel = range === "week" ? format(date, 'EEE', { locale }) : format(date, 'd');
                 const idx = data.findIndex(d => d.label === dayLabel);
                 if (idx !== -1) data[idx].value += session.duration / 60;
             }
@@ -138,7 +142,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
             const todo = todos.find(t => t.id === session.todoId);
             const catId = todo?.categoryId || "none";
             const category = flatCategories.find(c => c.id === catId);
-            const name = category?.name || (catId === "none" ? "No Category" : "Unknown");
+            const name = category?.name || (catId === "none" ? t('todo.noCategory', 'No Category') : "Unknown");
             const color = category?.color || "#9ca3af";
 
             if (!distribution[catId]) {
@@ -238,12 +242,12 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
 
     const handleBulkDelete = () => {
         Alert.alert(
-            "Delete Tasks",
-            `Are you sure you want to delete ${selectedIds.size} tasks?`,
+            t('activity.deleteTitle', "Delete Tasks"),
+            t('activity.deleteTodoConfirm', `Are you sure you want to delete {count} tasks?`).replace('{count}', selectedIds.size.toString()),
             [
-                { text: "Cancel", style: "cancel" },
+                { text: t('common.cancel', "Cancel"), style: "cancel" },
                 {
-                    text: "Delete",
+                    text: t('common.delete', "Delete"),
                     style: "destructive",
                     onPress: async () => {
                         const ids = Array.from(selectedIds);
@@ -331,7 +335,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                     {/* Header */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
                         <View style={styles.titleRow}>
-                            <Text style={[styles.title, { color: colors.text }]}>Activity</Text>
+                            <Text style={[styles.title, { color: colors.text }]}>{t('common.activity', 'Activity')}</Text>
                             <View style={[styles.tabContainer, { backgroundColor: colors.surfaceHighlight }]}>
                                 <TouchableOpacity
                                     style={[styles.tab, activeTab === 'analytics' && [styles.activeTab, { backgroundColor: colors.surface }]]}
@@ -342,7 +346,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                         styles.tabText,
                                         { color: colors.textSecondary },
                                         activeTab === 'analytics' && { color: colors.primary }
-                                    ]}>Analytics</Text>
+                                    ]}>{t('activity.analytics', 'Analytics')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.tab, activeTab === 'history' && [styles.activeTab, { backgroundColor: colors.surface }]]}
@@ -353,7 +357,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                         styles.tabText,
                                         { color: colors.textSecondary },
                                         activeTab === 'history' && { color: colors.primary }
-                                    ]}>History</Text>
+                                    ]}>{t('activity.history', 'History')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -378,7 +382,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                                 styles.rangeText,
                                                 { color: colors.textSecondary },
                                                 range === r && { color: '#fff' }
-                                            ]}>{r.charAt(0).toUpperCase() + r.slice(1)}</Text>
+                                            ]}>{t(`common.period.${r}`)}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
@@ -393,7 +397,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                             styles.filterChipText,
                                             { color: colors.textSecondary },
                                             filterCategory === 'all' && { color: '#fff' }
-                                        ]}>All</Text>
+                                        ]}>{t('common.all', 'All')}</Text>
                                     </TouchableOpacity>
                                     {flatCategories.map(c => (
                                         <TouchableOpacity
@@ -418,7 +422,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                 {/* Summary */}
                                 <View style={styles.summaryGrid}>
                                     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Focus Time</Text>
+                                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('activity.focusTime', 'Focus Time')}</Text>
                                         <View style={styles.cardValueRow}>
                                             <Text style={[styles.cardValue, { color: colors.text }]}>{totalHours}</Text>
                                             <Text style={[styles.cardUnit, { color: colors.textMuted }]}>h</Text>
@@ -427,21 +431,21 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                         </View>
                                     </View>
                                     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Completed</Text>
+                                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>{t('activity.completed', 'Completed')}</Text>
                                         <View style={styles.cardValueRow}>
                                             <Text style={[styles.cardValue, { color: colors.text }]}>{completedCount}</Text>
-                                            <Text style={[styles.cardUnit, { color: colors.textMuted }]}>tasks</Text>
+                                            <Text style={[styles.cardUnit, { color: colors.textMuted }]}>{t('common.tasks')}</Text>
                                         </View>
                                     </View>
                                 </View>
 
                                 {/* Charts */}
                                 <View style={[styles.chartCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                                    <Text style={[styles.chartTitle, { color: colors.text }]}>Trend (min)</Text>
+                                    <Text style={[styles.chartTitle, { color: colors.text }]}>{t('activity.trend', 'Trend (min)')}</Text>
                                     <BarChartComponent />
                                 </View>
                                 <View style={[styles.chartCard, { marginTop: 15, backgroundColor: colors.surface, borderColor: colors.border }]}>
-                                    <Text style={[styles.chartTitle, { color: colors.text }]}>Distribution</Text>
+                                    <Text style={[styles.chartTitle, { color: colors.text }]}>{t('activity.distribution', 'Distribution')}</Text>
                                     <PieChartComponent />
                                 </View>
                                 <View style={{ height: 40 }} />
@@ -456,22 +460,22 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                             onPress={() => setHistoryFilterStatus(prev => prev === 'all' ? 'completed' : prev === 'completed' ? 'incomplete' : 'all')}
                                         >
                                             <Text style={[styles.filterBtnText, { color: colors.textSecondary }, historyFilterStatus !== 'all' && { color: colors.primary }]}>
-                                                {historyFilterStatus === 'all' ? 'All Status' : historyFilterStatus === 'completed' ? 'Done' : 'Todo'}
+                                                {historyFilterStatus === 'all' ? t('activity.allStatus') : historyFilterStatus === 'completed' ? t('common.done') : t('common.todo')}
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
                                     {isSelectionMode ? (
                                         <View style={styles.selectionActions}>
                                             <TouchableOpacity onPress={() => setIsSelectionMode(false)}>
-                                                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
+                                                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{t('common.cancel')}</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity onPress={handleBulkDelete} disabled={selectedIds.size === 0}>
-                                                <Text style={[styles.deleteText, { color: colors.danger }, selectedIds.size === 0 && { opacity: 0.5 }]}>Delete ({selectedIds.size})</Text>
+                                                <Text style={[styles.deleteText, { color: colors.danger }, selectedIds.size === 0 && { opacity: 0.5 }]}>{t('common.delete')} ({selectedIds.size})</Text>
                                             </TouchableOpacity>
                                         </View>
                                     ) : (
                                         <TouchableOpacity onPress={() => setIsSelectionMode(true)}>
-                                            <Text style={[styles.selectText, { color: colors.primary }]}>Select</Text>
+                                            <Text style={[styles.selectText, { color: colors.primary }]}>{t('common.select')}</Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -504,7 +508,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                                                 </View>
                                                                 <View style={{ flex: 1, marginLeft: 8 }}>
                                                                     <Text style={[styles.groupTitle, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
-                                                                    <Text style={[styles.groupMeta, { color: colors.textSecondary }]}>{item.completedCount}/{item.todos.length} Done • {format(item.createdAt, 'MM/dd')}</Text>
+                                                                    <Text style={[styles.groupMeta, { color: colors.textSecondary }]}>{item.completedCount}/{item.todos.length} {t('common.done')} • {format(item.createdAt, 'MM/dd')}</Text>
                                                                 </View>
                                                                 {isExpanded ? <ChevronDown size={18} color={colors.textSecondary} /> : <ChevronRight size={18} color={colors.textSecondary} />}
                                                             </TouchableOpacity>
@@ -529,7 +533,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                                                         <Text style={[styles.historyMeta, { color: colors.textMuted }]}>{format(new Date(todo.createdAt), 'MM/dd HH:mm')}</Text>
                                                                     </View>
                                                                     <View style={[styles.statusBadge, todo.completed ? [styles.statusDone, { backgroundColor: isDark ? '#064e3b' : '#dcfce7' }] : [styles.statusTodo, { backgroundColor: colors.surfaceHighlight }]]}>
-                                                                        <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? 'DONE' : 'TODO'}</Text>
+                                                                        <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? t('common.done') : t('common.todo')}</Text>
                                                                     </View>
                                                                 </TouchableOpacity>
                                                             ))}
@@ -561,7 +565,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                                 </View>
                                                 {!isSelectionMode && (
                                                     <View style={[styles.statusBadge, todo.completed ? [styles.statusDone, { backgroundColor: isDark ? '#064e3b' : '#dcfce7' }] : [styles.statusTodo, { backgroundColor: colors.surfaceHighlight }]]}>
-                                                        <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? 'DONE' : 'TODO'}</Text>
+                                                        <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? t('common.done') : t('common.todo')}</Text>
                                                     </View>
                                                 )}
                                             </TouchableOpacity>
