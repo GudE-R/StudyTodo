@@ -427,4 +427,11 @@ ActivityModalとCategoryEditorをWeb版と同等の機能レベルに引き上�
 次は多言語対応やシェア機能などの「Phase 3: UX向上」に進むことができる。
 モバイル版の完成度が上がり、実用レベルに近づいてきた手応えがある。
 
+1/18 (続き2)
+**Modalのダークモード完全対応:**
+SRSEditor, CategoryEditor, TemplateModal, ActivityModalのダークモード対応を完了。
+これで主要な画面は全てテーマ切り替えに対応したことになる。
+特にActivityModalのチャートは、SVGのfillやtextのfillを動的に変える必要があったが、`ThemeProvider` から提供される `colors` を使うことで綺麗に解決できた。
+次はシェア機能や多言語対応だが、まずはここで一区切りとする。
+
 

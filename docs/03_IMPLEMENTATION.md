@@ -133,6 +133,13 @@
     - `TodoDetailModal.tsx`を新規作成し、モバイル版でのタスク詳細確認・編集を可能に（Web版相当）。
     - `useMobileSync.ts`の型定義エラーを修正し、`TodoCreateModal`との連携を強化。
 
+### [Mobile Dark Mode] - 2026-01-18
+#### 追加/変更 (Mobile)
+- **Modalのダークモード対応**:
+    - `SRSEditor`, `CategoryEditor`, `TemplateModal`, `ActivityModal` を `useTheme` フックに対応。
+    - チャート（SVG）もテーマカラー（`colors.primary`, `colors.surface` 等）を使用するように改修。
+    - **統一感**: アプリ全体の配色をWeb版のパレットに準拠させ、モード切り替え時の違和感を排除。
+
 
 ### [Offline Queue Error Fix] - 2026-01-17
 #### 修正 (Web)

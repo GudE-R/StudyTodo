@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { X, FolderTree, Repeat } from 'lucide-react-native';
 import { CategoryEditor } from './CategoryEditor';
 import { SRSEditor } from './SRSEditor';
+import { useTheme } from '../../providers/ThemeProvider';
 
 interface TemplateModalProps {
     visible: boolean;
@@ -10,36 +11,45 @@ interface TemplateModalProps {
 }
 
 export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
+    const { colors, isDark } = useTheme();
     const [activeTab, setActiveTab] = useState<"category" | "srs">("category");
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
-                <View style={styles.container}>
+                <View style={[styles.container, { backgroundColor: colors.surface }]}>
                     {/* Header */}
-                    <View style={styles.header}>
-                        <Text style={styles.title}>Templates</Text>
+                    <View style={[styles.header, { borderBottomColor: colors.border }]}>
+                        <Text style={[styles.title, { color: colors.text }]}>Templates</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                            <X size={24} color="#333" />
+                            <X size={24} color={colors.text} />
                         </TouchableOpacity>
                     </View>
 
                     {/* Tabs */}
-                    <View style={styles.tabs}>
+                    <View style={[styles.tabs, { borderBottomColor: colors.border }]}>
                         <TouchableOpacity
                             style={[styles.tab, activeTab === "category" && styles.activeTabCat]}
                             onPress={() => setActiveTab("category")}
                         >
-                            <FolderTree size={18} color={activeTab === "category" ? "#2563eb" : "#64748b"} />
-                            <Text style={[styles.tabText, activeTab === "category" && styles.activeTabTextCat]}>Categories</Text>
+                            <FolderTree size={18} color={activeTab === "category" ? colors.primary : colors.textSecondary} />
+                            <Text style={[
+                                styles.tabText,
+                                { color: colors.textSecondary },
+                                activeTab === "category" && { color: colors.primary }
+                            ]}>Categories</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             style={[styles.tab, activeTab === "srs" && styles.activeTabSrs]}
                             onPress={() => setActiveTab("srs")}
                         >
-                            <Repeat size={18} color={activeTab === "srs" ? "#9333ea" : "#64748b"} />
-                            <Text style={[styles.tabText, activeTab === "srs" && styles.activeTabTextSrs]}>SRS Profiles</Text>
+                            <Repeat size={18} color={activeTab === "srs" ? "#9333ea" : colors.textSecondary} />
+                            <Text style={[
+                                styles.tabText,
+                                { color: colors.textSecondary },
+                                activeTab === "srs" && { color: "#9333ea" }
+                            ]}>SRS Profiles</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -61,7 +71,6 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     container: {
-        backgroundColor: '#fff',
         borderRadius: 15,
         height: 600, // Fixed height or flex
         maxHeight: '80%',
@@ -73,12 +82,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 15,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
     },
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
     },
     closeBtn: {
         padding: 5,
@@ -86,7 +93,6 @@ const styles = StyleSheet.create({
     tabs: {
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
     },
     tab: {
         flex: 1,
@@ -106,13 +112,6 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontWeight: '600',
-        color: '#64748b',
-    },
-    activeTabTextCat: {
-        color: '#2563eb',
-    },
-    activeTabTextSrs: {
-        color: '#9333ea',
     },
     content: {
         flex: 1,

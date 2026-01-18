@@ -4,9 +4,10 @@ import { Repeat, Plus, Trash2, Calendar, TrendingUp } from 'lucide-react-native'
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { SRSProfile } from '@pomarc/shared';
 import { generateId } from '../../lib/utils';
-
+import { useTheme } from '../../providers/ThemeProvider';
 
 export const SRSEditor = () => {
+    const { colors, isDark } = useTheme();
     const { profiles, addSRSProfile, deleteSRSProfile } = useMobileSRS();
     const [isAdding, setIsAdding] = useState(false);
     const [newName, setNewName] = useState("");
@@ -56,11 +57,14 @@ export const SRSEditor = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>SRS Profiles</Text>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+                <Text style={[styles.title, { color: colors.text }]}>SRS Profiles</Text>
                 {!isAdding && (
-                    <TouchableOpacity style={styles.addBtn} onPress={() => setIsAdding(true)}>
+                    <TouchableOpacity
+                        style={[styles.addBtn, { backgroundColor: colors.primary }]}
+                        onPress={() => setIsAdding(true)}
+                    >
                         <Plus size={16} color="#fff" />
                         <Text style={styles.addBtnText}>New Profile</Text>
                     </TouchableOpacity>
@@ -69,26 +73,31 @@ export const SRSEditor = () => {
 
             <ScrollView style={styles.content}>
                 {isAdding && (
-                    <View style={styles.addForm}>
-                        <Text style={styles.formTitle}>New SRS Profile</Text>
+                    <View style={[styles.addForm, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primaryLight }]}>
+                        <Text style={[styles.formTitle, { color: colors.primary }]}>New SRS Profile</Text>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             placeholder="Profile Name (e.g. Exam Cram)"
+                            placeholderTextColor={colors.textMuted}
                             value={newName}
                             onChangeText={setNewName}
                         />
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             placeholder="Intervals (e.g. 1, 3, 7, 14)"
+                            placeholderTextColor={colors.textMuted}
                             value={newIntervals}
                             onChangeText={setNewIntervals}
                             keyboardType="numbers-and-punctuation"
                         />
                         <View style={styles.formActions}>
                             <TouchableOpacity style={styles.cancelBtn} onPress={() => setIsAdding(false)}>
-                                <Text style={styles.cancelText}>Cancel</Text>
+                                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.saveBtn} onPress={handleAdd}>
+                            <TouchableOpacity
+                                style={[styles.saveBtn, { backgroundColor: colors.primary }]}
+                                onPress={handleAdd}
+                            >
                                 <Text style={styles.saveText}>Save</Text>
                             </TouchableOpacity>
                         </View>
@@ -96,32 +105,32 @@ export const SRSEditor = () => {
                 )}
 
                 {profiles.map((profile) => (
-                    <View key={profile.id} style={styles.card}>
+                    <View key={profile.id} style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                         <View style={styles.cardHeader}>
                             <View style={styles.cardTitleRow}>
                                 {profile.isDefault ? (
-                                    <TrendingUp size={18} color="#f97316" />
+                                    <TrendingUp size={18} color={colors.orange} />
                                 ) : (
-                                    <Calendar size={18} color="#3b82f6" />
+                                    <Calendar size={18} color={colors.primary} />
                                 )}
-                                <Text style={styles.cardName}>{profile.name}</Text>
+                                <Text style={[styles.cardName, { color: colors.text }]}>{profile.name}</Text>
                                 {profile.isDefault && (
-                                    <View style={styles.badge}>
-                                        <Text style={styles.badgeText}>Default</Text>
+                                    <View style={[styles.badge, { backgroundColor: colors.surfaceHighlight }]}>
+                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>Default</Text>
                                     </View>
                                 )}
                             </View>
                             {!profile.isDefault && (
                                 <TouchableOpacity onPress={() => handleDelete(profile.id, profile.isDefault)}>
-                                    <Trash2 size={18} color="#94a3b8" />
+                                    <Trash2 size={18} color={colors.textMuted} />
                                 </TouchableOpacity>
                             )}
                         </View>
 
                         <View style={styles.intervalsRow}>
                             {profile.intervals.map((day, idx) => (
-                                <View key={idx} style={styles.intervalTag}>
-                                    <Text style={styles.intervalText}>{day}d</Text>
+                                <View key={idx} style={[styles.intervalTag, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
+                                    <Text style={[styles.intervalText, { color: colors.textSecondary }]}>{day}d</Text>
                                 </View>
                             ))}
                         </View>
@@ -135,26 +144,21 @@ export const SRSEditor = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 15,
-        backgroundColor: '#f8fafc',
         borderBottomWidth: 1,
-        borderBottomColor: '#e2e8f0',
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
     },
     addBtn: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#3b82f6',
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 20,
@@ -170,23 +174,18 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     addForm: {
-        backgroundColor: '#f0f9ff',
         padding: 15,
         borderRadius: 10,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#bfdbfe',
     },
     formTitle: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: '#1e40af',
         marginBottom: 10,
     },
     input: {
-        backgroundColor: '#fff',
         borderWidth: 1,
-        borderColor: '#cbd5e1',
         borderRadius: 6,
         padding: 10,
         marginBottom: 10,
@@ -202,12 +201,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
     },
     cancelText: {
-        color: '#64748b',
         fontWeight: '600',
         fontSize: 14,
     },
     saveBtn: {
-        backgroundColor: '#2563eb',
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 6,
@@ -218,13 +215,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     card: {
-        backgroundColor: '#fff',
         borderWidth: 1,
-        borderColor: '#e2e8f0',
         borderRadius: 10,
         padding: 15,
         marginBottom: 10,
-        shadowColor: '#64748b',
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
@@ -244,17 +239,14 @@ const styles = StyleSheet.create({
     cardName: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#334155',
     },
     badge: {
-        backgroundColor: '#f1f5f9',
         paddingHorizontal: 6,
         paddingVertical: 2,
         borderRadius: 4,
     },
     badgeText: {
         fontSize: 10,
-        color: '#64748b',
         fontWeight: '600',
     },
     intervalsRow: {
@@ -263,15 +255,12 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     intervalTag: {
-        backgroundColor: '#f8fafc',
         borderWidth: 1,
-        borderColor: '#e2e8f0',
         paddingHorizontal: 8,
         paddingVertical: 4,
         borderRadius: 12,
     },
     intervalText: {
         fontSize: 12,
-        color: '#475569',
     },
 });

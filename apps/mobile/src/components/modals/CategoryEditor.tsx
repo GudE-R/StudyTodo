@@ -4,7 +4,7 @@ import { Folder, File, ChevronRight, ChevronDown, Plus, Trash2 } from 'lucide-re
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { Category } from '@pomarc/shared';
 import { generateId } from '../../lib/utils';
-
+import { useTheme } from '../../providers/ThemeProvider';
 
 // カラーパレット定義（Web版と統一）
 const CATEGORY_COLORS = [
@@ -35,6 +35,7 @@ const buildCategoryTree = (categories: Category[]): Category[] => {
 };
 
 export const CategoryEditor = () => {
+    const { colors, isDark } = useTheme();
     const { categories, addCategory, updateCategory, deleteCategory } = useMobileCategories();
     const tree = useMemo(() => buildCategoryTree(categories || []), [categories]);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -110,27 +111,30 @@ export const CategoryEditor = () => {
 
         return (
             <View key={node.id}>
-                <View style={[styles.nodeRow, { paddingLeft: depth * 20 }]}>
+                <View style={[styles.nodeRow, { paddingLeft: depth * 20, borderBottomColor: colors.border }]}>
                     <TouchableOpacity
                         style={styles.expandIcon}
                         onPress={() => !isSmall && toggleExpand(node.id)}
                         disabled={isSmall}
                     >
-                        {!isSmall && (isExpanded ? <ChevronDown size={20} color="#666" /> : <ChevronRight size={20} color="#666" />)}
+                        {!isSmall && (isExpanded ? <ChevronDown size={20} color={colors.textSecondary} /> : <ChevronRight size={20} color={colors.textSecondary} />)}
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.colorIndicator, { backgroundColor: node.color || 'transparent', borderColor: node.color ? 'transparent' : '#ccc' }]}
+                        style={[styles.colorIndicator, {
+                            backgroundColor: node.color || 'transparent',
+                            borderColor: node.color ? 'transparent' : (isDark ? colors.textMuted : '#ccc')
+                        }]}
                         onPress={() => setColorPickerId(isPickingColor ? null : node.id)}
                     >
-                        {!node.color && <View style={styles.noColorLine} />}
+                        {!node.color && <View style={[styles.noColorLine, { backgroundColor: colors.danger }]} />}
                     </TouchableOpacity>
 
                     <View style={styles.iconContainer}>
-                        {isSmall ? <File size={18} color={node.color || "#3b82f6"} /> : <Folder size={18} color={node.color || "#f59e0b"} />}
+                        {isSmall ? <File size={18} color={node.color || colors.primary} /> : <Folder size={18} color={node.color || colors.orange} />}
                     </View>
 
-                    <Text style={styles.nodeText}>{node.name}</Text>
+                    <Text style={[styles.nodeText, { color: colors.text }]}>{node.name}</Text>
 
                     <View style={styles.actions}>
                         {!isSmall && (
@@ -138,24 +142,24 @@ export const CategoryEditor = () => {
                                 onPress={() => startAdding(node.id, node.level === 'large' ? 'medium' : 'small')}
                                 style={styles.actionBtn}
                             >
-                                <Plus size={16} color="#3b82f6" />
+                                <Plus size={16} color={colors.primary} />
                             </TouchableOpacity>
                         )}
                         <TouchableOpacity onPress={() => handleDelete(node.id)} style={styles.actionBtn}>
-                            <Trash2 size={16} color="#ef4444" />
+                            <Trash2 size={16} color={colors.danger} />
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* Color Picker Palette */}
                 {isPickingColor && (
-                    <View style={[styles.colorPalette, { marginLeft: depth * 20 + 40 }]}>
+                    <View style={[styles.colorPalette, { marginLeft: depth * 20 + 40, backgroundColor: colors.surfaceHighlight }]}>
                         {/* Clear Color Option */}
                         <TouchableOpacity
-                            style={[styles.colorOption, { borderColor: '#ccc', borderWidth: 1 }]}
+                            style={[styles.colorOption, { borderColor: colors.border, borderWidth: 1 }]}
                             onPress={() => handleColorSelect(node.id, "")}
                         >
-                            <View style={[styles.noColorLine, { backgroundColor: '#ef4444' }]} />
+                            <View style={[styles.noColorLine, { backgroundColor: colors.danger }]} />
                         </TouchableOpacity>
                         {CATEGORY_COLORS.map(color => (
                             <TouchableOpacity
@@ -171,19 +175,20 @@ export const CategoryEditor = () => {
 
                 {/* Input for new child */}
                 {addingParentId === node.id && (
-                    <View style={[styles.inputRow, { paddingLeft: (depth + 1) * 20 }]}>
+                    <View style={[styles.inputRow, { paddingLeft: (depth + 1) * 20, backgroundColor: colors.surfaceHighlight }]}>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             value={inputName}
                             onChangeText={setInputName}
                             placeholder="Category Name"
+                            placeholderTextColor={colors.textMuted}
                             autoFocus
                         />
-                        <TouchableOpacity onPress={confirmAdding} style={styles.saveBtn}>
+                        <TouchableOpacity onPress={confirmAdding} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
                             <Text style={styles.saveText}>Add</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={cancelAdding} style={styles.cancelBtn}>
-                            <Text style={styles.cancelText}>Cancel</Text>
+                            <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -192,11 +197,11 @@ export const CategoryEditor = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Categories</Text>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+                <Text style={[styles.title, { color: colors.text }]}>Categories</Text>
                 <TouchableOpacity
-                    style={styles.addMainBtn}
+                    style={[styles.addMainBtn, { backgroundColor: colors.primary }]}
                     onPress={() => startAdding(undefined, 'large')}
                     disabled={addingLevel !== null}
                 >
@@ -208,19 +213,20 @@ export const CategoryEditor = () => {
             <ScrollView style={styles.scroll}>
                 {/* Input for main category */}
                 {addingLevel === 'large' && !addingParentId && (
-                    <View style={styles.inputRow}>
+                    <View style={[styles.inputRow, { backgroundColor: colors.surfaceHighlight }]}>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             value={inputName}
                             onChangeText={setInputName}
                             placeholder="Main Category Name"
+                            placeholderTextColor={colors.textMuted}
                             autoFocus
                         />
-                        <TouchableOpacity onPress={confirmAdding} style={styles.saveBtn}>
+                        <TouchableOpacity onPress={confirmAdding} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
                             <Text style={styles.saveText}>Add</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={cancelAdding} style={styles.cancelBtn}>
-                            <Text style={styles.cancelText}>Cancel</Text>
+                            <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -234,26 +240,21 @@ export const CategoryEditor = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: '#f8fafc',
         borderBottomWidth: 1,
-        borderBottomColor: '#e2e8f0',
     },
     title: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
     },
     addMainBtn: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#3b82f6',
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 20,
@@ -273,7 +274,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 8,
         borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
     },
     expandIcon: {
         width: 24,
@@ -285,7 +285,6 @@ const styles = StyleSheet.create({
     nodeText: {
         flex: 1,
         fontSize: 15,
-        color: '#333',
     },
     actions: {
         flexDirection: 'row',
@@ -300,22 +299,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 10,
         paddingHorizontal: 5,
-        backgroundColor: '#f0f9ff',
         borderRadius: 6,
         marginVertical: 4,
     },
     input: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#cbd5e1',
         borderRadius: 4,
         paddingHorizontal: 8,
         paddingVertical: 4,
-        backgroundColor: '#fff',
         marginRight: 8,
     },
     saveBtn: {
-        backgroundColor: '#3b82f6',
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 4,
@@ -331,7 +326,6 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
     },
     cancelText: {
-        color: '#64748b',
         fontSize: 12,
     },
     // Color Picker Styles
@@ -348,7 +342,6 @@ const styles = StyleSheet.create({
     noColorLine: {
         width: '140%',
         height: 1,
-        backgroundColor: '#ef4444',
         transform: [{ rotate: '45deg' }],
     },
     colorPalette: {
@@ -356,7 +349,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 8,
         padding: 8,
-        backgroundColor: '#f8fafc',
         borderRadius: 8,
         marginBottom: 8,
     },

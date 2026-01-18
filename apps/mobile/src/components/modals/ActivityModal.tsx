@@ -8,6 +8,7 @@ import { Session, Todo, Category } from '@pomarc/shared';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
+import { useTheme } from '../../providers/ThemeProvider';
 
 interface ActivityModalProps {
     visible: boolean;
@@ -32,6 +33,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     const { sessions, refreshSessions } = useMobileSessions();
     const { todos, refreshTodos, deleteTodo } = useMobileTodos();
     const { categories } = useMobileCategories();
+    const { colors, isDark } = useTheme();
     const { width } = useWindowDimensions();
 
     const [activeTab, setActiveTab] = useState<Tab>("analytics");
@@ -272,10 +274,10 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
 
                         return (
                             <G key={i}>
-                                <Rect x={x} y={y} width={barWidth} height={barHeight} fill="#3b82f6" rx={4} />
-                                <SvgText x={x + barWidth / 2} y={chartHeight + 40} fontSize="10" fill="#666" textAnchor="middle">{d.label}</SvgText>
+                                <Rect x={x} y={y} width={barWidth} height={barHeight} fill={colors.primary} rx={4} />
+                                <SvgText x={x + barWidth / 2} y={chartHeight + 40} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{d.label}</SvgText>
                                 {d.value > 0 && (
-                                    <SvgText x={x + barWidth / 2} y={y - 5} fontSize="10" fill="#666" textAnchor="middle">{Math.round(d.value)}</SvgText>
+                                    <SvgText x={x + barWidth / 2} y={y - 5} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{Math.round(d.value)}</SvgText>
                                 )}
                             </G>
                         );
@@ -290,7 +292,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
         let cumulativePercent = 0;
         const total = pieData.reduce((acc, d) => acc + d.value, 0);
 
-        if (total === 0) return <View style={styles.noDataContainer}><Text style={styles.noDataText}>No Data</Text></View>;
+        if (total === 0) return <View style={styles.noDataContainer}><Text style={[styles.noDataText, { color: colors.textMuted }]}>No Data</Text></View>;
 
         return (
             <View style={styles.pieContainer}>
@@ -314,7 +316,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                     {pieData.slice(0, 5).map((d, i) => (
                         <View key={i} style={styles.legendItem}>
                             <View style={[styles.legendColor, { backgroundColor: d.color }]} />
-                            <Text style={styles.legendText} numberOfLines={1}>{d.name} ({Math.round(d.value)}m)</Text>
+                            <Text style={[styles.legendText, { color: colors.textSecondary }]} numberOfLines={1}>{d.name} ({Math.round(d.value)}m)</Text>
                         </View>
                     ))}
                 </View>
@@ -325,24 +327,38 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
-                <View style={styles.container}>
+                <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
-                    <View style={styles.header}>
+                    <View style={[styles.header, { borderBottomColor: colors.border }]}>
                         <View style={styles.titleRow}>
-                            <Text style={styles.title}>Activity</Text>
-                            <View style={styles.tabContainer}>
-                                <TouchableOpacity style={[styles.tab, activeTab === 'analytics' && styles.activeTab]} onPress={() => setActiveTab('analytics')}>
-                                    <BarChart2 size={16} color={activeTab === 'analytics' ? '#2563eb' : '#64748b'} />
-                                    <Text style={[styles.tabText, activeTab === 'analytics' && styles.activeTabText]}>Analytics</Text>
+                            <Text style={[styles.title, { color: colors.text }]}>Activity</Text>
+                            <View style={[styles.tabContainer, { backgroundColor: colors.surfaceHighlight }]}>
+                                <TouchableOpacity
+                                    style={[styles.tab, activeTab === 'analytics' && [styles.activeTab, { backgroundColor: colors.surface }]]}
+                                    onPress={() => setActiveTab('analytics')}
+                                >
+                                    <BarChart2 size={16} color={activeTab === 'analytics' ? colors.primary : colors.textSecondary} />
+                                    <Text style={[
+                                        styles.tabText,
+                                        { color: colors.textSecondary },
+                                        activeTab === 'analytics' && { color: colors.primary }
+                                    ]}>Analytics</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[styles.tab, activeTab === 'history' && styles.activeTab]} onPress={() => setActiveTab('history')}>
-                                    <History size={16} color={activeTab === 'history' ? '#2563eb' : '#64748b'} />
-                                    <Text style={[styles.tabText, activeTab === 'history' && styles.activeTabText]}>History</Text>
+                                <TouchableOpacity
+                                    style={[styles.tab, activeTab === 'history' && [styles.activeTab, { backgroundColor: colors.surface }]]}
+                                    onPress={() => setActiveTab('history')}
+                                >
+                                    <History size={16} color={activeTab === 'history' ? colors.primary : colors.textSecondary} />
+                                    <Text style={[
+                                        styles.tabText,
+                                        { color: colors.textSecondary },
+                                        activeTab === 'history' && { color: colors.primary }
+                                    ]}>History</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                            <X size={24} color="#333" />
+                        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+                            <X size={24} color={colors.text} />
                         </TouchableOpacity>
                     </View>
 
@@ -351,10 +367,18 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                         {activeTab === 'analytics' ? (
                             <ScrollView showsVerticalScrollIndicator={false}>
                                 {/* Range Selector */}
-                                <View style={styles.rangeContainer}>
+                                <View style={[styles.rangeContainer, { backgroundColor: colors.surfaceHighlight }]}>
                                     {(['week', 'month', 'year'] as Range[]).map(r => (
-                                        <TouchableOpacity key={r} style={[styles.rangeBtn, range === r && styles.activeRangeBtn]} onPress={() => setRange(r)}>
-                                            <Text style={[styles.rangeText, range === r && styles.activeRangeText]}>{r.charAt(0).toUpperCase() + r.slice(1)}</Text>
+                                        <TouchableOpacity
+                                            key={r}
+                                            style={[styles.rangeBtn, range === r && [styles.activeRangeBtn, { backgroundColor: colors.primary }]]}
+                                            onPress={() => setRange(r)}
+                                        >
+                                            <Text style={[
+                                                styles.rangeText,
+                                                { color: colors.textSecondary },
+                                                range === r && { color: '#fff' }
+                                            ]}>{r.charAt(0).toUpperCase() + r.slice(1)}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
@@ -362,50 +386,62 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                 {/* Category Filter (Simplified Dropdown) */}
                                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
                                     <TouchableOpacity
-                                        style={[styles.filterChip, filterCategory === 'all' && styles.activeFilterChip]}
+                                        style={[styles.filterChip, { backgroundColor: colors.surfaceHighlight }, filterCategory === 'all' && [styles.activeFilterChip, { backgroundColor: colors.primary }]]}
                                         onPress={() => setFilterCategory('all')}
                                     >
-                                        <Text style={[styles.filterChipText, filterCategory === 'all' && styles.activeFilterChipText]}>All</Text>
+                                        <Text style={[
+                                            styles.filterChipText,
+                                            { color: colors.textSecondary },
+                                            filterCategory === 'all' && { color: '#fff' }
+                                        ]}>All</Text>
                                     </TouchableOpacity>
                                     {flatCategories.map(c => (
                                         <TouchableOpacity
                                             key={c.id}
-                                            style={[styles.filterChip, filterCategory === c.id && { backgroundColor: c.color + '20', borderColor: c.color }]}
+                                            style={[
+                                                styles.filterChip,
+                                                { backgroundColor: colors.surfaceHighlight },
+                                                filterCategory === c.id && { backgroundColor: c.color + '20', borderColor: c.color }
+                                            ]}
                                             onPress={() => setFilterCategory(c.id)}
                                         >
                                             <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.color, marginRight: 4 }} />
-                                            <Text style={[styles.filterChipText, filterCategory === c.id && { color: c.color }]}>{c.name}</Text>
+                                            <Text style={[
+                                                styles.filterChipText,
+                                                { color: colors.textSecondary },
+                                                filterCategory === c.id && { color: c.color }
+                                            ]}>{c.name}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </ScrollView>
 
                                 {/* Summary */}
                                 <View style={styles.summaryGrid}>
-                                    <View style={styles.card}>
-                                        <Text style={styles.cardLabel}>Focus Time</Text>
+                                    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Focus Time</Text>
                                         <View style={styles.cardValueRow}>
-                                            <Text style={styles.cardValue}>{totalHours}</Text>
-                                            <Text style={styles.cardUnit}>h</Text>
-                                            <Text style={styles.cardValue}>{totalMins}</Text>
-                                            <Text style={styles.cardUnit}>m</Text>
+                                            <Text style={[styles.cardValue, { color: colors.text }]}>{totalHours}</Text>
+                                            <Text style={[styles.cardUnit, { color: colors.textMuted }]}>h</Text>
+                                            <Text style={[styles.cardValue, { color: colors.text }]}>{totalMins}</Text>
+                                            <Text style={[styles.cardUnit, { color: colors.textMuted }]}>m</Text>
                                         </View>
                                     </View>
-                                    <View style={styles.card}>
-                                        <Text style={styles.cardLabel}>Completed</Text>
+                                    <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                        <Text style={[styles.cardLabel, { color: colors.textSecondary }]}>Completed</Text>
                                         <View style={styles.cardValueRow}>
-                                            <Text style={styles.cardValue}>{completedCount}</Text>
-                                            <Text style={styles.cardUnit}>tasks</Text>
+                                            <Text style={[styles.cardValue, { color: colors.text }]}>{completedCount}</Text>
+                                            <Text style={[styles.cardUnit, { color: colors.textMuted }]}>tasks</Text>
                                         </View>
                                     </View>
                                 </View>
 
                                 {/* Charts */}
-                                <View style={styles.chartCard}>
-                                    <Text style={styles.chartTitle}>Trend (min)</Text>
+                                <View style={[styles.chartCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                    <Text style={[styles.chartTitle, { color: colors.text }]}>Trend (min)</Text>
                                     <BarChartComponent />
                                 </View>
-                                <View style={[styles.chartCard, { marginTop: 15 }]}>
-                                    <Text style={styles.chartTitle}>Distribution</Text>
+                                <View style={[styles.chartCard, { marginTop: 15, backgroundColor: colors.surface, borderColor: colors.border }]}>
+                                    <Text style={[styles.chartTitle, { color: colors.text }]}>Distribution</Text>
                                     <PieChartComponent />
                                 </View>
                                 <View style={{ height: 40 }} />
@@ -416,10 +452,10 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                 <View style={styles.historyFilters}>
                                     <View style={{ flexDirection: 'row', gap: 5 }}>
                                         <TouchableOpacity
-                                            style={[styles.filterBtn, historyFilterStatus === 'all' && styles.activeFilterBtn]}
+                                            style={[styles.filterBtn, { backgroundColor: colors.surfaceHighlight }, historyFilterStatus === 'all' && { backgroundColor: isDark ? colors.surface : '#eff6ff' }]}
                                             onPress={() => setHistoryFilterStatus(prev => prev === 'all' ? 'completed' : prev === 'completed' ? 'incomplete' : 'all')}
                                         >
-                                            <Text style={[styles.filterBtnText, historyFilterStatus !== 'all' && { color: '#3b82f6' }]}>
+                                            <Text style={[styles.filterBtnText, { color: colors.textSecondary }, historyFilterStatus !== 'all' && { color: colors.primary }]}>
                                                 {historyFilterStatus === 'all' ? 'All Status' : historyFilterStatus === 'completed' ? 'Done' : 'Todo'}
                                             </Text>
                                         </TouchableOpacity>
@@ -427,15 +463,15 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                     {isSelectionMode ? (
                                         <View style={styles.selectionActions}>
                                             <TouchableOpacity onPress={() => setIsSelectionMode(false)}>
-                                                <Text style={styles.cancelText}>Cancel</Text>
+                                                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity onPress={handleBulkDelete} disabled={selectedIds.size === 0}>
-                                                <Text style={[styles.deleteText, selectedIds.size === 0 && { opacity: 0.5 }]}>Delete ({selectedIds.size})</Text>
+                                                <Text style={[styles.deleteText, { color: colors.danger }, selectedIds.size === 0 && { opacity: 0.5 }]}>Delete ({selectedIds.size})</Text>
                                             </TouchableOpacity>
                                         </View>
                                     ) : (
                                         <TouchableOpacity onPress={() => setIsSelectionMode(true)}>
-                                            <Text style={styles.selectText}>Select</Text>
+                                            <Text style={[styles.selectText, { color: colors.primary }]}>Select</Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
@@ -450,50 +486,50 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                             const isGroupSelected = item.todos.length > 0 && item.todos.every(t => selectedIds.has(t.id));
 
                                             return (
-                                                <View style={styles.groupContainer}>
+                                                <View style={[styles.groupContainer, { backgroundColor: colors.surfaceHighlight, borderColor: colors.border }]}>
                                                     <View style={styles.groupHeader}>
                                                         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                                                             {isSelectionMode && (
                                                                 <TouchableOpacity
-                                                                    style={[styles.checkbox, isGroupSelected && styles.checkboxChecked]}
+                                                                    style={[styles.checkbox, { borderColor: colors.border }, isGroupSelected && [styles.checkboxChecked, { backgroundColor: colors.primary, borderColor: colors.primary }]]}
                                                                     onPress={() => toggleGroupSelection(item.todos)}
                                                                 >
                                                                     {isGroupSelected && <CheckCircle size={14} color="#fff" />}
                                                                 </TouchableOpacity>
                                                             )}
                                                             <TouchableOpacity onPress={() => toggleGroup(item.id)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                                                                <View style={styles.groupBadge}>
-                                                                    <Layers size={12} color="#8b5cf6" />
-                                                                    <Text style={styles.groupBadgeText}>{item.todos.length}</Text>
+                                                                <View style={[styles.groupBadge, { backgroundColor: isDark ? '#3b0764' : '#e9d5ff' }]}>
+                                                                    <Layers size={12} color={isDark ? '#d8b4fe' : '#7e22ce'} />
+                                                                    <Text style={[styles.groupBadgeText, { color: isDark ? '#d8b4fe' : '#7e22ce' }]}>{item.todos.length}</Text>
                                                                 </View>
                                                                 <View style={{ flex: 1, marginLeft: 8 }}>
-                                                                    <Text style={styles.groupTitle} numberOfLines={1}>{item.title}</Text>
-                                                                    <Text style={styles.groupMeta}>{item.completedCount}/{item.todos.length} Done • {format(item.createdAt, 'MM/dd')}</Text>
+                                                                    <Text style={[styles.groupTitle, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
+                                                                    <Text style={[styles.groupMeta, { color: colors.textSecondary }]}>{item.completedCount}/{item.todos.length} Done • {format(item.createdAt, 'MM/dd')}</Text>
                                                                 </View>
-                                                                {isExpanded ? <ChevronDown size={18} color="#94a3b8" /> : <ChevronRight size={18} color="#94a3b8" />}
+                                                                {isExpanded ? <ChevronDown size={18} color={colors.textSecondary} /> : <ChevronRight size={18} color={colors.textSecondary} />}
                                                             </TouchableOpacity>
                                                         </View>
                                                     </View>
                                                     {isExpanded && (
-                                                        <View style={styles.groupItems}>
+                                                        <View style={[styles.groupItems, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
                                                             {item.todos.map(todo => (
                                                                 <TouchableOpacity
                                                                     key={todo.id}
-                                                                    style={[styles.historyItem, selectedIds.has(todo.id) && styles.selectedItem]}
+                                                                    style={[styles.historyItem, { backgroundColor: colors.background, borderBottomColor: colors.border }, selectedIds.has(todo.id) && [styles.selectedItem, { backgroundColor: isDark ? colors.surfaceHighlight : '#f0f9ff' }]]}
                                                                     onPress={() => isSelectionMode && toggleSelection(todo.id)}
                                                                     activeOpacity={isSelectionMode ? 0.7 : 1}
                                                                 >
                                                                     {isSelectionMode && (
-                                                                        <View style={[styles.checkbox, selectedIds.has(todo.id) && styles.checkboxChecked]}>
+                                                                        <View style={[styles.checkbox, { borderColor: colors.border }, selectedIds.has(todo.id) && [styles.checkboxChecked, { backgroundColor: colors.primary, borderColor: colors.primary }]]} >
                                                                             {selectedIds.has(todo.id) && <CheckCircle size={14} color="#fff" />}
                                                                         </View>
                                                                     )}
                                                                     <View style={styles.historyContent}>
-                                                                        <Text style={[styles.historyTitle, todo.completed && styles.completedTitle]}>{todo.title}</Text>
-                                                                        <Text style={styles.historyMeta}>{format(new Date(todo.createdAt), 'MM/dd HH:mm')}</Text>
+                                                                        <Text style={[styles.historyTitle, { color: colors.text }, todo.completed && styles.completedTitle]}>{todo.title}</Text>
+                                                                        <Text style={[styles.historyMeta, { color: colors.textMuted }]}>{format(new Date(todo.createdAt), 'MM/dd HH:mm')}</Text>
                                                                     </View>
-                                                                    <View style={[styles.statusBadge, todo.completed ? styles.statusDone : styles.statusTodo]}>
-                                                                        <Text style={styles.statusText}>{todo.completed ? 'DONE' : 'TODO'}</Text>
+                                                                    <View style={[styles.statusBadge, todo.completed ? [styles.statusDone, { backgroundColor: isDark ? '#064e3b' : '#dcfce7' }] : [styles.statusTodo, { backgroundColor: colors.surfaceHighlight }]]}>
+                                                                        <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? 'DONE' : 'TODO'}</Text>
                                                                     </View>
                                                                 </TouchableOpacity>
                                                             ))}
@@ -506,26 +542,26 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                         const todo = item as Todo;
                                         return (
                                             <TouchableOpacity
-                                                style={[styles.historyItem, selectedIds.has(todo.id) && styles.selectedItem]}
+                                                style={[styles.historyItem, { backgroundColor: colors.background, borderBottomColor: colors.border }, selectedIds.has(todo.id) && [styles.selectedItem, { backgroundColor: isDark ? colors.surfaceHighlight : '#f0f9ff' }]]}
                                                 onPress={() => isSelectionMode && toggleSelection(todo.id)}
                                                 activeOpacity={isSelectionMode ? 0.7 : 1}
                                             >
                                                 {isSelectionMode && (
-                                                    <View style={[styles.checkbox, selectedIds.has(todo.id) && styles.checkboxChecked]}>
+                                                    <View style={[styles.checkbox, { borderColor: colors.border }, selectedIds.has(todo.id) && [styles.checkboxChecked, { backgroundColor: colors.primary, borderColor: colors.primary }]]} >
                                                         {selectedIds.has(todo.id) && <CheckCircle size={14} color="#fff" />}
                                                     </View>
                                                 )}
                                                 <View style={styles.historyContent}>
-                                                    <Text style={[styles.historyTitle, todo.completed && styles.completedTitle]}>
+                                                    <Text style={[styles.historyTitle, { color: colors.text }, todo.completed && styles.completedTitle]}>
                                                         {todo.title}
                                                     </Text>
-                                                    <Text style={styles.historyMeta}>
+                                                    <Text style={[styles.historyMeta, { color: colors.textMuted }]}>
                                                         {format(new Date(todo.createdAt), 'MM/dd HH:mm')}
                                                     </Text>
                                                 </View>
                                                 {!isSelectionMode && (
-                                                    <View style={[styles.statusBadge, todo.completed ? styles.statusDone : styles.statusTodo]}>
-                                                        <Text style={styles.statusText}>{todo.completed ? 'DONE' : 'TODO'}</Text>
+                                                    <View style={[styles.statusBadge, todo.completed ? [styles.statusDone, { backgroundColor: isDark ? '#064e3b' : '#dcfce7' }] : [styles.statusTodo, { backgroundColor: colors.surfaceHighlight }]]}>
+                                                        <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? 'DONE' : 'TODO'}</Text>
                                                     </View>
                                                 )}
                                             </TouchableOpacity>
