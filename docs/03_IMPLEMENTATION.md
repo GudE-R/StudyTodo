@@ -89,6 +89,14 @@
 これまでの主要な変更履歴です。
 
 
+### [Mobile Share Feature] - 2026-01-19
+#### 追加 (Mobile)
+- **シェア機能 (Activity Share)**:
+    - **ShareCard**: 学習の成果（ストリーク、総時間、完了数、ヒートマップ、円グラフ）を1枚のカード画像として生成するコンポーネントを作成。
+    - **技術構成**: `react-native-view-shot` でキャプチャし、`expo-sharing` でSNS共有。
+    - **UI統合**: ActivityModalに「Share」タブを追加。
+    - **共通ロジック**: Web版と重複するストリーク計算ロジック (`calculateStreak`) を `packages/shared` に移動して共通化。
+
 ### [Mobile Internationalization] - 2026-01-18
 #### 追加/変更 (Mobile)
 - **多言語対応 (i18n) 完了**:

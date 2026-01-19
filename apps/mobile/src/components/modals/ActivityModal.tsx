@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, FlatList, Alert, useWindowDimensions } from 'react-native';
-import { X, BarChart2, History, Filter, Trash2, ChevronDown, ChevronRight, Layers, CheckCircle } from 'lucide-react-native';
+import { X, BarChart2, History, Filter, Trash2, ChevronDown, ChevronRight, Layers, CheckCircle, Share2 } from 'lucide-react-native';
 import { Svg, Rect, Text as SvgText, G, Path } from 'react-native-svg';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, eachDayOfInterval, eachMonthOfInterval, isWithinInterval, isSameDay, getMonth, getYear } from 'date-fns';
 import { ja } from 'date-fns/locale';
@@ -11,13 +11,17 @@ import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useTheme } from '../../providers/ThemeProvider';
+import { captureRef } from 'react-native-view-shot';
+import { shareAsync } from 'expo-sharing';
+import { calculateStreak } from '@pomarc/shared';
+import { ShareCard } from '../activity/ShareCard';
 
 interface ActivityModalProps {
     visible: boolean;
     onClose: () => void;
 }
 
-type Tab = "analytics" | "history";
+type Tab = "analytics" | "history" | "share";
 type Range = "week" | "month" | "year";
 
 // Helper for Pie Chart
@@ -45,6 +49,22 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     const [filterCategory, setFilterCategory] = useState<string>("all");
     const [historyFilterCategory, setHistoryFilterCategory] = useState<string>("all");
     const [historyFilterStatus, setHistoryFilterStatus] = useState<"all" | "completed" | "incomplete">("all");
+
+    const shareRef = useRef<View>(null);
+    const streakStats = useMemo(() => calculateStreak(sessions), [sessions]);
+
+    const handleShare = async () => {
+        try {
+            const uri = await captureRef(shareRef, {
+                format: 'png',
+                quality: 1,
+            });
+            await shareAsync(uri);
+        } catch (e) {
+            console.error(e);
+            Alert.alert(t('common.error'), t('activity.shareError', 'Failed to share'));
+        }
+    };
 
     // History State
     const [isSelectionMode, setIsSelectionMode] = useState(false);
@@ -359,6 +379,17 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                         activeTab === 'history' && { color: colors.primary }
                                     ]}>{t('activity.history', 'History')}</Text>
                                 </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.tab, activeTab === 'share' && [styles.activeTab, { backgroundColor: colors.surface }]]}
+                                    onPress={() => setActiveTab('share')}
+                                >
+                                    <Share2 size={16} color={activeTab === 'share' ? colors.primary : colors.textSecondary} />
+                                    <Text style={[
+                                        styles.tabText,
+                                        { color: colors.textSecondary },
+                                        activeTab === 'share' && { color: colors.primary }
+                                    ]}>{t('activity.share', 'Share')}</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                         <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
@@ -368,7 +399,24 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
 
                     {/* Content */}
                     <View style={styles.content}>
-                        {activeTab === 'analytics' ? (
+                        {activeTab === 'share' ? (
+                            <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
+                                <View ref={shareRef} collapsable={false} style={{ backgroundColor: colors.background, padding: 10, borderRadius: 20 }}>
+                                    <ShareCard
+                                        sessions={sessions}
+                                        todos={todos}
+                                        categories={categories}
+                                        streak={streakStats}
+                                        totalDuration={totalTimeMinutes}
+                                        completedCount={completedCount}
+                                    />
+                                </View>
+                                <TouchableOpacity style={[styles.shareBtn, { backgroundColor: colors.primary }]} onPress={handleShare}>
+                                    <Share2 size={20} color="#fff" />
+                                    <Text style={styles.shareBtnText}>{t('activity.shareAction', 'Share Activity')}</Text>
+                                </TouchableOpacity>
+                            </ScrollView>
+                        ) : activeTab === 'analytics' ? (
                             <ScrollView showsVerticalScrollIndicator={false}>
                                 {/* Range Selector */}
                                 <View style={[styles.rangeContainer, { backgroundColor: colors.surfaceHighlight }]}>
@@ -853,6 +901,25 @@ const styles = StyleSheet.create({
     groupBadgeText: {
         fontSize: 10,
         color: '#7e22ce',
+        fontWeight: 'bold',
+    },
+    shareBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 30,
+        gap: 8,
+        marginTop: 30,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    shareBtnText: {
+        color: '#fff',
+        fontSize: 16,
         fontWeight: 'bold',
     },
     groupTitle: {

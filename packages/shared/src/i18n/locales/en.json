@@ -267,5 +267,15 @@
         "featureAnalyticsDesc": "Visualize growth with graphs and heatmaps",
         "featureSync": "Cloud Sync",
         "featureSyncDesc": "Real-time sync across all your devices"
+    },
+    "share": {
+        "streak": "{{count}} Days Streak",
+        "bestStreak": "Best {{count}} Days",
+        "totalTime": "Total Time",
+        "completed": "Completed",
+        "last14Days": "Last 14 Days activity",
+        "distribution": "Category Distribution",
+        "noData": "No Data",
+        "tasks": "tasks"
     }
 }

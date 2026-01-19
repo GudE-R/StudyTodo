@@ -5,3 +5,4 @@ export * from "./utils/date";
 export * from "./storage";
 export * from "./offlineSyncQueue";
 export * from "./sync";
+export * from "./utils/statistics";

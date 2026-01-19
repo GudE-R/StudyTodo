@@ -283,5 +283,15 @@
         "featureAnalyticsDesc": "グラフとヒートマップで成長を可視化",
         "featureSync": "クラウド同期",
         "featureSyncDesc": "デバイス間でデータをリアルタイム同期"
+    },
+    "share": {
+        "streak": "{{count}}日連続",
+        "bestStreak": "最高{{count}}日",
+        "totalTime": "総学習時間",
+        "completed": "完了タスク",
+        "last14Days": "直近14日間の活動",
+        "distribution": "カテゴリ別配分",
+        "noData": "データなし",
+        "tasks": "件"
     }
 }
