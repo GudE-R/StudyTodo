@@ -262,16 +262,14 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 renderSectionHeader={renderSectionHeader}
                 keyExtractor={keyExtractor}
                 stickySectionHeadersEnabled={true}
-                initialNumToRender={3}
-                maxToRenderPerBatch={3}
-                windowSize={5}
-                getItemLayout={getItemLayout}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+                windowSize={11}
                 onScrollToIndexFailed={handleScrollToIndexFailed}
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={stableOnViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
                 onScrollBeginDrag={handleScrollBeginDrag}
-                removeClippedSubviews={true}
             />
         </View>
     );
