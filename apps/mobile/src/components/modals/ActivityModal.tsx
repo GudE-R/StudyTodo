@@ -287,6 +287,11 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
         const barWidth = (width - 80) / chartData.length * 0.6;
         const maxVal = Math.max(...chartData.map(d => d.value), 10);
         const chartHeight = 150;
+        const showLabel = (index: number) => {
+            if (range !== "month") return true;
+            // For month view (30-31 days), show every 5th label
+            return index % 5 === 0;
+        };
 
         return (
             <View style={{ height: 200, marginTop: 10 }}>
@@ -299,7 +304,9 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                         return (
                             <G key={i}>
                                 <Rect x={x} y={y} width={barWidth} height={barHeight} fill={colors.primary} rx={4} />
-                                <SvgText x={x + barWidth / 2} y={chartHeight + 40} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{d.label}</SvgText>
+                                {showLabel(i) && (
+                                    <SvgText x={x + barWidth / 2} y={chartHeight + 40} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{d.label}</SvgText>
+                                )}
                                 {d.value > 0 && (
                                     <SvgText x={x + barWidth / 2} y={y - 5} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{Math.round(d.value)}</SvgText>
                                 )}
