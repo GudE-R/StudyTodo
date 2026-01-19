@@ -113,7 +113,8 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
 
     // Stable viewability config (must not change between renders)
     const viewabilityConfig = useRef({
-        itemVisiblePercentThreshold: 10
+        itemVisiblePercentThreshold: 10,
+        minimumViewTime: 150 // Only trigger if item is visible for 150ms (debounces rapid scrolling)
     }).current;
 
     // getItemLayout for optimized scrolling (fixed heights)
