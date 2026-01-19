@@ -93,7 +93,8 @@
 - 2026-01-19: モバイル版シェア機能の実装 (ActivityModal -> ShareCard)
 - 2026-01-19: モバイル版フィードバック機能の実装 (Header -> FeedbackModal, SQLite保存)
 - 2026-01-19: モバイル版コンパイルエラーの修正 (MainLayoutのインポートパス修正)
-- 2026-01-19: モバイル版使用ガイドの移植 (Web UsageGuideModal -> Mobile UsageGuideModal):
+- 2026-01-19: モバイル版使用ガイドの移植 (Web UsageGuideModal -> Mobile UsageGuideModal)
+- 2026-01-19: モバイル版デイスケジュールUI調整 (日付ヘッダー縮小, スロット高さ調整):
     - **ShareCard**: 学習の成果（ストリーク、総時間、完了数、ヒートマップ、円グラフ）を1枚のカード画像として生成するコンポーネントを作成。
     - **技術構成**: `react-native-view-shot` でキャプチャし、`expo-sharing` でSNS共有。
     - **UI統合**: ActivityModalに「Share」タブを追加。
