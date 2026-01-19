@@ -247,10 +247,11 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 renderSectionHeader={renderSectionHeader}
                 keyExtractor={keyExtractor}
                 stickySectionHeadersEnabled={true}
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
-                windowSize={11}
+                initialNumToRender={6}
+                maxToRenderPerBatch={6}
+                windowSize={5}
                 contentOffset={initialContentOffset}
+                getItemLayout={getItemLayout}
                 onScrollToIndexFailed={handleScrollToIndexFailed}
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={stableOnViewableItemsChanged}
