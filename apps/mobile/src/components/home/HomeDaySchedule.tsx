@@ -133,20 +133,26 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
     useEffect(() => {
         const todayIndex = RANGE; // Today is always at index RANGE (middle of the list)
 
-        // Small delay to ensure list is rendered
+        // Use longer delay to ensure list is fully rendered and measured
         const timer = setTimeout(() => {
-            isProgrammaticScroll.current = true;
-            listRef.current?.scrollToLocation({
-                sectionIndex: todayIndex,
-                itemIndex: 0,
-                animated: false,
-                viewOffset: 0
-            });
-            setTimeout(() => { isProgrammaticScroll.current = false; }, 100);
-        }, 50);
+            if (listRef.current && sections.length > todayIndex) {
+                isProgrammaticScroll.current = true;
+                try {
+                    listRef.current.scrollToLocation({
+                        sectionIndex: todayIndex,
+                        itemIndex: 0,
+                        animated: false,
+                        viewOffset: 0
+                    });
+                } catch (e) {
+                    console.warn('Initial scroll failed:', e);
+                }
+                setTimeout(() => { isProgrammaticScroll.current = false; }, 100);
+            }
+        }, 500); // Increased from 50ms to 500ms
 
         return () => clearTimeout(timer);
-    }, []); // Empty deps = run once on mount
+    }, [sections.length]); // Depend on sections.length to ensure data is ready
 
     // Handle external date changes (from Header arrows, Calendar clicks, etc.)
     useEffect(() => {
