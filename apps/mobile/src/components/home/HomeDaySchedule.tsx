@@ -129,30 +129,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
         };
     }, []);
 
-    // Initial scroll to today on mount
-    useEffect(() => {
-        const todayIndex = RANGE; // Today is always at index RANGE (middle of the list)
-
-        // Use longer delay to ensure list is fully rendered and measured
-        const timer = setTimeout(() => {
-            if (listRef.current && sections.length > todayIndex) {
-                isProgrammaticScroll.current = true;
-                try {
-                    listRef.current.scrollToLocation({
-                        sectionIndex: todayIndex,
-                        itemIndex: 0,
-                        animated: false,
-                        viewOffset: 0
-                    });
-                } catch (e) {
-                    console.warn('Initial scroll failed:', e);
-                }
-                setTimeout(() => { isProgrammaticScroll.current = false; }, 100);
-            }
-        }, 500); // Increased from 50ms to 500ms
-
-        return () => clearTimeout(timer);
-    }, [sections.length]); // Depend on sections.length to ensure data is ready
+    // Note: Initial scroll position is now handled by contentOffset prop on SectionList
 
     // Handle external date changes (from Header arrows, Calendar clicks, etc.)
     useEffect(() => {
@@ -255,6 +232,12 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
         (item instanceof Date && !isNaN(item.getTime())) ? item.toISOString() : Math.random().toString()
         , []);
 
+    // Calculate initial offset to show today (section at index RANGE)
+    const initialContentOffset = useMemo(() => ({
+        x: 0,
+        y: RANGE * (HEADER_HEIGHT + DAY_HEIGHT)
+    }), []);
+
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <SectionList
@@ -267,6 +250,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 initialNumToRender={5}
                 maxToRenderPerBatch={5}
                 windowSize={11}
+                contentOffset={initialContentOffset}
                 onScrollToIndexFailed={handleScrollToIndexFailed}
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={stableOnViewableItemsChanged}
