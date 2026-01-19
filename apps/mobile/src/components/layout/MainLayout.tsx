@@ -13,15 +13,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AdBanner } from './AdBanner';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { MobileTodoList } from '../home/MobileTodoList';
-import { MobileDaySchedule } from '../home/MobileDaySchedule';
-import { MobileCalendar } from '../home/MobileCalendar';
+import { HomeTodoList } from '../home/HomeTodoList';
+import { HomeDaySchedule } from '../home/HomeDaySchedule';
+import { HomeCalendar } from '../home/HomeCalendar';
 
 // Modals
 import { TodoCreateModal } from '../modals/TodoCreateModal';
 import { SettingsModal } from '../modals/SettingsModal';
 import { TemplateModal } from '../modals/TemplateModal';
 import { ActivityModal } from '../modals/ActivityModal';
+import { FeedbackModal } from '../modals/FeedbackModal';
 
 // Hooks
 import { useMobileCategories } from '../../hooks/useMobileCategories';
@@ -42,6 +43,7 @@ export const MainLayout = () => {
     const [isSettingsModalVisible, setSettingsModalVisible] = useState(false);
     const [isTemplateModalVisible, setTemplateModalVisible] = useState(false);
     const [isActivityModalVisible, setActivityModalVisible] = useState(false);
+    const [isFeedbackModalVisible, setFeedbackModalVisible] = useState(false);
 
     // Shared Values for Animation
     const splitRatio = useSharedValue(0.5); // 0.5 = 50/50
@@ -122,6 +124,7 @@ export const MainLayout = () => {
                 <Header
                     // date={currentDate} // TODO: Add date prop to Header
                     onOpenSettings={() => setSettingsModalVisible(true)}
+                    onOpenFeedback={() => setFeedbackModalVisible(true)}
                 />
 
                 {/* Main Content Area */}
@@ -131,7 +134,7 @@ export const MainLayout = () => {
                     <Animated.View style={[styles.splitViewWrapper, splitViewContainerStyle]}>
                         <GestureDetector gesture={todoSwipe}>
                             <Animated.View style={[styles.leftPane, leftPaneStyle]}>
-                                <MobileTodoList
+                                <HomeTodoList
                                     date={currentDate}
                                 />
                             </Animated.View>
@@ -139,7 +142,7 @@ export const MainLayout = () => {
 
                         <GestureDetector gesture={scheduleSwipe}>
                             <Animated.View style={[styles.rightPane, rightPaneStyle]}>
-                                <MobileDaySchedule
+                                <HomeDaySchedule
                                     currentDate={currentDate}
                                     onDateChange={setCurrentDate}
                                 />
@@ -150,7 +153,7 @@ export const MainLayout = () => {
                     {/* Calendar Pane */}
                     <GestureDetector gesture={calendarSwipe}>
                         <Animated.View style={[styles.calendarPane, calendarPaneStyle]}>
-                            <MobileCalendar
+                            <HomeCalendar
                                 currentDate={currentDate}
                                 onDateSelect={setCurrentDate}
                             />
@@ -182,6 +185,10 @@ export const MainLayout = () => {
                 <ActivityModal
                     visible={isActivityModalVisible}
                     onClose={() => setActivityModalVisible(false)}
+                />
+                <FeedbackModal
+                    visible={isFeedbackModalVisible}
+                    onClose={() => setFeedbackModalVisible(false)}
                 />
 
             </SafeAreaView>

@@ -40,4 +40,8 @@ export interface StorageInterface {
     getSessions(): Promise<Session[]>;
     /** データ変更時のコールバックを登録します (リアルタイム同期用) - 解除関数を返す */
     onDataChange?(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void): () => void;
+
+    // Feedback
+    /** フィードバックを保存します */
+    addFeedback(feedback: any): Promise<void>;
 }

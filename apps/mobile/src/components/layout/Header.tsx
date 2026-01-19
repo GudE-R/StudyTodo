@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Settings as SettingsIcon, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { Settings as SettingsIcon, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale'; // Keep for type or fallback? Not needed if using getDateFnsLocale
 import { useThemeColors } from '../../providers/ThemeProvider';
@@ -9,13 +9,14 @@ import { useTranslation } from 'react-i18next';
 interface HeaderProps {
     date?: Date;
     onOpenSettings: () => void;
+    onOpenFeedback: () => void;
     onPrevDate?: () => void;
     onNextDate?: () => void;
 }
 
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 
-export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
+export const Header = ({ onOpenSettings, onOpenFeedback, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
     const { colors } = useThemeColors();
     const { t, i18n } = useTranslation();
     const safeDate = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
@@ -39,9 +40,14 @@ export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date
                 </TouchableOpacity>
             </View>
 
-            <TouchableOpacity onPress={onOpenSettings} style={styles.settingsBtn}>
-                <SettingsIcon size={20} color={colors.icon} />
-            </TouchableOpacity>
+            <View style={styles.rightContainer}>
+                <TouchableOpacity onPress={onOpenFeedback} style={styles.iconBtn}>
+                    <MessageSquare size={20} color={colors.icon} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onOpenSettings} style={styles.iconBtn}>
+                    <SettingsIcon size={20} color={colors.icon} />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -72,10 +78,12 @@ const styles = StyleSheet.create({
         minWidth: 100,
         textAlign: 'center',
     },
-    settingsBtn: {
-        padding: 5,
-        width: 40,
-        alignItems: 'flex-end',
+    rightContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    iconBtn: {
+        padding: 8,
     }
 });
 

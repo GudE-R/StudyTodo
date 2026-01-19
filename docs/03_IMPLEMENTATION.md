@@ -89,9 +89,10 @@
 これまでの主要な変更履歴です。
 
 
-### [Mobile Share Feature] - 2026-01-19
-#### 追加 (Mobile)
-- **シェア機能 (Activity Share)**:
+### [Mobile Share Feature] - 2026-01-19: モバイル版の多言語化対応 (ActivityModal, ShareCard)
+- 2026-01-19: モバイル版シェア機能の実装 (ActivityModal -> ShareCard)
+- 2026-01-19: モバイル版フィードバック機能の実装 (Header -> FeedbackModal, SQLite保存)
+- 2026-01-19: モバイル版コンパイルエラーの修正 (MainLayoutのインポートパス修正):
     - **ShareCard**: 学習の成果（ストリーク、総時間、完了数、ヒートマップ、円グラフ）を1枚のカード画像として生成するコンポーネントを作成。
     - **技術構成**: `react-native-view-shot` でキャプチャし、`expo-sharing` でSNS共有。
     - **UI統合**: ActivityModalに「Share」タブを追加。

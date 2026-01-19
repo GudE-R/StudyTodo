@@ -106,6 +106,16 @@ export class SQLiteRepository implements StorageInterface {
                 mode TEXT,
                 createdAt TEXT
             );
+
+            CREATE TABLE IF NOT EXISTS feedbacks (
+                id TEXT PRIMARY KEY,
+                userId TEXT,
+                content TEXT,
+                type TEXT,
+                deviceInfo TEXT,
+                version TEXT,
+                createdAt TEXT
+            );
         `);
 
         // Additional migrations...
@@ -309,5 +319,16 @@ export class SQLiteRepository implements StorageInterface {
     async getSessions(): Promise<Session[]> {
         const rows = await this.db.getAllAsync('SELECT * FROM sessions');
         return rows.map(r => this.fromDB(r));
+    }
+
+    // Feedback
+    async addFeedback(feedback: any): Promise<void> {
+        const row = this.toDB(feedback);
+        await this.db.runAsync(
+            `INSERT INTO feedbacks (id, userId, content, type, deviceInfo, version, createdAt)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.userId, row.content, row.type, row.deviceInfo, row.version, row.createdAt]
+        );
+        this.notifyChange('feedbacks', 'INSERT', feedback);
     }
 }
