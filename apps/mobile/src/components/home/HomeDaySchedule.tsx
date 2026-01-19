@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useMemo, useCallback, memo } from 'react';
-import { View, Text, StyleSheet, FlatList, ViewToken } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ViewToken, TouchableOpacity } from 'react-native';
 import { addDays, format, startOfDay, isSameDay } from 'date-fns';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
@@ -42,11 +42,13 @@ interface DayItemProps {
 const TimeSlot = memo(({
     slotIndex,
     isKept,
-    colors
+    colors,
+    onLongPress
 }: {
     slotIndex: number;
     isKept: boolean;
     colors: any;
+    onLongPress?: () => void;
 }) => {
     const hour = Math.floor(slotIndex / 2);
     const minutes = (slotIndex % 2) * 30;
@@ -54,7 +56,11 @@ const TimeSlot = memo(({
     const isHalfHour = minutes === 30;
 
     return (
-        <View style={[styles.hourSlot, isKept && styles.keptSlot]}>
+        <TouchableOpacity
+            style={[styles.hourSlot, isKept && styles.keptSlot]}
+            activeOpacity={1}
+            onLongPress={onLongPress}
+        >
             <Text style={[styles.hourText, { color: colors.textMuted }, isKept && styles.keptText]}>
                 {!isHalfHour || isKept ? timeStr : ''}
             </Text>
@@ -66,7 +72,7 @@ const TimeSlot = memo(({
                         : { backgroundColor: colors.border, height: 1.5 }
                 ]}
             />
-        </View>
+        </TouchableOpacity>
     );
 });
 
@@ -122,12 +128,13 @@ const DayItem = memo(({
 
             {/* Time Slots */}
             <View style={[styles.dayContent, { backgroundColor: colors.background }]}>
-                {slots.map(({ slotIndex, isKept }) => (
+                {slots.map(({ slotIndex, isKept, timeStr }) => (
                     <TimeSlot
                         key={slotIndex}
                         slotIndex={slotIndex}
                         isKept={isKept}
                         colors={colors}
+                        onLongPress={() => onTimeLongPress?.(date, timeStr)}
                     />
                 ))}
 
