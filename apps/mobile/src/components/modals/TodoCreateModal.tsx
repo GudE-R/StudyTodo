@@ -14,7 +14,8 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { X, Tag, Repeat, Play, CheckCircle, Plus, Calendar, Clock, Hourglass, CalendarDays } from 'lucide-react-native';
 import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { useTranslation } from 'react-i18next';
 import { Todo, Category, SRSProfile, generateId } from '@pomarc/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
@@ -39,6 +40,8 @@ export const TodoCreateModal = ({
     onStartNow
 }: TodoCreateModalProps) => {
     const { colors, isDark } = useThemeColors();
+    const { t, i18n } = useTranslation();
+    const locale = getDateFnsLocale(i18n.language);
     const { addTodo } = useMobileTodos();
     const { profiles: srsProfiles } = useMobileSRS();
     const { addSession } = useMobileSessions();
@@ -140,7 +143,7 @@ export const TodoCreateModal = ({
     // Create handler
     const handleCreate = async () => {
         if (!isValid()) {
-            Alert.alert('エラー', 'タイトルまたはカテゴリを入力してください');
+            Alert.alert(t('common.error', 'Error'), t('todo.inputTitleOrCategory', 'Please enter a title or select a category'));
             return;
         }
         const todoData = buildTodoData();
@@ -156,13 +159,13 @@ export const TodoCreateModal = ({
     // Start now handler
     const handleStartNow = () => {
         if (!isValid()) {
-            Alert.alert('エラー', 'タイトルまたはカテゴリを入力してください');
+            Alert.alert(t('common.error', 'Error'), t('todo.inputTitleOrCategory', 'Please enter a title or select a category'));
             return;
         }
         const { title, notes } = parseContent();
         const now = new Date();
         const todoData: Omit<Todo, 'id' | 'createdAt' | 'completed'> = {
-            title: title || '無題',
+            title: title || t('todo.noTitle', 'Untitled'),
             dueDate: now,
             dueTime: format(now, 'HH:mm'),
             categoryId: categoryId || undefined,
@@ -180,12 +183,12 @@ export const TodoCreateModal = ({
     // Record handler
     const handleRecord = async () => {
         if (!isValid()) {
-            Alert.alert('エラー', 'タイトルまたはカテゴリを入力してください');
+            Alert.alert(t('common.error', 'Error'), t('todo.inputTitleOrCategory', 'Please enter a title or select a category'));
             return;
         }
         const durationNum = parseInt(duration, 10) || 0;
         if (durationNum <= 0) {
-            Alert.alert('エラー', '時間を入力してください');
+            Alert.alert(t('common.error', 'Error'), t('todo.inputDuration', 'Please enter a duration'));
             return;
         }
         const todoData = buildTodoData();
@@ -221,7 +224,7 @@ export const TodoCreateModal = ({
         onClose();
     };
 
-    const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || 'カテゴリなし';
+    const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || t('todo.noCategory', 'No Category');
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
@@ -229,7 +232,7 @@ export const TodoCreateModal = ({
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                        <Text style={[styles.headerTitle, { color: colors.text }]}>タスク作成</Text>
+                        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('todo.createTitle', 'Create Todo')}</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                             <X size={24} color={colors.text} />
                         </TouchableOpacity>
@@ -250,7 +253,7 @@ export const TodoCreateModal = ({
                             style={[styles.contentInput, { color: colors.text, borderColor: colors.primary }]}
                             value={content}
                             onChangeText={setContent}
-                            placeholder="タイトル&#10;メモ（2行目以降）"
+                            placeholder={t('todo.contentPlaceholder', "Title\nMemo (2nd line+)")}
                             placeholderTextColor={colors.textMuted}
                             multiline
                             numberOfLines={3}
@@ -264,7 +267,7 @@ export const TodoCreateModal = ({
                             >
                                 <Calendar size={18} color={colors.primary} />
                                 <Text style={[styles.gridText, { color: colors.text }]}>
-                                    {dueDate ? format(dueDate, 'M/d (EEE)', { locale: ja }) : '日付'}
+                                    {dueDate ? format(dueDate, t('common.dateFormat', 'MMM d (EEE)'), { locale }) : t('todo.datePlaceholder', 'Select Date')}
                                 </Text>
                             </TouchableOpacity>
 
@@ -274,7 +277,7 @@ export const TodoCreateModal = ({
                             >
                                 <Clock size={18} color={colors.primary} />
                                 <Text style={[styles.gridText, { color: colors.text }]}>
-                                    {dueTime || '開始時間'}
+                                    {dueTime || t('todo.startTime', 'Start Time')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -288,7 +291,7 @@ export const TodoCreateModal = ({
                                         style={[styles.durationInput, { color: colors.text }]}
                                         value={duration}
                                         onChangeText={setDuration}
-                                        placeholder="分数"
+                                        placeholder={t('todo.durationPlaceholder', 'Duration (min)')}
                                         placeholderTextColor={colors.textMuted}
                                         keyboardType="numeric"
                                     />
@@ -296,7 +299,7 @@ export const TodoCreateModal = ({
                             ) : (
                                 <View style={[styles.gridItem, { backgroundColor: colors.surface, opacity: 0.5 }]}>
                                     <Hourglass size={18} color={colors.textMuted} />
-                                    <Text style={[styles.gridText, { color: colors.textMuted }]}>記録時のみ</Text>
+                                    <Text style={[styles.gridText, { color: colors.textMuted }]}>{t('todo.durationRecordOnly', 'Record only')}</Text>
                                 </View>
                             )}
 
@@ -307,7 +310,7 @@ export const TodoCreateModal = ({
                             >
                                 <Clock size={18} color={dueTime ? colors.danger : colors.textMuted} />
                                 <Text style={[styles.gridText, { color: dueTime ? colors.text : colors.textMuted }]}>
-                                    {endTime || '終了時間'}
+                                    {endTime || t('todo.endTime', 'End Time')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -320,7 +323,7 @@ export const TodoCreateModal = ({
                             >
                                 <Repeat size={18} color={colors.success} />
                                 <Text style={[styles.srsBtnText, { color: colors.text }]} numberOfLines={1}>
-                                    {srsInterval || 'SRSなし'}
+                                    {srsInterval || t('todo.noSrs', 'No SRS')}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -340,16 +343,16 @@ export const TodoCreateModal = ({
                                 <View style={styles.routineHeader}>
                                     <View style={styles.routineLabelRow}>
                                         <CalendarDays size={14} color="#a855f7" />
-                                        <Text style={[styles.routineLabel, { color: colors.textSecondary }]}>ルーティン</Text>
+                                        <Text style={[styles.routineLabel, { color: colors.textSecondary }]}>{t('guide.routineTitle', 'Routine')}</Text>
                                     </View>
                                     {routineDays.length > 0 && (
                                         <TouchableOpacity onPress={() => setRoutineDays([])}>
-                                            <Text style={styles.routineClear}>クリア</Text>
+                                            <Text style={styles.routineClear}>{t('common.clear', 'Clear')}</Text>
                                         </TouchableOpacity>
                                     )}
                                 </View>
                                 <View style={styles.weekdayRow}>
-                                    {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => {
+                                    {['0', '1', '2', '3', '4', '5', '6'].map((key, index) => {
                                         const isSelected = routineDays.includes(index);
                                         const isWeekend = index === 0 || index === 6;
                                         return (
@@ -373,17 +376,12 @@ export const TodoCreateModal = ({
                                                     isSelected && styles.weekdayTextActive,
                                                     !isSelected && isWeekend && { color: colors.textMuted }
                                                 ]}>
-                                                    {day}
+                                                    {t(`common.weekdays.${key}`)}
                                                 </Text>
                                             </TouchableOpacity>
                                         );
                                     })}
                                 </View>
-                                {routineDays.length > 0 && (
-                                    <Text style={styles.routineHint}>
-                                        選択した{routineDays.length}曜日にタスクが繰り返されます
-                                    </Text>
-                                )}
                             </View>
                         )}
                     </ScrollView>
@@ -396,18 +394,18 @@ export const TodoCreateModal = ({
                         >
                             <CheckCircle size={18} color={isRecordMode ? '#fff' : colors.success} />
                             <Text style={[styles.actionBtnText, { color: isRecordMode ? '#fff' : colors.success }]}>
-                                {isRecordMode ? '確定' : '記録'}
+                                {isRecordMode ? t('todo.recordConfirm', 'Confirm') : t('todo.record', 'Record')}
                             </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionBtnStart} onPress={handleStartNow}>
                             <Play size={18} color="#ea580c" fill="#ea580c" />
-                            <Text style={[styles.actionBtnText, { color: '#ea580c' }]}>開始</Text>
+                            <Text style={[styles.actionBtnText, { color: '#ea580c' }]}>{t('todo.start', 'Start')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionBtnCreate} onPress={handleCreate}>
                             <Plus size={18} color={colors.primary} />
-                            <Text style={[styles.actionBtnText, { color: colors.primary }]}>作成</Text>
+                            <Text style={[styles.actionBtnText, { color: colors.primary }]}>{t('todo.create', 'Create')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -420,9 +418,9 @@ export const TodoCreateModal = ({
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
-                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>日付を選択</Text>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.selectDate', 'Select Date')}</Text>
                                     <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>完了</Text>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <DateTimePicker
@@ -458,12 +456,12 @@ export const TodoCreateModal = ({
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>
-                                        {showTimePicker === 'start' ? '開始時間' : '終了時間'}
+                                        {showTimePicker === 'start' ? t('todo.startTime', 'Start Time') : t('todo.endTime', 'End Time')}
                                     </Text>
                                     <TouchableOpacity onPress={() => {
                                         setShowTimePicker(null);
                                     }}>
-                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>完了</Text>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <DateTimePicker
@@ -521,13 +519,13 @@ export const TodoCreateModal = ({
             <Modal visible={showCategoryPicker} transparent animationType="fade">
                 <TouchableOpacity style={styles.pickerOverlay} onPress={() => setShowCategoryPicker(false)}>
                     <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
-                        <Text style={[styles.pickerTitle, { color: colors.text }]}>カテゴリを選択</Text>
+                        <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('category.selectCategory', 'Select Category')}</Text>
                         <ScrollView style={styles.pickerScroll}>
                             <TouchableOpacity
                                 style={[styles.pickerItem, { borderBottomColor: colors.border }]}
                                 onPress={() => { setCategoryId(''); setShowCategoryPicker(false); }}
                             >
-                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>カテゴリなし</Text>
+                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noCategory', 'No Category')}</Text>
                             </TouchableOpacity>
                             {categoryOptions.map(opt => (
                                 <TouchableOpacity
@@ -547,13 +545,13 @@ export const TodoCreateModal = ({
             <Modal visible={showSRSPicker} transparent animationType="fade">
                 <TouchableOpacity style={styles.pickerOverlay} onPress={() => setShowSRSPicker(false)}>
                     <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
-                        <Text style={[styles.pickerTitle, { color: colors.text }]}>SRSプロファイルを選択</Text>
+                        <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('srs.selectProfile', 'Select SRS Profile')}</Text>
                         <ScrollView style={styles.pickerScroll}>
                             <TouchableOpacity
                                 style={[styles.pickerItem, { borderBottomColor: colors.border }]}
                                 onPress={() => { setSrsInterval(''); setShowSRSPicker(false); }}
                             >
-                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>SRSなし</Text>
+                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noSrs', 'No SRS')}</Text>
                             </TouchableOpacity>
                             {srsProfiles.map(p => (
                                 <TouchableOpacity

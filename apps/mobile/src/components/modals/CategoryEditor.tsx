@@ -34,8 +34,11 @@ const buildCategoryTree = (categories: Category[]): Category[] => {
     return roots; // Sort by order if needed
 };
 
+import { useTranslation } from 'react-i18next';
+
 export const CategoryEditor = () => {
     const { colors, isDark } = useTheme();
+    const { t } = useTranslation();
     const { categories, addCategory, updateCategory, deleteCategory } = useMobileCategories();
     const tree = useMemo(() => buildCategoryTree(categories || []), [categories]);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -94,11 +97,11 @@ export const CategoryEditor = () => {
 
     const handleDelete = (id: string) => {
         Alert.alert(
-            "Delete Category",
-            "Are you sure? Sub-categories will also be deleted.",
+            t('category.deleteTitle', "Delete Category"),
+            t('category.deleteConfirm', "Are you sure? Sub-categories will also be deleted."),
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: () => deleteCategory(id) }
+                { text: t('common.cancel', "Cancel"), style: "cancel" },
+                { text: t('category.deleteButton', "Delete"), style: "destructive", onPress: () => deleteCategory(id) }
             ]
         );
     };
@@ -180,15 +183,15 @@ export const CategoryEditor = () => {
                             style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             value={inputName}
                             onChangeText={setInputName}
-                            placeholder="Category Name"
+                            placeholder={t('category.placeholder', 'Category Name')}
                             placeholderTextColor={colors.textMuted}
                             autoFocus
                         />
                         <TouchableOpacity onPress={confirmAdding} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
-                            <Text style={styles.saveText}>Add</Text>
+                            <Text style={styles.saveText}>{t('category.add', 'Add')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={cancelAdding} style={styles.cancelBtn}>
-                            <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
+                            <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -199,14 +202,14 @@ export const CategoryEditor = () => {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-                <Text style={[styles.title, { color: colors.text }]}>Categories</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{t('category.treeTitle', 'Categories')}</Text>
                 <TouchableOpacity
                     style={[styles.addMainBtn, { backgroundColor: colors.primary }]}
                     onPress={() => startAdding(undefined, 'large')}
                     disabled={addingLevel !== null}
                 >
                     <Plus size={16} color="#fff" />
-                    <Text style={styles.addMainText}>Add Main</Text>
+                    <Text style={styles.addMainText}>{t('category.addLargeCategory', 'Add Main')}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -218,15 +221,15 @@ export const CategoryEditor = () => {
                             style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             value={inputName}
                             onChangeText={setInputName}
-                            placeholder="Main Category Name"
+                            placeholder={t('category.placeholder', 'Main Category Name')}
                             placeholderTextColor={colors.textMuted}
                             autoFocus
                         />
                         <TouchableOpacity onPress={confirmAdding} style={[styles.saveBtn, { backgroundColor: colors.primary }]}>
-                            <Text style={styles.saveText}>Add</Text>
+                            <Text style={styles.saveText}>{t('category.add', 'Add')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={cancelAdding} style={styles.cancelBtn}>
-                            <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
+                            <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                         </TouchableOpacity>
                     </View>
                 )}

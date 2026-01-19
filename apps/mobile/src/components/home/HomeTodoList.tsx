@@ -11,10 +11,13 @@ interface HomeTodoListProps {
     onTodoPress?: (todo: Todo) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListProps) => {
     const { todos, loading, refreshTodos, updateTodo } = useMobileTodos();
     const { categories } = useMobileCategories();
     const { colors } = useThemeColors();
+    const { t } = useTranslation();
 
     useEffect(() => {
         refreshTodos();
@@ -86,7 +89,7 @@ export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListPro
     if (loading && todos.length === 0) {
         return (
             <View style={[styles.container, { backgroundColor: colors.background }]}>
-                <Text style={[styles.emptyText, { color: colors.textMuted }]}>Loading...</Text>
+                <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t('common.loading', 'Loading...')}</Text>
             </View>
         );
     }
@@ -95,7 +98,7 @@ export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListPro
         return (
             <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <View style={styles.emptyContainer}>
-                    <Text style={[styles.emptyText, { color: colors.textMuted }]}>No tasks for this day</Text>
+                    <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t('common.noTasks', 'No tasks for this day')}</Text>
                 </View>
             </View>
         );
@@ -104,7 +107,7 @@ export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListPro
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={[styles.debugHeader, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.debugText, { color: colors.textSecondary }]}>Tasks: {filteredTodos.length} / {todos.length}</Text>
+                <Text style={[styles.debugText, { color: colors.textSecondary }]}>{t('common.tasks')}: {filteredTodos.length} / {todos.length}</Text>
             </View>
             <FlatList
                 data={filteredTodos}

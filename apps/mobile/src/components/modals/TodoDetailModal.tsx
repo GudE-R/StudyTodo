@@ -14,7 +14,8 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, ChevronRight, Trash2 } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { useTranslation } from 'react-i18next';
 import { Todo, Category, SRSProfile } from '@pomarc/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
@@ -41,6 +42,8 @@ export const TodoDetailModal = ({
     onRecord
 }: TodoDetailModalProps) => {
     const { colors, isDark } = useThemeColors();
+    const { t, i18n } = useTranslation();
+    const locale = getDateFnsLocale(i18n.language);
     const { categories } = useMobileCategories();
     const { profiles: srsProfiles } = useMobileSRS();
     const { sessions } = useMobileSessions();
@@ -138,11 +141,11 @@ export const TodoDetailModal = ({
 
     const handleDelete = () => {
         Alert.alert(
-            'タスクを削除',
-            'このタスクを削除しますか？',
+            t('todo.deleteTask', 'Delete Task'),
+            t('todo.deleteConfirm', 'Are you sure?'),
             [
-                { text: 'キャンセル', style: 'cancel' },
-                { text: '削除', style: 'destructive', onPress: () => { onDelete(todo.id); onClose(); } },
+                { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+                { text: t('common.delete', 'Delete'), style: 'destructive', onPress: () => { onDelete(todo.id); onClose(); } },
             ]
         );
     };
@@ -150,12 +153,12 @@ export const TodoDetailModal = ({
     const handleRecordSubmit = () => {
         const d = parseInt(recordDuration, 10);
         if (isNaN(d) || d <= 0) {
-            Alert.alert('エラー', '有効な時間（分）を入力してください');
+            Alert.alert(t('common.error', 'Error'), t('todo.invalidDuration', 'Invalid duration'));
             return;
         }
         const updated: Todo = {
             ...todo,
-            title: title.trim() || 'Untitled',
+            title: title.trim() || t('todo.noTitle', 'Untitled'),
             memo: memo.trim() || undefined,
             categoryId: categoryId || undefined,
             dueDate: dueDate || undefined,
@@ -171,7 +174,7 @@ export const TodoDetailModal = ({
 
     const showCategoryPicker = () => {
         if (Platform.OS === 'ios') {
-            const options = ['カテゴリなし', ...categoryOptions.map(c => c.label), 'キャンセル'];
+            const options = [t('todo.noCategory', 'No Category'), ...categoryOptions.map(c => c.label), t('common.cancel', 'Cancel')];
             ActionSheetIOS.showActionSheetWithOptions(
                 { options, cancelButtonIndex: options.length - 1 },
                 (index) => {
@@ -182,17 +185,17 @@ export const TodoDetailModal = ({
         } else {
             // Android: Use Alert or a custom picker
             const buttons = [
-                { text: 'カテゴリなし', onPress: () => setCategoryId('') },
+                { text: t('todo.noCategory', 'No Category'), onPress: () => setCategoryId('') },
                 ...categoryOptions.map(c => ({ text: c.label, onPress: () => setCategoryId(c.value) })),
-                { text: 'キャンセル', style: 'cancel' as const },
+                { text: t('common.cancel', 'Cancel'), style: 'cancel' as const },
             ];
-            Alert.alert('カテゴリを選択', '', buttons);
+            Alert.alert(t('category.treeTitle', 'Select Category'), '', buttons);
         }
     };
 
     const showSRSPicker = () => {
         if (Platform.OS === 'ios') {
-            const options = ['SRSなし', ...srsProfiles.map(p => p.name), 'キャンセル'];
+            const options = [t('todo.noSrs', 'No SRS'), ...srsProfiles.map(p => p.name), t('common.cancel', 'Cancel')];
             ActionSheetIOS.showActionSheetWithOptions(
                 { options, cancelButtonIndex: options.length - 1 },
                 (index) => {
@@ -202,11 +205,11 @@ export const TodoDetailModal = ({
             );
         } else {
             const buttons = [
-                { text: 'SRSなし', onPress: () => setSrsInterval('') },
+                { text: t('todo.noSrs', 'No SRS'), onPress: () => setSrsInterval('') },
                 ...srsProfiles.map(p => ({ text: p.name, onPress: () => setSrsInterval(p.name) })),
-                { text: 'キャンセル', style: 'cancel' as const },
+                { text: t('common.cancel', 'Cancel'), style: 'cancel' as const },
             ];
-            Alert.alert('SRSプロファイルを選択', '', buttons);
+            Alert.alert(t('srs.listTitle', 'Select SRS'), '', buttons);
         }
     };
 
@@ -218,10 +221,10 @@ export const TodoDetailModal = ({
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                        <Text style={[styles.headerTitle, { color: colors.text }]}>タスク詳細</Text>
+                        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('todo.detailTitle', 'Task Details')}</Text>
                         <View style={styles.headerRight}>
                             <TouchableOpacity onPress={handleUpdate} style={styles.saveBtn}>
-                                <Text style={[styles.saveBtnText, { color: colors.primary }]}>保存</Text>
+                                <Text style={[styles.saveBtnText, { color: colors.primary }]}>{t('common.save', 'Save')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                                 <X size={24} color={colors.text} />
@@ -241,7 +244,7 @@ export const TodoDetailModal = ({
                                 style={[styles.titleInput, { color: colors.text }, todo.completed && styles.completedText]}
                                 value={title}
                                 onChangeText={setTitle}
-                                placeholder="タスク名"
+                                placeholder={t('todo.titleLabel', 'Task Title')}
                                 placeholderTextColor={colors.textMuted}
                             />
                         </View>
@@ -251,7 +254,7 @@ export const TodoDetailModal = ({
                             style={[styles.memoInput, { color: colors.text, backgroundColor: colors.surface, borderColor: colors.border }]}
                             value={memo}
                             onChangeText={setMemo}
-                            placeholder="メモ"
+                            placeholder={t('todo.memoLabel', 'Memo')}
                             placeholderTextColor={colors.textMuted}
                             multiline
                             numberOfLines={3}
@@ -275,7 +278,7 @@ export const TodoDetailModal = ({
                             >
                                 <Calendar size={18} color={colors.primary} />
                                 <Text style={[styles.dateText, { color: colors.text }]}>
-                                    {dueDate ? format(dueDate, 'M/d (EEE)', { locale: ja }) : '日付なし'}
+                                    {dueDate ? format(dueDate, t('common.dateFormat', 'MMM d (EEE)'), { locale }) : t('todo.datePlaceholder', 'Date')}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -284,7 +287,7 @@ export const TodoDetailModal = ({
                             >
                                 <Clock size={18} color={colors.primary} />
                                 <Text style={[styles.dateText, { color: colors.text }]}>
-                                    {dueTime || '時間なし'}
+                                    {dueTime || t('todo.startTime', 'Time')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -295,7 +298,7 @@ export const TodoDetailModal = ({
                             onPress={showSRSPicker}
                         >
                             <Repeat size={18} color={colors.success} />
-                            <Text style={[styles.optionText, { color: colors.text }]}>{srsInterval || 'SRSなし'}</Text>
+                            <Text style={[styles.optionText, { color: colors.text }]}>{srsInterval || t('todo.noSrs', 'No SRS')}</Text>
                             <ChevronRight size={18} color={colors.textMuted} />
                         </TouchableOpacity>
 
@@ -303,9 +306,9 @@ export const TodoDetailModal = ({
                         <View style={[styles.statsBox, { backgroundColor: colors.primaryLight }]}>
                             <Clock size={20} color={colors.primary} />
                             <View style={styles.statsContent}>
-                                <Text style={[styles.statsLabel, { color: colors.textSecondary }]}>学習記録</Text>
+                                <Text style={[styles.statsLabel, { color: colors.textSecondary }]}>{t('todo.statsTitle', 'Learning Stats')}</Text>
                                 <Text style={[styles.statsValue, { color: colors.text }]}>
-                                    {todoSessions.length}回 ({totalMinutes}分)
+                                    {todoSessions.length} {t('common.times', 'times')} ({totalMinutes}{t('common.units.minutes', 'm')})
                                 </Text>
                             </View>
                         </View>
@@ -319,7 +322,7 @@ export const TodoDetailModal = ({
                                     style={[styles.recordInput, { backgroundColor: colors.surface, color: colors.text }]}
                                     value={recordDuration}
                                     onChangeText={setRecordDuration}
-                                    placeholder="分数を入力"
+                                    placeholder={t('todo.durationPlaceholder', 'Duration (min)')}
                                     placeholderTextColor={colors.textMuted}
                                     keyboardType="numeric"
                                     autoFocus
@@ -336,20 +339,20 @@ export const TodoDetailModal = ({
                                 <View style={styles.actionRow}>
                                     <TouchableOpacity style={styles.recordBtn} onPress={() => setIsRecording(true)}>
                                         <CheckCircle size={20} color={colors.success} />
-                                        <Text style={[styles.actionBtnText, { color: colors.success }]}>記録</Text>
+                                        <Text style={[styles.actionBtnText, { color: colors.success }]}>{t('todo.record', 'Record')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.startBtn} onPress={handleStartNow}>
                                         <Play size={18} color={colors.warning} fill={colors.warning} />
-                                        <Text style={[styles.actionBtnText, { color: colors.warning }]}>開始</Text>
+                                        <Text style={[styles.actionBtnText, { color: colors.warning }]}>{t('todo.start', 'Start')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.secondaryActions}>
                                     <TouchableOpacity style={[styles.postponeBtn, { backgroundColor: colors.surface }]} onPress={handlePostpone}>
-                                        <Text style={[styles.postponeBtnText, { color: colors.textSecondary }]}>明日に延期</Text>
+                                        <Text style={[styles.postponeBtnText, { color: colors.textSecondary }]}>{t('todo.postpone', 'Postpone')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
                                         <Trash2 size={16} color={colors.danger} />
-                                        <Text style={[styles.deleteBtnText, { color: colors.danger }]}>削除</Text>
+                                        <Text style={[styles.deleteBtnText, { color: colors.danger }]}>{t('common.delete', 'Delete')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </>

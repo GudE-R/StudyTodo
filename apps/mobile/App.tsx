@@ -1,5 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
+import './src/i18n'; // Initialize i18n
 import { MainLayout } from './src/components/layout/MainLayout_Safe';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RepositoryProvider } from './src/providers/RepositoryProvider';

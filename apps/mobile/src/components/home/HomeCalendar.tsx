@@ -14,8 +14,13 @@ interface HomeCalendarProps {
     onDateLongPress?: (date: Date) => void;
 }
 
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { useTranslation } from 'react-i18next';
+
 export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: HomeCalendarProps) => {
     const { colors, isDark } = useThemeColors();
+    const { t, i18n } = useTranslation();
+    const locale = getDateFnsLocale(i18n.language);
     const { todos, refreshTodos } = useMobileTodos();
     const { categories } = useMobileCategories();
 
@@ -71,7 +76,9 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                 <TouchableOpacity onPress={handlePrevMonth} style={styles.navBtn}>
                     <ChevronLeft size={20} color={colors.icon} />
                 </TouchableOpacity>
-                <Text style={[styles.monthTitle, { color: colors.text }]}>{format(viewingMonth, 'yyyy年 M月')}</Text>
+                <Text style={[styles.monthTitle, { color: colors.text }]}>
+                    {format(viewingMonth, t('common.calendarTitleFormat', 'MMM yyyy'), { locale })}
+                </Text>
                 <TouchableOpacity onPress={handleNextMonth} style={styles.navBtn}>
                     <ChevronRight size={20} color={colors.icon} />
                 </TouchableOpacity>
@@ -79,9 +86,9 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
 
             <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.grid}>
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                        <View key={i} style={styles.headerCell}>
-                            <Text style={[styles.headerText, { color: colors.textMuted }]}>{d}</Text>
+                    {['0', '1', '2', '3', '4', '5', '6'].map((key) => (
+                        <View key={key} style={styles.headerCell}>
+                            <Text style={[styles.headerText, { color: colors.textMuted }]}>{t(`common.weekdays.${key}`)}</Text>
                         </View>
                     ))}
 

@@ -6,8 +6,11 @@ import { SRSProfile } from '@pomarc/shared';
 import { generateId } from '../../lib/utils';
 import { useTheme } from '../../providers/ThemeProvider';
 
+import { useTranslation } from 'react-i18next';
+
 export const SRSEditor = () => {
     const { colors, isDark } = useTheme();
+    const { t } = useTranslation();
     const { profiles, addSRSProfile, deleteSRSProfile } = useMobileSRS();
     const [isAdding, setIsAdding] = useState(false);
     const [newName, setNewName] = useState("");
@@ -15,13 +18,13 @@ export const SRSEditor = () => {
 
     const handleAdd = async () => {
         if (!newName.trim() || !newIntervals.trim()) {
-            Alert.alert("Validation Error", "Please enter both name and intervals.");
+            Alert.alert(t('srs.validationError', "Validation Error"), t('srs.enterBoth', "Please enter both name and intervals."));
             return;
         }
 
         const intervals = newIntervals.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
         if (intervals.length === 0) {
-            Alert.alert("Validation Error", "Please enter valid comma-separated numbers for intervals (e.g., 1, 3, 7).");
+            Alert.alert(t('srs.validationError', "Validation Error"), t('srs.validIntervals', "Please enter valid comma-separated numbers for intervals (e.g., 1, 3, 7)."));
             return;
         }
 
@@ -42,16 +45,16 @@ export const SRSEditor = () => {
 
     const handleDelete = (id: string, isDefault?: boolean) => {
         if (isDefault) {
-            Alert.alert("Cannot Delete", "The default profile cannot be deleted.");
+            Alert.alert(t('srs.cannotDelete', "Cannot Delete"), t('srs.defaultDeleteError', "The default profile cannot be deleted."));
             return;
         }
 
         Alert.alert(
-            "Delete SRS Profile",
-            "Are you sure?",
+            t('srs.deleteProfile', "Delete SRS Profile"),
+            t('srs.deleteConfirm', "Are you sure?"),
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: () => deleteSRSProfile(id) }
+                { text: t('common.cancel', "Cancel"), style: "cancel" },
+                { text: t('common.delete', "Delete"), style: "destructive", onPress: () => deleteSRSProfile(id) }
             ]
         );
     };
@@ -59,14 +62,14 @@ export const SRSEditor = () => {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-                <Text style={[styles.title, { color: colors.text }]}>SRS Profiles</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{t('srs.listTitle', 'SRS Profiles')}</Text>
                 {!isAdding && (
                     <TouchableOpacity
                         style={[styles.addBtn, { backgroundColor: colors.primary }]}
                         onPress={() => setIsAdding(true)}
                     >
                         <Plus size={16} color="#fff" />
-                        <Text style={styles.addBtnText}>New Profile</Text>
+                        <Text style={styles.addBtnText}>{t('srs.createNew', 'New Profile')}</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -74,17 +77,17 @@ export const SRSEditor = () => {
             <ScrollView style={styles.content}>
                 {isAdding && (
                     <View style={[styles.addForm, { backgroundColor: colors.surfaceHighlight, borderColor: colors.primaryLight }]}>
-                        <Text style={[styles.formTitle, { color: colors.primary }]}>New SRS Profile</Text>
+                        <Text style={[styles.formTitle, { color: colors.primary }]}>{t('srs.createNew')}</Text>
                         <TextInput
                             style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
-                            placeholder="Profile Name (e.g. Exam Cram)"
+                            placeholder={t('srs.namePlaceholder', 'Profile Name')}
                             placeholderTextColor={colors.textMuted}
                             value={newName}
                             onChangeText={setNewName}
                         />
                         <TextInput
                             style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
-                            placeholder="Intervals (e.g. 1, 3, 7, 14)"
+                            placeholder={t('srs.intervalPlaceholder', 'Intervals (e.g. 1, 3, 7)')}
                             placeholderTextColor={colors.textMuted}
                             value={newIntervals}
                             onChangeText={setNewIntervals}
@@ -92,13 +95,13 @@ export const SRSEditor = () => {
                         />
                         <View style={styles.formActions}>
                             <TouchableOpacity style={styles.cancelBtn} onPress={() => setIsAdding(false)}>
-                                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Cancel</Text>
+                                <Text style={[styles.cancelText, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.saveBtn, { backgroundColor: colors.primary }]}
                                 onPress={handleAdd}
                             >
-                                <Text style={styles.saveText}>Save</Text>
+                                <Text style={styles.saveText}>{t('common.save', 'Save')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -116,7 +119,7 @@ export const SRSEditor = () => {
                                 <Text style={[styles.cardName, { color: colors.text }]}>{profile.name}</Text>
                                 {profile.isDefault && (
                                     <View style={[styles.badge, { backgroundColor: colors.surfaceHighlight }]}>
-                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>Default</Text>
+                                        <Text style={[styles.badgeText, { color: colors.textSecondary }]}>{t('srs.defaultBadge', 'Default')}</Text>
                                     </View>
                                 )}
                             </View>

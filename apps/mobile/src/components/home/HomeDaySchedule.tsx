@@ -14,8 +14,13 @@ interface HomeDayScheduleProps {
 const SLOT_HEIGHT = 30;
 const DAY_HEIGHT = SLOT_HEIGHT * 48;
 
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { useTranslation } from 'react-i18next';
+
 export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: HomeDayScheduleProps) => {
     const { colors } = useThemeColors();
+    const { t, i18n } = useTranslation();
+    const locale = getDateFnsLocale(i18n.language);
     const listRef = useRef<SectionList<Date, { title: Date }>>(null);
     const isProgrammaticScroll = useRef(false);
 
@@ -97,7 +102,9 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
 
     const renderSectionHeader = ({ section }: { section: SectionListData<Date, { title: Date }> }) => (
         <View style={[styles.dayHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <Text style={[styles.dayTitle, { color: colors.text }]}>{format(section.title, 'MMM d (EEE)')}</Text>
+            <Text style={[styles.dayTitle, { color: colors.text }]}>
+                {format(section.title, t('common.dateFormat', 'MMM d (EEE)'), { locale })}
+            </Text>
         </View>
     );
 

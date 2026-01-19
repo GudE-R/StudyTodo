@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FolderTree, BarChart2, X } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
+import { useTranslation } from 'react-i18next';
 
 interface FooterProps {
     onOpenTemplate: () => void;
@@ -13,12 +14,13 @@ interface FooterProps {
 
 export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted, onResetKeep }: FooterProps) => {
     const { colors } = useThemeColors();
+    const { t } = useTranslation();
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <TouchableOpacity style={styles.button} onPress={onOpenTemplate}>
                 <FolderTree size={20} color={colors.icon} />
-                <Text style={[styles.label, { color: colors.textSecondary }]}>Template</Text>
+                <Text style={[styles.label, { color: colors.textSecondary }]}>{t('common.template', 'Template')}</Text>
             </TouchableOpacity>
 
             <View style={styles.centerContainer}>
@@ -37,7 +39,7 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted
 
             <TouchableOpacity style={styles.button} onPress={onOpenReport}>
                 <BarChart2 size={20} color={colors.icon} />
-                <Text style={[styles.label, { color: colors.textSecondary }]}>Activity</Text>
+                <Text style={[styles.label, { color: colors.textSecondary }]}>{t('common.activity', 'Activity')}</Text>
             </TouchableOpacity>
         </View>
     );

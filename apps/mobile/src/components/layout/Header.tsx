@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Settings as SettingsIcon, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { ja } from 'date-fns/locale'; // Keep for type or fallback? Not needed if using getDateFnsLocale
 import { useThemeColors } from '../../providers/ThemeProvider';
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
     date?: Date;
@@ -12,10 +13,15 @@ interface HeaderProps {
     onNextDate?: () => void;
 }
 
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+
 export const Header = ({ onOpenSettings, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
     const { colors } = useThemeColors();
+    const { t, i18n } = useTranslation();
     const safeDate = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
-    const formattedDate = format(safeDate, 'M月d日(EEE)', { locale: ja });
+
+    const locale = getDateFnsLocale(i18n.language);
+    const formattedDate = format(safeDate, t('common.dateFormat', 'MMM d (EEE)'), { locale });
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border }]}>

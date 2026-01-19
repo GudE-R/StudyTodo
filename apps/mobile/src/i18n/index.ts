@@ -1,0 +1,102 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import * as Localization from 'expo-localization';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'intl-pluralrules';
+
+import da from '@pomarc/shared/src/i18n/locales/da.json';
+import de from '@pomarc/shared/src/i18n/locales/de.json';
+import en from '@pomarc/shared/src/i18n/locales/en.json';
+import es from '@pomarc/shared/src/i18n/locales/es.json';
+import fi from '@pomarc/shared/src/i18n/locales/fi.json';
+import fr from '@pomarc/shared/src/i18n/locales/fr.json';
+import id from '@pomarc/shared/src/i18n/locales/id.json';
+import it from '@pomarc/shared/src/i18n/locales/it.json';
+import ja from '@pomarc/shared/src/i18n/locales/ja.json';
+import ko from '@pomarc/shared/src/i18n/locales/ko.json';
+import nl from '@pomarc/shared/src/i18n/locales/nl.json';
+import no from '@pomarc/shared/src/i18n/locales/no.json';
+import ptBR from '@pomarc/shared/src/i18n/locales/pt-BR.json';
+import ru from '@pomarc/shared/src/i18n/locales/ru.json';
+import sv from '@pomarc/shared/src/i18n/locales/sv.json';
+import tr from '@pomarc/shared/src/i18n/locales/tr.json';
+import vi from '@pomarc/shared/src/i18n/locales/vi.json';
+import zhCN from '@pomarc/shared/src/i18n/locales/zh-CN.json';
+import zhTW from '@pomarc/shared/src/i18n/locales/zh-TW.json';
+
+const resources = {
+    da: { translation: da },
+    de: { translation: de },
+    en: { translation: en },
+    es: { translation: es },
+    fi: { translation: fi },
+    fr: { translation: fr },
+    id: { translation: id },
+    it: { translation: it },
+    ja: { translation: ja },
+    ko: { translation: ko },
+    nl: { translation: nl },
+    no: { translation: no },
+    'pt-BR': { translation: ptBR },
+    ru: { translation: ru },
+    sv: { translation: sv },
+    tr: { translation: tr },
+    vi: { translation: vi },
+    'zh-CN': { translation: zhCN },
+    'zh-TW': { translation: zhTW },
+};
+
+const LANGUAGE_DETECTOR = {
+    type: 'languageDetector',
+    async: true,
+    detect: async (callback: (lang: string) => void) => {
+        try {
+            const stored = await AsyncStorage.getItem('user-language');
+            if (stored) {
+                return callback(stored);
+            }
+
+            const locales = Localization.getLocales();
+            // Use the first locale's language code or tag
+            // For Chinese/Portuguese, we might need tag to distinguish variants
+            // expo-localization returns languageTag like 'en-US', 'ja-JP'
+            // languageCode like 'en', 'ja'
+
+            const primary = locales[0];
+            if (!primary) return callback('en');
+
+            // Try tag match first (e.g. pt-BR)
+            if (primary.languageTag && resources[primary.languageTag as keyof typeof resources]) {
+                return callback(primary.languageTag);
+            }
+
+            // Fallback to language code (e.g. ja)
+            return callback(primary.languageCode ?? 'en');
+        } catch (e) {
+            callback('en');
+        }
+    },
+    init: () => { },
+    cacheUserLanguage: async (language: string) => {
+        try {
+            await AsyncStorage.setItem('user-language', language);
+        } catch (e) { }
+    },
+};
+
+i18n
+    .use(initReactI18next)
+    .use(LANGUAGE_DETECTOR as any)
+    .init({
+        resources,
+        fallbackLng: 'en',
+        interpolation: {
+            escapeValue: false, // React already safes from xss
+        },
+        compatibilityJSON: 'v4',
+        react: {
+            useSuspense: false, // React Native doesn't support Suspense well yet (or async usage)
+        },
+    });
+
+export default i18n;

@@ -10,8 +10,11 @@ interface TemplateModalProps {
     onClose: () => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
     const { colors, isDark } = useTheme();
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<"category" | "srs">("category");
 
     return (
@@ -20,7 +23,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
                 <View style={[styles.container, { backgroundColor: colors.surface }]}>
                     {/* Header */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                        <Text style={[styles.title, { color: colors.text }]}>Templates</Text>
+                        <Text style={[styles.title, { color: colors.text }]}>{t('template.title', 'Templates')}</Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                             <X size={24} color={colors.text} />
                         </TouchableOpacity>
@@ -37,7 +40,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
                                 styles.tabText,
                                 { color: colors.textSecondary },
                                 activeTab === "category" && { color: colors.primary }
-                            ]}>Categories</Text>
+                            ]}>{t('template.categoryTab', 'Categories')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -49,7 +52,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
                                 styles.tabText,
                                 { color: colors.textSecondary },
                                 activeTab === "srs" && { color: "#9333ea" }
-                            ]}>SRS Profiles</Text>
+                            ]}>{t('template.srsTab', 'SRS Profiles')}</Text>
                         </TouchableOpacity>
                     </View>
 
