@@ -11,7 +11,7 @@ interface HomeDayScheduleProps {
     onTimeLongPress?: (date: Date, time: string) => void;
 }
 
-const SLOT_HEIGHT = 30;
+const SLOT_HEIGHT = 27;
 const DAY_HEIGHT = SLOT_HEIGHT * 48;
 
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
@@ -30,7 +30,8 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
     const initialDate = useMemo(() => startOfDay(new Date()), []);
     const sections = useMemo(() => {
         const result = [];
-        for (let i = -30; i <= 30; i++) {
+        const RANGE = 365; // Expand range
+        for (let i = -RANGE; i <= RANGE; i++) {
             const date = addDays(initialDate, i);
             result.push({
                 title: date,
@@ -60,7 +61,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
 
         const diffTime = startOfDay(currentDate).getTime() - initialDate.getTime();
         const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
-        const index = diffDays + 30;
+        const index = diffDays + 365; // Offset by RANGE
 
         if (index >= 0 && index < sections.length) {
             isProgrammaticScroll.current = true;
@@ -157,7 +158,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
     );
 
 
-    const HEADER_HEIGHT = 44; // Estimated/Fixed height of header
+    const HEADER_HEIGHT = 30; // Estimated/Fixed height of header
 
     const getItemLayout = (data: any, index: number) => {
         // SectionList's internal FlatList sees: Header0, Item0, Header1, Item1, ...
@@ -236,14 +237,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
     },
     dayHeader: {
-        height: 44,
+        height: 30,
         paddingHorizontal: 10,
         justifyContent: 'center',
         borderBottomWidth: 1,
     },
     dayTitle: {
-        fontWeight: 'bold',
-        fontSize: 16,
+        fontWeight: '500',
+        fontSize: 11,
     },
     hourSlot: {
         flexDirection: 'row',

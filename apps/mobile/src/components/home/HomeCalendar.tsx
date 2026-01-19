@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
@@ -30,6 +30,12 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
 
     const safeCurrentDate = (currentDate instanceof Date && !isNaN(currentDate.getTime())) ? currentDate : new Date();
     const [viewingMonth, setViewingMonth] = useState(safeCurrentDate);
+
+    useEffect(() => {
+        if (!isSameMonth(safeCurrentDate, viewingMonth)) {
+            setViewingMonth(safeCurrentDate);
+        }
+    }, [safeCurrentDate, viewingMonth]);
 
     const handlePrevMonth = () => setViewingMonth(subMonths(viewingMonth, 1));
     const handleNextMonth = () => setViewingMonth(addMonths(viewingMonth, 1));
