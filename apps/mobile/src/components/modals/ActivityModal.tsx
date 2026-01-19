@@ -354,8 +354,16 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                        <View style={styles.titleRow}>
-                            <Text style={[styles.title, { color: colors.text }]}>{t('common.activity', 'Activity')}</Text>
+                        <Text style={[styles.title, { color: colors.text }]}>{t('common.activity', 'Activity')}</Text>
+                        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
+                            <X size={24} color={colors.text} />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Content */}
+                    <View style={styles.content}>
+                        {/* Tabs */}
+                        <View style={{ alignItems: 'center', marginBottom: 15 }}>
                             <View style={[styles.tabContainer, { backgroundColor: colors.surfaceHighlight }]}>
                                 <TouchableOpacity
                                     style={[styles.tab, activeTab === 'analytics' && [styles.activeTab, { backgroundColor: colors.surface }]]}
@@ -392,13 +400,6 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: colors.surfaceHighlight }]}>
-                            <X size={24} color={colors.text} />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Content */}
-                    <View style={styles.content}>
                         {activeTab === 'share' ? (
                             <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
                                 <View ref={shareRef} collapsable={false} style={{ backgroundColor: colors.background, padding: 10, borderRadius: 20 }}>
