@@ -213,7 +213,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                     const hour = Math.floor(slotIndex / 2);
                     const minutes = (slotIndex % 2) * 30;
                     const timeStr = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-                    const isKept = keptTime === timeStr && keptDate && isSameDay(item, keptDate);
+                    const isKept = !!(keptTime === timeStr && keptDate && isSameDay(item, keptDate));
 
                     return (
                         <TimeSlot
