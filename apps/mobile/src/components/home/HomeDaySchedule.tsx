@@ -97,9 +97,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
         }
     }).current;
 
-    const viewabilityConfig = useRef({
-        itemVisiblePercentThreshold: 50 // Trigger when 50% of the day is visible
-    }).current;
+
 
     const renderSectionHeader = ({ section }: { section: SectionListData<Date, { title: Date }> }) => (
         <View style={[styles.dayHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -158,23 +156,7 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
     );
 
 
-    const HEADER_HEIGHT = 30; // Estimated/Fixed height of header
 
-    const getItemLayout = (data: any, index: number) => {
-        // SectionList's internal FlatList sees: Header0, Item0, Header1, Item1, ...
-        // Index 2n: Header
-        // Index 2n+1: Item
-        const sectionIndex = Math.floor(index / 2);
-        const isHeader = index % 2 === 0;
-
-        const offset = sectionIndex * (HEADER_HEIGHT + DAY_HEIGHT);
-
-        return {
-            length: isHeader ? HEADER_HEIGHT : DAY_HEIGHT,
-            offset: isHeader ? offset : offset + HEADER_HEIGHT,
-            index,
-        };
-    };
 
     const onScrollBeginDrag = () => {
         // User started scrolling manually
@@ -191,9 +173,10 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 keyExtractor={(item) => (item instanceof Date && !isNaN(item.getTime())) ? item.toISOString() : Math.random().toString()}
                 stickySectionHeadersEnabled={true}
                 initialNumToRender={5}
-                getItemLayout={getItemLayout}
+                // getItemLayout removed to prevent rendering issues with dynamic/large lists
                 onScrollToIndexFailed={(info) => {
                     console.log('Scroll failed', info);
+                    // Minimal fallback
                     listRef.current?.scrollToLocation({
                         sectionIndex: Math.floor(info.index / 2),
                         itemIndex: 0,
@@ -202,7 +185,11 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
                 }}
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={viewabilityConfig}
+                viewabilityConfig={{
+                    // Reduced threshold significantly because items (days) are very tall (1296px).
+                    // 50% would require ~650px of visibility, which fails on smaller screens with headers/footers.
+                    itemVisiblePercentThreshold: 10
+                }}
                 onScrollBeginDrag={onScrollBeginDrag}
             />
         </View>
