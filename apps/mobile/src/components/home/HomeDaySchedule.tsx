@@ -1,8 +1,23 @@
-import React, { useRef, useEffect, useState, useMemo, useCallback, memo } from 'react';
-import { View, Text, StyleSheet, SectionList, SectionListData, ViewToken, TouchableOpacity } from 'react-native';
+import React, { useRef, useEffect, useMemo, useCallback, memo } from 'react';
+import { View, Text, StyleSheet, FlatList, ViewToken } from 'react-native';
 import { addDays, format, startOfDay, isSameDay } from 'date-fns';
 import { useThemeColors } from '../../providers/ThemeProvider';
+import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { useTranslation } from 'react-i18next';
 
+// ============================================================================
+// Constants
+// ============================================================================
+const SLOT_HEIGHT = 27;
+const SLOTS_PER_DAY = 48;
+const HEADER_HEIGHT = 30;
+const DAY_CONTENT_HEIGHT = SLOT_HEIGHT * SLOTS_PER_DAY;
+const ITEM_HEIGHT = HEADER_HEIGHT + DAY_CONTENT_HEIGHT; // Total height per day
+const RANGE = 30; // ±30 days (61 total items)
+
+// ============================================================================
+// Types
+// ============================================================================
 interface HomeDayScheduleProps {
     currentDate?: Date;
     onDateChange?: (date: Date) => void;
@@ -11,72 +26,55 @@ interface HomeDayScheduleProps {
     onTimeLongPress?: (date: Date, time: string) => void;
 }
 
-const SLOT_HEIGHT = 27;
-const DAY_HEIGHT = SLOT_HEIGHT * 48;
-const HEADER_HEIGHT = 30;
-const RANGE = 90; // 3 months before/after (reduced from 365 for performance)
+interface DayItemProps {
+    date: Date;
+    colors: any;
+    locale: any;
+    dateFormat: string;
+    keptDate: Date | null;
+    keptTime: string | null;
+    onTimeLongPress?: (date: Date, time: string) => void;
+}
 
-import { getDateFnsLocale } from '../../lib/date-fns-locales';
-import { useTranslation } from 'react-i18next';
-
-// Memoized TimeSlot component to prevent unnecessary re-renders
+// ============================================================================
+// TimeSlot Component (Memoized)
+// ============================================================================
 const TimeSlot = memo(({
     slotIndex,
     isKept,
-    onLongPress,
     colors
 }: {
     slotIndex: number;
     isKept: boolean;
-    onLongPress: () => void;
     colors: any;
 }) => {
     const hour = Math.floor(slotIndex / 2);
     const minutes = (slotIndex % 2) * 30;
-    const timeStr = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    const timeStr = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     const isHalfHour = minutes === 30;
 
     return (
-        <TouchableOpacity
-            style={[
-                styles.hourSlot,
-                { height: SLOT_HEIGHT },
-                isKept && styles.keptSlot,
-            ]}
-            activeOpacity={1}
-            onLongPress={onLongPress}
-        >
+        <View style={[styles.hourSlot, isKept && styles.keptSlot]}>
             <Text style={[styles.hourText, { color: colors.textMuted }, isKept && styles.keptText]}>
                 {!isHalfHour || isKept ? timeStr : ''}
             </Text>
-            <View style={[
-                styles.hourLine,
-                isHalfHour ? {
-                    backgroundColor: 'transparent',
-                    borderBottomWidth: 1,
-                    borderStyle: 'dashed',
-                    borderColor: colors.border,
-                    height: 1,
-                    top: 0,
-                } : {
-                    backgroundColor: colors.border,
-                    height: 1.5,
-                    top: 0,
-                }
-            ]} />
-        </TouchableOpacity>
+            <View
+                style={[
+                    styles.hourLine,
+                    isHalfHour
+                        ? { borderBottomWidth: 1, borderStyle: 'dashed', borderColor: colors.border }
+                        : { backgroundColor: colors.border, height: 1.5 }
+                ]}
+            />
+        </View>
     );
 });
 
-// Memoized CurrentTimeIndicator
+// ============================================================================
+// CurrentTimeIndicator Component (Memoized)
+// ============================================================================
 const CurrentTimeIndicator = memo(() => {
-    const [now, setNow] = useState(new Date());
-
-    useEffect(() => {
-        const interval = setInterval(() => setNow(new Date()), 60000);
-        return () => clearInterval(interval);
-    }, []);
-
+    const now = new Date();
     const minutes = now.getHours() * 60 + now.getMinutes();
     const top = (minutes / 30) * SLOT_HEIGHT;
 
@@ -88,51 +86,98 @@ const CurrentTimeIndicator = memo(() => {
     );
 });
 
-export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDate, keptTime, onTimeLongPress }: HomeDayScheduleProps) => {
+// ============================================================================
+// DayItem Component (Memoized)
+// ============================================================================
+const DayItem = memo(({
+    date,
+    colors,
+    locale,
+    dateFormat,
+    keptDate,
+    keptTime,
+    onTimeLongPress
+}: DayItemProps) => {
+    const isToday = isSameDay(date, new Date());
+
+    // Pre-compute time slots
+    const slots = useMemo(() => {
+        return Array.from({ length: SLOTS_PER_DAY }, (_, slotIndex) => {
+            const hour = Math.floor(slotIndex / 2);
+            const minutes = (slotIndex % 2) * 30;
+            const timeStr = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            const isKept = !!(keptTime === timeStr && keptDate && isSameDay(date, keptDate));
+            return { slotIndex, isKept, timeStr };
+        });
+    }, [date, keptDate, keptTime]);
+
+    return (
+        <View style={{ height: ITEM_HEIGHT }}>
+            {/* Day Header */}
+            <View style={[styles.dayHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Text style={[styles.dayTitle, { color: colors.text }]}>
+                    {format(date, dateFormat, { locale })}
+                </Text>
+            </View>
+
+            {/* Time Slots */}
+            <View style={[styles.dayContent, { backgroundColor: colors.background }]}>
+                {slots.map(({ slotIndex, isKept }) => (
+                    <TimeSlot
+                        key={slotIndex}
+                        slotIndex={slotIndex}
+                        isKept={isKept}
+                        colors={colors}
+                    />
+                ))}
+
+                {/* Current Time Indicator */}
+                {isToday && <CurrentTimeIndicator />}
+            </View>
+        </View>
+    );
+});
+
+// ============================================================================
+// Main Component
+// ============================================================================
+export const HomeDaySchedule = ({
+    currentDate = new Date(),
+    onDateChange,
+    keptDate = null,
+    keptTime = null,
+    onTimeLongPress
+}: HomeDayScheduleProps) => {
     const { colors } = useThemeColors();
     const { t, i18n } = useTranslation();
     const locale = getDateFnsLocale(i18n.language);
-    const listRef = useRef<SectionList<Date, { title: Date }>>(null);
+    const dateFormat = t('common.dateFormat', 'MMM d (EEE)');
+
+    const listRef = useRef<FlatList<Date>>(null);
     const isProgrammaticScroll = useRef(false);
     const isScrollDateChange = useRef(false);
     const lastExternalDate = useRef(currentDate);
 
-    const initialDate = useMemo(() => startOfDay(new Date()), []);
+    // Generate days array centered on today
+    const today = useMemo(() => startOfDay(new Date()), []);
+    const days = useMemo(() => {
+        return Array.from({ length: RANGE * 2 + 1 }, (_, i) => addDays(today, i - RANGE));
+    }, [today]);
 
-    const sections = useMemo(() => {
-        const result = [];
-        for (let i = -RANGE; i <= RANGE; i++) {
-            const date = addDays(initialDate, i);
-            result.push({
-                title: date,
-                data: [date],
-            });
-        }
-        return result;
-    }, [initialDate]);
-
-    // Stable viewability config (must not change between renders)
+    // Stable viewability config
     const viewabilityConfig = useRef({
-        itemVisiblePercentThreshold: 10,
-        minimumViewTime: 150 // Only trigger if item is visible for 150ms (debounces rapid scrolling)
+        itemVisiblePercentThreshold: 20,
+        minimumViewTime: 100
     }).current;
 
-    // getItemLayout for optimized scrolling (fixed heights)
-    const getItemLayout = useCallback((data: any, index: number) => {
-        const sectionIndex = Math.floor(index / 2);
-        const isHeader = index % 2 === 0;
-        const offset = sectionIndex * (HEADER_HEIGHT + DAY_HEIGHT);
+    // getItemLayout for optimized scrolling
+    const getItemLayout = useCallback((_: any, index: number) => ({
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * index,
+        index,
+    }), []);
 
-        return {
-            length: isHeader ? HEADER_HEIGHT : DAY_HEIGHT,
-            offset: isHeader ? offset : offset + HEADER_HEIGHT,
-            index,
-        };
-    }, []);
-
-    // Note: Initial scroll position is now handled by contentOffset prop on SectionList
-
-    // Handle external date changes (from Header arrows, Calendar clicks, etc.)
+    // Handle external date changes (from Calendar, Header arrows)
     useEffect(() => {
         if (isScrollDateChange.current) {
             isScrollDateChange.current = false;
@@ -144,132 +189,93 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
         }
         lastExternalDate.current = currentDate;
 
-        const diffTime = startOfDay(currentDate).getTime() - initialDate.getTime();
-        const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
-        const index = diffDays + RANGE;
+        // Calculate target index
+        const diffTime = startOfDay(currentDate).getTime() - today.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        const targetIndex = diffDays + RANGE;
 
-        if (index >= 0 && index < sections.length) {
+        if (targetIndex >= 0 && targetIndex < days.length) {
             isProgrammaticScroll.current = true;
-            listRef.current?.scrollToLocation({
-                sectionIndex: index,
-                itemIndex: 0,
-                animated: true,
-                viewOffset: 0
+            listRef.current?.scrollToIndex({
+                index: targetIndex,
+                animated: true
             });
-            setTimeout(() => { isProgrammaticScroll.current = false; }, 600);
+            setTimeout(() => { isProgrammaticScroll.current = false; }, 500);
         }
-    }, [currentDate, initialDate, sections]);
+    }, [currentDate, today, days.length]);
 
+    // Handle viewable items change (scroll sync)
     const handleViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
         if (isProgrammaticScroll.current) return;
+        if (viewableItems.length === 0) return;
 
-        if (viewableItems.length > 0) {
-            const firstItem = viewableItems[0];
-            const itemDate = firstItem.item as Date | undefined;
-            const section = firstItem.section as any;
+        const firstVisible = viewableItems[0];
+        const visibleDate = firstVisible.item as Date;
 
-            if (onDateChange) {
-                const targetDate = itemDate || section?.title;
-                if (!targetDate) return;
-
-                isScrollDateChange.current = true;
-                lastExternalDate.current = targetDate;
-                onDateChange(targetDate);
-            }
+        if (visibleDate && onDateChange) {
+            isScrollDateChange.current = true;
+            lastExternalDate.current = visibleDate;
+            onDateChange(visibleDate);
         }
     }, [onDateChange]);
 
-    const onViewableItemsChangedRef = useRef(handleViewableItemsChanged);
-    onViewableItemsChangedRef.current = handleViewableItemsChanged;
+    // Stable callback ref pattern
+    const viewableItemsChangedRef = useRef(handleViewableItemsChanged);
+    viewableItemsChangedRef.current = handleViewableItemsChanged;
 
     const stableOnViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
-        onViewableItemsChangedRef.current({ viewableItems });
+        viewableItemsChangedRef.current({ viewableItems });
     }).current;
 
+    // Scroll begin handler
     const handleScrollBeginDrag = useCallback(() => {
         isProgrammaticScroll.current = false;
     }, []);
 
-    const handleScrollToIndexFailed = useCallback((info: any) => {
-        // Just log - don't attempt to scroll again as it causes infinite recursion
-        console.warn('Scroll to index failed:', info.index, 'Max sections:', sections.length);
-    }, [sections.length]);
+    // Render item
+    const renderItem = useCallback(({ item }: { item: Date }) => (
+        <DayItem
+            date={item}
+            colors={colors}
+            locale={locale}
+            dateFormat={dateFormat}
+            keptDate={keptDate}
+            keptTime={keptTime}
+            onTimeLongPress={onTimeLongPress}
+        />
+    ), [colors, locale, dateFormat, keptDate, keptTime, onTimeLongPress]);
 
-    const renderSectionHeader = useCallback(({ section }: { section: SectionListData<Date, { title: Date }> }) => (
-        <View style={[styles.dayHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <Text style={[styles.dayTitle, { color: colors.text }]}>
-                {format(section.title, t('common.dateFormat', 'MMM d (EEE)'), { locale })}
-            </Text>
-        </View>
-    ), [colors, t, locale]);
-
-    const renderItem = useCallback(({ item }: { item: Date }) => {
-        const isToday = isSameDay(item, new Date());
-
-        return (
-            <View style={[styles.dayContainer, { height: DAY_HEIGHT, backgroundColor: colors.background, borderColor: colors.border }]}>
-                {Array.from({ length: 48 }).map((_, slotIndex) => {
-                    const hour = Math.floor(slotIndex / 2);
-                    const minutes = (slotIndex % 2) * 30;
-                    const timeStr = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-                    const isKept = !!(keptTime === timeStr && keptDate && isSameDay(item, keptDate));
-
-                    return (
-                        <TimeSlot
-                            key={slotIndex}
-                            slotIndex={slotIndex}
-                            isKept={isKept}
-                            onLongPress={() => onTimeLongPress?.(item, timeStr)}
-                            colors={colors}
-                        />
-                    );
-                })}
-                {isToday && <CurrentTimeIndicator />}
-            </View>
-        );
-    }, [colors, keptDate, keptTime, onTimeLongPress]);
-
-    const keyExtractor = useCallback((item: Date) =>
-        (item instanceof Date && !isNaN(item.getTime())) ? item.toISOString() : Math.random().toString()
-        , []);
-
-    // Calculate initial offset to show today (section at index RANGE)
-    const initialContentOffset = useMemo(() => ({
-        x: 0,
-        y: RANGE * (HEADER_HEIGHT + DAY_HEIGHT)
-    }), []);
+    // Key extractor
+    const keyExtractor = useCallback((item: Date) => item.toISOString(), []);
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <SectionList
+            <FlatList
                 ref={listRef}
-                sections={sections}
+                data={days}
                 renderItem={renderItem}
-                renderSectionHeader={renderSectionHeader}
                 keyExtractor={keyExtractor}
-                stickySectionHeadersEnabled={true}
-                initialNumToRender={6}
-                maxToRenderPerBatch={6}
-                windowSize={5}
-                contentOffset={initialContentOffset}
                 getItemLayout={getItemLayout}
-                onScrollToIndexFailed={handleScrollToIndexFailed}
-                showsVerticalScrollIndicator={false}
+                initialScrollIndex={RANGE}
                 onViewableItemsChanged={stableOnViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
                 onScrollBeginDrag={handleScrollBeginDrag}
+                windowSize={5}
+                maxToRenderPerBatch={3}
+                initialNumToRender={3}
+                showsVerticalScrollIndicator={false}
+                removeClippedSubviews={false}
             />
         </View>
     );
 };
 
+// ============================================================================
+// Styles
+// ============================================================================
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    dayContainer: {
-        width: '100%',
-        borderBottomWidth: 1,
     },
     dayHeader: {
         height: HEADER_HEIGHT,
@@ -281,7 +287,12 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 11,
     },
+    dayContent: {
+        height: DAY_CONTENT_HEIGHT,
+        position: 'relative',
+    },
     hourSlot: {
+        height: SLOT_HEIGHT,
         flexDirection: 'row',
         alignItems: 'flex-start',
     },
@@ -289,12 +300,11 @@ const styles = StyleSheet.create({
         width: 50,
         textAlign: 'right',
         paddingRight: 10,
-        color: '#888',
         fontSize: 12,
     },
     hourLine: {
         flex: 1,
-        marginTop: 0,
+        height: 1,
     },
     currentTimeLine: {
         position: 'absolute',
@@ -322,5 +332,5 @@ const styles = StyleSheet.create({
     keptText: {
         color: '#3b82f6',
         fontWeight: 'bold',
-    }
+    },
 });
