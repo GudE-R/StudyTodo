@@ -13,7 +13,7 @@ const SLOTS_PER_DAY = 48;
 const HEADER_HEIGHT = 30;
 const DAY_CONTENT_HEIGHT = SLOT_HEIGHT * SLOTS_PER_DAY;
 const ITEM_HEIGHT = HEADER_HEIGHT + DAY_CONTENT_HEIGHT; // Total height per day
-const RANGE = 30; // ±30 days (61 total items)
+const RANGE = 60; // ±60 days (121 total items, ~4 months)
 
 // ============================================================================
 // Types

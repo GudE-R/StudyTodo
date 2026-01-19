@@ -31,14 +31,35 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
     const safeCurrentDate = (currentDate instanceof Date && !isNaN(currentDate.getTime())) ? currentDate : new Date();
     const [viewingMonth, setViewingMonth] = useState(safeCurrentDate);
 
+    // Track if navigation was initiated by user (to prevent useEffect override)
+    const isUserNavigation = React.useRef(false);
+
     useEffect(() => {
+        // Only sync if not a user-initiated navigation
+        if (isUserNavigation.current) {
+            isUserNavigation.current = false;
+            return;
+        }
         if (!isSameMonth(safeCurrentDate, viewingMonth)) {
             setViewingMonth(safeCurrentDate);
         }
     }, [safeCurrentDate, viewingMonth]);
 
-    const handlePrevMonth = () => setViewingMonth(subMonths(viewingMonth, 1));
-    const handleNextMonth = () => setViewingMonth(addMonths(viewingMonth, 1));
+    const handlePrevMonth = () => {
+        const newMonth = subMonths(viewingMonth, 1);
+        isUserNavigation.current = true;
+        setViewingMonth(newMonth);
+        // Navigate to first day of new month
+        onDateSelect?.(startOfMonth(newMonth));
+    };
+
+    const handleNextMonth = () => {
+        const newMonth = addMonths(viewingMonth, 1);
+        isUserNavigation.current = true;
+        setViewingMonth(newMonth);
+        // Navigate to first day of new month
+        onDateSelect?.(startOfMonth(newMonth));
+    };
 
     const monthStart = startOfMonth(viewingMonth);
     const monthEnd = endOfMonth(viewingMonth);
