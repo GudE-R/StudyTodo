@@ -491,3 +491,11 @@ Web版の `UsageGuideModal` をモバイルアプリに移植した。
 
 これで「フェーズ 5: モバイル版の仕上げ」の一つであるシェア機能が完了した。
 広告実装を残すのみとなった。
+
+**デイスケジュールの全面リライト:**
+SectionListベースの実装でパフォーマンス問題と描画バグが多発したため、FlatListベースで完全に作り直した。
+- **アーキテクチャ変更**: SectionList → FlatList に変更。インデックス計算がシンプルになり、`getItemLayout`が安定して動作するようになった。
+- **初期位置**: `initialScrollIndex={RANGE}` で今日の日付を即座に表示。`scrollToLocation` や `contentOffset` のワークアラウンドが不要に。
+- **範囲縮小**: ±90日 → ±30日 (61アイテム) に縮小し、メモリ使用量とレンダリング負荷を削減。
+- **メモ化**: `DayItem`, `TimeSlot`, `CurrentTimeIndicator` を全て `React.memo` でラップ。
+- **安定化**: `viewabilityConfig` と `onViewableItemsChanged` を `useRef` パターンで固定し、警告を解消。
