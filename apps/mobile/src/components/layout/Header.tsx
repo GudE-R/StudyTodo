@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Settings as SettingsIcon, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react-native';
+import { Settings as SettingsIcon, ChevronLeft, ChevronRight, MessageSquare, BookOpen } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale'; // Keep for type or fallback? Not needed if using getDateFnsLocale
 import { useThemeColors } from '../../providers/ThemeProvider';
@@ -10,13 +10,14 @@ interface HeaderProps {
     date?: Date;
     onOpenSettings: () => void;
     onOpenFeedback: () => void;
+    onOpenGuide: () => void;
     onPrevDate?: () => void;
     onNextDate?: () => void;
 }
 
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 
-export const Header = ({ onOpenSettings, onOpenFeedback, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
+export const Header = ({ onOpenSettings, onOpenFeedback, onOpenGuide, onPrevDate, onNextDate, date = new Date() }: HeaderProps) => {
     const { colors } = useThemeColors();
     const { t, i18n } = useTranslation();
     const safeDate = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
@@ -41,6 +42,9 @@ export const Header = ({ onOpenSettings, onOpenFeedback, onPrevDate, onNextDate,
             </View>
 
             <View style={styles.rightContainer}>
+                <TouchableOpacity onPress={onOpenGuide} style={styles.iconBtn}>
+                    <BookOpen size={20} color={colors.icon} />
+                </TouchableOpacity>
                 <TouchableOpacity onPress={onOpenFeedback} style={styles.iconBtn}>
                     <MessageSquare size={20} color={colors.icon} />
                 </TouchableOpacity>

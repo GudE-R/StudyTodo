@@ -23,6 +23,7 @@ import { SettingsModal } from '../modals/SettingsModal';
 import { TemplateModal } from '../modals/TemplateModal';
 import { ActivityModal } from '../modals/ActivityModal';
 import { FeedbackModal } from '../modals/FeedbackModal';
+import { UsageGuideModal } from '../modals/UsageGuideModal';
 
 // Hooks
 import { useMobileCategories } from '../../hooks/useMobileCategories';
@@ -44,6 +45,7 @@ export const MainLayout = () => {
     const [isTemplateModalVisible, setTemplateModalVisible] = useState(false);
     const [isActivityModalVisible, setActivityModalVisible] = useState(false);
     const [isFeedbackModalVisible, setFeedbackModalVisible] = useState(false);
+    const [isGuideModalVisible, setGuideModalVisible] = useState(false);
 
     // Shared Values for Animation
     const splitRatio = useSharedValue(0.5); // 0.5 = 50/50
@@ -125,6 +127,7 @@ export const MainLayout = () => {
                     // date={currentDate} // TODO: Add date prop to Header
                     onOpenSettings={() => setSettingsModalVisible(true)}
                     onOpenFeedback={() => setFeedbackModalVisible(true)}
+                    onOpenGuide={() => setGuideModalVisible(true)}
                 />
 
                 {/* Main Content Area */}
@@ -189,6 +192,10 @@ export const MainLayout = () => {
                 <FeedbackModal
                     visible={isFeedbackModalVisible}
                     onClose={() => setFeedbackModalVisible(false)}
+                />
+                <UsageGuideModal
+                    visible={isGuideModalVisible}
+                    onClose={() => setGuideModalVisible(false)}
                 />
 
             </SafeAreaView>

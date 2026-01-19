@@ -16,6 +16,7 @@ import { SettingsModal } from '../modals/SettingsModal';
 import { TemplateModal } from '../modals/TemplateModal';
 import { ActivityModal } from '../modals/ActivityModal';
 import { FeedbackModal } from '../modals/FeedbackModal';
+import { UsageGuideModal } from '../modals/UsageGuideModal';
 import { MobileTimerView } from '../timer/MobileTimerView'; // Import Timer
 
 import { useMobileCategories } from '../../hooks/useMobileCategories';
@@ -46,6 +47,7 @@ export const MainLayout = () => {
     const [isTemplateModalVisible, setTemplateModalVisible] = useState(false);
     const [isActivityModalVisible, setActivityModalVisible] = useState(false);
     const [isFeedbackModalVisible, setFeedbackModalVisible] = useState(false);
+    const [isGuideModalVisible, setGuideModalVisible] = useState(false);
 
     // Keep Handlers
     const handleDateLongPress = (date: Date) => {
@@ -148,6 +150,7 @@ export const MainLayout = () => {
                 date={currentDate}
                 onOpenSettings={() => setSettingsModalVisible(true)}
                 onOpenFeedback={() => setFeedbackModalVisible(true)}
+                onOpenGuide={() => setGuideModalVisible(true)}
                 onPrevDate={() => setCurrentDate(d => {
                     const safeD = (d instanceof Date && !isNaN(d.getTime())) ? d : new Date();
                     const newDate = new Date(safeD);
@@ -222,6 +225,10 @@ export const MainLayout = () => {
             <FeedbackModal
                 visible={isFeedbackModalVisible}
                 onClose={() => setFeedbackModalVisible(false)}
+            />
+            <UsageGuideModal
+                visible={isGuideModalVisible}
+                onClose={() => setGuideModalVisible(false)}
             />
             <TodoDetailModal
                 visible={isDetailModalVisible}
