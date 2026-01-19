@@ -208,12 +208,15 @@ export const HomeDaySchedule = ({ currentDate = new Date(), onDateChange, keptDa
 
     const handleScrollToIndexFailed = useCallback((info: any) => {
         console.log('Scroll failed', info);
+        // Clamp to valid range and scroll to middle (today) as fallback
+        const maxIndex = sections.length - 1;
+        const safeIndex = Math.min(Math.max(0, RANGE), maxIndex); // Default to today
         listRef.current?.scrollToLocation({
-            sectionIndex: Math.floor(info.index / 2),
+            sectionIndex: safeIndex,
             itemIndex: 0,
             animated: false,
         });
-    }, []);
+    }, [sections.length]);
 
     const renderSectionHeader = useCallback(({ section }: { section: SectionListData<Date, { title: Date }> }) => (
         <View style={[styles.dayHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
