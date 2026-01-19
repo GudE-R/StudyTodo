@@ -284,37 +284,35 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
 
     // Components
     const BarChartComponent = () => {
-        const barWidth = (width - 80) / chartData.length * 0.6;
+        // Calculate dynamic width: Fixed 35px for month view to enable scrolling, otherwise fit to screen
+        const itemWidth = range === 'month' ? 35 : (width - 60) / chartData.length;
+        const totalContentWidth = Math.max(width - 60, itemWidth * chartData.length);
+        const barWidth = itemWidth * 0.6;
         const maxVal = Math.max(...chartData.map(d => d.value), 10);
         const chartHeight = 150;
-        const showLabel = (index: number) => {
-            if (range !== "month") return true;
-            // For month view (30-31 days), show every 5th label
-            return index % 5 === 0;
-        };
 
         return (
-            <View style={{ height: 200, marginTop: 10 }}>
-                <Svg height="100%" width="100%">
-                    {chartData.map((d, i) => {
-                        const barHeight = (d.value / maxVal) * chartHeight;
-                        const x = i * ((width - 80) / chartData.length) + 10;
-                        const y = chartHeight - barHeight + 20;
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={{ height: 200, marginTop: 10, width: totalContentWidth }}>
+                    <Svg height="100%" width="100%">
+                        {chartData.map((d, i) => {
+                            const barHeight = (d.value / maxVal) * chartHeight;
+                            const x = i * itemWidth + (itemWidth - barWidth) / 2;
+                            const y = chartHeight - barHeight + 20;
 
-                        return (
-                            <G key={i}>
-                                <Rect x={x} y={y} width={barWidth} height={barHeight} fill={colors.primary} rx={4} />
-                                {showLabel(i) && (
+                            return (
+                                <G key={i}>
+                                    <Rect x={x} y={y} width={barWidth} height={barHeight} fill={colors.primary} rx={4} />
                                     <SvgText x={x + barWidth / 2} y={chartHeight + 40} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{d.label}</SvgText>
-                                )}
-                                {d.value > 0 && (
-                                    <SvgText x={x + barWidth / 2} y={y - 5} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{Math.round(d.value)}</SvgText>
-                                )}
-                            </G>
-                        );
-                    })}
-                </Svg>
-            </View>
+                                    {d.value > 0 && (
+                                        <SvgText x={x + barWidth / 2} y={y - 5} fontSize="10" fill={colors.textSecondary} textAnchor="middle">{Math.round(d.value)}</SvgText>
+                                    )}
+                                </G>
+                            );
+                        })}
+                    </Svg>
+                </View>
+            </ScrollView>
         );
     };
 
