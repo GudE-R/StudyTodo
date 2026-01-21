@@ -24,9 +24,17 @@ export default function App() {
     <RepositoryProvider>
       <AuthProvider>
         <ThemeProvider>
+          {/* 
+            レイアウト設定（Default / Simple）をアプリ全体で管理するプロバイダー。
+            アプリ起動時に保存された設定を読み込み、切り替えを可能にします。
+          */}
           <LayoutProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <SafeAreaProvider>
+                {/* 
+                  現在のレイアウト設定に基づいて、適切なメイン画面コンポーネント
+                  （MainLayout または MainLayoutSimple）を自動的に選択して表示します。
+                */}
                 <AppContent />
               </SafeAreaProvider>
             </GestureHandlerRootView>
