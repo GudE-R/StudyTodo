@@ -17,6 +17,7 @@ import { useTheme, ThemeMode } from '../../providers/ThemeProvider'; // テー�
 import { useMobileSync } from '../../hooks/useMobileSync'; // データ同期機能
 import { useTranslation } from 'react-i18next'; // 多言語対応
 import { SUPPORTED_LANGUAGES } from '../../i18n/languages'; // サポート言語リスト
+import { useLayout } from '../../providers/LayoutProvider';
 
 // Propsの型定義
 // 親コンポーネントから受け取るデータの型を指定します
@@ -43,6 +44,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
 
     // 翻訳機能を取得（t: テキスト取得関数, i18n: 言語切り替えオブジェクト）
     const { t, i18n } = useTranslation();
+    const { layoutMode, setLayoutMode } = useLayout();
 
     // --- State (状態管理) ---
 
@@ -118,7 +120,9 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
             >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Layout size={20} color={colors.textSecondary} />
-                    <Text style={[styles.menuItemText, { color: colors.text }]}>{t('settings.layoutDefault', 'Default')}</Text>
+                    <Text style={[styles.menuItemText, { color: colors.text }]}>
+                        {layoutMode === 'simple' ? 'Simple' : t('settings.layoutDefault', 'Default')}
+                    </Text>
                 </View>
                 <ChevronRight size={20} color={colors.textSecondary} />
             </TouchableOpacity>
@@ -261,30 +265,48 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('settings.layoutPreview', 'Preview')}</Text>
 
                 <View style={[styles.previewContainer, { borderColor: colors.border, backgroundColor: isDark ? '#0f172a' : '#f1f5f9' }]}>
-                    <LayoutPreview mode="default" isDark={isDark} color={colors.primary} />
+                    <LayoutPreview mode={layoutMode} isDark={isDark} color={colors.primary} />
                 </View>
 
                 {/* 選択肢表示 */}
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.select', 'Select')}</Text>
 
+                {/* Default Option */}
                 <TouchableOpacity
                     style={[
                         styles.languageItem,
                         { borderBottomColor: colors.border },
-                        true && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' } // 現状はDefaultのみなので常に選択状態
+                        layoutMode === 'default' && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' }
                     ]}
-                    onPress={() => {
-                        // 将来的にレイアウト変更処理をここに実装
-                    }}
+                    onPress={() => setLayoutMode('default')}
                 >
                     <Text style={[
                         styles.languageLabel,
                         { color: colors.text },
-                        true && { color: colors.primary, fontWeight: 'bold' }
+                        layoutMode === 'default' && { color: colors.primary, fontWeight: 'bold' }
                     ]}>
                         {t('settings.layoutDefault', 'Default')}
                     </Text>
-                    {true && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
+                    {layoutMode === 'default' && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
+                </TouchableOpacity>
+
+                {/* Simple Option */}
+                <TouchableOpacity
+                    style={[
+                        styles.languageItem,
+                        { borderBottomColor: colors.border },
+                        layoutMode === 'simple' && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' }
+                    ]}
+                    onPress={() => setLayoutMode('simple')}
+                >
+                    <Text style={[
+                        styles.languageLabel,
+                        { color: colors.text },
+                        layoutMode === 'simple' && { color: colors.primary, fontWeight: 'bold' }
+                    ]}>
+                        Simple
+                    </Text>
+                    {layoutMode === 'simple' && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
                 </TouchableOpacity>
             </ScrollView>
         </View>
@@ -326,7 +348,8 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
 
 // レイアウトプレビュー用の簡易表示コンポーネント
 const LayoutPreview = ({ mode, isDark, color }: { mode: string, isDark: boolean, color: string }) => {
-    if (mode === 'default') {
+    if (mode === 'default' || mode === 'simple') {
+        // Currently 'simple' is a copy of 'default', so we use the same preview
         const imageSource = require('../../../assets/previews/layout_default.png');
         return (
             <View style={styles.schematicContainer}>
