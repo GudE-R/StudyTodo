@@ -48,8 +48,12 @@ export const LayoutProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
 export const useLayout = () => {
     const context = useContext(LayoutContext);
+    // Provider外で使用された場合はデフォルト値を返す（エラーをスローしない）
     if (!context) {
-        throw new Error('useLayout must be used within a LayoutProvider');
+        return {
+            layoutMode: 'default' as LayoutMode,
+            setLayoutMode: async () => { }
+        };
     }
     return context;
 };

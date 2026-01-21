@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { FolderTree, BarChart2, X } from 'lucide-react-native';
+import { FolderTree, BarChart2, X, Menu } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 
@@ -8,11 +8,12 @@ interface FooterProps {
     onOpenTemplate: () => void;
     onOpenTodo: () => void;
     onOpenReport: () => void;
+    onOpenMenu?: () => void;
     isHighlighted?: boolean;
     onResetKeep?: () => void;
 }
 
-export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted, onResetKeep }: FooterProps) => {
+export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, isHighlighted, onResetKeep }: FooterProps) => {
     const { colors } = useThemeColors();
     const { t } = useTranslation();
 
@@ -41,6 +42,13 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, isHighlighted
                 <BarChart2 size={20} color={colors.icon} />
                 <Text style={[styles.label, { color: colors.textSecondary }]}>{t('common.activity', 'Activity')}</Text>
             </TouchableOpacity>
+
+            {onOpenMenu && (
+                <TouchableOpacity style={styles.button} onPress={onOpenMenu}>
+                    <Menu size={20} color={colors.icon} />
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>{t('common.menu', 'Menu')}</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 };

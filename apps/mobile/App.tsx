@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import './src/i18n'; // Initialize i18n
 import { MainLayoutSelector } from './src/components/layout/MainLayoutSelector';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RepositoryProvider } from './src/providers/RepositoryProvider';
 import { AuthProvider } from './src/providers/AuthProvider';
 import { ThemeProvider, useTheme } from './src/providers/ThemeProvider';
@@ -24,9 +25,11 @@ export default function App() {
       <AuthProvider>
         <ThemeProvider>
           <LayoutProvider>
-            <SafeAreaProvider>
-              <AppContent />
-            </SafeAreaProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <SafeAreaProvider>
+                <AppContent />
+              </SafeAreaProvider>
+            </GestureHandlerRootView>
           </LayoutProvider>
         </ThemeProvider>
       </AuthProvider>

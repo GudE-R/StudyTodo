@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, useWindowDimensions, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StyleSheet, PanResponder, Animated, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AdBanner } from './AdBanner';
-import { Header } from './Header';
 import { Footer } from './Footer';
 import { HomeTodoList } from '../home/HomeTodoList';
 import { HomeDaySchedule } from '../home/HomeDaySchedule';
@@ -17,21 +16,26 @@ import { TemplateModal } from '../modals/TemplateModal';
 import { ActivityModal } from '../modals/ActivityModal';
 import { FeedbackModal } from '../modals/FeedbackModal';
 import { UsageGuideModal } from '../modals/UsageGuideModal';
-import { MobileTimerView } from '../timer/MobileTimerView'; // Import Timer
+import { MobileTimerView } from '../timer/MobileTimerView';
+import { MenuModal } from '../modals/MenuModal';
 
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useThemeColors } from '../../providers/ThemeProvider';
-import { Todo, generateId } from '@pomarc/shared'; // Utils
+import { Todo, generateId } from '@pomarc/shared';
+
+// Enable LayoutAnimation for Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export const MainLayoutSimple = () => {
-    // Basic Layout without Reanimated
     const [currentDate, setCurrentDate] = useState(new Date());
     const { categories, refreshCategories } = useMobileCategories();
     const { addTodo, updateTodo, deleteTodo } = useMobileTodos();
     const { addSession } = useMobileSessions();
-    const { colors, isDark } = useThemeColors();
+    const { colors } = useThemeColors();
 
     const [viewMode, setViewMode] = useState<"home" | "timer">("home");
     const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
@@ -40,6 +44,7 @@ export const MainLayoutSimple = () => {
     const [keptDate, setKeptDate] = useState<Date | null>(null);
     const [keptTime, setKeptTime] = useState<string | null>(null);
 
+    // Modal States
     const [isTodoModalVisible, setTodoModalVisible] = useState(false);
     const [isDetailModalVisible, setDetailModalVisible] = useState(false);
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
@@ -48,6 +53,86 @@ export const MainLayoutSimple = () => {
     const [isActivityModalVisible, setActivityModalVisible] = useState(false);
     const [isFeedbackModalVisible, setFeedbackModalVisible] = useState(false);
     const [isGuideModalVisible, setGuideModalVisible] = useState(false);
+    const [isMenuModalVisible, setMenuModalVisible] = useState(false);
+
+    // Calendar Mode (week / month)
+    const [calendarMode, setCalendarMode] = useState<'week' | 'month'>('week');
+
+    // Animated height for smooth transitions
+    const calendarHeight = useRef(new Animated.Value(100)).current;
+    // Animated horizontal slide for week navigation
+    const calendarTranslateX = useRef(new Animated.Value(0)).current;
+
+    // Animate calendar height when mode changes
+    useEffect(() => {
+        const targetHeight = calendarMode === 'week' ? 100 : 350;
+        Animated.spring(calendarHeight, {
+            toValue: targetHeight,
+            friction: 10,
+            tension: 40,
+            useNativeDriver: false, // Height animation can't use native driver
+        }).start();
+    }, [calendarMode]);
+
+    // Week navigation with slide animation
+    const navigateWeek = (direction: 'next' | 'prev') => {
+        const slideOut = direction === 'next' ? -300 : 300;
+        const slideIn = direction === 'next' ? 300 : -300;
+
+        // Slide out
+        Animated.timing(calendarTranslateX, {
+            toValue: slideOut,
+            duration: 150,
+            useNativeDriver: false, // Must match height animation
+        }).start(() => {
+            // Change date
+            setCurrentDate(d => {
+                const newDate = new Date(d);
+                newDate.setDate(d.getDate() + (direction === 'next' ? 7 : -7));
+                return newDate;
+            });
+
+            // Reset to opposite side instantly
+            calendarTranslateX.setValue(slideIn);
+
+            // Slide in
+            Animated.spring(calendarTranslateX, {
+                toValue: 0,
+                friction: 8,
+                tension: 50,
+                useNativeDriver: false, // Must match height animation
+            }).start();
+        });
+    };
+
+    // PanResponder for Calendar Swipe
+    const panResponder = useRef(
+        PanResponder.create({
+            onMoveShouldSetPanResponder: (_, gestureState) => {
+                // Respond to significant vertical OR horizontal gestures
+                return Math.abs(gestureState.dy) > 10 || Math.abs(gestureState.dx) > 10;
+            },
+            onPanResponderRelease: (_, gestureState) => {
+                // Vertical swipes: toggle calendar mode
+                if (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) {
+                    if (gestureState.dy > 50) {
+                        // Swipe Down -> Expand to Month
+                        setCalendarMode('month');
+                    } else if (gestureState.dy < -50) {
+                        // Swipe Up -> Collapse to Week
+                        setCalendarMode('week');
+                    }
+                } else if (calendarMode === 'week') {
+                    // Horizontal swipes (only in week mode): navigate weeks with animation
+                    if (gestureState.dx < -50) {
+                        navigateWeek('next');
+                    } else if (gestureState.dx > 50) {
+                        navigateWeek('prev');
+                    }
+                }
+            },
+        })
+    ).current;
 
     // Keep Handlers
     const handleDateLongPress = (date: Date) => {
@@ -58,9 +143,7 @@ export const MainLayoutSimple = () => {
         }
     };
 
-    // For Schedule time slot
     const handleTimeLongPress = (date: Date, time: string) => {
-        // If same slot, toggle off
         if (keptTime === time && keptDate && date.getTime() === keptDate.getTime()) {
             setKeptTime(null);
             setKeptDate(null);
@@ -88,7 +171,6 @@ export const MainLayoutSimple = () => {
         setTodoModalVisible(false);
     };
 
-    // TodoDetailModal handlers
     const handleTodoPress = (todo: Todo) => {
         setSelectedTodo(todo);
         setDetailModalVisible(true);
@@ -146,32 +228,37 @@ export const MainLayoutSimple = () => {
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
             <AdBanner />
-            <Header
-                date={currentDate}
-                onOpenSettings={() => setSettingsModalVisible(true)}
-                onOpenFeedback={() => setFeedbackModalVisible(true)}
-                onOpenGuide={() => setGuideModalVisible(true)}
-                onPrevDate={() => setCurrentDate(d => {
-                    const safeD = (d instanceof Date && !isNaN(d.getTime())) ? d : new Date();
-                    const newDate = new Date(safeD);
-                    newDate.setDate(safeD.getDate() - 1);
-                    return newDate;
-                })}
-                onNextDate={() => setCurrentDate(d => {
-                    const safeD = (d instanceof Date && !isNaN(d.getTime())) ? d : new Date();
-                    const newDate = new Date(safeD);
-                    newDate.setDate(safeD.getDate() + 1);
-                    return newDate;
-                })}
-            />
 
-            {/* Simple Flex Layout */}
+            {/* Expandable Calendar Area (NO HEADER) */}
+            <Animated.View
+                style={[
+                    styles.calendarContainer,
+                    {
+                        borderColor: colors.border,
+                        height: calendarHeight,
+                        transform: [{ translateX: calendarTranslateX }]
+                    }
+                ]}
+                {...panResponder.panHandlers}
+            >
+                <HomeCalendar
+                    currentDate={currentDate}
+                    onDateSelect={setCurrentDate}
+                    keptDate={keptDate}
+                    onDateLongPress={(date) => handleDateLongPress(date)}
+                    viewMode={calendarMode}
+                />
+            </Animated.View>
+
+            {/* Main Content: Split View */}
             <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
                 <View style={styles.splitRow}>
-                    <View style={[styles.paneHalf, { borderColor: colors.border }]}>
+                    {/* Wider Todo List */}
+                    <View style={[styles.todoPane, { borderColor: colors.border }]}>
                         <HomeTodoList date={currentDate} onTodoPress={handleTodoPress} />
                     </View>
-                    <View style={[styles.paneHalf, { borderColor: colors.border }]}>
+                    {/* Narrow Schedule Pane */}
+                    <View style={[styles.schedulePane, { borderColor: colors.border }]}>
                         <HomeDaySchedule
                             currentDate={currentDate}
                             onDateChange={setCurrentDate}
@@ -181,24 +268,18 @@ export const MainLayoutSimple = () => {
                         />
                     </View>
                 </View>
-                <View style={[styles.calendarPane, { borderColor: colors.border }]}>
-                    <HomeCalendar
-                        currentDate={currentDate}
-                        onDateSelect={setCurrentDate}
-                        keptDate={keptDate}
-                        onDateLongPress={(date) => handleDateLongPress(date)}
-                    />
-                </View>
             </View>
 
             <Footer
                 onOpenTemplate={() => setTemplateModalVisible(true)}
                 onOpenTodo={() => setTodoModalVisible(true)}
                 onOpenReport={() => setActivityModalVisible(true)}
+                onOpenMenu={() => setMenuModalVisible(true)}
                 isHighlighted={!!keptDate || !!keptTime}
                 onResetKeep={handleResetKeep}
             />
 
+            {/* Modals */}
             <TodoCreateModal
                 visible={isTodoModalVisible}
                 onClose={() => setTodoModalVisible(false)}
@@ -207,6 +288,15 @@ export const MainLayoutSimple = () => {
                 initialTime={keptTime || undefined}
                 onStartNow={handleStartNow}
             />
+
+            <MenuModal
+                visible={isMenuModalVisible}
+                onClose={() => setMenuModalVisible(false)}
+                onOpenSettings={() => setSettingsModalVisible(true)}
+                onOpenFeedback={() => setFeedbackModalVisible(true)}
+                onOpenGuide={() => setGuideModalVisible(true)}
+            />
+
             <SettingsModal
                 visible={isSettingsModalVisible}
                 onClose={() => setSettingsModalVisible(false)}
@@ -254,13 +344,16 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
     },
-    paneHalf: {
-        flex: 1,
-        borderWidth: 1,
+    todoPane: {
+        flex: 3,
+        borderRightWidth: 1,
     },
-    calendarPane: {
-        height: 150,
-        borderTopWidth: 1,
+    schedulePane: {
+        width: 80,
+        borderLeftWidth: 1,
+    },
+    calendarContainer: {
+        borderBottomWidth: 1,
+        overflow: 'hidden',
     }
 });
-

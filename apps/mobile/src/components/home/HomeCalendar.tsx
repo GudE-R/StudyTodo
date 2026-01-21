@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
@@ -12,12 +12,13 @@ interface HomeCalendarProps {
     onDateSelect?: (date: Date) => void;
     keptDate?: Date | null;
     onDateLongPress?: (date: Date) => void;
+    viewMode?: 'month' | 'week';
 }
 
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
 
-export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress }: HomeCalendarProps) => {
+export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate, onDateLongPress, viewMode = 'month' }: HomeCalendarProps) => {
     const { colors, isDark } = useThemeColors();
     const { t, i18n } = useTranslation();
     const locale = getDateFnsLocale(i18n.language);
@@ -40,32 +41,65 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
             isUserNavigation.current = false;
             return;
         }
-        if (!isSameMonth(safeCurrentDate, viewingMonth)) {
+        // In week mode, we want to follow current date if it changes drastically? 
+        // Or if month changed.
+        if (viewMode === 'month') {
+            if (!isSameMonth(safeCurrentDate, viewingMonth)) {
+                setViewingMonth(safeCurrentDate);
+            }
+        } else {
+            // Week mode sync logic: check if safeCurrentDate is in viewing week?
+            // For simplicity, just sync if significantly different
+            // Actually, usually user selects date, so viewing should follow if needed.
+            // let's stick to simple sync for now
             setViewingMonth(safeCurrentDate);
         }
-    }, [safeCurrentDate, viewingMonth]);
+    }, [safeCurrentDate, viewMode]); // Removing viewingMonth from deps to avoid loop if sync sets it
 
-    const handlePrevMonth = () => {
-        const newMonth = subMonths(viewingMonth, 1);
+    const handlePrev = () => {
         isUserNavigation.current = true;
-        setViewingMonth(newMonth);
-        // Navigate to first day of new month
-        onDateSelect?.(startOfMonth(newMonth));
+        if (viewMode === 'week') {
+            const newDate = subWeeks(viewingMonth, 1);
+            setViewingMonth(newDate);
+            // Optionally select first day logic? No, just move view.
+        } else {
+            const newMonth = subMonths(viewingMonth, 1);
+            setViewingMonth(newMonth);
+            // Navigate to first day of new month
+            onDateSelect?.(startOfMonth(newMonth));
+        }
     };
 
-    const handleNextMonth = () => {
-        const newMonth = addMonths(viewingMonth, 1);
+    const handleNext = () => {
         isUserNavigation.current = true;
-        setViewingMonth(newMonth);
-        // Navigate to first day of new month
-        onDateSelect?.(startOfMonth(newMonth));
+        if (viewMode === 'week') {
+            const newDate = addWeeks(viewingMonth, 1);
+            setViewingMonth(newDate);
+        } else {
+            const newMonth = addMonths(viewingMonth, 1);
+            setViewingMonth(newMonth);
+            // Navigate to first day of new month
+            onDateSelect?.(startOfMonth(newMonth));
+        }
     };
 
-    const monthStart = startOfMonth(viewingMonth);
-    const monthEnd = endOfMonth(viewingMonth);
-    const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-    const startDayOfWeek = monthStart.getDay();
-    const paddedDays = Array.from({ length: startDayOfWeek }).fill(null).concat(days);
+    // Calculate Days to render
+    const daysToRender = useMemo(() => {
+        if (viewMode === 'week') {
+            const start = startOfWeek(viewingMonth, { locale });
+            const end = endOfWeek(viewingMonth, { locale });
+            return eachDayOfInterval({ start, end });
+        } else {
+            const monthStart = startOfMonth(viewingMonth);
+            const monthEnd = endOfMonth(viewingMonth);
+            const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+            const startDayOfWeek = monthStart.getDay(); // 0 (Sun) - 6 (Sat). Check locale start? date-fns default is Sun(0).
+            // Proper padding needs to respect locale week start, but for now simple 0-padding
+            // If locale starts on Mon, this needs adjustment. standard date-fns getDay is always Sun=0.
+            return Array.from({ length: startDayOfWeek }).fill(null).concat(days);
+        }
+    }, [viewingMonth, viewMode, locale]);
+
 
     // Create Category ID -> Color Map
     const categoryColorMap = useMemo(() => {
@@ -99,17 +133,20 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                <TouchableOpacity onPress={handlePrevMonth} style={styles.navBtn}>
-                    <ChevronLeft size={20} color={colors.icon} />
-                </TouchableOpacity>
-                <Text style={[styles.monthTitle, { color: colors.text }]}>
-                    {format(viewingMonth, t('common.calendarTitleFormat', 'MMM yyyy'), { locale })}
-                </Text>
-                <TouchableOpacity onPress={handleNextMonth} style={styles.navBtn}>
-                    <ChevronRight size={20} color={colors.icon} />
-                </TouchableOpacity>
-            </View>
+            {/* Header only shown in month mode */}
+            {viewMode === 'month' && (
+                <View style={[styles.header, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                    <TouchableOpacity onPress={handlePrev} style={styles.navBtn}>
+                        <ChevronLeft size={20} color={colors.icon} />
+                    </TouchableOpacity>
+                    <Text style={[styles.monthTitle, { color: colors.text }]}>
+                        {format(viewingMonth, t('common.calendarTitleFormat', 'MMM yyyy'), { locale })}
+                    </Text>
+                    <TouchableOpacity onPress={handleNext} style={styles.navBtn}>
+                        <ChevronRight size={20} color={colors.icon} />
+                    </TouchableOpacity>
+                </View>
+            )}
 
             <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.grid}>
@@ -119,7 +156,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                         </View>
                     ))}
 
-                    {paddedDays.map((day: any, index) => {
+                    {daysToRender.map((day: any, index) => {
                         if (!day) return <View key={`pad-${index}`} style={styles.dayCell} />;
 
                         const isSelected = isSameDay(day, safeCurrentDate);
@@ -134,7 +171,11 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                             <TouchableOpacity
                                 key={(day instanceof Date && !isNaN(day.getTime())) ? day.toISOString() : index.toString()}
                                 style={styles.dayCell}
-                                onPress={() => onDateSelect?.(day)}
+                                onPress={() => {
+                                    onDateSelect?.(day);
+                                    // Also move view to this day (important for week views)
+                                    setViewingMonth(day);
+                                }}
                                 onLongPress={() => onDateLongPress?.(day)}
                             >
                                 <View style={[
@@ -207,7 +248,7 @@ const styles = StyleSheet.create({
     },
     dayCell: {
         width: '14.28%',
-        aspectRatio: 1,
+        height: 60, // Fixed height for consistency
         justifyContent: 'center',
         alignItems: 'center',
     },

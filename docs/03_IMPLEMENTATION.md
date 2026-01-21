@@ -102,6 +102,20 @@
     - **UI統合**: ActivityModalに「Share」タブを追加。
     - **共通ロジック**: Web版と重複するストリーク計算ロジック (`calculateStreak`) を `packages/shared` に移動して共通化。
 
+### [Simple Layout] - 2026-01-21
+#### 追加/変更 (Mobile)
+- **Simpleレイアウトの実装**:
+    - **LayoutProvider**: レイアウトモード（Default/Simple）をAsyncStorageで永続管理。
+    - **MainLayoutSimple**: 新レイアウトコンポーネント。ヘッダー削除、カレンダー上部配置。
+    - **MainLayoutSelector**: レイアウトモードに応じてDefaultまたはSimpleを切替表示。
+- **カレンダー拡張**:
+    - **HomeCalendar**: `viewMode` propを追加し、週表示/月表示の切替に対応。
+    - **週表示時**: ヘッダー（年月）を非表示。左右スワイプで週移動。
+    - **月表示時**: ヘッダー表示、ナビゲーションボタンあり。
+    - **アニメーション**: `Animated.spring` による高さ変化、スライドアニメーション。
+- **MenuModal**: 設定・ガイド・フィードバックへのアクセスを集約する新モーダル。
+- **Footer**: Menuボタンを追加（Simpleレイアウト用）。
+
 ### [Learning Materials] - 2026-01-21
 #### 追加 (Doc)
 - **コード解説コメントの追加**:
