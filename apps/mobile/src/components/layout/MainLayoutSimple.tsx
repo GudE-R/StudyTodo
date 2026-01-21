@@ -89,9 +89,8 @@ export const MainLayoutSimple = () => {
     }, [scheduleExpanded]);
 
     // Animate calendar height when mode changes
-    // Animate calendar height when mode changes
     useEffect(() => {
-        let targetHeight = 100; // Default week height
+        let targetHeight = 85; // Default week height (24 header + 60 row + 1 border)
 
         if (calendarMode === 'month') {
             const startDay = startOfMonth(currentDate).getDay(); // 0(Sun) - 6(Sat)
