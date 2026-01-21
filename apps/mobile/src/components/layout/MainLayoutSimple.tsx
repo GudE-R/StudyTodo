@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { startOfMonth, getDaysInMonth } from 'date-fns';
 import { View, StyleSheet, PanResponder, Animated, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -88,15 +89,31 @@ export const MainLayoutSimple = () => {
     }, [scheduleExpanded]);
 
     // Animate calendar height when mode changes
+    // Animate calendar height when mode changes
     useEffect(() => {
-        const targetHeight = calendarMode === 'week' ? 100 : 450; // Increased to fit 6 weeks (60*6 + headers)
+        let targetHeight = 100; // Default week height
+
+        if (calendarMode === 'month') {
+            const startDay = startOfMonth(currentDate).getDay(); // 0(Sun) - 6(Sat)
+            const daysInMonth = getDaysInMonth(currentDate);
+            const totalSlots = startDay + daysInMonth;
+            const rows = Math.ceil(totalSlots / 7);
+
+            // Header (34) + WeekdayHeader (24) + Rows * 60 + Borders(2)
+            // Header is roughly 34px (padding 4+4 + icon 20 + text + border 1)
+            // Weekday is 24px
+            // Row is 60px
+            // let's try 58 + rows * 60 for tight fit
+            targetHeight = 58 + (rows * 60);
+        }
+
         Animated.spring(calendarHeight, {
             toValue: targetHeight,
-            friction: 10,
+            friction: 12,
             tension: 40,
-            useNativeDriver: false, // Height animation can't use native driver
+            useNativeDriver: false,
         }).start();
-    }, [calendarMode]);
+    }, [calendarMode, currentDate]);
 
     // Week navigation with slide animation
     const navigateWeek = (direction: 'next' | 'prev') => {
