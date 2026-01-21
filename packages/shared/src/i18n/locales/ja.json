@@ -122,6 +122,10 @@
     },
     "settings": {
         "title": "設定",
+        "layout": "レイアウト",
+        "layoutDefault": "デフォルト (現在)",
+        "layoutPreview": "プレビュー",
+        "language": "言語",
         "language": "言語",
         "appearance": "表示設定",
         "cloudSync": "クラウド同期",

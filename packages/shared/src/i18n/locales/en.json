@@ -120,6 +120,10 @@
     },
     "settings": {
         "title": "Settings",
+        "layout": "Layout",
+        "layoutDefault": "Default (Current)",
+        "layoutPreview": "Preview",
+        "language": "Language",
         "language": "Language",
         "appearance": "Appearance",
         "cloudSync": "Cloud Sync",

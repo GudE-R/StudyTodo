@@ -1,38 +1,76 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndicator, ScrollView, FlatList } from 'react-native';
-import { X, Moon, Sun, Monitor, BookOpen, RefreshCw, Languages, ChevronRight, ArrowLeft } from 'lucide-react-native';
-import { useAuth } from '../../providers/AuthProvider';
-import { AuthModal } from './AuthModal';
-import { useTheme, ThemeMode } from '../../providers/ThemeProvider';
-import { useMobileSync } from '../../hooks/useMobileSync';
-import { useTranslation } from 'react-i18next';
-import { SUPPORTED_LANGUAGES } from '../../i18n/languages';
+// React Nativeの基本コンポーネントをインポート
+// View: <div>のようなコンテナ
+// Text: 文字を表示するコンポーネント
+// TouchableOpacity: タップ可能なボタン（押すと少し透明になる）
+// Modal: 画面最前面に表示されるウィンドウ
+// StyleSheet: スタイル定義用
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndicator, ScrollView, FlatList, Image } from 'react-native';
 
+// アイコンライブラリからのインポート
+import { X, Moon, Sun, Monitor, RefreshCw, Languages, ChevronRight, ArrowLeft, Layout } from 'lucide-react-native';
+
+// アプリケーション固有の機能をインポート（カスタムフックなど）
+import { useAuth } from '../../providers/AuthProvider'; // 認証状態管理
+import { AuthModal } from './AuthModal'; // ログイン用モーダル
+import { useTheme, ThemeMode } from '../../providers/ThemeProvider'; // テーマ管理（ダークモード等）
+import { useMobileSync } from '../../hooks/useMobileSync'; // データ同期機能
+import { useTranslation } from 'react-i18next'; // 多言語対応
+import { SUPPORTED_LANGUAGES } from '../../i18n/languages'; // サポート言語リスト
+
+// Propsの型定義
+// 親コンポーネントから受け取るデータの型を指定します
 interface SettingsModalProps {
-    visible: boolean;
-    onClose: () => void;
+    visible: boolean; // モーダルの表示状態
+    onClose: () => void; // モーダルを閉じるための関数
 }
 
+/**
+ * 設定画面モーダルコンポーネント
+ * アプリの各種設定（テーマ、言語、レイアウト、同期）を管理します。
+ */
 export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
-    const { colors, isDark, themeMode, setThemeMode } = useTheme();
-    const { user, signOut } = useAuth();
-    const [showAuthModal, setShowAuthModal] = React.useState(false);
-    const { isSyncing, lastSyncTime, sync } = useMobileSync();
-    const { t, i18n } = useTranslation();
-    const [view, setView] = React.useState<'main' | 'language'>('main');
+    // --- Custom Hooks (機能の呼び出し) ---
 
-    // Reset view when modal opens/closes
+    // テーマ設定を取得（現在の色, ダークモード状態, モード設定関数）
+    const { colors, isDark, themeMode, setThemeMode } = useTheme();
+
+    // 認証情報を取得（ユーザー情報, ログアウト関数）
+    const { user, signOut } = useAuth();
+
+    // データ同期の状態と関数を取得
+    const { isSyncing, lastSyncTime, sync } = useMobileSync();
+
+    // 翻訳機能を取得（t: テキスト取得関数, i18n: 言語切り替えオブジェクト）
+    const { t, i18n } = useTranslation();
+
+    // --- State (状態管理) ---
+
+    // ログインモーダルの表示状態
+    const [showAuthModal, setShowAuthModal] = React.useState(false);
+
+    // 現在表示しているビューの切り替え ('main' | 'language' | 'layout')
+    const [view, setView] = React.useState<'main' | 'language' | 'layout'>('main');
+
+    // --- Side Effects (副作用) ---
+
+    // モーダルの開閉状態(visible)が変わった時に実行される処理
+    // モーダルが閉じられたら、次回開く時のために表示を 'main' に戻しておく
     React.useEffect(() => {
         if (!visible) setView('main');
     }, [visible]);
 
+    // --- Helper Functions (表示用ヘルパー関数) ---
+
+    // テーマ選択ボタンを描画する関数
     const renderThemeOption = (label: string, icon: any, mode: ThemeMode) => {
-        const selected = themeMode === mode;
+        const selected = themeMode === mode; // 現在の選択状態を判定
         return (
             <TouchableOpacity
                 style={[
                     styles.themeOption,
                     { borderColor: colors.border },
+                    // 選択されている場合のみ、アクセントカラーと背景色を適用
                     selected && { borderColor: colors.primary, backgroundColor: colors.primaryLight }
                 ]}
                 onPress={() => setThemeMode(mode)}
@@ -43,11 +81,15 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
         );
     };
 
+    // 現在選択されている言語のラベルを取得
     const currentLanguageLabel = SUPPORTED_LANGUAGES.find(l => l.code === i18n.language)?.label || i18n.language;
 
+    /**
+     * メイン設定画面のレンダリング
+     */
     const renderMainView = () => (
         <ScrollView contentContainerStyle={styles.content}>
-            {/* Theme Settings */}
+            {/* --- 外観設定 (Appearance) --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('settings.appearance', 'Appearance')}</Text>
             <View style={styles.themeRow}>
                 {renderThemeOption(t('theme.light', 'Light'), <Sun size={24} color={themeMode === 'light' ? colors.primary : colors.icon} />, 'light')}
@@ -55,11 +97,11 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 {renderThemeOption(t('theme.system', 'System'), <Monitor size={24} color={themeMode === 'system' ? colors.primary : colors.icon} />, 'system')}
             </View>
 
-            {/* Language Settings */}
+            {/* --- 言語設定 (Language) --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.language', 'Language')}</Text>
             <TouchableOpacity
                 style={[styles.menuItem, { borderColor: colors.border }]}
-                onPress={() => setView('language')}
+                onPress={() => setView('language')} // 言語選択画面へ切り替え
             >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Languages size={20} color={colors.textSecondary} />
@@ -68,20 +110,37 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 <ChevronRight size={20} color={colors.textSecondary} />
             </TouchableOpacity>
 
-            {/* Cloud Sync / Account */}
+            {/* --- レイアウト設定 (Layout) --- */}
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.layout', 'Layout')}</Text>
+            <TouchableOpacity
+                style={[styles.menuItem, { borderColor: colors.border }]}
+                onPress={() => setView('layout')} // レイアウト選択画面へ切り替え
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Layout size={20} color={colors.textSecondary} />
+                    <Text style={[styles.menuItemText, { color: colors.text }]}>{t('settings.layoutDefault', 'Default')}</Text>
+                </View>
+                <ChevronRight size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
+
+            {/* --- クラウド同期 / アカウント設定 --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.cloudSync', 'Cloud Sync')}</Text>
 
             {user ? (
+                // ログイン済みの場合の表示
                 <View>
+                    {/* ユーザー情報表示 */}
                     <View style={[styles.userInfo, { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff', borderColor: '#bfdbfe' }]}>
                         <Text style={[styles.userLabel, { color: '#2563eb' }]}>{t('settings.loggedInAs', 'LOGGED IN AS')}</Text>
                         <Text style={[styles.userEmail, { color: colors.text }]}>{user.email}</Text>
                     </View>
+
+                    {/* ログアウトボタン */}
                     <TouchableOpacity
                         style={[styles.actionBtn, { borderColor: user ? '#ef4444' : colors.border, marginTop: 10 }]}
                         onPress={async () => {
                             await signOut();
-                            // alert("Logged out");
+                            // ログアウト後の処理（必要であれば）
                         }}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -89,16 +148,16 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                         </View>
                     </TouchableOpacity>
 
-                    {/* Sync Button */}
+                    {/* 同期実行ボタン */}
                     <TouchableOpacity
                         style={[styles.syncBtn, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}
                         onPress={async () => {
+                            // 同期中でない場合のみ同期を実行
                             if (user && !isSyncing) {
                                 await sync(user.id);
-                                // alert("Sync Complete!");
                             }
                         }}
-                        disabled={isSyncing}
+                        disabled={isSyncing} // 同期中はボタンを無効化
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <View>
@@ -111,6 +170,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                                         : t('settings.backupCloudDescription', "Sync to cloud")}
                                 </Text>
                             </View>
+                            {/* 同期中はローディング表示、それ以外は更新アイコンを表示 */}
                             {isSyncing ? (
                                 <ActivityIndicator size="small" color={colors.primary} />
                             ) : (
@@ -120,6 +180,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                     </TouchableOpacity>
                 </View>
             ) : (
+                // 未ログインの場合の表示
                 <TouchableOpacity
                     style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}
                     onPress={() => setShowAuthModal(true)}
@@ -130,29 +191,33 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 </TouchableOpacity>
             )}
 
-            {/* Guide */}
-            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.guide', 'About App')}</Text>
+            {/* ガイドセクション (現在非表示) */}
+            {/* <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.guide', 'About App')}</Text>
             <TouchableOpacity style={[styles.guideBtn, { borderColor: colors.border }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <BookOpen size={20} color={colors.textSecondary} />
                     <Text style={[styles.guideText, { color: colors.text }]}>{t('guide.title', 'Usage Guide')}</Text>
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </ScrollView>
     );
 
+    /**
+     * 言語選択画面のレンダリング
+     */
     const renderLanguageView = () => (
         <View style={styles.languageContainer}>
+            {/* 戻るボタン */}
             <TouchableOpacity style={[styles.backRow, { borderBottomColor: colors.border }]} onPress={() => setView('main')}>
                 <ArrowLeft size={24} color={colors.text} />
                 <Text style={[styles.backText, { color: colors.text }]}>{t('common.back', 'Back')}</Text>
             </TouchableOpacity>
+            {/* 言語リストの表示 */}
             <FlatList
                 data={SUPPORTED_LANGUAGES}
                 keyExtractor={item => item.code}
                 renderItem={({ item }) => {
                     const isSelected = item.code === i18n.language || (i18n.language === 'en-US' && item.code === 'en');
-                    // Simple fuzzy match check if needed or just exact
 
                     return (
                         <TouchableOpacity
@@ -162,9 +227,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                                 isSelected && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' }
                             ]}
                             onPress={() => {
-                                i18n.changeLanguage(item.code);
-                                // Optional: persist via LANGUAGE_DETECTOR.cacheUserLanguage called by i18next internally? 
-                                // Yes, if detection order includes AsyncStorage and we have cacheUserLanguage.
+                                i18n.changeLanguage(item.code); // 言語を変更
                             }}
                         >
                             <Text style={[
@@ -182,28 +245,104 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
         </View>
     );
 
+    /**
+     * レイアウト選択画面のレンダリング
+     */
+    const renderLayoutView = () => (
+        <View style={styles.languageContainer}>
+            {/* 戻るボタン */}
+            <TouchableOpacity style={[styles.backRow, { borderBottomColor: colors.border }]} onPress={() => setView('main')}>
+                <ArrowLeft size={24} color={colors.text} />
+                <Text style={[styles.backText, { color: colors.text }]}>{t('common.back', 'Back')}</Text>
+            </TouchableOpacity>
+
+            <ScrollView contentContainerStyle={{ padding: 20 }}>
+                {/* プレビュー表示エリア */}
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('settings.layoutPreview', 'Preview')}</Text>
+
+                <View style={[styles.previewContainer, { borderColor: colors.border, backgroundColor: isDark ? '#0f172a' : '#f1f5f9' }]}>
+                    <LayoutPreview mode="default" isDark={isDark} color={colors.primary} />
+                </View>
+
+                {/* 選択肢表示 */}
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.select', 'Select')}</Text>
+
+                <TouchableOpacity
+                    style={[
+                        styles.languageItem,
+                        { borderBottomColor: colors.border },
+                        true && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' } // 現状はDefaultのみなので常に選択状態
+                    ]}
+                    onPress={() => {
+                        // 将来的にレイアウト変更処理をここに実装
+                    }}
+                >
+                    <Text style={[
+                        styles.languageLabel,
+                        { color: colors.text },
+                        true && { color: colors.primary, fontWeight: 'bold' }
+                    ]}>
+                        {t('settings.layoutDefault', 'Default')}
+                    </Text>
+                    {true && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
+    );
+
+    // --- Main Render (最終的なモーダル全体の描画) ---
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
+                {/* 背景部分 */}
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
+                    {/* モーダルヘッダー */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
+                        {/* 画面の状態(view)に応じてタイトルを切り替え */}
                         <Text style={[styles.title, { color: colors.text }]}>
-                            {view === 'language' ? t('settings.language', 'Language') : t('settings.title', 'Settings')}
+                            {view === 'language' ? t('settings.language', 'Language') :
+                                view === 'layout' ? t('settings.layout', 'Layout') :
+                                    t('settings.title', 'Settings')}
                         </Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                             <X size={24} color={colors.text} />
                         </TouchableOpacity>
                     </View>
 
-                    {view === 'main' ? renderMainView() : renderLanguageView()}
+                    {/* コンテンツの条件別レンダリング */}
+                    {view === 'main' ? renderMainView() :
+                        view === 'layout' ? renderLayoutView() :
+                            renderLanguageView()}
                 </View>
             </View>
 
+            {/* ログイン/サインアップモーダル（入れ子で表示） */}
             <AuthModal visible={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </Modal >
     );
 };
 
+// --- Sub Components (サブコンポーネント) ---
+
+// レイアウトプレビュー用の簡易表示コンポーネント
+const LayoutPreview = ({ mode, isDark, color }: { mode: string, isDark: boolean, color: string }) => {
+    if (mode === 'default') {
+        const imageSource = require('../../../assets/previews/layout_default.png');
+        return (
+            <View style={styles.schematicContainer}>
+                <Image
+                    source={imageSource}
+                    style={styles.previewImage}
+                    resizeMode="contain"
+                />
+            </View>
+        );
+    }
+    return null;
+};
+
+// --- Styles (スタイル定義) ---
+// CSSライクなスタイル定義
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
@@ -214,11 +353,11 @@ const styles = StyleSheet.create({
     container: {
         borderRadius: 15,
         overflow: 'hidden',
-        maxHeight: 600, // Slightly taller for better list view
+        maxHeight: 600, // リスト表示のために少し高さを確保
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
-        flex: 1, // Allow flex
+        flex: 1,
     },
     header: {
         flexDirection: 'row',
@@ -343,5 +482,36 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
+    },
+    // Preview Styles
+    previewContainer: {
+        width: '100%',
+        height: 260,
+        borderRadius: 12,
+        borderWidth: 1,
+        marginBottom: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 10
+    },
+    schematicContainer: {
+        width: 120,
+        height: 240,
+        borderRadius: 8,
+        overflow: 'hidden',
+        position: 'relative',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
+        backgroundColor: '#fff'
+    },
+    previewImage: {
+        width: '100%',
+        height: '100%',
     }
 });

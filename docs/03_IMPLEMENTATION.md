@@ -102,6 +102,12 @@
     - **UI統合**: ActivityModalに「Share」タブを追加。
     - **共通ロジック**: Web版と重複するストリーク計算ロジック (`calculateStreak`) を `packages/shared` に移動して共通化。
 
+### [Learning Materials] - 2026-01-21
+#### 追加 (Doc)
+- **コード解説コメントの追加**:
+    - `SettingsModal.tsx` に詳細な学習用コメントを追加。Hooksの動作原理や条件分岐の意図を解説。
+    - `learning/SettingsModal_Explained.md` を作成。
+
 ### [Mobile Internationalization] - 2026-01-18
 #### 追加/変更 (Mobile)
 - **多言語対応 (i18n) 完了**:
