@@ -89,7 +89,7 @@ export const MainLayoutSimple = () => {
 
     // Animate calendar height when mode changes
     useEffect(() => {
-        const targetHeight = calendarMode === 'week' ? 100 : 350;
+        const targetHeight = calendarMode === 'week' ? 100 : 450; // Increased to fit 6 weeks (60*6 + headers)
         Animated.spring(calendarHeight, {
             toValue: targetHeight,
             friction: 10,
