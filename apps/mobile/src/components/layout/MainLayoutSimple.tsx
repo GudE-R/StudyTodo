@@ -58,10 +58,34 @@ export const MainLayoutSimple = () => {
     // Calendar Mode (week / month)
     const [calendarMode, setCalendarMode] = useState<'week' | 'month'>('week');
 
+    // Schedule expand mode
+    const [scheduleExpanded, setScheduleExpanded] = useState(false);
+
     // Animated height for smooth transitions
     const calendarHeight = useRef(new Animated.Value(100)).current;
     // Animated horizontal slide for week navigation
     const calendarTranslateX = useRef(new Animated.Value(0)).current;
+    // Animated flex for schedule pane (default 7.5:2.5, expanded 4:6)
+    const todoFlex = useRef(new Animated.Value(7.5)).current;
+    const scheduleFlex = useRef(new Animated.Value(2.5)).current;
+
+    // Animate schedule width when expanded mode changes
+    useEffect(() => {
+        Animated.parallel([
+            Animated.spring(todoFlex, {
+                toValue: scheduleExpanded ? 4 : 7.5,
+                friction: 10,
+                tension: 40,
+                useNativeDriver: false,
+            }),
+            Animated.spring(scheduleFlex, {
+                toValue: scheduleExpanded ? 6 : 2.5,
+                friction: 10,
+                tension: 40,
+                useNativeDriver: false,
+            }),
+        ]).start();
+    }, [scheduleExpanded]);
 
     // Animate calendar height when mode changes
     useEffect(() => {
@@ -253,12 +277,26 @@ export const MainLayoutSimple = () => {
             {/* Main Content: Split View */}
             <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
                 <View style={styles.splitRow}>
-                    {/* Wider Todo List */}
-                    <View style={[styles.todoPane, { borderColor: colors.border }]}>
+                    {/* Todo List */}
+                    <Animated.View style={[styles.todoPane, { borderColor: colors.border, flex: todoFlex }]}>
                         <HomeTodoList date={currentDate} onTodoPress={handleTodoPress} />
-                    </View>
-                    {/* Narrow Schedule Pane */}
-                    <View style={[styles.schedulePane, { borderColor: colors.border }]}>
+                    </Animated.View>
+                    {/* Schedule Pane - Swipe left to expand, right to collapse */}
+                    <Animated.View
+                        style={[styles.schedulePane, { borderColor: colors.border, flex: scheduleFlex }]}
+                        {...(() => PanResponder.create({
+                            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 20,
+                            onPanResponderRelease: (_, gs) => {
+                                if (gs.dx < -50) {
+                                    // Swipe Left -> Expand schedule
+                                    setScheduleExpanded(true);
+                                } else if (gs.dx > 50) {
+                                    // Swipe Right -> Collapse schedule
+                                    setScheduleExpanded(false);
+                                }
+                            },
+                        }).panHandlers)()}
+                    >
                         <HomeDaySchedule
                             currentDate={currentDate}
                             onDateChange={setCurrentDate}
@@ -266,7 +304,7 @@ export const MainLayoutSimple = () => {
                             keptTime={keptTime}
                             onTimeLongPress={(date, time) => handleTimeLongPress(date, time)}
                         />
-                    </View>
+                    </Animated.View>
                 </View>
             </View>
 
@@ -345,11 +383,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     todoPane: {
-        flex: 3,
         borderRightWidth: 1,
     },
     schedulePane: {
-        width: 80,
         borderLeftWidth: 1,
     },
     calendarContainer: {
