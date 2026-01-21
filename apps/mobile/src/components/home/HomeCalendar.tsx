@@ -149,15 +149,15 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
             )}
 
             <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-                <View style={styles.grid}>
+                <View style={[styles.grid, { borderColor: colors.border }]}>
                     {['0', '1', '2', '3', '4', '5', '6'].map((key) => (
-                        <View key={key} style={styles.headerCell}>
+                        <View key={key} style={[styles.headerCell, { borderColor: colors.border }]}>
                             <Text style={[styles.headerText, { color: colors.textMuted }]}>{t(`common.weekdays.${key}`)}</Text>
                         </View>
                     ))}
 
                     {daysToRender.map((day: any, index) => {
-                        if (!day) return <View key={`pad-${index}`} style={styles.dayCell} />;
+                        if (!day) return <View key={`pad-${index}`} style={[styles.dayCell, { borderColor: colors.border }]} />;
 
                         const isSelected = isSameDay(day, safeCurrentDate);
                         const safeKeptDate = (keptDate instanceof Date && !isNaN(keptDate.getTime())) ? keptDate : null;
@@ -165,12 +165,12 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
 
                         const dateKey = format(day, 'yyyy-MM-dd');
                         const dayColors = todosByDate.get(dateKey);
-                        const dots = dayColors ? Array.from(dayColors).slice(0, 3) : []; // Max 3 dots
+                        const dots = dayColors ? Array.from(dayColors).slice(0, 6) : []; // Max 6 dots now that we have space
 
                         return (
                             <TouchableOpacity
                                 key={(day instanceof Date && !isNaN(day.getTime())) ? day.toISOString() : index.toString()}
-                                style={styles.dayCell}
+                                style={[styles.dayCell, { borderColor: colors.border }]}
                                 onPress={() => {
                                     onDateSelect?.(day);
                                     // Also move view to this day (important for week views)
@@ -230,32 +230,39 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        padding: 5,
+        padding: 0,
     },
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         width: '100%',
+        borderTopWidth: 1,
+        borderLeftWidth: 1,
     },
     headerCell: {
         width: '14.28%',
-        height: 20,
+        height: 24,
         justifyContent: 'center',
         alignItems: 'center',
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
     },
     headerText: {
         fontSize: 10,
     },
     dayCell: {
         width: '14.28%',
-        height: 60, // Fixed height for consistency
-        justifyContent: 'center',
+        height: 60,
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        paddingTop: 6,
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
     },
     dateCircle: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
+        width: 26,
+        height: 26,
+        borderRadius: 13,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -280,14 +287,15 @@ const styles = StyleSheet.create({
     dotsContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        gap: 2,
-        marginTop: 2,
+        gap: 3,
+        marginTop: 4,
         height: 6,
+        flexWrap: 'wrap',
     },
     dot: {
-        width: 4,
-        height: 4,
-        borderRadius: 2,
+        width: 6,
+        height: 6,
+        borderRadius: 3,
     },
 });
 

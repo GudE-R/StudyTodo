@@ -106,9 +106,6 @@ export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListPro
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={[styles.debugHeader, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.debugText, { color: colors.textSecondary }]}>{t('common.tasks')}: {filteredTodos.length} / {todos.length}</Text>
-            </View>
             <FlatList
                 data={filteredTodos}
                 renderItem={renderItem}
@@ -122,14 +119,6 @@ export const HomeTodoList = ({ date = new Date(), onTodoPress }: HomeTodoListPro
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    debugHeader: {
-        paddingHorizontal: 12,
-        paddingTop: 4,
-    },
-    debugText: {
-        fontSize: 10,
-        fontWeight: 'bold',
     },
     list: {
         padding: 8,

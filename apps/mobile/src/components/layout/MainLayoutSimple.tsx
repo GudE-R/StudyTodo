@@ -146,12 +146,30 @@ export const MainLayoutSimple = () => {
                         // Swipe Up -> Collapse to Week
                         setCalendarMode('week');
                     }
-                } else if (calendarMode === 'week') {
-                    // Horizontal swipes (only in week mode): navigate weeks with animation
+                } else {
+                    // Horizontal swipes: navigate weeks or months based on mode
                     if (gestureState.dx < -50) {
-                        navigateWeek('next');
+                        if (calendarMode === 'week') {
+                            navigateWeek('next');
+                        } else {
+                            // Month mode: navigate to next month
+                            setCurrentDate(d => {
+                                const newDate = new Date(d);
+                                newDate.setMonth(d.getMonth() + 1);
+                                return newDate;
+                            });
+                        }
                     } else if (gestureState.dx > 50) {
-                        navigateWeek('prev');
+                        if (calendarMode === 'week') {
+                            navigateWeek('prev');
+                        } else {
+                            // Month mode: navigate to previous month
+                            setCurrentDate(d => {
+                                const newDate = new Date(d);
+                                newDate.setMonth(d.getMonth() - 1);
+                                return newDate;
+                            });
+                        }
                     }
                 }
             },
