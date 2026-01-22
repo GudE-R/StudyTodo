@@ -22,7 +22,7 @@ import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
-import { buildCategoryTree } from '../../lib/categoryUtils';
+import { CategoryTreePicker } from '../ui/CategoryTreePicker';
 
 interface TodoDetailModalProps {
     visible: boolean;
@@ -66,24 +66,6 @@ export const TodoDetailModal = ({
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
-
-    // Tree Logic
-    const tree = useMemo(() => buildCategoryTree(categories || []), [categories]);
-    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-
-    // Expand all by default
-    useEffect(() => {
-        if (categories.length > 0) {
-            setExpandedIds(new Set(categories.map(c => c.id)));
-        }
-    }, [categories]);
-
-    const toggleExpand = (id: string) => {
-        const newSet = new Set(expandedIds);
-        if (newSet.has(id)) newSet.delete(id);
-        else newSet.add(id);
-        setExpandedIds(newSet);
-    };
 
     // Initialize when modal opens
     useEffect(() => {
@@ -193,71 +175,6 @@ export const TodoDetailModal = ({
         onClose();
     };
 
-    const renderCategoryNode = (node: Category, depth: number = 0) => {
-        const isExpanded = expandedIds.has(node.id);
-        const hasChildren = node.children && node.children.length > 0;
-        const isSmall = node.level === 'small';
-        const isSelected = categoryId === node.id;
-
-        return (
-            <View key={node.id}>
-                <TouchableOpacity
-                    style={[
-                        styles.pickerItem,
-                        {
-                            borderBottomColor: colors.border,
-                            paddingLeft: 16 + depth * 20,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
-                        }
-                    ]}
-                    onPress={() => { setCategoryId(node.id); setIsCategoryPickerVisible(false); }}
-                >
-                    {/* Expand/Collapse Icon */}
-                    {hasChildren && !isSmall ? (
-                        <TouchableOpacity
-                            onPress={(e) => {
-                                e.stopPropagation();
-                                toggleExpand(node.id);
-                            }}
-                            style={{ padding: 4, marginRight: 4 }}
-                        >
-                            {isExpanded
-                                ? <ChevronDown size={16} color={colors.textSecondary} />
-                                : <ChevronRight size={16} color={colors.textSecondary} />
-                            }
-                        </TouchableOpacity>
-                    ) : (
-                        <View style={{ width: 24, marginRight: 4 }} />
-                    )}
-
-                    {/* Category Icon */}
-                    <View style={{ marginRight: 8 }}>
-                        {node.icon ? (
-                            <CategoryIcon iconName={node.icon} size={16} color={node.color || (isSmall ? colors.primary : colors.orange)} />
-                        ) : (
-                            isSmall
-                                ? <File size={16} color={node.color || colors.primary} />
-                                : <Folder size={16} color={node.color || colors.orange} />
-                        )}
-                    </View>
-
-                    <Text style={[
-                        styles.pickerItemText,
-                        {
-                            color: isSelected ? colors.primary : colors.text,
-                            fontWeight: isSelected ? 'bold' : 'normal'
-                        }
-                    ]}>
-                        {node.name}
-                    </Text>
-                </TouchableOpacity>
-
-                {isExpanded && node.children && node.children.map(child => renderCategoryNode(child, depth + 1))}
-            </View>
-        );
-    };
 
     const showSRSPicker = () => {
         if (Platform.OS === 'ios') {
@@ -454,25 +371,13 @@ export const TodoDetailModal = ({
             )}
 
             {/* Category Picker Modal */}
-            <Modal visible={isCategoryPickerVisible} transparent animationType="fade">
-                <TouchableOpacity style={styles.pickerOverlay} onPress={() => setIsCategoryPickerVisible(false)}>
-                    <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
-                        <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('category.selectCategory', 'Select Category')}</Text>
-                        <ScrollView style={styles.pickerScroll}>
-                            <TouchableOpacity
-                                style={[styles.pickerItem, { borderBottomColor: colors.border, paddingLeft: 16 }]}
-                                onPress={() => { setCategoryId(''); setIsCategoryPickerVisible(false); }}
-                            >
-                                <View style={{ width: 24, marginRight: 12 }}>
-                                    <File size={16} color={colors.textSecondary} />
-                                </View>
-                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noCategory', 'No Category')}</Text>
-                            </TouchableOpacity>
-                            {tree.map(root => renderCategoryNode(root))}
-                        </ScrollView>
-                    </View>
-                </TouchableOpacity>
-            </Modal>
+            <CategoryTreePicker
+                visible={isCategoryPickerVisible}
+                onClose={() => setIsCategoryPickerVisible(false)}
+                categories={categories}
+                selectedId={categoryId}
+                onSelect={(id) => setCategoryId(id)}
+            />
         </Modal>
     );
 };
