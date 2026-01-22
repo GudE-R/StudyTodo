@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, ChevronRight, Trash2 } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, ChevronRight, Check, ChevronDown, Trash2, Folder, File } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +21,21 @@ import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
+
+// Utility to build tree
+const buildCategoryTree = (categories: Category[]): Category[] => {
+    const map = new Map<string, Category>();
+    categories.forEach(c => map.set(c.id, { ...c, children: [] }));
+    const roots: Category[] = [];
+    map.forEach(c => {
+        if (c.parentId && map.has(c.parentId)) {
+            map.get(c.parentId)?.children?.push(c);
+        } else {
+            roots.push(c);
+        }
+    });
+    return roots;
+};
 
 interface TodoDetailModalProps {
     visible: boolean;
@@ -63,6 +78,25 @@ export const TodoDetailModal = ({
     // DateTimePicker
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
+    const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
+
+    // Tree Logic
+    const tree = useMemo(() => buildCategoryTree(categories || []), [categories]);
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+    // Expand all by default
+    useEffect(() => {
+        if (categories.length > 0) {
+            setExpandedIds(new Set(categories.map(c => c.id)));
+        }
+    }, [categories]);
+
+    const toggleExpand = (id: string) => {
+        const newSet = new Set(expandedIds);
+        if (newSet.has(id)) newSet.delete(id);
+        else newSet.add(id);
+        setExpandedIds(newSet);
+    };
 
     // Initialize when modal opens
     useEffect(() => {
@@ -172,25 +206,67 @@ export const TodoDetailModal = ({
         onClose();
     };
 
-    const showCategoryPicker = () => {
-        if (Platform.OS === 'ios') {
-            const options = [t('todo.noCategory', 'No Category'), ...categoryOptions.map(c => c.label), t('common.cancel', 'Cancel')];
-            ActionSheetIOS.showActionSheetWithOptions(
-                { options, cancelButtonIndex: options.length - 1 },
-                (index) => {
-                    if (index === 0) setCategoryId('');
-                    else if (index < options.length - 1) setCategoryId(categoryOptions[index - 1].value);
-                }
-            );
-        } else {
-            // Android: Use Alert or a custom picker
-            const buttons = [
-                { text: t('todo.noCategory', 'No Category'), onPress: () => setCategoryId('') },
-                ...categoryOptions.map(c => ({ text: c.label, onPress: () => setCategoryId(c.value) })),
-                { text: t('common.cancel', 'Cancel'), style: 'cancel' as const },
-            ];
-            Alert.alert(t('category.treeTitle', 'Select Category'), '', buttons);
-        }
+    const renderCategoryNode = (node: Category, depth: number = 0) => {
+        const isExpanded = expandedIds.has(node.id);
+        const hasChildren = node.children && node.children.length > 0;
+        const isSmall = node.level === 'small';
+        const isSelected = categoryId === node.id;
+
+        return (
+            <View key={node.id}>
+                <TouchableOpacity
+                    style={[
+                        styles.pickerItem,
+                        {
+                            borderBottomColor: colors.border,
+                            paddingLeft: 16 + depth * 20,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+                        }
+                    ]}
+                    onPress={() => { setCategoryId(node.id); setIsCategoryPickerVisible(false); }}
+                >
+                    {/* Expand/Collapse Icon */}
+                    {hasChildren && !isSmall ? (
+                        <TouchableOpacity
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                toggleExpand(node.id);
+                            }}
+                            style={{ padding: 4, marginRight: 4 }}
+                        >
+                            {isExpanded
+                                ? <ChevronDown size={16} color={colors.textSecondary} />
+                                : <ChevronRight size={16} color={colors.textSecondary} />
+                            }
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={{ width: 24, marginRight: 4 }} />
+                    )}
+
+                    {/* Category Icon */}
+                    <View style={{ marginRight: 8 }}>
+                        {isSmall
+                            ? <File size={16} color={node.color || colors.primary} />
+                            : <Folder size={16} color={node.color || colors.orange} />
+                        }
+                    </View>
+
+                    <Text style={[
+                        styles.pickerItemText,
+                        {
+                            color: isSelected ? colors.primary : colors.text,
+                            fontWeight: isSelected ? 'bold' : 'normal'
+                        }
+                    ]}>
+                        {node.name}
+                    </Text>
+                </TouchableOpacity>
+
+                {isExpanded && node.children && node.children.map(child => renderCategoryNode(child, depth + 1))}
+            </View>
+        );
     };
 
     const showSRSPicker = () => {
@@ -263,7 +339,7 @@ export const TodoDetailModal = ({
                         {/* Category */}
                         <TouchableOpacity
                             style={[styles.optionRow, { backgroundColor: colors.surface }]}
-                            onPress={showCategoryPicker}
+                            onPress={() => setIsCategoryPickerVisible(true)}
                         >
                             <Tag size={18} color={colors.icon} />
                             <Text style={[styles.optionText, { color: colors.text }]}>{selectedCategoryLabel}</Text>
@@ -386,6 +462,27 @@ export const TodoDetailModal = ({
                     }}
                 />
             )}
+
+            {/* Category Picker Modal */}
+            <Modal visible={isCategoryPickerVisible} transparent animationType="fade">
+                <TouchableOpacity style={styles.pickerOverlay} onPress={() => setIsCategoryPickerVisible(false)}>
+                    <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
+                        <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('category.selectCategory', 'Select Category')}</Text>
+                        <ScrollView style={styles.pickerScroll}>
+                            <TouchableOpacity
+                                style={[styles.pickerItem, { borderBottomColor: colors.border, paddingLeft: 16 }]}
+                                onPress={() => { setCategoryId(''); setIsCategoryPickerVisible(false); }}
+                            >
+                                <View style={{ width: 24, marginRight: 12 }}>
+                                    <File size={16} color={colors.textSecondary} />
+                                </View>
+                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noCategory', 'No Category')}</Text>
+                            </TouchableOpacity>
+                            {tree.map(root => renderCategoryNode(root))}
+                        </ScrollView>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </Modal>
     );
 };
@@ -591,5 +688,32 @@ const styles = StyleSheet.create({
     recordCancelBtn: {
         padding: 14,
         borderRadius: 12,
+    },
+    pickerOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    pickerContainer: {
+        width: '80%',
+        maxHeight: '60%',
+        borderRadius: 16,
+        padding: 16,
+    },
+    pickerTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 12,
+    },
+    pickerScroll: {
+        maxHeight: 300,
+    },
+    pickerItem: {
+        paddingVertical: 14,
+        borderBottomWidth: 1,
+    },
+    pickerItemText: {
+        fontSize: 15,
     },
 });
