@@ -22,21 +22,7 @@ import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useThemeColors } from '../../providers/ThemeProvider';
-
-// Utility to build tree
-const buildCategoryTree = (categories: Category[]): Category[] => {
-    const map = new Map<string, Category>();
-    categories.forEach(c => map.set(c.id, { ...c, children: [] }));
-    const roots: Category[] = [];
-    map.forEach(c => {
-        if (c.parentId && map.has(c.parentId)) {
-            map.get(c.parentId)?.children?.push(c);
-        } else {
-            roots.push(c);
-        }
-    });
-    return roots;
-};
+import { buildCategoryTree } from '../../lib/categoryUtils';
 
 interface TodoCreateModalProps {
     visible: boolean;

@@ -5,6 +5,10 @@ import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { Category } from '@pomarc/shared';
 import { generateId } from '../../lib/utils';
 import { useTheme } from '../../providers/ThemeProvider';
+import { buildCategoryTree } from '../../lib/categoryUtils';
+import { useTranslation } from 'react-i18next';
+import { CategoryIcon } from '../ui/CategoryIcon';
+import { IconPickerModal } from './IconPickerModal';
 
 // カラーパレット定義（Web版と統一）
 const CATEGORY_COLORS = [
@@ -18,26 +22,6 @@ const CATEGORY_COLORS = [
     "#ec4899", // ピンク
     "#6b7280", // グレー
 ];
-
-// Utility to build tree
-const buildCategoryTree = (categories: Category[]): Category[] => {
-    const map = new Map<string, Category>();
-    categories.forEach(c => map.set(c.id, { ...c, children: [] }));
-    const roots: Category[] = [];
-    map.forEach(c => {
-        if (c.parentId && map.has(c.parentId)) {
-            map.get(c.parentId)?.children?.push(c);
-        } else {
-            roots.push(c);
-        }
-    });
-    return roots; // Sort by order if needed
-};
-
-import { useTranslation } from 'react-i18next';
-
-import { CategoryIcon } from '../ui/CategoryIcon';
-import { IconPickerModal } from './IconPickerModal';
 
 export const CategoryEditor = () => {
     const { colors, isDark } = useTheme();
