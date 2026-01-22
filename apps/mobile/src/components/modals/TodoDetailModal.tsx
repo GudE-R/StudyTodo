@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
         padding: 4,
     },
     content: {
-        flex: 1,
+        // Removed flex: 1 to allow auto-height behavior
     },
     scrollContent: {
         padding: 16,
