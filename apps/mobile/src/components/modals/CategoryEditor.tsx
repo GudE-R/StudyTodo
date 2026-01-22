@@ -121,7 +121,6 @@ export const CategoryEditor = () => {
 
     const renderNode = (node: Category, depth: number = 0) => {
         const isExpanded = expandedIds.has(node.id);
-        const hasChildren = node.children && node.children.length > 0;
         const isSmall = node.level === 'small';
         const isPickingColor = colorPickerId === node.id;
 

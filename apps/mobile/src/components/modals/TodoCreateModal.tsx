@@ -139,15 +139,13 @@ export const TodoCreateModal = ({
 
                     {/* Category Icon */}
                     <View style={{ marginRight: 8 }}>
-                        <View style={{ marginRight: 8 }}>
-                            {node.icon ? (
-                                <CategoryIcon iconName={node.icon} size={16} color={node.color || (isSmall ? colors.primary : colors.orange)} />
-                            ) : (
-                                isSmall
-                                    ? <File size={16} color={node.color || colors.primary} />
-                                    : <Folder size={16} color={node.color || colors.orange} />
-                            )}
-                        </View>
+                        {node.icon ? (
+                            <CategoryIcon iconName={node.icon} size={16} color={node.color || (isSmall ? colors.primary : colors.orange)} />
+                        ) : (
+                            isSmall
+                                ? <File size={16} color={node.color || colors.primary} />
+                                : <Folder size={16} color={node.color || colors.orange} />
+                        )}
                     </View>
 
                     <Text style={[

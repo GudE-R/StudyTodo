@@ -7,7 +7,6 @@ import {
     Gamepad2, Dumbbell, Utensils, Coffee, Home,
     File, Folder, HelpCircle
 } from 'lucide-react-native';
-import { useThemeColors } from '../../providers/ThemeProvider';
 
 // Mapping of icon names to components
 // Note: explicit import is required for tree shaking and React Native compatibility
