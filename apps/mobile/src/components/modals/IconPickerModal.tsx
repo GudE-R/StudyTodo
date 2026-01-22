@@ -78,7 +78,7 @@ export const IconPickerModal: React.FC<IconPickerModalProps> = ({
     const saveAndSelectImage = async (tempUri: string) => {
         try {
             // Create icons directory if it doesn't exist
-            const iconsDir = `${FileSystem.documentDirectory}category-icons/`;
+            const iconsDir = `${(FileSystem as any).documentDirectory}category-icons/`;
             const dirInfo = await FileSystem.getInfoAsync(iconsDir);
             if (!dirInfo.exists) {
                 await FileSystem.makeDirectoryAsync(iconsDir, { intermediates: true });

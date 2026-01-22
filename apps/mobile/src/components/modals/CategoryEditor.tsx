@@ -72,7 +72,7 @@ export const CategoryEditor = () => {
                 icon: undefined,
                 customIconUri: imageUri,
                 updatedAt: new Date()
-            });
+            } as any);
             setPickingIconCategoryId(null);
         }
     };
@@ -150,10 +150,10 @@ export const CategoryEditor = () => {
                         style={styles.iconContainer}
                         onPress={() => setPickingIconCategoryId(node.id)}
                     >
-                        {node.customIconUri || node.icon ? (
+                        {(node as any).customIconUri || node.icon ? (
                             <CategoryIcon
                                 iconName={node.icon}
-                                customIconUri={node.customIconUri}
+                                customIconUri={(node as any).customIconUri}
                                 size={18}
                                 color={node.color || (isSmall ? colors.primary : colors.orange)}
                             />
@@ -268,7 +268,7 @@ export const CategoryEditor = () => {
                 onSelect={(iconName) => pickingIconCategoryId && handleIconSelect(iconName)}
                 onSelectImage={handleImageSelect}
                 currentIcon={pickingIconCategoryId ? categories.find(c => c.id === pickingIconCategoryId)?.icon : undefined}
-                currentImageUri={pickingIconCategoryId ? categories.find(c => c.id === pickingIconCategoryId)?.customIconUri : undefined}
+                currentImageUri={pickingIconCategoryId ? (categories.find(c => c.id === pickingIconCategoryId) as any)?.customIconUri : undefined}
             />
         </View>
     );
