@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Check, Trash2 } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Check, Trash2, ChevronRight } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
