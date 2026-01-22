@@ -99,6 +99,9 @@
     - `IconPickerModal` を実装し、 `lucide-react-native` アイコンを選択可能に。
     - `SQLiteRepository` に `icon` カラムの保存処理を追加。
     - 作成・詳細モーダルでのアイコン表示に対応。
+- **コード効率化リファクタリング**:
+    - `buildCategoryTree` を `lib/categoryUtils.ts` に抽出（3箇所の重複解消）。
+    - `CategoryTreePicker` 共通コンポーネントを作成（約150行のコード統合）。
 
 ### [Mobile Share Feature] - 2026-01-19: モバイル版の多言語化対応 (ActivityModal, ShareCard)
 - 2026-01-19: モバイル版シェア機能の実装 (ActivityModal -> ShareCard)
