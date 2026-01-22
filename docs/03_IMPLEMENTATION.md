@@ -88,6 +88,12 @@
 
 これまでの主要な変更履歴です。
 
+### [Category Tree View] - 2026-01-22
+#### 追加/変更 (Mobile)
+- **カテゴリ選択のツリー化**:
+    - `TodoCreateModal`, `TodoDetailModal` のカテゴリ選択画面をリニューアル。
+    - `CategoryEditor` のロジックを流用し、親子関係を持つツリー表示を実装。
+    - デフォルトで全ノードを展開し、アクセス性を確保。
 
 ### [Mobile Share Feature] - 2026-01-19: モバイル版の多言語化対応 (ActivityModal, ShareCard)
 - 2026-01-19: モバイル版シェア機能の実装 (ActivityModal -> ShareCard)
