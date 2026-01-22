@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, ChevronRight, Check, ChevronDown, Trash2, Folder, File } from 'lucide-react-native';
+import { CategoryIcon } from '../ui/CategoryIcon';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -247,10 +248,13 @@ export const TodoDetailModal = ({
 
                     {/* Category Icon */}
                     <View style={{ marginRight: 8 }}>
-                        {isSmall
-                            ? <File size={16} color={node.color || colors.primary} />
-                            : <Folder size={16} color={node.color || colors.orange} />
-                        }
+                        {node.icon ? (
+                            <CategoryIcon iconName={node.icon} size={16} color={node.color || (isSmall ? colors.primary : colors.orange)} />
+                        ) : (
+                            isSmall
+                                ? <File size={16} color={node.color || colors.primary} />
+                                : <Folder size={16} color={node.color || colors.orange} />
+                        )}
                     </View>
 
                     <Text style={[
@@ -717,3 +721,4 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
 });
+してください

@@ -36,6 +36,9 @@ const buildCategoryTree = (categories: Category[]): Category[] => {
 
 import { useTranslation } from 'react-i18next';
 
+import { CategoryIcon } from '../ui/CategoryIcon';
+import { IconPickerModal } from './IconPickerModal';
+
 export const CategoryEditor = () => {
     const { colors, isDark } = useTheme();
     const { t } = useTranslation();
@@ -51,6 +54,9 @@ export const CategoryEditor = () => {
     // Color Picker state
     const [colorPickerId, setColorPickerId] = useState<string | null>(null);
 
+    // Icon Picker state
+    const [pickingIconCategoryId, setPickingIconCategoryId] = useState<string | null>(null);
+
     const toggleExpand = (id: string) => {
         const newSet = new Set(expandedIds);
         if (newSet.has(id)) newSet.delete(id);
@@ -61,6 +67,13 @@ export const CategoryEditor = () => {
     const handleColorSelect = async (categoryId: string, color: string) => {
         await updateCategory(categoryId, { color: color || undefined, updatedAt: new Date() });
         setColorPickerId(null);
+    };
+
+    const handleIconSelect = async (iconName: string) => {
+        if (pickingIconCategoryId) {
+            await updateCategory(pickingIconCategoryId, { icon: iconName, updatedAt: new Date() });
+            setPickingIconCategoryId(null); // Modal close is handled by onSelect, but safely ensure state clear
+        }
     };
 
     const startAdding = (parentId: string | undefined, level: 'large' | 'medium' | 'small') => {
@@ -133,9 +146,16 @@ export const CategoryEditor = () => {
                         {!node.color && <View style={[styles.noColorLine, { backgroundColor: colors.danger }]} />}
                     </TouchableOpacity>
 
-                    <View style={styles.iconContainer}>
-                        {isSmall ? <File size={18} color={node.color || colors.primary} /> : <Folder size={18} color={node.color || colors.orange} />}
-                    </View>
+                    <TouchableOpacity
+                        style={styles.iconContainer}
+                        onPress={() => setPickingIconCategoryId(node.id)}
+                    >
+                        {node.icon ? (
+                            <CategoryIcon iconName={node.icon} size={18} color={node.color || (isSmall ? colors.primary : colors.orange)} />
+                        ) : (
+                            isSmall ? <File size={18} color={node.color || colors.primary} /> : <Folder size={18} color={node.color || colors.orange} />
+                        )}
+                    </TouchableOpacity>
 
                     <Text style={[styles.nodeText, { color: colors.text }]}>{node.name}</Text>
 
@@ -236,6 +256,13 @@ export const CategoryEditor = () => {
                 {tree.map(root => renderNode(root))}
                 <View style={{ height: 100 }} />
             </ScrollView>
+
+            <IconPickerModal
+                visible={!!pickingIconCategoryId}
+                onClose={() => setPickingIconCategoryId(null)}
+                onSelect={(iconName) => pickingIconCategoryId && handleIconSelect(iconName)}
+                currentIcon={pickingIconCategoryId ? categories.find(c => c.id === pickingIconCategoryId)?.icon : undefined}
+            />
         </View>
     );
 };

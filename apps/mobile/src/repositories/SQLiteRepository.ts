@@ -242,9 +242,9 @@ export class SQLiteRepository implements StorageInterface {
     async addCategory(category: Category): Promise<void> {
         const row = this.toDB(category);
         await this.db.runAsync(
-            `INSERT INTO categories (id, name, parentId, level, isDefault, "order", createdAt, updatedAt)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [row.id, row.name, row.parentId, row.level, row.isDefault, row.order, row.createdAt, row.updatedAt] // quote order
+            `INSERT INTO categories (id, name, parentId, level, isDefault, "order", color, icon, createdAt, updatedAt)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.name, row.parentId, row.level, row.isDefault, row.order, row.color, row.icon, row.createdAt, row.updatedAt] // quote order
         );
         this.notifyChange('categories', 'INSERT', category);
     }

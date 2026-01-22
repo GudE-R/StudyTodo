@@ -94,6 +94,11 @@
     - `TodoCreateModal`, `TodoDetailModal` のカテゴリ選択画面をリニューアル。
     - `CategoryEditor` のロジックを流用し、親子関係を持つツリー表示を実装。
     - デフォルトで全ノードを展開し、アクセス性を確保。
+- **カテゴリアイコン機能**:
+    - Web版と同様にカテゴリにアイコンを設定可能に。
+    - `IconPickerModal` を実装し、 `lucide-react-native` アイコンを選択可能に。
+    - `SQLiteRepository` に `icon` カラムの保存処理を追加。
+    - 作成・詳細モーダルでのアイコン表示に対応。
 
 ### [Mobile Share Feature] - 2026-01-19: モバイル版の多言語化対応 (ActivityModal, ShareCard)
 - 2026-01-19: モバイル版シェア機能の実装 (ActivityModal -> ShareCard)
