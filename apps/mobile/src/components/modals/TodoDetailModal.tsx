@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Check, Trash2, ChevronRight } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Check, Trash2, ChevronRight, CalendarRange } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -281,43 +281,48 @@ export const TodoDetailModal = ({
                             <ChevronRight size={18} color={colors.textMuted} />
                         </TouchableOpacity>
 
-                        {/* Date & Time */}
-                        <View style={styles.dateTimeRow}>
+                        {/* Date/Time Row */}
+                        <View style={styles.gridRow}>
                             <TouchableOpacity
-                                style={[styles.dateBtn, { backgroundColor: colors.surface }]}
+                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
                                 onPress={() => setShowDatePicker(true)}
                             >
                                 <Calendar size={18} color={colors.primary} />
-                                <Text style={[styles.dateText, { color: colors.text }]}>
-                                    {dueDate ? format(dueDate, t('common.dateFormat', 'MMM d (EEE)'), { locale }) : t('todo.datePlaceholder', 'Date')}
+                                <Text style={[styles.gridText, { color: colors.text }]} numberOfLines={1}>
+                                    {dueDate ? format(dueDate, t('common.dateFormat', 'MMM d'), { locale }) : t('todo.datePlaceholder', 'Date')}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.timeBtn, { backgroundColor: colors.surface }]}
+                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
                                 onPress={() => setShowTimePicker(true)}
                             >
                                 <Clock size={18} color={colors.primary} />
-                                <Text style={[styles.dateText, { color: colors.text }]}>
+                                <Text style={[styles.gridText, { color: colors.text }]}>
                                     {dueTime || t('todo.startTime', 'Time')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
 
-                        {/* SRS */}
-                        <TouchableOpacity
-                            style={[styles.optionRow, { backgroundColor: colors.surface }]}
-                            onPress={showSRSPicker}
-                        >
-                            <Repeat size={18} color={colors.success} />
-                            <Text style={[styles.optionText, { color: colors.text }]}>{srsInterval || t('todo.noSrs', 'No SRS')}</Text>
-                            <ChevronRight size={18} color={colors.textMuted} />
-                        </TouchableOpacity>
+                        <View style={styles.gridRow}>
+                            {/* SRS */}
+                            <TouchableOpacity
+                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                onPress={showSRSPicker}
+                            >
+                                <Repeat size={18} color={colors.success} />
+                                <Text style={[styles.gridText, { color: colors.text }]} numberOfLines={1}>
+                                    {srsInterval || t('todo.noSrs', 'No SRS')}
+                                </Text>
+                            </TouchableOpacity>
+                            {/* Empty space or other field if needed */}
+                            <View style={[styles.gridItem, { backgroundColor: 'transparent' }]} />
+                        </View>
 
                         {/* Stats */}
-                        <View style={[styles.statsBox, { backgroundColor: colors.primaryLight }]}>
+                        <View style={[styles.statsBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }]}>
                             <Clock size={20} color={colors.primary} />
                             <View style={styles.statsContent}>
-                                <Text style={[styles.statsLabel, { color: colors.textSecondary }]}>{t('todo.statsTitle', 'Learning Stats')}</Text>
+                                <Text style={[styles.statsLabel, { color: colors.textSecondary }]}>{t('todo.results', 'Results')}</Text>
                                 <Text style={[styles.statsValue, { color: colors.text }]}>
                                     {todoSessions.length} {t('common.times', 'times')} ({totalMinutes}{t('common.units.minutes', 'm')})
                                 </Text>
@@ -359,6 +364,7 @@ export const TodoDetailModal = ({
                                 </View>
                                 <View style={styles.secondaryActions}>
                                     <TouchableOpacity style={[styles.postponeBtn, { backgroundColor: colors.surface }]} onPress={handlePostpone}>
+                                        <CalendarRange size={16} color={colors.textSecondary} />
                                         <Text style={[styles.postponeBtnText, { color: colors.textSecondary }]}>{t('todo.postpone', 'Postpone')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
@@ -443,38 +449,41 @@ const styles = StyleSheet.create({
     },
     saveBtnText: {
         fontWeight: 'bold',
-        fontSize: 14,
+        fontSize: 15,
     },
     closeBtn: {
         padding: 4,
+        marginLeft: 4,
     },
     content: {
         flex: 1,
     },
     contentContainer: {
         padding: 16,
-        gap: 12,
+        gap: 16,
     },
     contentRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         gap: 12,
+        marginBottom: 8,
     },
     contentIcon: {
-        marginTop: 8,
+        marginTop: 6,
     },
     checkbox: {
         width: 24,
         height: 24,
         borderRadius: 12,
         borderWidth: 2,
+        marginTop: 6,
     },
     contentInput: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 19,
         fontWeight: 'bold',
-        minHeight: 100,
-        paddingTop: 8,
+        minHeight: 80,
+        paddingTop: 4,
     },
     completedText: {
         textDecorationLine: 'line-through',
@@ -484,12 +493,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 12,
-        borderRadius: 12,
+        borderRadius: 14,
         gap: 10,
     },
     optionText: {
         flex: 1,
         fontSize: 14,
+        fontWeight: '500',
     },
     dateTimeRow: {
         flexDirection: 'row',
@@ -525,11 +535,30 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     statsLabel: {
-        fontSize: 12,
+        fontSize: 10,
+        textTransform: 'uppercase',
+        fontWeight: 'bold',
+        marginBottom: 2,
     },
     statsValue: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '600',
+    },
+    gridRow: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    gridItem: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 14,
+        gap: 10,
+    },
+    gridText: {
+        fontSize: 14,
+        flex: 1,
     },
     actions: {
         padding: 16,
@@ -546,8 +575,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 14,
-        borderRadius: 12,
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderRadius: 14,
+        backgroundColor: '#dcfce7', // bg-green-100
         gap: 8,
     },
     startBtn: {
@@ -556,27 +585,31 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 14,
-        borderRadius: 12,
-        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        borderRadius: 14,
+        backgroundColor: '#ffedd5', // bg-orange-100
         gap: 8,
     },
     actionBtnText: {
         fontWeight: 'bold',
-        fontSize: 14,
+        fontSize: 15,
     },
     secondaryActions: {
         flexDirection: 'row',
         gap: 10,
+        marginTop: 4,
     },
     postponeBtn: {
         flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         padding: 10,
-        borderRadius: 12,
+        borderRadius: 14,
+        gap: 8,
     },
     postponeBtnText: {
         fontSize: 13,
-        fontWeight: '500',
+        fontWeight: '600',
     },
     deleteBtn: {
         flex: 1,
@@ -584,12 +617,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-        borderRadius: 12,
+        borderRadius: 14,
         gap: 6,
     },
     deleteBtnText: {
         fontSize: 13,
-        fontWeight: '500',
+        fontWeight: '600',
     },
     recordRow: {
         flexDirection: 'row',
