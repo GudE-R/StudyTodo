@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, CalendarRange, ChevronRight } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, CalendarRange, ChevronRight, Minus, Plus } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -349,21 +349,42 @@ export const TodoDetailModal = ({
                     <View style={[styles.footer, { borderTopColor: colors.border }]}>
                         {isRecording ? (
                             <View style={styles.recordingRow}>
-                                <TextInput
-                                    style={[styles.recordInput, { backgroundColor: colors.surface, color: colors.text }]}
-                                    keyboardType="numeric"
-                                    value={recordDuration}
-                                    onChangeText={setRecordDuration}
-                                    placeholder={t('todo.durationPlaceholder')}
-                                    placeholderTextColor={colors.textMuted}
-                                    autoFocus
-                                />
-                                <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
-                                    <Save size={20} color="#fff" />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        const current = parseInt(recordDuration || '0', 10);
+                                        const next = Math.max(0, current - 5);
+                                        setRecordDuration(next.toString());
+                                    }}
+                                    style={[styles.stepperBtn, { backgroundColor: colors.surface }]}
+                                >
+                                    <Minus size={20} color={colors.text} />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
-                                    <X size={20} color={colors.text} />
+
+                                <View style={[styles.stepperValueContainer, { backgroundColor: colors.surface }]}>
+                                    <Text style={[styles.stepperValueText, { color: colors.text }]}>
+                                        {recordDuration || '0'}<Text style={styles.stepperUnit}>分</Text>
+                                    </Text>
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        const current = parseInt(recordDuration || '0', 10);
+                                        const next = current + 5;
+                                        setRecordDuration(next.toString());
+                                    }}
+                                    style={[styles.stepperBtn, { backgroundColor: colors.surface }]}
+                                >
+                                    <Plus size={20} color={colors.text} />
                                 </TouchableOpacity>
+
+                                <View style={styles.recordActions}>
+                                    <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
+                                        <Save size={20} color="#fff" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
+                                        <X size={20} color={colors.text} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         ) : (
                             <>
@@ -627,18 +648,42 @@ const styles = StyleSheet.create({
     },
     recordingRow: {
         flexDirection: 'row',
-        gap: 10,
+        alignItems: 'center',
+        gap: 12,
+        justifyContent: 'space-between',
     },
-    recordInput: {
+    stepperBtn: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    stepperValueContainer: {
         flex: 1,
-        padding: 14,
-        borderRadius: 14,
-        fontSize: 16,
-        fontWeight: '600',
+        height: 44,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    stepperValueText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    stepperUnit: {
+        fontSize: 14,
+        fontWeight: 'normal',
+        opacity: 0.7,
+        marginLeft: 2,
+    },
+    recordActions: {
+        flexDirection: 'row',
+        gap: 8,
     },
     recordActionBtn: {
-        padding: 14,
-        borderRadius: 14,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         justifyContent: 'center',
         alignItems: 'center',
     },
