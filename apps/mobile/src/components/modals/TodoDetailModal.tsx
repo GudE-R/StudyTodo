@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, CalendarRange, ChevronRight, Minus, Plus } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, CalendarRange, ChevronRight } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -63,6 +63,7 @@ export const TodoDetailModal = ({
     // UI States
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
+    const [showDurationPicker, setShowDurationPicker] = useState(false);
     const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
 
     // Flatten categories for selection logic
@@ -350,31 +351,22 @@ export const TodoDetailModal = ({
                         {isRecording ? (
                             <View style={styles.recordingRow}>
                                 <TouchableOpacity
-                                    onPress={() => {
-                                        const current = parseInt(recordDuration || '0', 10);
-                                        const next = Math.max(0, current - 5);
-                                        setRecordDuration(next.toString());
-                                    }}
-                                    style={[styles.stepperBtn, { backgroundColor: colors.surface }]}
+                                    style={[styles.durationPickerBtn, { backgroundColor: colors.surface }]}
+                                    onPress={() => setShowDurationPicker(true)}
                                 >
-                                    <Minus size={20} color={colors.text} />
-                                </TouchableOpacity>
-
-                                <View style={[styles.stepperValueContainer, { backgroundColor: colors.surface }]}>
-                                    <Text style={[styles.stepperValueText, { color: colors.text }]}>
-                                        {recordDuration || '0'}<Text style={styles.stepperUnit}>分</Text>
-                                    </Text>
-                                </View>
-
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        const current = parseInt(recordDuration || '0', 10);
-                                        const next = current + 5;
-                                        setRecordDuration(next.toString());
-                                    }}
-                                    style={[styles.stepperBtn, { backgroundColor: colors.surface }]}
-                                >
-                                    <Plus size={20} color={colors.text} />
+                                    <Clock size={20} color={colors.primary} />
+                                    <View style={styles.durationValueContainer}>
+                                        <Text style={[styles.durationValueText, { color: colors.text }]}>
+                                            {recordDuration ? (
+                                                <>
+                                                    {parseInt(recordDuration, 10)}
+                                                    <Text style={styles.durationUnitText}>{t('common.minute', 'min')}</Text>
+                                                </>
+                                            ) : (
+                                                <Text style={{ color: colors.textMuted }}>{t('todo.durationPlaceholder', 'Select Duration')}</Text>
+                                            )}
+                                        </Text>
+                                    </View>
                                 </TouchableOpacity>
 
                                 <View style={styles.recordActions}>
@@ -449,6 +441,61 @@ export const TodoDetailModal = ({
                         if (date) setDueTime(format(date, 'HH:mm'));
                     }}
                 />
+            )}
+
+            {/* Duration Picker (Drum Roll style) */}
+            {showDurationPicker && (
+                Platform.OS === 'ios' ? (
+                    <Modal visible={showDurationPicker} transparent animationType="fade">
+                        <View style={styles.overlay}>
+                            <View style={[styles.container, { backgroundColor: colors.background, paddingBottom: 30 }]}>
+                                <View style={[styles.header, { borderBottomColor: colors.border }]}>
+                                    <Text style={[styles.headerTitle, { color: colors.text }]}>{t('todo.durationPlaceholder', 'Duration')}</Text>
+                                    <TouchableOpacity onPress={() => setShowDurationPicker(false)}>
+                                        <Text style={{ color: colors.primary, fontWeight: 'bold', fontSize: 16 }}>{t('common.done', 'Done')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <DateTimePicker
+                                    value={(() => {
+                                        const d = new Date();
+                                        d.setHours(0);
+                                        d.setMinutes(parseInt(recordDuration || '0', 10));
+                                        return d;
+                                    })()}
+                                    mode="countdown"
+                                    display="spinner"
+                                    minuteInterval={5}
+                                    onChange={(event, date) => {
+                                        if (date) {
+                                            const minutes = date.getHours() * 60 + date.getMinutes();
+                                            setRecordDuration(minutes.toString());
+                                        }
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    </Modal>
+                ) : (
+                    <DateTimePicker
+                        value={(() => {
+                            const d = new Date();
+                            d.setHours(0);
+                            d.setMinutes(parseInt(recordDuration || '0', 10));
+                            return d;
+                        })()}
+                        mode="time"
+                        display="spinner"
+                        is24Hour={true}
+                        minuteInterval={5}
+                        onChange={(event, date) => {
+                            setShowDurationPicker(false);
+                            if (date) {
+                                const minutes = date.getHours() * 60 + date.getMinutes();
+                                setRecordDuration(minutes.toString());
+                            }
+                        }}
+                    />
+                )
             )}
 
             {/* Category Picker */}
@@ -652,29 +699,27 @@ const styles = StyleSheet.create({
         gap: 12,
         justifyContent: 'space-between',
     },
-    stepperBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    stepperValueContainer: {
+    durationPickerBtn: {
         flex: 1,
-        height: 44,
-        borderRadius: 12,
-        justifyContent: 'center',
+        flexDirection: 'row',
         alignItems: 'center',
+        padding: 12,
+        borderRadius: 14,
+        gap: 10,
+        height: 44,
     },
-    stepperValueText: {
+    durationValueContainer: {
+        flex: 1,
+    },
+    durationValueText: {
         fontSize: 18,
         fontWeight: 'bold',
     },
-    stepperUnit: {
+    durationUnitText: {
         fontSize: 14,
         fontWeight: 'normal',
         opacity: 0.7,
-        marginLeft: 2,
+        marginLeft: 4,
     },
     recordActions: {
         flexDirection: 'row',
