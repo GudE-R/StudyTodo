@@ -14,7 +14,7 @@ interface IconPickerModalProps {
 
 export const IconPickerModal: React.FC<IconPickerModalProps> = ({ visible, onClose, onSelect, currentIcon }) => {
     const { t } = useTranslation();
-    const colors = useThemeColors();
+    const { colors } = useThemeColors();
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredIcons = POPULAR_ICONS.filter(icon =>
