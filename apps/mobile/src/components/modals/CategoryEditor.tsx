@@ -55,8 +55,25 @@ export const CategoryEditor = () => {
 
     const handleIconSelect = async (iconName: string) => {
         if (pickingIconCategoryId) {
-            await updateCategory(pickingIconCategoryId, { icon: iconName, updatedAt: new Date() });
-            setPickingIconCategoryId(null); // Modal close is handled by onSelect, but safely ensure state clear
+            // When selecting a Lucide icon, clear any custom image
+            await updateCategory(pickingIconCategoryId, {
+                icon: iconName,
+                customIconUri: undefined,
+                updatedAt: new Date()
+            });
+            setPickingIconCategoryId(null);
+        }
+    };
+
+    const handleImageSelect = async (imageUri: string) => {
+        if (pickingIconCategoryId) {
+            // When selecting a custom image, clear the Lucide icon
+            await updateCategory(pickingIconCategoryId, {
+                icon: undefined,
+                customIconUri: imageUri,
+                updatedAt: new Date()
+            });
+            setPickingIconCategoryId(null);
         }
     };
 
@@ -133,8 +150,13 @@ export const CategoryEditor = () => {
                         style={styles.iconContainer}
                         onPress={() => setPickingIconCategoryId(node.id)}
                     >
-                        {node.icon ? (
-                            <CategoryIcon iconName={node.icon} size={18} color={node.color || (isSmall ? colors.primary : colors.orange)} />
+                        {node.customIconUri || node.icon ? (
+                            <CategoryIcon
+                                iconName={node.icon}
+                                customIconUri={node.customIconUri}
+                                size={18}
+                                color={node.color || (isSmall ? colors.primary : colors.orange)}
+                            />
                         ) : (
                             isSmall ? <File size={18} color={node.color || colors.primary} /> : <Folder size={18} color={node.color || colors.orange} />
                         )}
@@ -244,7 +266,9 @@ export const CategoryEditor = () => {
                 visible={!!pickingIconCategoryId}
                 onClose={() => setPickingIconCategoryId(null)}
                 onSelect={(iconName) => pickingIconCategoryId && handleIconSelect(iconName)}
+                onSelectImage={handleImageSelect}
                 currentIcon={pickingIconCategoryId ? categories.find(c => c.id === pickingIconCategoryId)?.icon : undefined}
+                currentImageUri={pickingIconCategoryId ? categories.find(c => c.id === pickingIconCategoryId)?.customIconUri : undefined}
             />
         </View>
     );

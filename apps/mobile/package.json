@@ -17,6 +17,8 @@
     "date-fns": "^4.1.0",
     "expo": "~54.0.29",
     "expo-crypto": "^15.0.8",
+    "expo-file-system": "~19.0.21",
+    "expo-image-picker": "~17.0.10",
     "expo-localization": "~17.0.8",
     "expo-network": "^8.0.8",
     "expo-secure-store": "~15.0.8",

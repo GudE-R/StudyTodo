@@ -74,14 +74,15 @@ export class SQLiteRepository implements StorageInterface {
                 level TEXT,
                 isDefault INTEGER,
                 "order" INTEGER,
-                color TEXT,         -- Added
-                icon TEXT,          -- Added
+                color TEXT,
+                icon TEXT,
+                customIconUri TEXT,
                 createdAt TEXT,
                 updatedAt TEXT
             );
         `);
 
-        const catMigrations = ['color', 'icon'];
+        const catMigrations = ['color', 'icon', 'customIconUri'];
         catMigrations.forEach(col => {
             try { this.db.execSync(`ALTER TABLE categories ADD COLUMN ${col} TEXT;`); } catch (e) { }
         });
@@ -242,9 +243,9 @@ export class SQLiteRepository implements StorageInterface {
     async addCategory(category: Category): Promise<void> {
         const row = this.toDB(category);
         await this.db.runAsync(
-            `INSERT INTO categories (id, name, parentId, level, isDefault, "order", color, icon, createdAt, updatedAt)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [row.id, row.name, row.parentId, row.level, row.isDefault, row.order, row.color, row.icon, row.createdAt, row.updatedAt] // quote order
+            `INSERT INTO categories (id, name, parentId, level, isDefault, "order", color, icon, customIconUri, createdAt, updatedAt)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.name, row.parentId, row.level, row.isDefault, row.order, row.color, row.icon, row.customIconUri, row.createdAt, row.updatedAt]
         );
         this.notifyChange('categories', 'INSERT', category);
     }

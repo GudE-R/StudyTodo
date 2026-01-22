@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image, StyleSheet } from 'react-native';
 import {
     Book, Code, Music, Palette, Calculator, Globe,
     Briefcase, GraduationCap, Lightbulb, Target, Trophy,
@@ -30,21 +31,51 @@ export const POPULAR_ICONS = [
 
 interface CategoryIconProps {
     iconName?: string;
+    customIconUri?: string;
     size?: number;
     color?: string;
     style?: any;
 }
 
-export const CategoryIcon: React.FC<CategoryIconProps> = ({ iconName, size = 16, color, style }) => {
-    const defaultColor = color; // If undefined, Icon will use its default or inherit
+/**
+ * カテゴリアイコンを表示するコンポーネント
+ * Lucideアイコンまたはカスタム画像を表示します
+ */
+export const CategoryIcon: React.FC<CategoryIconProps> = ({
+    iconName,
+    customIconUri,
+    size = 16,
+    color,
+    style
+}) => {
+    // カスタム画像がある場合は画像を表示
+    if (customIconUri) {
+        return (
+            <Image
+                source={{ uri: customIconUri }}
+                style={[
+                    styles.customImage,
+                    { width: size, height: size, borderRadius: size / 4 },
+                    style
+                ]}
+            />
+        );
+    }
 
+    // Lucideアイコンを表示
     if (!iconName) return null;
     const Icon = ICON_MAP[iconName];
 
     if (!Icon) {
-        // Fallback or nothing
-        return <HelpCircle size={size} color={defaultColor} style={style} />;
+        // Fallback
+        return <HelpCircle size={size} color={color} style={style} />;
     }
 
-    return <Icon size={size} color={defaultColor} style={style} />;
+    return <Icon size={size} color={color} style={style} />;
 };
+
+const styles = StyleSheet.create({
+    customImage: {
+        resizeMode: 'cover',
+    },
+});

@@ -40,6 +40,7 @@ export interface Category {
     parentId?: string;
     children?: Category[]; // For UI tree structure
     icon?: string; // Lucide icon name (e.g., "Book", "Code", "Music")
+    customIconUri?: string; // Custom image URI (local file path)
     color?: string; // HEX color (e.g., "#3b82f6")
     order: number;
     createdAt: Date;

@@ -89,8 +89,13 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
 
                     {/* Category Icon */}
                     <View style={{ marginRight: 8 }}>
-                        {node.icon ? (
-                            <CategoryIcon iconName={node.icon} size={16} color={node.color || (isSmall ? colors.primary : colors.orange)} />
+                        {node.customIconUri || node.icon ? (
+                            <CategoryIcon
+                                iconName={node.icon}
+                                customIconUri={node.customIconUri}
+                                size={16}
+                                color={node.color || (isSmall ? colors.primary : colors.orange)}
+                            />
                         ) : (
                             isSmall
                                 ? <File size={16} color={node.color || colors.primary} />
