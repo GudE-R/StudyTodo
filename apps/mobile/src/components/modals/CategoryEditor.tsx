@@ -60,7 +60,7 @@ export const CategoryEditor = () => {
                 icon: iconName,
                 customIconUri: undefined,
                 updatedAt: new Date()
-            });
+            } as any);
             setPickingIconCategoryId(null);
         }
     };
