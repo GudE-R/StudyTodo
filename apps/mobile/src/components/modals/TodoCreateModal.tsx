@@ -12,7 +12,7 @@ import {
     Alert,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Tag, Repeat, Play, CheckCircle, Plus, Calendar, Clock, Hourglass, CalendarDays } from 'lucide-react-native';
+import { X, Tag, Repeat, Play, CheckCircle, Plus, Calendar, Clock, Hourglass, CalendarDays, Folder, File, ChevronRight, ChevronDown } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +21,21 @@ import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useThemeColors } from '../../providers/ThemeProvider';
+
+// Utility to build tree
+const buildCategoryTree = (categories: Category[]): Category[] => {
+    const map = new Map<string, Category>();
+    categories.forEach(c => map.set(c.id, { ...c, children: [] }));
+    const roots: Category[] = [];
+    map.forEach(c => {
+        if (c.parentId && map.has(c.parentId)) {
+            map.get(c.parentId)?.children?.push(c);
+        } else {
+            roots.push(c);
+        }
+    });
+    return roots;
+};
 
 interface TodoCreateModalProps {
     visible: boolean;
@@ -63,6 +78,87 @@ export const TodoCreateModal = ({
     const [showTimePicker, setShowTimePicker] = useState<'start' | 'end' | null>(null);
     const [showCategoryPicker, setShowCategoryPicker] = useState(false);
     const [showSRSPicker, setShowSRSPicker] = useState(false);
+
+    // Tree Logic
+    const tree = useMemo(() => buildCategoryTree(categories || []), [categories]);
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+    // Expand all by default
+    useEffect(() => {
+        if (categories.length > 0) {
+            setExpandedIds(new Set(categories.map(c => c.id)));
+        }
+    }, [categories]);
+
+    const toggleExpand = (id: string) => {
+        const newSet = new Set(expandedIds);
+        if (newSet.has(id)) newSet.delete(id);
+        else newSet.add(id);
+        setExpandedIds(newSet);
+    };
+
+    const renderCategoryNode = (node: Category, depth: number = 0) => {
+        const isExpanded = expandedIds.has(node.id);
+        const hasChildren = node.children && node.children.length > 0;
+        const isSmall = node.level === 'small';
+        const isSelected = categoryId === node.id;
+
+        return (
+            <View key={node.id}>
+                <TouchableOpacity
+                    style={[
+                        styles.pickerItem,
+                        {
+                            borderBottomColor: colors.border,
+                            paddingLeft: 16 + depth * 20,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+                        }
+                    ]}
+                    onPress={() => { setCategoryId(node.id); setShowCategoryPicker(false); }}
+                >
+                    {/* Expand/Collapse Icon */}
+                    {hasChildren && !isSmall ? (
+                        <TouchableOpacity
+                            onPress={(e) => {
+                                e.stopPropagation();
+                                toggleExpand(node.id);
+                            }}
+                            style={{ padding: 4, marginRight: 4 }}
+                        >
+                            {isExpanded
+                                ? <ChevronDown size={16} color={colors.textSecondary} />
+                                : <ChevronRight size={16} color={colors.textSecondary} />
+                            }
+                        </TouchableOpacity>
+                    ) : (
+                        <View style={{ width: 24, marginRight: 4 }} />
+                    )}
+
+                    {/* Category Icon */}
+                    <View style={{ marginRight: 8 }}>
+                        {isSmall
+                            ? <File size={16} color={node.color || colors.primary} />
+                            : <Folder size={16} color={node.color || colors.orange} />
+                        }
+                    </View>
+
+                    <Text style={[
+                        styles.pickerItemText,
+                        {
+                            color: isSelected ? colors.primary : colors.text,
+                            fontWeight: isSelected ? 'bold' : 'normal'
+                        }
+                    ]}>
+                        {node.name}
+                    </Text>
+                </TouchableOpacity>
+
+                {isExpanded && node.children && node.children.map(child => renderCategoryNode(child, depth + 1))}
+            </View>
+        );
+    };
 
     // Initialize on open
     useEffect(() => {
@@ -522,48 +618,15 @@ export const TodoCreateModal = ({
                         <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('category.selectCategory', 'Select Category')}</Text>
                         <ScrollView style={styles.pickerScroll}>
                             <TouchableOpacity
-                                style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                style={[styles.pickerItem, { borderBottomColor: colors.border, paddingLeft: 16 }]}
                                 onPress={() => { setCategoryId(''); setShowCategoryPicker(false); }}
                             >
+                                <View style={{ width: 24, marginRight: 12 }}>
+                                    <File size={16} color={colors.textSecondary} />
+                                </View>
                                 <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noCategory', 'No Category')}</Text>
                             </TouchableOpacity>
-
-                            {/* Recursive Tree Rendering */}
-                            {categories.map(category => {
-                                const renderCategory = (cat: Category, depth: number) => (
-                                    <React.Fragment key={cat.id}>
-                                        <TouchableOpacity
-                                            style={[
-                                                styles.pickerItem,
-                                                {
-                                                    borderBottomColor: colors.border,
-                                                    paddingLeft: 16 + (depth * 24), // Indentation
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                    gap: 8
-                                                }
-                                            ]}
-                                            onPress={() => { setCategoryId(cat.id); setShowCategoryPicker(false); }}
-                                        >
-                                            {depth > 0 && (
-                                                <View style={{
-                                                    width: 6,
-                                                    height: 6,
-                                                    borderLeftWidth: 1,
-                                                    borderBottomWidth: 1,
-                                                    borderColor: colors.border,
-                                                    marginBottom: 4,
-                                                    marginRight: 4
-                                                }} />
-                                            )}
-                                            <Tag size={16} color={colors.primary} />
-                                            <Text style={[styles.pickerItemText, { color: colors.text }]}>{cat.name}</Text>
-                                        </TouchableOpacity>
-                                        {cat.children?.map(child => renderCategory(child, depth + 1))}
-                                    </React.Fragment>
-                                );
-                                return renderCategory(category, 0);
-                            })}
+                            {tree.map(root => renderCategoryNode(root))}
                         </ScrollView>
                     </View>
                 </TouchableOpacity>
