@@ -527,15 +527,43 @@ export const TodoCreateModal = ({
                             >
                                 <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noCategory', 'No Category')}</Text>
                             </TouchableOpacity>
-                            {categoryOptions.map(opt => (
-                                <TouchableOpacity
-                                    key={opt.value}
-                                    style={[styles.pickerItem, { borderBottomColor: colors.border }]}
-                                    onPress={() => { setCategoryId(opt.value); setShowCategoryPicker(false); }}
-                                >
-                                    <Text style={[styles.pickerItemText, { color: colors.text }]}>{opt.label}</Text>
-                                </TouchableOpacity>
-                            ))}
+
+                            {/* Recursive Tree Rendering */}
+                            {categories.map(category => {
+                                const renderCategory = (cat: Category, depth: number) => (
+                                    <React.Fragment key={cat.id}>
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.pickerItem,
+                                                {
+                                                    borderBottomColor: colors.border,
+                                                    paddingLeft: 16 + (depth * 24), // Indentation
+                                                    flexDirection: 'row',
+                                                    alignItems: 'center',
+                                                    gap: 8
+                                                }
+                                            ]}
+                                            onPress={() => { setCategoryId(cat.id); setShowCategoryPicker(false); }}
+                                        >
+                                            {depth > 0 && (
+                                                <View style={{
+                                                    width: 6,
+                                                    height: 6,
+                                                    borderLeftWidth: 1,
+                                                    borderBottomWidth: 1,
+                                                    borderColor: colors.border,
+                                                    marginBottom: 4,
+                                                    marginRight: 4
+                                                }} />
+                                            )}
+                                            <Tag size={16} color={colors.primary} />
+                                            <Text style={[styles.pickerItemText, { color: colors.text }]}>{cat.name}</Text>
+                                        </TouchableOpacity>
+                                        {cat.children?.map(child => renderCategory(child, depth + 1))}
+                                    </React.Fragment>
+                                );
+                                return renderCategory(category, 0);
+                            })}
                         </ScrollView>
                     </View>
                 </TouchableOpacity>
