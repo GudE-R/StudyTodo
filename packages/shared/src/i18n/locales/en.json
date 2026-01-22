@@ -62,7 +62,7 @@
         "createTitle": "Create Todo",
         "detailTitle": "Task Details / Edit",
         "noCategory": "No Category",
-        "contentPlaceholder": "Enter task name, range, or notes... (1st line is title, 2nd+ lines are details)",
+        "contentPlaceholder": "What needs to be done?\n(1st line: Title, 2nd line: Memo)",
         "titleLabel": "Task Title",
         "memoLabel": "Memo",
         "datePlaceholder": "Select Date",
@@ -82,7 +82,7 @@
         "priorityLowLabel": "Priority: Low",
         "priorityMediumLabel": "Priority: Medium",
         "priorityHighLabel": "Priority: High",
-        "statsTitle": "Learning Stats",
+        "statsTitle": "Learning History",
         "results": "Results",
         "deleteTask": "Delete this task",
         "deleteConfirm": "Are you sure you want to delete this task?",
@@ -217,6 +217,9 @@
         "selectCategory": "Select Category"
     },
     "srs": {
+        "title": "SRS (Spaced Repetition)",
+        "confirmTitle": "SRS Schedule",
+        "confirmGenerate": "SRS profile changed. Generate review schedule?",
         "listTitle": "SRS Profiles",
         "createNew": "Create New",
         "namePlaceholder": "Name (e.g., Intensive)",

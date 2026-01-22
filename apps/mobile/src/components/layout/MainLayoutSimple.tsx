@@ -23,6 +23,7 @@ import { MenuModal } from '../modals/MenuModal';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
+import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { Todo, generateId } from '@pomarc/shared';
 
@@ -34,8 +35,9 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 export const MainLayoutSimple = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const { categories, refreshCategories } = useMobileCategories();
-    const { addTodo, updateTodo, deleteTodo } = useMobileTodos();
+    const { addTodo, updateTodo, deleteTodo, applySrsToExistingTodo } = useMobileTodos();
     const { addSession } = useMobileSessions();
+    const { profiles: srsProfiles } = useMobileSRS();
     const { colors } = useThemeColors();
 
     const [viewMode, setViewMode] = useState<"home" | "timer">("home");
@@ -239,8 +241,16 @@ export const MainLayoutSimple = () => {
         setViewMode("timer");
     };
 
-    const handleTodoUpdate = async (todo: Todo) => {
+    const handleTodoUpdate = async (todo: Todo, options?: { applySrs?: boolean }) => {
         await updateTodo(todo.id, todo);
+
+        // SRS Generation Logic
+        if (options?.applySrs && todo.srsInterval) {
+            const profile = srsProfiles.find(p => p.name === todo.srsInterval);
+            if (profile) {
+                await applySrsToExistingTodo(todo, profile.intervals);
+            }
+        }
     };
 
     const handleTodoDelete = async (todoId: string) => {

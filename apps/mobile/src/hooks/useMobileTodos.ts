@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 
 import { Todo } from "@pomarc/shared";
+import { addDays } from "date-fns";
+import { generateId } from "../lib/utils";
 import { useRepository } from "../providers/RepositoryProvider";
 import { SQLiteRepository } from "../repositories/SQLiteRepository";
 
@@ -45,17 +47,104 @@ export function useMobileTodos() {
 
     const addTodo = async (todo: Todo) => {
         await repository.addTodo(todo);
-        // No need to manually refresh, onDataChange will trigger it
+    };
+
+    const addSRSTodos = async (baseTodo: Todo, intervals: number[]) => {
+        const baseId = generateId();
+        const todoWithId: Todo = {
+            ...baseTodo,
+            id: baseId,
+            srsGroupId: baseId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            completed: false,
+        };
+        const todosToAdd: Todo[] = [todoWithId];
+        const baseDate = baseTodo.dueDate ? new Date(baseTodo.dueDate) : new Date();
+
+        intervals.forEach((days, index) => {
+            const reviewTodo: Todo = {
+                ...baseTodo,
+                id: generateId(),
+                title: `${baseTodo.title} (${index + 1}回目)`,
+                dueDate: addDays(baseDate, days),
+                completed: false,
+                updatedAt: new Date(),
+                createdAt: new Date(),
+                srsGroupId: baseId,
+            };
+            todosToAdd.push(reviewTodo);
+        });
+
+        await repository.addSRSTodos(todosToAdd);
+    };
+
+    const applySrsToExistingTodo = async (todo: Todo, intervals: number[]) => {
+        const srsGroupId = todo.srsGroupId || todo.id;
+
+        if (!todo.srsGroupId) {
+            await repository.updateTodo(todo.id, { srsGroupId });
+        }
+
+        const baseDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
+        const todosToAdd: Todo[] = [];
+
+        intervals.forEach((days, index) => {
+            const reviewTodo: Todo = {
+                ...todo,
+                id: generateId(),
+                title: `${todo.title} (${index + 1}回目)`,
+                dueDate: addDays(baseDate, days),
+                completed: false,
+                updatedAt: new Date(),
+                createdAt: new Date(),
+                srsGroupId: srsGroupId,
+                srsInterval: undefined,
+                srsProfileId: undefined
+            };
+            todosToAdd.push(reviewTodo);
+        });
+
+        await repository.addSRSTodos(todosToAdd);
+    };
+
+    const addRoutineTodos = async (baseTodo: Todo, routineDays: number[]) => {
+        const groupId = generateId();
+        const now = new Date();
+        const todosToAdd: Todo[] = [];
+
+        for (let i = 0; i < 30; i++) {
+            const date = addDays(now, i);
+            const dayOfWeek = date.getDay();
+
+            if (routineDays.includes(dayOfWeek)) {
+                const routineTodo: Todo = {
+                    ...baseTodo,
+                    id: generateId(),
+                    dueDate: date,
+                    completed: false,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    srsGroupId: groupId,
+                };
+                if (todosToAdd.length === 0) {
+                    routineTodo.id = groupId;
+                }
+                todosToAdd.push(routineTodo);
+            }
+        }
+
+        if (todosToAdd.length > 0) {
+            await repository.addSRSTodos(todosToAdd); // Using addSRSTodos for bulk add
+        }
     };
 
     const updateTodo = async (id: string, updates: Partial<Todo>) => {
         await repository.updateTodo(id, updates);
-        // No need to manually refresh, onDataChange will trigger it
     };
 
     const deleteTodo = async (id: string) => {
         await repository.deleteTodo(id);
-        // No need to manually refresh, onDataChange will trigger it
     };
 
     return {
@@ -63,6 +152,9 @@ export function useMobileTodos() {
         loading,
         refreshTodos,
         addTodo,
+        addSRSTodos,
+        applySrsToExistingTodo,
+        addRoutineTodos,
         updateTodo,
         deleteTodo
     };

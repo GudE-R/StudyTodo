@@ -197,9 +197,9 @@ export class SQLiteRepository implements StorageInterface {
     async addTodo(todo: Todo): Promise<void> {
         const row = this.toDB(todo);
         await this.db.runAsync(
-            `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, dueTime, endTime, categoryId, estimatedDuration, actualDuration, priority, notes, memo, range, srsInterval, tags, srsLevel, nextReviewDate, srsProfileId, reviewHistory)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.dueTime, row.endTime, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.reviewHistory]
+            `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, dueTime, endTime, categoryId, estimatedDuration, actualDuration, priority, notes, memo, range, srsInterval, tags, srsLevel, nextReviewDate, srsProfileId, srsGroupId, reviewHistory)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.dueTime, row.endTime, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.srsGroupId, row.reviewHistory]
         );
         this.notifyChange('todos', 'INSERT', todo);
     }
@@ -230,8 +230,46 @@ export class SQLiteRepository implements StorageInterface {
     }
 
     async deleteTodo(id: string): Promise<void> {
-        await this.db.runAsync('DELETE FROM todos WHERE id = ?', [id]);
-        this.notifyChange('todos', 'DELETE', { id });
+        // SRS Cascade Delete Check
+        const todo = await this.getTodo(id);
+        const idsToDelete: string[] = [id];
+
+        if (todo && todo.srsGroupId && todo.srsGroupId === id) {
+            // This is the Root SRS Todo -> Cascade Delete Children
+            const children = await this.db.getAllAsync('SELECT id FROM todos WHERE srsGroupId = ?', [id]);
+            children.forEach((c: any) => {
+                if (c.id !== id) idsToDelete.push(c.id);
+            });
+        }
+
+        if (idsToDelete.length === 1) {
+            await this.db.runAsync('DELETE FROM todos WHERE id = ?', [id]);
+        } else {
+            const placeholders = idsToDelete.map(() => '?').join(', ');
+            await this.db.runAsync(`DELETE FROM todos WHERE id IN (${placeholders})`, idsToDelete);
+        }
+
+        idsToDelete.forEach(deletedId => {
+            this.notifyChange('todos', 'DELETE', { id: deletedId });
+        });
+    }
+
+    /**
+     * SRSプロファイルに基づいて、複数のTodo(復習)を一括生成・保存します。
+     */
+    async addSRSTodos(todos: Todo[]): Promise<void> {
+        for (const todo of todos) {
+            const row = this.toDB(todo);
+            await this.db.runAsync(
+                `INSERT INTO todos (id, title, completed, createdAt, updatedAt, dueDate, dueTime, endTime, categoryId, estimatedDuration, actualDuration, priority, notes, memo, range, srsInterval, tags, srsLevel, nextReviewDate, srsProfileId, srsGroupId, reviewHistory)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.dueTime, row.endTime, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.srsGroupId, row.reviewHistory]
+            );
+        }
+        // Notify once to trigger refresh
+        if (todos.length > 0) {
+            this.notifyChange('todos', 'INSERT', todos[0]);
+        }
     }
 
     // Categories

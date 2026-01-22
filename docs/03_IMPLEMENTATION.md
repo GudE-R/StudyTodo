@@ -106,6 +106,12 @@
     - `expo-image-picker` を導入し、カメラ/ライブラリからアイコン画像を選択可能に。
     - 選択した画像はアプリのドキュメントディレクトリに保存。
     - `CategoryIcon` コンポーネントでLucideアイコンとカスタム画像の両方を表示。
+- **TodoDetailModal の Web 移植・SRS強化**:
+    - タイトルとメモの統合入力フィールドを実装。解析ロジック (`parseContent`) を Web 版と同期。
+    - SRS プロファイル変更時の再生成確認アラートを実装。
+    - 優先度UIの削除とアクションボタンの最適化によるUX改善。
+    - `SQLiteRepository` に SRS グループのカスケード削除を実装。
+    - `useMobileTodos` に SRS/ルーティーン生成ロジックを統合し、モバイル完結での高機能学習管理を実現。
 
 ### [Mobile Share Feature] - 2026-01-19: モバイル版の多言語化対応 (ActivityModal, ShareCard)
 - 2026-01-19: モバイル版シェア機能の実装 (ActivityModal -> ShareCard)

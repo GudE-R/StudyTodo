@@ -29,7 +29,7 @@ interface TodoDetailModalProps {
     todo: Todo | null;
     onStartNow: (todo: Todo) => void;
     onDelete: (todoId: string) => void;
-    onUpdate: (todo: Todo) => void;
+    onUpdate: (todo: Todo, options?: { applySrs?: boolean }) => void;
     onRecord: (todo: Todo, duration: number) => void;
 }
 
@@ -50,8 +50,7 @@ export const TodoDetailModal = ({
     const { sessions } = useMobileSessions();
 
     // Edit States
-    const [title, setTitle] = useState('');
-    const [memo, setMemo] = useState('');
+    const [content, setContent] = useState('');
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [dueTime, setDueTime] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -69,8 +68,8 @@ export const TodoDetailModal = ({
     // Initialize when modal opens
     useEffect(() => {
         if (todo && visible) {
-            setTitle(todo.title || '');
-            setMemo(todo.memo || '');
+            const initialContent = todo.memo ? `${todo.title}\n${todo.memo}` : (todo.title || '');
+            setContent(initialContent);
             setCategoryId(todo.categoryId || '');
             setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
             setDueTime(todo.dueTime || '');
@@ -79,6 +78,25 @@ export const TodoDetailModal = ({
             setRecordDuration('');
         }
     }, [todo, visible]);
+
+    // parseContent logic like Web version
+    const parseContent = () => {
+        const lines = content.split('\n');
+        const rawTitle = lines[0].trim();
+        const notes = lines.slice(1).join('\n').trim();
+
+        let effectiveTitle = rawTitle;
+        if (!effectiveTitle && categoryId) {
+            // If title is empty but category is selected, use category name as title
+            const cat = categoryOptions.find(c => c.value === categoryId);
+            if (cat) effectiveTitle = cat.label.split(' > ').pop() || cat.label;
+        }
+
+        return {
+            title: effectiveTitle || t('todo.noTitle', 'Untitled'),
+            memo: notes || undefined
+        };
+    };
 
     // Flatten categories for selection
     const categoryOptions = useMemo(() => {
@@ -105,25 +123,40 @@ export const TodoDetailModal = ({
     if (!visible || !todo) return null;
 
     const handleUpdate = () => {
+        const { title: parsedTitle, memo: parsedMemo } = parseContent();
         const updated: Todo = {
             ...todo,
-            title: title.trim() || 'Untitled',
-            memo: memo.trim() || undefined,
+            title: parsedTitle,
+            memo: parsedMemo,
             categoryId: categoryId || undefined,
             dueDate: dueDate || undefined,
             dueTime: dueTime || undefined,
             srsInterval: srsInterval || undefined,
             updatedAt: new Date(),
         };
-        onUpdate(updated);
-        onClose();
+
+        // SRS Logic: Check if newly added or changed
+        if (srsInterval && srsInterval !== todo.srsInterval && srsInterval !== '') {
+            Alert.alert(
+                t('srs.confirmTitle', 'SRS Schedule'),
+                t('srs.confirmGenerate', 'SRS profile changed. Generate review schedule?'),
+                [
+                    { text: t('common.no', 'No'), onPress: () => { onUpdate(updated); onClose(); } },
+                    { text: t('common.yes', 'Yes'), onPress: () => { onUpdate(updated, { applySrs: true }); onClose(); } }
+                ]
+            );
+        } else {
+            onUpdate(updated);
+            onClose();
+        }
     };
 
     const handleStartNow = () => {
+        const { title: parsedTitle, memo: parsedMemo } = parseContent();
         const updated: Todo = {
             ...todo,
-            title: title.trim() || 'Untitled',
-            memo: memo.trim() || undefined,
+            title: parsedTitle,
+            memo: parsedMemo,
             categoryId: categoryId || undefined,
             dueDate: dueDate || undefined,
             dueTime: dueTime || undefined,
@@ -158,10 +191,11 @@ export const TodoDetailModal = ({
             Alert.alert(t('common.error', 'Error'), t('todo.invalidDuration', 'Invalid duration'));
             return;
         }
+        const { title: parsedTitle, memo: parsedMemo } = parseContent();
         const updated: Todo = {
             ...todo,
-            title: title.trim() || t('todo.noTitle', 'Untitled'),
-            memo: memo.trim() || undefined,
+            title: parsedTitle,
+            memo: parsedMemo,
             categoryId: categoryId || undefined,
             dueDate: dueDate || undefined,
             dueTime: dueTime || undefined,
@@ -215,32 +249,27 @@ export const TodoDetailModal = ({
                     </View>
 
                     <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-                        {/* Title */}
-                        <View style={styles.titleRow}>
+                        {/* Merged Content Input (Title & Memo) */}
+                        <View style={styles.contentRow}>
                             {todo.completed ? (
-                                <CheckCircle size={24} color={colors.success} />
+                                <CheckCircle size={24} color={colors.success} style={styles.contentIcon} />
                             ) : (
-                                <View style={[styles.checkbox, { borderColor: colors.primary }]} />
+                                <View style={[styles.checkbox, { borderColor: colors.primary, marginTop: 10 }]} />
                             )}
                             <TextInput
-                                style={[styles.titleInput, { color: colors.text }, todo.completed && styles.completedText]}
-                                value={title}
-                                onChangeText={setTitle}
-                                placeholder={t('todo.titleLabel', 'Task Title')}
+                                style={[
+                                    styles.contentInput,
+                                    { color: colors.text },
+                                    todo.completed && styles.completedText
+                                ]}
+                                value={content}
+                                onChangeText={setContent}
+                                placeholder={t('todo.contentPlaceholder', 'What needs to be done?\n(1st line: Title, 2nd line: Memo)')}
                                 placeholderTextColor={colors.textMuted}
+                                multiline
+                                textAlignVertical="top"
                             />
                         </View>
-
-                        {/* Memo */}
-                        <TextInput
-                            style={[styles.memoInput, { color: colors.text, backgroundColor: colors.surface, borderColor: colors.border }]}
-                            value={memo}
-                            onChangeText={setMemo}
-                            placeholder={t('todo.memoLabel', 'Memo')}
-                            placeholderTextColor={colors.textMuted}
-                            multiline
-                            numberOfLines={3}
-                        />
 
                         {/* Category */}
                         <TouchableOpacity
@@ -426,10 +455,13 @@ const styles = StyleSheet.create({
         padding: 16,
         gap: 12,
     },
-    titleRow: {
+    contentRow: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: 12,
+    },
+    contentIcon: {
+        marginTop: 8,
     },
     checkbox: {
         width: 24,
@@ -437,21 +469,16 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 2,
     },
-    titleInput: {
+    contentInput: {
         flex: 1,
         fontSize: 18,
         fontWeight: 'bold',
+        minHeight: 100,
+        paddingTop: 8,
     },
     completedText: {
         textDecorationLine: 'line-through',
         opacity: 0.6,
-    },
-    memoInput: {
-        borderRadius: 12,
-        padding: 12,
-        borderWidth: 1,
-        minHeight: 80,
-        textAlignVertical: 'top',
     },
     optionRow: {
         flexDirection: 'row',
