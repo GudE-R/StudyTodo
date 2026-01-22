@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Check, Trash2, ChevronRight, CalendarRange } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, CalendarRange, ChevronRight } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -56,49 +56,16 @@ export const TodoDetailModal = ({
     const [categoryId, setCategoryId] = useState('');
     const [srsInterval, setSrsInterval] = useState('');
 
-    // Recording
+    // Recording States
     const [isRecording, setIsRecording] = useState(false);
     const [recordDuration, setRecordDuration] = useState('');
 
-    // DateTimePicker
+    // UI States
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
 
-    // Initialize when modal opens
-    useEffect(() => {
-        if (todo && visible) {
-            const initialContent = todo.memo ? `${todo.title}\n${todo.memo}` : (todo.title || '');
-            setContent(initialContent);
-            setCategoryId(todo.categoryId || '');
-            setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
-            setDueTime(todo.dueTime || '');
-            setSrsInterval(todo.srsInterval || '');
-            setIsRecording(false);
-            setRecordDuration('');
-        }
-    }, [todo, visible]);
-
-    // parseContent logic like Web version
-    const parseContent = () => {
-        const lines = content.split('\n');
-        const rawTitle = lines[0].trim();
-        const notes = lines.slice(1).join('\n').trim();
-
-        let effectiveTitle = rawTitle;
-        if (!effectiveTitle && categoryId) {
-            // If title is empty but category is selected, use category name as title
-            const cat = categoryOptions.find(c => c.value === categoryId);
-            if (cat) effectiveTitle = cat.label.split(' > ').pop() || cat.label;
-        }
-
-        return {
-            title: effectiveTitle || t('todo.noTitle', 'Untitled'),
-            memo: notes || undefined
-        };
-    };
-
-    // Flatten categories for selection
+    // Flatten categories for selection logic
     const categoryOptions = useMemo(() => {
         const options: { value: string; label: string }[] = [];
         const traverse = (cats: Category[], prefix = '') => {
@@ -112,17 +79,40 @@ export const TodoDetailModal = ({
         return options;
     }, [categories]);
 
-    // Todo sessions
-    const todoSessions = useMemo(() => {
-        if (!todo) return [];
-        return sessions.filter(s => s.todoId === todo.id);
-    }, [sessions, todo]);
+    // Initialize states when todo is opened (Strict parity with Web)
+    useEffect(() => {
+        if (todo && visible) {
+            const initialContent = todo.memo ? `${todo.title}\n${todo.memo}` : (todo.title || '');
+            setContent(initialContent);
+            setCategoryId(todo.categoryId || '');
+            setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
+            setDueTime(todo.dueTime || '');
+            setSrsInterval(todo.srsInterval || '');
+            setIsRecording(false);
+            setRecordDuration('');
+        }
+    }, [todo, visible]);
 
-    const totalMinutes = Math.floor(todoSessions.reduce((acc, s) => acc + s.duration, 0) / 60);
+    // parseContent logic (Strict parity with Web)
+    const parseContent = () => {
+        const lines = content.split('\n');
+        const rawTitle = lines[0].trim();
+        const notes = lines.slice(1).join('\n').trim();
 
-    if (!visible || !todo) return null;
+        let effectiveTitle = rawTitle;
+        if (!effectiveTitle && categoryId) {
+            const cat = categoryOptions.find(c => c.value === categoryId);
+            if (cat) effectiveTitle = cat.label.split(' > ').pop() || cat.label;
+        }
+
+        return {
+            title: effectiveTitle || t('todo.noTitle', 'Untitled'),
+            memo: notes || undefined
+        };
+    };
 
     const handleUpdate = () => {
+        if (!todo) return;
         const { title: parsedTitle, memo: parsedMemo } = parseContent();
         const updated: Todo = {
             ...todo,
@@ -135,7 +125,7 @@ export const TodoDetailModal = ({
             updatedAt: new Date(),
         };
 
-        // SRS Logic: Check if newly added or changed
+        // SRS Logic: Check if newly added or changed (Strict parity with Web Alert)
         if (srsInterval && srsInterval !== todo.srsInterval && srsInterval !== '') {
             Alert.alert(
                 t('srs.confirmTitle', 'SRS Schedule'),
@@ -152,8 +142,9 @@ export const TodoDetailModal = ({
     };
 
     const handleStartNow = () => {
+        if (!todo) return;
         const { title: parsedTitle, memo: parsedMemo } = parseContent();
-        const updated: Todo = {
+        onStartNow({
             ...todo,
             title: parsedTitle,
             memo: parsedMemo,
@@ -162,12 +153,12 @@ export const TodoDetailModal = ({
             dueTime: dueTime || undefined,
             srsInterval: srsInterval || undefined,
             updatedAt: new Date(),
-        };
-        onStartNow(updated);
+        });
         onClose();
     };
 
     const handlePostpone = () => {
+        if (!todo) return;
         const currentDate = dueDate || new Date();
         const nextDate = addDays(currentDate, 1);
         onUpdate({ ...todo, dueDate: nextDate, updatedAt: new Date() });
@@ -175,6 +166,7 @@ export const TodoDetailModal = ({
     };
 
     const handleDelete = () => {
+        if (!todo) return;
         Alert.alert(
             t('todo.deleteTask', 'Delete Task'),
             t('todo.deleteConfirm', 'Are you sure?'),
@@ -186,13 +178,14 @@ export const TodoDetailModal = ({
     };
 
     const handleRecordSubmit = () => {
+        if (!todo) return;
         const d = parseInt(recordDuration, 10);
         if (isNaN(d) || d <= 0) {
             Alert.alert(t('common.error', 'Error'), t('todo.invalidDuration', 'Invalid duration'));
             return;
         }
         const { title: parsedTitle, memo: parsedMemo } = parseContent();
-        const updated: Todo = {
+        onRecord({
             ...todo,
             title: parsedTitle,
             memo: parsedMemo,
@@ -201,13 +194,11 @@ export const TodoDetailModal = ({
             dueTime: dueTime || undefined,
             srsInterval: srsInterval || undefined,
             updatedAt: new Date(),
-        };
-        onRecord(updated, d * 60);
+        }, d * 60);
         setRecordDuration('');
         setIsRecording(false);
         onClose();
     };
-
 
     const showSRSPicker = () => {
         if (Platform.OS === 'ios') {
@@ -229,33 +220,57 @@ export const TodoDetailModal = ({
         }
     };
 
-    const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || 'カテゴリなし';
+    const todoSessions = useMemo(() => {
+        if (!todo) return [];
+        return sessions.filter(s => s.todoId === todo.id);
+    }, [sessions, todo]);
+
+    const totalMinutes = Math.floor(todoSessions.reduce((acc, s) => acc + s.duration, 0) / 60);
+    const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || t('todo.noCategory', 'No Category');
+
+    if (!visible || !todo) return null;
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
-                    {/* Header */}
+
+                    {/* Header (Web Parity) */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
                         <Text style={[styles.headerTitle, { color: colors.text }]}>{t('todo.detailTitle', 'Task Details')}</Text>
                         <View style={styles.headerRight}>
                             <TouchableOpacity onPress={handleUpdate} style={styles.saveBtn}>
                                 <Text style={[styles.saveBtnText, { color: colors.primary }]}>{t('common.save', 'Save')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-                                <X size={24} color={colors.text} />
+                            <TouchableOpacity onPress={onClose} style={styles.closeBtnIcon}>
+                                <X size={24} color={colors.textMuted} />
                             </TouchableOpacity>
                         </View>
                     </View>
 
-                    <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-                        {/* Merged Content Input (Title & Memo) */}
-                        <View style={styles.contentRow}>
-                            {todo.completed ? (
-                                <CheckCircle size={24} color={colors.success} style={styles.contentIcon} />
-                            ) : (
-                                <View style={[styles.checkbox, { borderColor: colors.primary, marginTop: 10 }]} />
-                            )}
+                    <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+
+                        {/* Category (Strict Parity with Web Top-Level Choice) */}
+                        <TouchableOpacity
+                            style={[styles.inputRow, { backgroundColor: colors.surface }]}
+                            onPress={() => setIsCategoryPickerVisible(true)}
+                        >
+                            <Tag size={18} color={colors.textMuted} />
+                            <Text style={[styles.inputText, { color: colors.text }]} numberOfLines={1}>
+                                {selectedCategoryLabel}
+                            </Text>
+                            <ChevronRight size={16} color={colors.textMuted} />
+                        </TouchableOpacity>
+
+                        {/* Merged Content Input (Strict Parity) */}
+                        <View style={styles.contentInputWrapper}>
+                            <View style={styles.statusIconWrapper}>
+                                {todo.completed ? (
+                                    <CheckCircle size={24} color={colors.success} />
+                                ) : (
+                                    <View style={[styles.checkboxCircle, { borderColor: colors.border }]} />
+                                )}
+                            </View>
                             <TextInput
                                 style={[
                                     styles.contentInput,
@@ -264,112 +279,123 @@ export const TodoDetailModal = ({
                                 ]}
                                 value={content}
                                 onChangeText={setContent}
-                                placeholder={t('todo.contentPlaceholder', 'What needs to be done?\n(1st line: Title, 2nd line: Memo)')}
+                                placeholder={t('todo.contentPlaceholder')}
                                 placeholderTextColor={colors.textMuted}
                                 multiline
                                 textAlignVertical="top"
                             />
                         </View>
 
-                        {/* Category */}
-                        <TouchableOpacity
-                            style={[styles.optionRow, { backgroundColor: colors.surface }]}
-                            onPress={() => setIsCategoryPickerVisible(true)}
-                        >
-                            <Tag size={18} color={colors.icon} />
-                            <Text style={[styles.optionText, { color: colors.text }]}>{selectedCategoryLabel}</Text>
-                            <ChevronRight size={18} color={colors.textMuted} />
-                        </TouchableOpacity>
+                        {/* Grid Options (Strict parity with Web grid-cols-2) */}
+                        <View style={styles.gridContainer}>
+                            <View style={styles.gridRow}>
+                                {/* Due Date */}
+                                <TouchableOpacity
+                                    style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                    onPress={() => setShowDatePicker(true)}
+                                >
+                                    <Calendar size={18} color={colors.primary} />
+                                    <Text style={[styles.gridItemText, { color: colors.text }]} numberOfLines={1}>
+                                        {dueDate ? format(dueDate, "yyyy-MM-dd") : t('todo.datePlaceholder', 'Date')}
+                                    </Text>
+                                </TouchableOpacity>
 
-                        {/* Date/Time Row */}
-                        <View style={styles.gridRow}>
-                            <TouchableOpacity
-                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                onPress={() => setShowDatePicker(true)}
-                            >
-                                <Calendar size={18} color={colors.primary} />
-                                <Text style={[styles.gridText, { color: colors.text }]} numberOfLines={1}>
-                                    {dueDate ? format(dueDate, t('common.dateFormat', 'MMM d'), { locale }) : t('todo.datePlaceholder', 'Date')}
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                onPress={() => setShowTimePicker(true)}
-                            >
-                                <Clock size={18} color={colors.primary} />
-                                <Text style={[styles.gridText, { color: colors.text }]}>
-                                    {dueTime || t('todo.startTime', 'Time')}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                                {/* Start Time */}
+                                <TouchableOpacity
+                                    style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                    onPress={() => setShowTimePicker(true)}
+                                >
+                                    <Clock size={18} color={colors.primary} />
+                                    <Text style={[styles.gridItemText, { color: colors.text }]}>
+                                        {dueTime || t('todo.startTime', 'Time')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
 
-                        <View style={styles.gridRow}>
-                            {/* SRS */}
-                            <TouchableOpacity
-                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                onPress={showSRSPicker}
-                            >
-                                <Repeat size={18} color={colors.success} />
-                                <Text style={[styles.gridText, { color: colors.text }]} numberOfLines={1}>
-                                    {srsInterval || t('todo.noSrs', 'No SRS')}
-                                </Text>
-                            </TouchableOpacity>
-                            {/* Empty space or other field if needed */}
-                            <View style={[styles.gridItem, { backgroundColor: 'transparent' }]} />
-                        </View>
+                            <View style={styles.gridRow}>
+                                {/* SRS Profile */}
+                                <TouchableOpacity
+                                    style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                    onPress={showSRSPicker}
+                                >
+                                    <Repeat size={18} color={colors.success} />
+                                    <Text style={[styles.gridItemText, { color: colors.text }]} numberOfLines={1}>
+                                        {srsInterval || t('todo.noSrs', 'No SRS')}
+                                    </Text>
+                                </TouchableOpacity>
 
-                        {/* Stats */}
-                        <View style={[styles.statsBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : '#eff6ff' }]}>
-                            <Clock size={20} color={colors.primary} />
-                            <View style={styles.statsContent}>
-                                <Text style={[styles.statsLabel, { color: colors.textSecondary }]}>{t('todo.results', 'Results')}</Text>
-                                <Text style={[styles.statsValue, { color: colors.text }]}>
-                                    {todoSessions.length} {t('common.times', 'times')} ({totalMinutes}{t('common.units.minutes', 'm')})
-                                </Text>
+                                {/* Placeholder for balance if needed, or other field */}
+                                <View style={styles.gridItemPlaceholder} />
                             </View>
                         </View>
+
+                        {/* Stats Summary (Strict Parity with Web Box) */}
+                        <View style={styles.statsSection}>
+                            <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t('todo.statsTitle', 'Learning History').toUpperCase()}</Text>
+                            <View style={[styles.statsBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : '#eff6ff' }]}>
+                                <Clock size={20} color={colors.primary} />
+                                <View style={styles.statsTextColumn}>
+                                    <Text style={[styles.statsSmallLabel, { color: colors.textSecondary }]}>{t('todo.results', 'Results')}</Text>
+                                    <Text style={[styles.statsValueText, { color: colors.text }]}>
+                                        {todoSessions.length}回 ({totalMinutes}分)
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+
                     </ScrollView>
 
-                    {/* Actions */}
-                    <View style={[styles.actions, { borderTopColor: colors.border }]}>
+                    {/* Bottom Actions (Strict Parity) */}
+                    <View style={[styles.footer, { borderTopColor: colors.border }]}>
                         {isRecording ? (
-                            <View style={styles.recordRow}>
+                            <View style={styles.recordingRow}>
                                 <TextInput
                                     style={[styles.recordInput, { backgroundColor: colors.surface, color: colors.text }]}
+                                    keyboardType="numeric"
                                     value={recordDuration}
                                     onChangeText={setRecordDuration}
-                                    placeholder={t('todo.durationPlaceholder', 'Duration (min)')}
+                                    placeholder={t('todo.durationPlaceholder')}
                                     placeholderTextColor={colors.textMuted}
-                                    keyboardType="numeric"
                                     autoFocus
                                 />
-                                <TouchableOpacity style={styles.recordSubmitBtn} onPress={handleRecordSubmit}>
+                                <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
                                     <Save size={20} color="#fff" />
                                 </TouchableOpacity>
-                                <TouchableOpacity style={[styles.recordCancelBtn, { backgroundColor: colors.surface }]} onPress={() => setIsRecording(false)}>
+                                <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
                                     <X size={20} color={colors.text} />
                                 </TouchableOpacity>
                             </View>
                         ) : (
                             <>
-                                <View style={styles.actionRow}>
-                                    <TouchableOpacity style={styles.recordBtn} onPress={() => setIsRecording(true)}>
-                                        <CheckCircle size={20} color={colors.success} />
-                                        <Text style={[styles.actionBtnText, { color: colors.success }]}>{t('todo.record', 'Record')}</Text>
+                                <View style={styles.mainActionContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(34, 197, 94, 0.2)' : '#dcfce7' }]}
+                                        onPress={() => setIsRecording(true)}
+                                    >
+                                        <CheckCircle size={20} color="#16a34a" />
+                                        <Text style={[styles.actionBtnText, { color: '#16a34a' }]}>{t('todo.record')}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.startBtn} onPress={handleStartNow}>
-                                        <Play size={18} color={colors.warning} fill={colors.warning} />
-                                        <Text style={[styles.actionBtnText, { color: colors.warning }]}>{t('todo.start', 'Start')}</Text>
+                                    <TouchableOpacity
+                                        style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#ffedd5' }]}
+                                        onPress={handleStartNow}
+                                    >
+                                        <Play size={18} color="#d97706" fill="#d97706" />
+                                        <Text style={[styles.actionBtnText, { color: '#d97706' }]}>{t('todo.start')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={styles.secondaryActions}>
-                                    <TouchableOpacity style={[styles.postponeBtn, { backgroundColor: colors.surface }]} onPress={handlePostpone}>
+                                <View style={styles.secondaryActionContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.secondaryActionBtn, { backgroundColor: colors.surface }]}
+                                        onPress={handlePostpone}
+                                    >
                                         <CalendarRange size={16} color={colors.textSecondary} />
-                                        <Text style={[styles.postponeBtnText, { color: colors.textSecondary }]}>{t('todo.postpone', 'Postpone')}</Text>
+                                        <Text style={[styles.secondaryActionText, { color: colors.textSecondary }]}>{t('todo.postpone')}</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
-                                        <Trash2 size={16} color={colors.danger} />
-                                        <Text style={[styles.deleteBtnText, { color: colors.danger }]}>{t('common.delete', 'Delete')}</Text>
+                                    <TouchableOpacity
+                                        style={styles.deleteBtnContainer}
+                                        onPress={handleDelete}
+                                    >
+                                        <Text style={styles.deleteText}>{t('todo.deleteTask')}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </>
@@ -404,7 +430,7 @@ export const TodoDetailModal = ({
                 />
             )}
 
-            {/* Category Picker Modal */}
+            {/* Category Picker */}
             <CategoryTreePicker
                 visible={isCategoryPickerVisible}
                 onClose={() => setIsCategoryPickerVisible(false)}
@@ -423,14 +449,14 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     container: {
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
         maxHeight: '90%',
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'space-between',
         padding: 16,
         borderBottomWidth: 1,
     },
@@ -448,101 +474,58 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
     },
     saveBtnText: {
-        fontWeight: 'bold',
         fontSize: 15,
+        fontWeight: 'bold',
     },
-    closeBtn: {
+    closeBtnIcon: {
         padding: 4,
-        marginLeft: 4,
     },
     content: {
         flex: 1,
     },
-    contentContainer: {
+    scrollContent: {
         padding: 16,
-        gap: 16,
+        gap: 20,
     },
-    contentRow: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        gap: 12,
-        marginBottom: 8,
-    },
-    contentIcon: {
-        marginTop: 6,
-    },
-    checkbox: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        borderWidth: 2,
-        marginTop: 6,
-    },
-    contentInput: {
-        flex: 1,
-        fontSize: 19,
-        fontWeight: 'bold',
-        minHeight: 80,
-        paddingTop: 4,
-    },
-    completedText: {
-        textDecorationLine: 'line-through',
-        opacity: 0.6,
-    },
-    optionRow: {
+    inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 12,
         borderRadius: 14,
         gap: 10,
     },
-    optionText: {
+    inputText: {
         flex: 1,
         fontSize: 14,
         fontWeight: '500',
     },
-    dateTimeRow: {
+    contentInputWrapper: {
         flexDirection: 'row',
-        gap: 10,
-    },
-    dateBtn: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderRadius: 12,
-        gap: 8,
-    },
-    timeBtn: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderRadius: 12,
-        gap: 8,
-    },
-    dateText: {
-        fontSize: 14,
-    },
-    statsBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        borderRadius: 12,
+        alignItems: 'flex-start',
         gap: 12,
     },
-    statsContent: {
+    statusIconWrapper: {
+        marginTop: 6,
+    },
+    checkboxCircle: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        borderWidth: 2,
+    },
+    contentInput: {
         flex: 1,
-    },
-    statsLabel: {
-        fontSize: 10,
-        textTransform: 'uppercase',
+        fontSize: 19,
         fontWeight: 'bold',
-        marginBottom: 2,
+        minHeight: 120,
+        paddingTop: 4,
     },
-    statsValue: {
-        fontSize: 15,
-        fontWeight: '600',
+    completedText: {
+        textDecorationLine: 'line-through',
+        opacity: 0.5,
+    },
+    gridContainer: {
+        gap: 12,
     },
     gridRow: {
         flexDirection: 'row',
@@ -556,50 +539,70 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         gap: 10,
     },
-    gridText: {
+    gridItemPlaceholder: {
+        flex: 1,
+    },
+    gridItemText: {
         fontSize: 14,
         flex: 1,
     },
-    actions: {
+    statsSection: {
+        gap: 8,
+    },
+    sectionLabel: {
+        fontSize: 11,
+        fontWeight: 'bold',
+        marginLeft: 4,
+    },
+    statsBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 14,
+        borderRadius: 14,
+        gap: 12,
+    },
+    statsTextColumn: {
+        flex: 1,
+    },
+    statsSmallLabel: {
+        fontSize: 10,
+        marginBottom: 2,
+    },
+    statsValueText: {
+        fontSize: 15,
+        fontWeight: '600',
+    },
+    footer: {
         padding: 16,
         borderTopWidth: 1,
         gap: 12,
+        paddingBottom: Platform.OS === 'ios' ? 36 : 16,
     },
-    actionRow: {
+    mainActionContainer: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 12,
     },
-    recordBtn: {
+    actionBtn: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 14,
         borderRadius: 14,
-        backgroundColor: '#dcfce7', // bg-green-100
-        gap: 8,
-    },
-    startBtn: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 14,
-        borderRadius: 14,
-        backgroundColor: '#ffedd5', // bg-orange-100
         gap: 8,
     },
     actionBtnText: {
-        fontWeight: 'bold',
         fontSize: 15,
+        fontWeight: 'bold',
     },
-    secondaryActions: {
+    secondaryActionContainer: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 12,
+        alignItems: 'center',
         marginTop: 4,
     },
-    postponeBtn: {
-        flex: 1,
+    secondaryActionBtn: {
+        flex: 1.2,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -607,67 +610,36 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         gap: 8,
     },
-    postponeBtnText: {
+    secondaryActionText: {
         fontSize: 13,
         fontWeight: '600',
     },
-    deleteBtn: {
+    deleteBtnContainer: {
         flex: 1,
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-        borderRadius: 14,
-        gap: 6,
     },
-    deleteBtnText: {
+    deleteText: {
+        color: '#ef4444',
         fontSize: 13,
-        fontWeight: '600',
+        fontWeight: '500',
     },
-    recordRow: {
+    recordingRow: {
         flexDirection: 'row',
         gap: 10,
     },
     recordInput: {
         flex: 1,
         padding: 14,
-        borderRadius: 12,
+        borderRadius: 14,
         fontSize: 16,
+        fontWeight: '600',
     },
-    recordSubmitBtn: {
-        backgroundColor: '#22c55e',
+    recordActionBtn: {
         padding: 14,
-        borderRadius: 12,
-    },
-    recordCancelBtn: {
-        padding: 14,
-        borderRadius: 12,
-    },
-    pickerOverlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    pickerContainer: {
-        width: '80%',
-        maxHeight: '60%',
-        borderRadius: 16,
-        padding: 16,
-    },
-    pickerTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 12,
-    },
-    pickerScroll: {
-        maxHeight: 300,
-    },
-    pickerItem: {
-        paddingVertical: 14,
-        borderBottomWidth: 1,
-    },
-    pickerItemText: {
-        fontSize: 15,
     },
 });
