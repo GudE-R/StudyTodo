@@ -69,7 +69,9 @@ describe('export', () => {
 
         // Check if createObjectURL was called
         expect(mockCreateObjectURL).toHaveBeenCalled();
-        const blob = mockCreateObjectURL.mock.calls[0][0] as Blob;
+        // Safe casting for typescript
+        const args = mockCreateObjectURL.mock.calls[0] as unknown as [Blob];
+        const blob = args[0];
         expect(blob).toBeInstanceOf(Blob);
 
         // Read Blob content
@@ -88,22 +90,22 @@ describe('export', () => {
         expect(result).toBe(true);
 
         expect(mockCreateObjectURL).toHaveBeenCalled();
-        const blob = mockCreateObjectURL.mock.calls[0][0] as Blob;
+        const args = mockCreateObjectURL.mock.calls[0] as unknown as [Blob];
+        const blob = args[0];
         expect(blob.type).toBe('text/csv');
 
         // Verify CSV content
         const text = await readBlob(blob);
 
-        // Check for BOM presence or simple content check
-        // Note: readAsText might strip BOM or handle it differently depending on env
-        // We just verify content is there.
-        // If we strictly want to check BOM, we might need readAsArrayBuffer
-
-        // expect(text.charCodeAt(0)).toBe(0xFEFF); // This failed due to encoding handling in test env
-
         expect(text).toContain('SessionID,TodoTitle,Mode');
-        // Check data including quotes
-        expect(contentShouldMatch(text));
+        // Partial match check
+        if (text.includes('s1,"Test Todo",pomodoro')) {
+            expect(true).toBe(true);
+        } else {
+            // Fallback for debugging if it fails
+            console.log('CSV Content:', text);
+            expect(text).toContain('s1,"Test Todo",pomodoro');
+        }
     });
 
     it('should handle errors gracefully', async () => {
@@ -115,9 +117,3 @@ describe('export', () => {
         expect(result).toBe(false);
     });
 });
-
-function contentShouldMatch(text: string) {
-    // Helper to allow partial matching if BOM issues persist
-    if (text.includes('s1,"Test Todo",pomodoro')) return true;
-    return false;
-}
