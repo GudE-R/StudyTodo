@@ -6,7 +6,7 @@ import { format, addDays } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { Todo, Category, SRSProfile } from "@pomarc/shared";
+import { Todo, Category, SRSProfile, parseTodoContent } from "@pomarc/shared";
 
 interface TodoDetailModalProps {
     isOpen: boolean;
@@ -91,20 +91,11 @@ export function TodoDetailModal({
 
     // 自由記述欄のパース（CreateModalと同じロジック）
     const parseContent = () => {
-        const lines = content.split("\n");
-        const rawTitle = lines[0].trim();
-        const notes = lines.slice(1).join("\n").trim();
+        const cat = categoryOptions.find(c => c.value === categoryId);
+        const fallbackTitle = cat ? (cat.label.split(" > ").pop() || cat.label) : undefined;
 
-        let effectiveTitle = rawTitle;
-        if (!effectiveTitle && categoryId) {
-            const cat = categoryOptions.find(c => c.value === categoryId);
-            if (cat) effectiveTitle = cat.label.split(" > ").pop() || cat.label;
-        }
-
-        return {
-            title: effectiveTitle || t("noTitle"),
-            notes: notes || undefined
-        };
+        const { title, memo } = parseTodoContent(content, fallbackTitle, t("noTitle"));
+        return { title, notes: memo };
     };
 
     // 優先度の表示名とカラー

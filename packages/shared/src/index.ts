@@ -6,3 +6,4 @@ export * from "./storage";
 export * from "./offlineSyncQueue";
 export * from "./sync";
 export * from "./utils/statistics";
+export * from "./domain/todo";

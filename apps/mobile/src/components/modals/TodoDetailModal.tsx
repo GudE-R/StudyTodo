@@ -16,7 +16,7 @@ import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, Calen
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
-import { Todo, Category, SRSProfile } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, parseTodoContent } from '@pomarc/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
@@ -96,20 +96,10 @@ export const TodoDetailModal = ({
 
     // parseContent logic (Strict parity with Web)
     const parseContent = () => {
-        const lines = content.split('\n');
-        const rawTitle = lines[0].trim();
-        const notes = lines.slice(1).join('\n').trim();
+        const cat = categoryOptions.find(c => c.value === categoryId);
+        const fallbackTitle = cat ? (cat.label.split(' > ').pop() || cat.label) : undefined;
 
-        let effectiveTitle = rawTitle;
-        if (!effectiveTitle && categoryId) {
-            const cat = categoryOptions.find(c => c.value === categoryId);
-            if (cat) effectiveTitle = cat.label.split(' > ').pop() || cat.label;
-        }
-
-        return {
-            title: effectiveTitle || t('todo.noTitle', 'Untitled'),
-            memo: notes || undefined
-        };
+        return parseTodoContent(content, fallbackTitle, t('todo.noTitle', 'Untitled'));
     };
 
     const handleUpdate = () => {

@@ -72,6 +72,7 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 まだ具体的な計画には入っていないアイデアや、技術的な課題です。
 
 ### リファクタリング / 技術的負債
+- [x] **共通ロジックの統合**: TodoDetailModalのテキスト解析ロジックをpackages/sharedへ移動。
 - [ ] **ActivityModal.tsxの分割**: 約900行の巨大ファイルをAnalyticsTab、HistoryTab、ShareTabに分割。
 - [ ] **高速化**: アプリケーション全体のパフォーマンスチューニング。
 - [ ] **カスタムアイコン画像の同期**: カテゴリのカスタム画像アイコンをSupabase Storageで同期（Web/Mobile間）。
