@@ -96,9 +96,20 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
     // モードや設定変更時にタイマーをリセット
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        resetTimer();
-    }, [resetTimer]);
+        // Stop reset if we just switched to stopwatch (manually handled in button click)
+        // However, standard useEffect logic resets whenever mode changes. 
+        // We need to bypass this for the specific transition or update resetTimer to handle data preservation?
+        // Actually, the button click handler runs STATE UPDATES (batching might apply).
+        // If we set state in button click, then THIS effect runs.
+        // resetTimer sets stopwatchTime to 0. This will OVERWRITE our carried over time.
+
+        // Solution: Only call resetTimer if NOT switching to stopwatch (or handle stopwatch reset differently).
+        // But we want resetTimer to run when switching BACK to pomodoro.
+
+        if (mode !== "stopwatch") {
+            resetTimer();
+        }
+    }, [mode, focusDuration, breakDuration, countdownDuration, resetTimer]);
 
     // タイマーロジック
     useEffect(() => {
@@ -213,21 +224,48 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                 </button>
 
                 {/* モード切替タブ */}
+                {/* モード切替タブ */}
                 <div className="flex bg-white/50 rounded-full p-1">
                     <button
-                        onClick={() => { setMode("pomodoro"); setStatus("focus"); }}
+                        onClick={() => {
+                            setMode("pomodoro");
+                            setStatus("focus");
+                            setIsRunning(false);
+                            resetTimer();
+                        }}
                         className={`p-2 rounded-full transition-colors ${mode === "pomodoro" ? "bg-white shadow-sm text-blue-600" : "text-gray-400"}`}
                     >
                         <Timer size={20} />
                     </button>
                     <button
-                        onClick={() => setMode("countdown")}
+                        onClick={() => {
+                            setMode("countdown");
+                            setIsRunning(false);
+                            resetTimer();
+                        }}
                         className={`p-2 rounded-full transition-colors ${mode === "countdown" ? "bg-white shadow-sm text-blue-600" : "text-gray-400"}`}
                     >
                         <Watch size={20} />
                     </button>
                     <button
-                        onClick={() => setMode("stopwatch")}
+                        onClick={() => {
+                            if (mode !== "stopwatch") {
+                                // Calculate elapsed time to carry over
+                                let elapsed = 0;
+                                if (mode === "pomodoro" && status === "focus") {
+                                    elapsed = focusDuration * 60 - timeLeft;
+                                } else if (mode === "countdown") {
+                                    elapsed = countdownDuration * 60 - timeLeft;
+                                } else {
+                                    // if break mode, start from 0
+                                    elapsed = 0;
+                                }
+
+                                setStopwatchTime(Math.max(0, elapsed));
+                                setMode("stopwatch");
+                                // Do NOT stop timer, let it continue running if it was
+                            }
+                        }}
                         className={`p-2 rounded-full transition-colors ${mode === "stopwatch" ? "bg-white shadow-sm text-blue-600" : "text-gray-400"}`}
                     >
                         <Play size={20} className="rotate-90" />

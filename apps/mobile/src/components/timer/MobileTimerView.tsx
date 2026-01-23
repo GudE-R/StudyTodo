@@ -54,8 +54,11 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
     }, [mode, status, focusDuration, breakDuration, countdownDuration]);
 
     useEffect(() => {
-        resetTimer();
-    }, [resetTimer]);
+        // Skip reset if switching to stopwatch (handled manually)
+        if (mode !== "stopwatch") {
+            resetTimer();
+        }
+    }, [resetTimer, mode]);
 
     // Timer Logic
     useEffect(() => {
@@ -153,13 +156,31 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                 </TouchableOpacity>
 
                 <View style={styles.modeTabs}>
-                    <TouchableOpacity onPress={() => { setMode("pomodoro"); setStatus("focus"); }} style={[styles.tab, mode === "pomodoro" && styles.activeTab]}>
+                    <TouchableOpacity onPress={() => { setMode("pomodoro"); setStatus("focus"); setIsRunning(false); }} style={[styles.tab, mode === "pomodoro" && styles.activeTab]}>
                         <Timer size={20} color={mode === "pomodoro" ? "#2563eb" : "#999"} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setMode("countdown")} style={[styles.tab, mode === "countdown" && styles.activeTab]}>
+                    <TouchableOpacity onPress={() => { setMode("countdown"); setIsRunning(false); }} style={[styles.tab, mode === "countdown" && styles.activeTab]}>
                         <Watch size={20} color={mode === "countdown" ? "#2563eb" : "#999"} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setMode("stopwatch")} style={[styles.tab, mode === "stopwatch" && styles.activeTab]}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (mode !== "stopwatch") {
+                                let elapsed = 0;
+                                if (mode === "pomodoro" && status === "focus") {
+                                    elapsed = focusDuration * 60 - timeLeft;
+                                } else if (mode === "countdown") {
+                                    elapsed = countdownDuration * 60 - timeLeft;
+                                } else {
+                                    elapsed = 0;
+                                }
+
+                                setStopwatchTime(Math.max(0, elapsed));
+                                setMode("stopwatch");
+                                // Keep running state
+                            }
+                        }}
+                        style={[styles.tab, mode === "stopwatch" && styles.activeTab]}
+                    >
                         <Play size={20} color={mode === "stopwatch" ? "#2563eb" : "#999"} style={{ transform: [{ rotate: '90deg' }] }} />
                     </TouchableOpacity>
                 </View>
