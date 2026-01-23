@@ -225,6 +225,7 @@ export function TodoDetailModal({
                     <div className="flex items-center space-x-2">
                         <Tag size={18} className="text-gray-400" />
                         <select
+                            data-testid="category-select"
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
                             className="flex-1 bg-gray-50 dark:bg-gray-800 text-sm p-2 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-400"
@@ -246,6 +247,7 @@ export function TodoDetailModal({
                             )}
                         </div>
                         <textarea
+                            data-testid="content-textarea"
                             placeholder={t("contentPlaceholder")}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
@@ -282,6 +284,7 @@ export function TodoDetailModal({
                         <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
                             <Repeat size={18} className="text-green-500" />
                             <select
+                                data-testid="srs-select"
                                 value={srsInterval}
                                 onChange={(e) => setSrsInterval(e.target.value)}
                                 className="bg-transparent text-sm w-full border-none outline-none"
