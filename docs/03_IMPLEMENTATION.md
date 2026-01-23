@@ -94,6 +94,10 @@
     - Web版とMobile版で重複していた `TodoDetailModal` のテキスト解析ロジック (`parseContent`) を共通化。
     - `packages/shared/src/domain/todo.ts` に `parseTodoContent` 関数を実装し、単体テストを追加。
     - 両アプリからこの共通関数を呼び出すように変更し、保守性と堅牢性を向上。
+- **テストカバレッジの拡充**:
+    - **Web**: `TodoDetailModal` (コンポーネント), `offlineQueue` (同期), `export` (バックアップ) のテストを追加。
+    - **Mobile**: `categoryUtils` (ロジック) のテストを追加。
+    - **Shared**: `statistics` (ストリーク計算) のテストを追加。
 
 ### [Category Tree View] - 2026-01-22
 #### 追加/変更 (Mobile)
