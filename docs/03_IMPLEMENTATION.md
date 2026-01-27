@@ -88,6 +88,13 @@
 
 これまでの主要な変更履歴です。
 
+### [Marketing Materials] - 2026-01-27
+#### 追加 (Doc)
+- **マーケティング資料の作成 (`docs/07_MARKETING.md`)**:
+    - アプリのキャッチコピー（日/英）、サブタイトル、ASOキーワードを策定。
+    - "Record, Measure, Plan - All in one" をメインメッセージとして定義。
+    - `welcome.subtitle` (ja/en) を新コピーに更新。
+
 ### [Project Renaming] - 2026-01-27
 #### 変更 (All)
 - **プロジェクト名の変更 (PomArc -> StudyTodo)**:

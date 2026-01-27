@@ -684,3 +684,9 @@ Web版・Mobile版のプロジェクト名、パッケージ名、設定ファ�
 importパスの修正とnpm installによる依存関係解決を実施。
 DB名も StudyTodoDB に変更。
 
+Marketing Materials:
+docs/07_MARKETING.md を作成。
+「記録、計測、計画これ一つ」をキャッチコピーに採用。
+ASO用キーワードと日/英のバリエーションを整理。
+
+
