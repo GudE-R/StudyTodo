@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Todo } from '@pomarc/shared';
+import { Todo } from '@studytodo/shared';
 import { isSameDay, format } from 'date-fns';
 import { Check, Clock, Play } from 'lucide-react-native';
 import { useThemeColors } from '../../hooks/useThemeColors';

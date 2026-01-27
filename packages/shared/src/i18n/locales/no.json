@@ -79,7 +79,7 @@
         "welcomeBack": "Velkommen tilbake",
         "createAccount": "Opprett konto",
         "signInDescription": "Synkroniser dataene dine og fortsett læringen",
-        "signUpDescription": "Bli med i PomArc for å sikkerhetskopiere dataene dine",
+        "signUpDescription": "Bli med i StudyTodo for å sikkerhetskopiere dataene dine",
         "email": "E-postadresse",
         "password": "Passord",
         "loginButton": "Logg inn",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Kategorier",

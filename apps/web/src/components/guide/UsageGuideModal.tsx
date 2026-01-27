@@ -12,7 +12,7 @@ interface UsageGuideModalProps {
 /**
  * 使用ガイドモーダルコンポーネント
  * 
- * PomArcの主要機能の使い方を説明します。
+ * StudyTodoの主要機能の使い方を説明します。
  */
 export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
     const t = useTranslations("guide");

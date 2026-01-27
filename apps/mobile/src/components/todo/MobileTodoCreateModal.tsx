@@ -4,7 +4,7 @@ import * as Crypto from 'expo-crypto';
 import { Modal, View, Text, TextInput, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { X, Calendar as CalendarIcon, Clock } from 'lucide-react-native';
-import { Todo } from '@pomarc/shared';
+import { Todo } from '@studytodo/shared';
 import { format } from 'date-fns';
 
 interface MobileTodoCreateModalProps {

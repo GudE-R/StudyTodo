@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
-import { Todo, Session } from '@pomarc/shared';
+import { Todo, Session } from '@studytodo/shared';
 import { useThemeColors } from '../../hooks/useThemeColors';
 
 interface CalendarWidgetProps {

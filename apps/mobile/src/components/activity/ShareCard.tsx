@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Dimensions, useColorScheme } from 'react-native';
 import { Svg, Rect, Path, Circle } from 'react-native-svg';
 import { format, subDays, eachDayOfInterval, isSameDay } from 'date-fns';
-import { Session, Todo, Category } from '@pomarc/shared';
+import { Session, Todo, Category } from "@studytodo/shared";
 import { Flame, Trophy, Clock, CheckCircle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../providers/ThemeProvider';
@@ -25,7 +25,7 @@ export const ShareCard = ({
     todos,
     categories,
     streak,
-    userName = "PomArc User",
+    userName = "StudyTodo User",
     totalDuration,
     completedCount
 }: ShareCardProps) => {
@@ -117,7 +117,7 @@ export const ShareCard = ({
                     <View style={styles.logoBadge}>
                         <Text style={styles.logoText}>P</Text>
                     </View>
-                    <Text style={[styles.appName, { color: colors.text }]}>PomArc</Text>
+                    <Text style={[styles.appName, { color: colors.text }]}>StudyTodo</Text>
                 </View>
                 <Text style={[styles.date, { color: colors.textSecondary }]}>{format(today, "yyyy.MM.dd")}</Text>
             </View>
@@ -251,7 +251,7 @@ export const ShareCard = ({
                     </View>
                     <View>
                         <Text style={[styles.footerUserName, { color: colors.text }]}>{userName}</Text>
-                        <Text style={[styles.footerUrl, { color: colors.textMuted }]}>pomarc.app</Text>
+                        <Text style={[styles.footerUrl, { color: colors.textMuted }]}>studytodo.app</Text>
                     </View>
                 </View>
                 <View>

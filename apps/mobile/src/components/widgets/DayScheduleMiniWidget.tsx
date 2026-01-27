@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-import { Todo, getTodoScheduleRange } from "@pomarc/shared";
+import { Todo, getTodoScheduleRange } from "@studytodo/shared";
 
 interface DayScheduleMiniWidgetProps {
     todos: Todo[];

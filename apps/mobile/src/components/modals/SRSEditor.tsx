@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { Repeat, Plus, Trash2, Calendar, TrendingUp } from 'lucide-react-native';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
-import { SRSProfile } from '@pomarc/shared';
+import { SRSProfile } from '@studytodo/shared';
 import { generateId } from '../../lib/utils';
 import { useTheme } from '../../providers/ThemeProvider';
 

@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@pomarc/shared'],
+  transpilePackages: ['@studytodo/shared'],
 };
 
 export default withNextIntl(nextConfig);

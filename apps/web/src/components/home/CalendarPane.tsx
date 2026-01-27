@@ -6,7 +6,7 @@ import { useLocale, useTranslations, useFormatter } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Session, Todo, Category } from "@pomarc/shared";
+import { Session, Todo, Category } from "@studytodo/shared";
 
 interface CalendarPaneProps {
     selectedDate?: Date;

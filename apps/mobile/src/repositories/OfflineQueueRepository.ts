@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-import { SyncQueueItem, SyncQueueInterface, SyncOperationType } from '@pomarc/shared';
+import { SyncQueueItem, SyncQueueInterface, SyncOperationType } from '@studytodo/shared';
 import * as Crypto from 'expo-crypto';
 
 /**

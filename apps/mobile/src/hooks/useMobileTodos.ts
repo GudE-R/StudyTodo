@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 
-import { Todo } from "@pomarc/shared";
+import { Todo } from "@studytodo/shared";
 import { addDays } from "date-fns";
 import { generateId } from "../lib/utils";
 import { useRepository } from "../providers/RepositoryProvider";

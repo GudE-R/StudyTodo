@@ -25,7 +25,7 @@ import { WelcomeScreen } from "@/components/onboarding/WelcomeScreen";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
-import { Todo, Feedback } from "@pomarc/shared";
+import { Todo, Feedback } from "@studytodo/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
 import { useSync } from "@/hooks/useSync";
@@ -287,7 +287,7 @@ export default function Home() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
         <LoadingSpinner size={40} />
-        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading PomArc...</p>
+        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading StudyTodo...</p>
       </div>
     );
   }

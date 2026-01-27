@@ -79,7 +79,7 @@
         "welcomeBack": "다시 오신 것을 환영합니다",
         "createAccount": "계정 만들기",
         "signInDescription": "데이터를 동기화하고 학습을 계속하세요",
-        "signUpDescription": "PomArc에 가입하고 학습 데이터를 백업하세요",
+        "signUpDescription": "StudyTodo에 가입하고 학습 데이터를 백업하세요",
         "email": "이메일 주소",
         "password": "비밀번호",
         "loginButton": "로그인",
@@ -154,7 +154,7 @@
         "catReview": "복습 및 공유",
         "catOthers": "기타 기능",
         "feedbackTitle": "피드백 요청",
-        "feedbackDesc": "PomArc는 사용자 여러분의 의견과 함께 진화합니다. 버그 보고나 기능 요청은 홈 화면 우측 상단의 '피드백'을 통해 보내주세요."
+        "feedbackDesc": "StudyTodo는 사용자 여러분의 의견과 함께 진화합니다. 버그 보고나 기능 요청은 홈 화면 우측 상단의 '피드백'을 통해 보내주세요."
     },
     "category": {
         "treeTitle": "카테고리 구성",

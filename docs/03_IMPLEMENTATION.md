@@ -1,11 +1,11 @@
-# PomArc 実装の記録 (Implementation)
+# StudyTodo 実装の記録 (Implementation)
 
 現在の実装状況と、これまでの変更履歴を記録するドキュメントです。
 
 ## 1. 現在の実装状況 (Specs)
 
 ### プロジェクト概要
-**PomArc** は、タスク管理、スケジュール管理、学習記録、そしてポモドーロタイマーを統合したWebアプリケーションです。
+**StudyTodo** は、タスク管理、スケジュール管理、学習記録、そしてポモドーロタイマーを統合したWebアプリケーションです。
 
 ### 実装済み機能
 
@@ -87,6 +87,14 @@
 ## 2. 変更履歴 (History)
 
 これまでの主要な変更履歴です。
+
+### [Project Renaming] - 2026-01-27
+#### 変更 (All)
+- **プロジェクト名の変更 (PomArc -> StudyTodo)**:
+    - ユーザー要望によりプロジェクト名、パッケージスコープ、DB名、設定ファイルを一括変更。
+    - `@pomarc/shared` -> `@studytodo/shared`
+    - `apps/web`, `apps/mobile` の全インポートパスを置換。
+    - `supabase/config.toml` の `project_id` を更新。
 
 ### [Android Emulator Setup] - 2026-01-27
 #### 追加/変更 (Doc & Env)
@@ -258,7 +266,7 @@
 ### [Activity Analytics Fix] - 2026-01-11
   - Fixed type error in ActivityModal.tsx (Tooltip formatter value type)
 ### [Usage Guide Update] - 2026-01-10
-  - Removed "PomArc Concept" from the introduction
+  - Removed "StudyTodo Concept" from the introduction
   - Added "Feedback Request" to encourage user engagement
   - Updated icons and translations for the guide
 ### [Activity Analytics] - 2026-01-10

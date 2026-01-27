@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TodoDetailModal } from "../TodoDetailModal";
-import { Todo, Category, SRSProfile } from "@pomarc/shared";
+import { Todo, Category, SRSProfile } from "@studytodo/shared";
 
 // Mocks
 vi.mock("next-intl", () => ({

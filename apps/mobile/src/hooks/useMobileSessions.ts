@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from "react";
-import { Session } from "@pomarc/shared";
+import { Session } from "@studytodo/shared";
 import { useRepository } from "../providers/RepositoryProvider";
 
 export function useMobileSessions() {

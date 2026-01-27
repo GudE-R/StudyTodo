@@ -16,7 +16,7 @@ import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, Calen
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
-import { Todo, Category, SRSProfile, parseTodoContent } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, parseTodoContent } from '@studytodo/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileSRS } from '../../hooks/useMobileSRS';

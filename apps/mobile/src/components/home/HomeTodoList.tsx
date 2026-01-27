@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Todo, Category } from '@pomarc/shared';
+import { Todo, Category } from '@studytodo/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { isSameDay } from 'date-fns';

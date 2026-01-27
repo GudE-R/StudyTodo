@@ -5,7 +5,7 @@ import { X, Send, Lightbulb, AlertCircle, HelpCircle, MessageSquare } from 'luci
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useRepository } from '../../providers/RepositoryProvider';
 import { useAuth } from '../../providers/AuthProvider';
-import { generateId, Feedback } from '@pomarc/shared';
+import { generateId, Feedback } from '@studytodo/shared';
 
 interface FeedbackModalProps {
     visible: boolean;

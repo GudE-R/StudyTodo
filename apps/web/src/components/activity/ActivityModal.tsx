@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, eachDayOfInterval, eachMonthOfInterval, getMonth, getYear } from "date-fns";
 import { ja } from "date-fns/locale";
 import { X, BarChart2, History, Trash2, Filter, Share2, Download, Copy, Twitter, Facebook, Instagram, Hash, ChevronDown, ChevronRight, Layers } from "lucide-react";
-import { Session, Todo, Category } from "@pomarc/shared";
+import { Session, Todo, Category } from "@studytodo/shared";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 import { ShareCard } from "./ShareCard";
@@ -376,7 +376,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
         // 1. Generate Image
         try {
             if (platform === 'instagram' || platform === 'download') {
-                await downloadImage(shareCardRef.current, `pomarc-stats-${format(new Date(), 'yyyyMMdd')}.png`);
+                await downloadImage(shareCardRef.current, `studytodo-stats-${format(new Date(), 'yyyyMMdd')}.png`);
                 if (platform === 'instagram') {
                     window.open('https://www.instagram.com/', '_blank');
                     applyAdFreeReward();
@@ -392,7 +392,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
 
                 // 2. Open URL
                 let url = '';
-                const text = `I've focused for ${Math.floor(cardDuration / 60)} mins on PomArc! streak: ${streak.currentStreak} days. #PomArc #Pomodoro`;
+                const text = `I've focused for ${Math.floor(cardDuration / 60)} mins on StudyTodo! streak: ${streak.currentStreak} days. #StudyTodo #Pomodoro`;
                 const encodedText = encodeURIComponent(text);
 
                 switch (platform) {
@@ -400,7 +400,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                         url = `https://twitter.com/intent/tweet?text=${encodedText}`;
                         break;
                     case 'facebook':
-                        url = `https://www.facebook.com/sharer/sharer.php?u=https://pomarc.app`; // FB only allows URL share
+                        url = `https://www.facebook.com/sharer/sharer.php?u=https://studytodo.app`; // FB only allows URL share
                         break;
                     case 'reddit':
                         url = `https://www.reddit.com/submit?title=${encodedText}`;
@@ -790,7 +790,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                                         targetCategory={targetShareCategory}
                                         totalDuration={cardDuration}
                                         completedCount={cardCompleted}
-                                        userName="PomArc Member"
+                                        userName="StudyTodo Member"
                                     />
                                 </div>
                             </div>

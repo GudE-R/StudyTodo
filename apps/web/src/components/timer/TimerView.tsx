@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle } from "lucide-react";
-import { Todo } from "@pomarc/shared";
+import { Todo } from "@studytodo/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNotification } from "@/hooks/useNotification";
 import { InterstitialAd } from "@/components/ads/InterstitialAd";

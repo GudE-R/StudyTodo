@@ -1,4 +1,4 @@
-import { Category } from '@pomarc/shared';
+import { Category } from '@studytodo/shared';
 
 /**
  * フラットなカテゴリ配列をツリー構造に変換します。

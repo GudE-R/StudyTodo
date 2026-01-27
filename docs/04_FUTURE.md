@@ -1,4 +1,4 @@
-# PomArc 開発計画 (Future)
+# StudyTodo 開発計画 (Future)
 
 これからの開発計画、ロードマップ、およびアイデア（バックログ）を管理するドキュメントです。
 
@@ -117,9 +117,9 @@ Auth Google Github
 
 ### 本番環境: 新規プロジェクト / マイグレーション
 
-**新規セットアップ**: [supabase_schema.sql](file:///home/tatsuya/PomArc/docs/supabase_schema.sql) を実行
+**新規セットアップ**: [supabase_schema.sql](file:///home/tatsuya/StudyTodo/docs/supabase_schema.sql) を実行
 
-**既存DBの更新**: [migration_v2.sql](file:///home/tatsuya/PomArc/docs/migration_v2.sql) を実行
+**既存DBの更新**: [migration_v2.sql](file:///home/tatsuya/StudyTodo/docs/migration_v2.sql) を実行
 
 
 

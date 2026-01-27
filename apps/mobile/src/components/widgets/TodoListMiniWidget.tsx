@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
-import { Todo } from "@pomarc/shared";
+import { Todo } from "@studytodo/shared";
 import { useMobileTodos } from "../../hooks/useMobileTodos";
 
 interface TodoListMiniWidgetProps {

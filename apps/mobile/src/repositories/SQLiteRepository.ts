@@ -1,4 +1,4 @@
-import { StorageInterface, Todo, Category, SRSProfile, Session } from "@pomarc/shared";
+import { StorageInterface, Todo, Category, SRSProfile, Session } from "@studytodo/shared";
 import * as SQLite from 'expo-sqlite';
 
 /**

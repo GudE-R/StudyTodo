@@ -79,7 +79,7 @@
         "welcomeBack": "С возвращением",
         "createAccount": "Создать аккаунт",
         "signInDescription": "Синхронизируйте данные и продолжайте обучение",
-        "signUpDescription": "Присоединяйтесь к PomArc и сохраняйте прогресс",
+        "signUpDescription": "Присоединяйтесь к StudyTodo и сохраняйте прогресс",
         "email": "Эл. почта",
         "password": "Пароль",
         "loginButton": "Войти",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Структура категорий",

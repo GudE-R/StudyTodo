@@ -5,7 +5,7 @@ import { format, addDays, subDays, isSameDay } from "date-fns";
 import { useLocale, useTranslations } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
 
-import { Todo, Category, getTodoScheduleRange } from "@pomarc/shared";
+import { Todo, Category, getTodoScheduleRange } from "@studytodo/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 
 interface DayScheduleProps {

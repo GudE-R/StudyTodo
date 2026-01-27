@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useRepository } from '../providers/RepositoryProvider';
-import { mapper, allowedFieldsMap, compareDates, Todo, Category, SRSProfile, Session } from '@pomarc/shared';
+import { mapper, allowedFieldsMap, compareDates, Todo, Category, SRSProfile, Session } from '@studytodo/shared';
 import { SQLiteRepository } from '../repositories/SQLiteRepository';
 import { offlineQueue } from '../repositories/OfflineQueueRepository';
 import * as Network from 'expo-network';
@@ -23,7 +23,7 @@ async function processOfflineQueue(userId: string): Promise<void> {
 
     console.log(`[MobileOfflineQueue] Processing ${items.length} queued items...`);
 
-    // allowedFieldsMap は @pomarc/shared からインポート
+    // allowedFieldsMap は @studytodo/shared からインポート
 
     for (const item of items) {
         try {

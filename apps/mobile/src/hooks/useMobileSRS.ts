@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { SRSProfile, Todo } from '@pomarc/shared';
+import { SRSProfile, Todo } from '@studytodo/shared';
 import { useRepository } from '../providers/RepositoryProvider';
 import { addDays } from 'date-fns';
 

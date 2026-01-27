@@ -79,7 +79,7 @@
         "welcomeBack": "Welkom terug",
         "createAccount": "Account aanmaken",
         "signInDescription": "Synchroniseer gegevens en ga door met leren",
-        "signUpDescription": "Word lid van PomArc om je gegevens te back-uppen",
+        "signUpDescription": "Word lid van StudyTodo om je gegevens te back-uppen",
         "email": "E-mailadres",
         "password": "Wachtwoord",
         "loginButton": "Inloggen",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Categoriestructuur",

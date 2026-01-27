@@ -1,5 +1,5 @@
 import Dexie, { Table, Transaction } from 'dexie';
-import { Todo, Category, SRSProfile, Session, Feedback, mapper, allowedFieldsMap, supabaseTableMap, SyncOperationType } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, Session, Feedback, mapper, allowedFieldsMap, supabaseTableMap, SyncOperationType } from '@studytodo/shared';
 import { generateId } from '@/lib/utils';
 
 /**
@@ -14,7 +14,7 @@ interface ExtendedTransaction extends Transaction {
  */
 type TableName = 'todos' | 'categories' | 'srsProfiles' | 'sessions' | 'feedbacks';
 
-export class PomArcDatabase extends Dexie {
+export class StudyTodoDatabase extends Dexie {
     todos!: Table<Todo>;
     categories!: Table<Omit<Category, 'children'>>;
     srsProfiles!: Table<SRSProfile>;
@@ -28,7 +28,7 @@ export class PomArcDatabase extends Dexie {
     }
 
     constructor() {
-        super('PomArcDB_v2');
+        super('StudyTodoDB_v1');
 
         this.version(4).stores({
             todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt, srsGroupId',
@@ -170,4 +170,4 @@ export class PomArcDatabase extends Dexie {
     }
 }
 
-export const db = new PomArcDatabase();
+export const db = new StudyTodoDatabase();

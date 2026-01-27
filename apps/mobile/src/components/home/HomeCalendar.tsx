@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
-import { Category } from '@pomarc/shared';
+import { Category } from '@studytodo/shared';
 
 interface HomeCalendarProps {
     currentDate?: Date;

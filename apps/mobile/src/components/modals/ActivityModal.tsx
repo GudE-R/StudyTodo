@@ -6,14 +6,14 @@ import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, 
 import { ja } from 'date-fns/locale';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
-import { Session, Todo, Category } from '@pomarc/shared';
+import { Session, Todo, Category } from '@studytodo/shared';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useTheme } from '../../providers/ThemeProvider';
 import { captureRef } from 'react-native-view-shot';
 import { shareAsync } from 'expo-sharing';
-import { calculateStreak } from '@pomarc/shared';
+import { calculateStreak } from '@studytodo/shared';
 import { ShareCard } from '../activity/ShareCard';
 
 interface ActivityModalProps {

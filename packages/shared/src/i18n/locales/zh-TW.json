@@ -79,7 +79,7 @@
         "welcomeBack": "歡迎回來",
         "createAccount": "建立帳號",
         "signInDescription": "同步數據，繼續您的學習之旅",
-        "signUpDescription": "加入 PomArc，備份您的學習數據",
+        "signUpDescription": "加入 StudyTodo，備份您的學習數據",
         "email": "電子郵件地址",
         "password": "密碼",
         "loginButton": "登入",
@@ -154,7 +154,7 @@
         "catReview": "複習與分享",
         "catOthers": "其他功能",
         "feedbackTitle": "回饋請求",
-        "feedbackDesc": "PomArc 隨使用者聲音共同進化。歡迎透過主螢幕右上角的「回饋」向我們發送錯誤報告或功能請求。"
+        "feedbackDesc": "StudyTodo 隨使用者聲音共同進化。歡迎透過主螢幕右上角的「回饋」向我們發送錯誤報告或功能請求。"
     },
     "category": {
         "treeTitle": "分類結構",

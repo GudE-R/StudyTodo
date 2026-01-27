@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { ChevronRight, ChevronDown, Folder, File } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { Category } from '@pomarc/shared';
+import { Category } from '@studytodo/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { buildCategoryTree } from '../../lib/categoryUtils';
 import { CategoryIcon } from './CategoryIcon';

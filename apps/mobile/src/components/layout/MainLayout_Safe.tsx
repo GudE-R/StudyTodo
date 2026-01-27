@@ -23,7 +23,7 @@ import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useThemeColors } from '../../providers/ThemeProvider';
-import { Todo, generateId } from '@pomarc/shared'; // Utils
+import { Todo, generateId } from '@studytodo/shared'; // Utils
 
 export const MainLayout = () => {
     // Basic Layout without Reanimated

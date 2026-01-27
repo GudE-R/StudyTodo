@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Todo } from "@pomarc/shared";
+import { Todo } from "@studytodo/shared";
 
 interface CalendarMiniWidgetProps {
     isExpanded: boolean;

@@ -6,7 +6,7 @@ import { format, addDays } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { Todo, Category, SRSProfile, parseTodoContent } from "@pomarc/shared";
+import { Todo, Category, SRSProfile, parseTodoContent } from "@studytodo/shared";
 
 interface TodoDetailModalProps {
     isOpen: boolean;

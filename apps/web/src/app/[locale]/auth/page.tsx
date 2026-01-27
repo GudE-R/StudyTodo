@@ -118,7 +118,7 @@ export default function AuthPage() {
                         <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
                             <Timer className="w-7 h-7 text-white" />
                         </div>
-                        <span className="text-2xl font-bold text-white tracking-tight">PomArc</span>
+                        <span className="text-2xl font-bold text-white tracking-tight">StudyTodo</span>
                     </div>
 
                     <h1
@@ -152,7 +152,7 @@ export default function AuthPage() {
                 </div>
 
                 <p className="text-blue-200 text-sm relative z-10 animate-in fade-in duration-1000" style={{ animationDelay: '700ms', animationFillMode: 'backwards' }}>
-                    © 2026 PomArc. All rights reserved.
+                    © 2026 StudyTodo. All rights reserved.
                 </p>
             </div>
 
@@ -173,7 +173,7 @@ export default function AuthPage() {
                         <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
                             <Timer className="w-6 h-6 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">PomArc</span>
+                        <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">StudyTodo</span>
                     </div>
 
                     {/* Header */}

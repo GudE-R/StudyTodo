@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useMemo } from "react";
-import { StorageInterface } from "@pomarc/shared";
+import { StorageInterface } from "@studytodo/shared";
 import { SQLiteRepository } from "../repositories/SQLiteRepository";
 
 const RepositoryContext = createContext<StorageInterface | null>(null);

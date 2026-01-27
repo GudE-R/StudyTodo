@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, useWindowDimensions } from 'react-native';
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle, ChevronDown } from 'lucide-react-native';
 import { Svg, Circle } from 'react-native-svg';
-import { Todo } from '@pomarc/shared';
+import { Todo } from '@studytodo/shared';
 
 interface MobileTimerViewProps {
     todo: Todo;

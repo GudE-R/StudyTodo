@@ -45,7 +45,7 @@ export function WelcomeScreen({ onGetStarted, onLogin }: WelcomeScreenProps) {
                         <Timer className="w-10 h-10 text-white" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-                        PomArc
+                        StudyTodo
                     </h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400 max-w-md mx-auto">
                         {t("subtitle")}

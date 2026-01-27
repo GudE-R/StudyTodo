@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
-import { Todo, Category, SRSProfile } from "@pomarc/shared";
+import { Todo, Category, SRSProfile } from "@studytodo/shared";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { WeekdayPicker } from "@/components/ui/WeekdayPicker";

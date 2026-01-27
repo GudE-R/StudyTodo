@@ -4,14 +4,14 @@
  */
 
 import Dexie, { Table } from 'dexie';
-import { SyncQueueItem, SyncQueueInterface, SyncOperationType, allowedFieldsMap, supabaseTableMap } from '@pomarc/shared';
+import { SyncQueueItem, SyncQueueInterface, SyncOperationType, allowedFieldsMap, supabaseTableMap } from '@studytodo/shared';
 import { generateId } from '@/lib/utils';
 
 class OfflineQueueDB extends Dexie {
     syncQueue!: Table<SyncQueueItem>;
 
     constructor() {
-        super('PomArcOfflineQueue');
+        super('StudyTodoOfflineQueue');
         this.version(1).stores({
             syncQueue: 'id, table, createdAt'
         });
@@ -85,7 +85,7 @@ export async function processOfflineQueue(
     const items = await offlineQueue.getAll();
     if (items.length === 0) return;
 
-    // allowedFieldsMap と supabaseTableMap は @pomarc/shared からインポート
+    // allowedFieldsMap と supabaseTableMap は @studytodo/shared からインポート
 
     for (const item of items) {
         try {

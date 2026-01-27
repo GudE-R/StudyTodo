@@ -176,7 +176,7 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
 
                     {/* Version Info (Optional) */}
                     <div className="text-center text-xs text-gray-400 pt-4">
-                        PomArc v1.0.0
+                        StudyTodo v1.0.0
                     </div>
                 </div>
             </div>

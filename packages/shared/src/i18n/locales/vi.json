@@ -79,7 +79,7 @@
         "welcomeBack": "Chào mừng trở lại",
         "createAccount": "Tạo tài khoản",
         "signInDescription": "Đồng bộ dữ liệu để tiếp tục học tập",
-        "signUpDescription": "Tham gia PomArc để sao lưu dữ liệu của bạn",
+        "signUpDescription": "Tham gia StudyTodo để sao lưu dữ liệu của bạn",
         "email": "Email",
         "password": "Mật khẩu",
         "loginButton": "Đăng nhập",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Cấu trúc danh mục",

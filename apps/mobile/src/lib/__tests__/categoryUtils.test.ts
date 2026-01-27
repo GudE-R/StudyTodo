@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildCategoryTree } from '../categoryUtils';
-import { Category } from '@pomarc/shared';
+import { Category } from '@studytodo/shared';
 
 const createCategory = (id: string, parentId?: string, name: string = "test"): Category => ({
     id,

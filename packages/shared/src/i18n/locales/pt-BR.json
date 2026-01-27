@@ -79,7 +79,7 @@
         "welcomeBack": "Bem-vindo de volta",
         "createAccount": "Criar Conta",
         "signInDescription": "Sincronize seus dados e continue seus estudos",
-        "signUpDescription": "Junte-se ao PomArc e faça backup dos seus dados",
+        "signUpDescription": "Junte-se ao StudyTodo e faça backup dos seus dados",
         "email": "E-mail",
         "password": "Senha",
         "loginButton": "Entrar",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Estrutura",

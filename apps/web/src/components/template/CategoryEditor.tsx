@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File, Palette } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Category } from "@pomarc/shared";
+import { Category } from "@studytodo/shared";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { generateId, buildCategoryTree } from "@/lib/utils";

@@ -83,7 +83,7 @@ export default function PrivacyPage() {
                         </section>
 
                         <section className="mb-12 border-t border-gray-100 dark:border-gray-800 pt-8 text-center text-sm text-gray-500">
-                            <p>PomArcは個人開発によるプロジェクトです。法人ではありません。</p>
+                            <p>StudyTodoは個人開発によるプロジェクトです。法人ではありません。</p>
                         </section>
                     </div>
                 </div>

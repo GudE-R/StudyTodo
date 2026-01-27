@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { mapper, allowedFieldsMap, compareDates, Session } from "@pomarc/shared";
+import { mapper, allowedFieldsMap, compareDates, Session } from "@studytodo/shared";
 import { useRepository } from "../providers/RepositoryProvider";
 
 import { useMobileRealtimeSync } from "./useMobileRealtimeSync";

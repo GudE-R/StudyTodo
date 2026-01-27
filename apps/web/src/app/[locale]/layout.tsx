@@ -22,84 +22,84 @@ const geistMono = Geist_Mono({
 // 多言語メタデータ定義
 const seoData: Record<string, { title: string; description: string }> = {
   ja: {
-    title: "PomArc - ポモドーロタイマー＆学習管理アプリ",
+    title: "StudyTodo - ポモドーロタイマー＆学習管理アプリ",
     description: "効率的な学習をサポートするポモドーロタイマーとSRS（間隔反復システム）アプリ。タスク管理、スケジュール管理、学習記録を一元化。",
   },
   en: {
-    title: "PomArc - Pomodoro Timer & Study Tracker",
+    title: "StudyTodo - Pomodoro Timer & Study Tracker",
     description: "Boost your productivity with Pomodoro timer and SRS (Spaced Repetition System). Manage tasks, schedules, and track your learning progress.",
   },
   de: {
-    title: "PomArc - Pomodoro-Timer & Lernmanagement",
+    title: "StudyTodo - Pomodoro-Timer & Lernmanagement",
     description: "Steigern Sie Ihre Produktivität mit Pomodoro-Timer und SRS. Aufgaben-, Zeitplan- und Lernfortschrittsverwaltung.",
   },
   fr: {
-    title: "PomArc - Minuteur Pomodoro & Suivi d'Études",
+    title: "StudyTodo - Minuteur Pomodoro & Suivi d'Études",
     description: "Boostez votre productivité avec le minuteur Pomodoro et le système SRS. Gestion des tâches, planification et suivi de progression.",
   },
   es: {
-    title: "PomArc - Temporizador Pomodoro & Gestión de Estudios",
+    title: "StudyTodo - Temporizador Pomodoro & Gestión de Estudios",
     description: "Mejora tu productividad con el temporizador Pomodoro y SRS. Gestión de tareas, horarios y seguimiento de aprendizaje.",
   },
   ko: {
-    title: "PomArc - 포모도로 타이머 & 학습 관리",
+    title: "StudyTodo - 포모도로 타이머 & 학습 관리",
     description: "포모도로 타이머와 SRS로 생산성을 높이세요. 작업 관리, 일정 관리, 학습 진도 추적을 한 곳에서.",
   },
   "zh-CN": {
-    title: "PomArc - 番茄钟计时器 & 学习管理",
+    title: "StudyTodo - 番茄钟计时器 & 学习管理",
     description: "使用番茄钟和SRS间隔重复系统提高学习效率。任务管理、日程安排、学习进度追踪一站式解决。",
   },
   "zh-TW": {
-    title: "PomArc - 番茄鐘計時器 & 學習管理",
+    title: "StudyTodo - 番茄鐘計時器 & 學習管理",
     description: "使用番茄鐘和SRS間隔重複系統提升學習效率。任務管理、行程規劃、學習進度追蹤。",
   },
   "pt-BR": {
-    title: "PomArc - Timer Pomodoro & Gerenciamento de Estudos",
+    title: "StudyTodo - Timer Pomodoro & Gerenciamento de Estudos",
     description: "Aumente sua produtividade com o timer Pomodoro e SRS. Gerencie tarefas, cronogramas e acompanhe seu progresso.",
   },
   it: {
-    title: "PomArc - Timer Pomodoro & Gestione Studio",
+    title: "StudyTodo - Timer Pomodoro & Gestione Studio",
     description: "Aumenta la tua produttività con il timer Pomodoro e SRS. Gestione attività, pianificazione e monitoraggio progressi.",
   },
   ru: {
-    title: "PomArc - Помодоро таймер и управление обучением",
+    title: "StudyTodo - Помодоро таймер и управление обучением",
     description: "Повысьте продуктивность с помощью таймера Помодоро и SRS. Управление задачами, расписанием и отслеживание прогресса.",
   },
   vi: {
-    title: "PomArc - Hẹn giờ Pomodoro & Quản lý học tập",
+    title: "StudyTodo - Hẹn giờ Pomodoro & Quản lý học tập",
     description: "Tăng năng suất với hẹn giờ Pomodoro và SRS. Quản lý công việc, lịch trình và theo dõi tiến độ học tập.",
   },
   id: {
-    title: "PomArc - Timer Pomodoro & Manajemen Belajar",
+    title: "StudyTodo - Timer Pomodoro & Manajemen Belajar",
     description: "Tingkatkan produktivitas dengan timer Pomodoro dan SRS. Kelola tugas, jadwal, dan lacak kemajuan belajar.",
   },
   tr: {
-    title: "PomArc - Pomodoro Zamanlayıcı & Çalışma Yönetimi",
+    title: "StudyTodo - Pomodoro Zamanlayıcı & Çalışma Yönetimi",
     description: "Pomodoro zamanlayıcı ve SRS ile verimliliğinizi artırın. Görev, program ve ilerleme takibi.",
   },
   nl: {
-    title: "PomArc - Pomodoro Timer & Studiebeheer",
+    title: "StudyTodo - Pomodoro Timer & Studiebeheer",
     description: "Verhoog je productiviteit met Pomodoro timer en SRS. Beheer taken, schema's en volg je voortgang.",
   },
   sv: {
-    title: "PomArc - Pomodoro-timer & Studiehantering",
+    title: "StudyTodo - Pomodoro-timer & Studiehantering",
     description: "Öka din produktivitet med Pomodoro-timer och SRS. Hantera uppgifter, scheman och spåra dina framsteg.",
   },
   no: {
-    title: "PomArc - Pomodoro-timer & Studieadministrasjon",
+    title: "StudyTodo - Pomodoro-timer & Studieadministrasjon",
     description: "Øk produktiviteten din med Pomodoro-timer og SRS. Administrer oppgaver, tidsplaner og spor fremgangen din.",
   },
   da: {
-    title: "PomArc - Pomodoro-timer & Studieadministration",
+    title: "StudyTodo - Pomodoro-timer & Studieadministration",
     description: "Øg din produktivitet med Pomodoro-timer og SRS. Administrer opgaver, tidsplaner og spor din fremgang.",
   },
   fi: {
-    title: "PomArc - Pomodoro-ajastin & Opiskelun hallinta",
+    title: "StudyTodo - Pomodoro-ajastin & Opiskelun hallinta",
     description: "Paranna tuottavuuttasi Pomodoro-ajastimella ja SRS:llä. Hallitse tehtäviä, aikatauluja ja seuraa edistymistäsi.",
   },
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pomarc.app';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://studytodo.app';
 
 // 動的メタデータ生成
 export async function generateMetadata(
@@ -126,7 +126,7 @@ export async function generateMetadata(
       title: seo.title,
       description: seo.description,
       url: `${baseUrl}/${locale}`,
-      siteName: "PomArc",
+      siteName: "StudyTodo",
       locale: locale.replace("-", "_"),
       type: "website",
       images: [
@@ -170,7 +170,7 @@ function generateJsonLd(locale: string) {
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "PomArc",
+    name: "StudyTodo",
     description: seo.description,
     url: `${baseUrl}/${locale}`,
     applicationCategory: "ProductivityApplication",
@@ -182,7 +182,7 @@ function generateJsonLd(locale: string) {
     },
     author: {
       "@type": "Organization",
-      name: "PomArc Team",
+      name: "StudyTodo Team",
     },
     inLanguage: locale,
   };

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Category } from "@pomarc/shared";
+import { Category } from "@studytodo/shared";
 import { useRepository } from "../providers/RepositoryProvider";
 
 export function useMobileCategories() {

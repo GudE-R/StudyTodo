@@ -79,7 +79,7 @@
         "welcomeBack": "Selamat Datang Kembali",
         "createAccount": "Buat Akun",
         "signInDescription": "Sinkronkan data untuk melanjutkan belajar",
-        "signUpDescription": "Bergabunglah dengan PomArc untuk mencadangkan data Anda",
+        "signUpDescription": "Bergabunglah dengan StudyTodo untuk mencadangkan data Anda",
         "email": "Alamat Email",
         "password": "Kata Sandi",
         "loginButton": "Masuk",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Struktur Kategori",

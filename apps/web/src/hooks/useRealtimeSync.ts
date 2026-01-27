@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { db } from '@/lib/db';
-import { mapper, compareDates } from '@pomarc/shared';
+import { mapper, compareDates } from '@studytodo/shared';
 
 export function useRealtimeSync(userId: string | undefined) {
     useEffect(() => {

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { Folder, File, ChevronRight, ChevronDown, Plus, Trash2 } from 'lucide-react-native';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
-import { Category } from '@pomarc/shared';
+import { Category } from '@studytodo/shared';
 import { generateId } from '../../lib/utils';
 import { useTheme } from '../../providers/ThemeProvider';
 import { buildCategoryTree } from '../../lib/categoryUtils';

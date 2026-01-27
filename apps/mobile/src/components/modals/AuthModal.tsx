@@ -65,7 +65,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
                             {isLoginMode
                                 ? "Sync your data and continue learning"
-                                : "Join PomArc to backup your data"}
+                                : "Join StudyTodo to backup your data"}
                         </Text>
 
                         {/* Email Input */}

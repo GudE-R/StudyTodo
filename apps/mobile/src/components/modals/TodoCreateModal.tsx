@@ -16,7 +16,7 @@ import { X, Tag, Repeat, Play, CheckCircle, Plus, Calendar, Clock, Hourglass, Ca
 import { format } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
-import { Todo, Category, SRSProfile, generateId } from '@pomarc/shared';
+import { Todo, Category, SRSProfile, generateId } from '@studytodo/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useMobileSessions } from '../../hooks/useMobileSessions';

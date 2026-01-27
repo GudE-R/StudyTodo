@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Todo, getTodoScheduleRange } from '@pomarc/shared';
+import { Todo, getTodoScheduleRange } from '@studytodo/shared';
 import { isSameDay } from 'date-fns';
 import { useThemeColors } from '../../hooks/useThemeColors';
 

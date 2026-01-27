@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { X, Send, MessageSquare, AlertCircle, Lightbulb, HelpCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Feedback } from "@pomarc/shared";
+import { Feedback } from "@studytodo/shared";
 import { generateId } from "@/lib/utils";
 
 interface FeedbackModalProps {

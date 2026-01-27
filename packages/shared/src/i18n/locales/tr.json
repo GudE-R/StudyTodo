@@ -79,7 +79,7 @@
         "welcomeBack": "Tekrar Hoş Geldiniz",
         "createAccount": "Hesap Oluştur",
         "signInDescription": "Verileri senkronize edin ve çalışmaya devam edin",
-        "signUpDescription": "PomArc'a katılın ve verilerinizi yedekleyin",
+        "signUpDescription": "StudyTodo'a katılın ve verilerinizi yedekleyin",
         "email": "E-posta",
         "password": "Şifre",
         "loginButton": "Giriş Yap",
@@ -154,7 +154,7 @@
         "catReview": "Review & Share",
         "catOthers": "Other Features",
         "feedbackTitle": "Request for Feedback",
-        "feedbackDesc": "PomArc evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
+        "feedbackDesc": "StudyTodo evolves with our users. Feel free to send us bug reports or feature requests via 'Feedback' at the top right of the Home screen."
     },
     "category": {
         "treeTitle": "Kategori Yapısı",

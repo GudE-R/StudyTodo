@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import { mapper } from "@pomarc/shared";
+import { mapper } from "@studytodo/shared";
 
 /**
  * Migration Utility

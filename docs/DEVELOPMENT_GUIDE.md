@@ -1,11 +1,11 @@
-# PomArc 開発ガイドライン
+# StudyTodo 開発ガイドライン
 
-このドキュメントは、PomArcの開発における共通ルールとベストプラクティスを定義します。
+このドキュメントは、StudyTodoの開発における共通ルールとベストプラクティスを定義します。
 
 ## 1. プロジェクト構造
 
 ```
-PomArc/
+StudyTodo/
 ├── apps/
 │   ├── web/        # Next.js (Dexie.js)
 │   └── mobile/     # Expo React Native (SQLite)
@@ -36,8 +36,8 @@ PomArc/
 
 1. `packages/shared/src/` に実装
 2. `packages/shared/src/index.ts` にエクスポートを追加
-3. `npm run build -w @pomarc/shared` でビルド
-4. 各アプリから `@pomarc/shared` としてインポート
+3. `npm run build -w @studytodo/shared` でビルド
+4. 各アプリから `@studytodo/shared` としてインポート
 
 ## 3. 日付/時間の扱い方
 
@@ -50,7 +50,7 @@ PomArc/
 ### 3.2 ユーティリティ関数
 
 ```typescript
-import { parseDate, toISOString, compareDates } from '@pomarc/shared';
+import { parseDate, toISOString, compareDates } from '@studytodo/shared';
 
 // パース（無効な値は undefined）
 const date = parseDate(todo.dueDate);
@@ -106,8 +106,8 @@ src/
 npm test
 
 # 個別実行
-npm test -w @pomarc/shared
-npm test -w @pomarc/web
+npm test -w @studytodo/shared
+npm test -w @studytodo/web
 npm test -w mobile
 ```
 
@@ -125,7 +125,7 @@ npm test -w mobile
 ### 共有コード変更時
 
 - [ ] `packages/shared` の変更は両プラットフォームでビルド確認した
-- [ ] `npm run build -w @pomarc/shared` が通る
+- [ ] `npm run build -w @studytodo/shared` が通る
 - [ ] 既存のテストがすべてパスする（`npm test`）
 - [ ] 新規ロジックに対するテストを追加した
 
@@ -138,7 +138,7 @@ npm test -w mobile
 
 - [ ] `Date` オブジェクトを直接保存していない（ISO文字列を使用）
 - [ ] 無効な日付値のエラーハンドリングがある
-- [ ] `@pomarc/shared` の日付ユーティリティを使用している
+- [ ] `@studytodo/shared` の日付ユーティリティを使用している
 
 ### 同期処理
 

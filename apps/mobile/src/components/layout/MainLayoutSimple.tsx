@@ -25,7 +25,7 @@ import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useThemeColors } from '../../providers/ThemeProvider';
-import { Todo, generateId } from '@pomarc/shared';
+import { Todo, generateId } from '@studytodo/shared';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {

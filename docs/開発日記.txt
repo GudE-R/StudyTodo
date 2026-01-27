@@ -676,3 +676,11 @@ Androidでは同等の機能として時計型（またはリスト型）の時�
     必ず `apps/mobile` に移動して実行する必要がある。基本だが忘れがち。
 
 これで実機を繋がなくても開発・テストができるようになった。バッテリーを気にせず開発できるのは大きい。
+
+1/27
+Project Renaming (PomArc -> StudyTodo):
+Web版・Mobile版のプロジェクト名、パッケージ名、設定ファイルを一括置換。
+@pomarc/shared -> @studytodo/shared
+importパスの修正とnpm installによる依存関係解決を実施。
+DB名も StudyTodoDB に変更。
+

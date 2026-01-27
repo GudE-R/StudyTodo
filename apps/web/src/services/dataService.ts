@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import { Todo, Session, Category, SRSProfile, Feedback, mapper } from "@pomarc/shared";
+import { Todo, Session, Category, SRSProfile, Feedback, mapper } from "@studytodo/shared";
 import { addDays } from "date-fns";
 import { generateId } from "@/lib/utils";
 

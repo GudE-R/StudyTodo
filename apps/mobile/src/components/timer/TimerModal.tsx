@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { X, Play, Pause, Save, RotateCcw } from 'lucide-react-native';
-import { Todo, Session } from '@pomarc/shared';
+import { Todo, Session } from '@studytodo/shared';
 import * as Crypto from 'expo-crypto';
 import { useTimer, TimerMode } from '../../hooks/useTimer';
 import { useMobileSRS } from '../../hooks/useMobileSRS';

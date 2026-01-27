@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { db } from "@/lib/db";
-import { mapper, allowedFieldsMap, compareDates } from "@pomarc/shared";
+import { mapper, allowedFieldsMap, compareDates } from "@studytodo/shared";
 import { useRealtimeSync } from "./useRealtimeSync";
 import { initNetworkListener, processOfflineQueue } from "@/lib/offlineQueue";
 import type { Table } from "dexie";

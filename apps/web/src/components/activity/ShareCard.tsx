@@ -2,7 +2,7 @@
 
 import React, { forwardRef } from "react";
 import { format, subDays, eachDayOfInterval, isSameDay } from "date-fns";
-import { Session, Todo, Category } from "@pomarc/shared";
+import { Session, Todo, Category } from "@studytodo/shared";
 import { StreakStats } from "@/lib/statistics";
 import { Flame, Trophy, Clock, CheckCircle } from "lucide-react";
 
@@ -23,7 +23,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
     categories,
     streak,
     targetCategory = "all",
-    userName = "PomArc User",
+    userName = "StudyTodo User",
     totalDuration,
     completedCount
 }, ref) => {
@@ -80,7 +80,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                     <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
                         <span className="text-white font-bold text-lg">P</span>
                     </div>
-                    <span className="font-bold text-xl text-gray-900">PomArc</span>
+                    <span className="font-bold text-xl text-gray-900">StudyTodo</span>
                 </div>
                 <div className="text-sm text-gray-500">
                     {format(today, "yyyy.MM.dd")}
@@ -212,7 +212,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                     </div>
                     <div>
                         <div className="text-sm font-bold text-gray-800">{userName}</div>
-                        <div className="text-[10px] text-gray-400">pomarc.app</div>
+                        <div className="text-[10px] text-gray-400">studytodo.app</div>
                     </div>
                 </div>
                 <div className="text-right">

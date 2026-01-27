@@ -1,6 +1,6 @@
 # Native App Implementation Plan
 
-本ドキュメントは、PomArc のネイティブアプリ化（Expo/React Native）およびモノレポ構成への移行計画をまとめたものです。
+本ドキュメントは、StudyTodo のネイティブアプリ化（Expo/React Native）およびモノレポ構成への移行計画をまとめたものです。
 
 ## 1. 目的と方針
 *   **技術スタック**: Expo (React Native) + TypeScript

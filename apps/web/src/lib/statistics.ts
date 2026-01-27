@@ -1,4 +1,4 @@
-import { Session } from '@pomarc/shared';
+import { Session } from '@studytodo/shared';
 import { isSameDay, subDays, startOfDay, differenceInCalendarDays } from 'date-fns';
 
 export interface StreakStats {

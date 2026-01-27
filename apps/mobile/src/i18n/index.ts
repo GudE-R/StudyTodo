@@ -4,25 +4,25 @@ import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'intl-pluralrules';
 
-import da from '@pomarc/shared/src/i18n/locales/da.json';
-import de from '@pomarc/shared/src/i18n/locales/de.json';
-import en from '@pomarc/shared/src/i18n/locales/en.json';
-import es from '@pomarc/shared/src/i18n/locales/es.json';
-import fi from '@pomarc/shared/src/i18n/locales/fi.json';
-import fr from '@pomarc/shared/src/i18n/locales/fr.json';
-import id from '@pomarc/shared/src/i18n/locales/id.json';
-import it from '@pomarc/shared/src/i18n/locales/it.json';
-import ja from '@pomarc/shared/src/i18n/locales/ja.json';
-import ko from '@pomarc/shared/src/i18n/locales/ko.json';
-import nl from '@pomarc/shared/src/i18n/locales/nl.json';
-import no from '@pomarc/shared/src/i18n/locales/no.json';
-import ptBR from '@pomarc/shared/src/i18n/locales/pt-BR.json';
-import ru from '@pomarc/shared/src/i18n/locales/ru.json';
-import sv from '@pomarc/shared/src/i18n/locales/sv.json';
-import tr from '@pomarc/shared/src/i18n/locales/tr.json';
-import vi from '@pomarc/shared/src/i18n/locales/vi.json';
-import zhCN from '@pomarc/shared/src/i18n/locales/zh-CN.json';
-import zhTW from '@pomarc/shared/src/i18n/locales/zh-TW.json';
+import da from '@studytodo/shared/src/i18n/locales/da.json';
+import de from '@studytodo/shared/src/i18n/locales/de.json';
+import en from '@studytodo/shared/src/i18n/locales/en.json';
+import es from '@studytodo/shared/src/i18n/locales/es.json';
+import fi from '@studytodo/shared/src/i18n/locales/fi.json';
+import fr from '@studytodo/shared/src/i18n/locales/fr.json';
+import id from '@studytodo/shared/src/i18n/locales/id.json';
+import it from '@studytodo/shared/src/i18n/locales/it.json';
+import ja from '@studytodo/shared/src/i18n/locales/ja.json';
+import ko from '@studytodo/shared/src/i18n/locales/ko.json';
+import nl from '@studytodo/shared/src/i18n/locales/nl.json';
+import no from '@studytodo/shared/src/i18n/locales/no.json';
+import ptBR from '@studytodo/shared/src/i18n/locales/pt-BR.json';
+import ru from '@studytodo/shared/src/i18n/locales/ru.json';
+import sv from '@studytodo/shared/src/i18n/locales/sv.json';
+import tr from '@studytodo/shared/src/i18n/locales/tr.json';
+import vi from '@studytodo/shared/src/i18n/locales/vi.json';
+import zhCN from '@studytodo/shared/src/i18n/locales/zh-CN.json';
+import zhTW from '@studytodo/shared/src/i18n/locales/zh-TW.json';
 
 const resources = {
     da: { translation: da },

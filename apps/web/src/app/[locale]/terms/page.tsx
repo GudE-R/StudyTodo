@@ -36,7 +36,7 @@ export default function TermsPage() {
                                 第1条（はじめに）
                             </h2>
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                                この利用規約（以下，「本規約」といいます。）は，本サービス「PomArc」（以下，「本サービス」といいます。）の利用条件を定めるものです。本サービスは、開発者本人（以下，「管理者」といいます。）が個人で提供します。ユーザーの皆さまには，本規約に従って，本サービスをご利用いただきます。
+                                この利用規約（以下，「本規約」といいます。）は，本サービス「StudyTodo」（以下，「本サービス」といいます。）の利用条件を定めるものです。本サービスは、開発者本人（以下，「管理者」といいます。）が個人で提供します。ユーザーの皆さまには，本規約に従って，本サービスをご利用いただきます。
                             </p>
                         </section>
 
@@ -82,7 +82,7 @@ export default function TermsPage() {
                         </section>
 
                         <section className="mb-12 border-t border-gray-100 dark:border-gray-800 pt-8 text-center text-sm text-gray-500">
-                            <p>PomArcは個人開発によるプロジェクトです。法人ではありません。</p>
+                            <p>StudyTodoは個人開発によるプロジェクトです。法人ではありません。</p>
                         </section>
                     </div>
                 </div>

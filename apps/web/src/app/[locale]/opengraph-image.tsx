@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'PomArc - Pomodoro Timer & Study Tracker';
+export const alt = 'StudyTodo - Pomodoro Timer & Study Tracker';
 export const size = {
     width: 1200,
     height: 630,
@@ -10,25 +10,25 @@ export const contentType = 'image/png';
 
 // 多言語タイトル
 const titles: Record<string, { title: string; subtitle: string }> = {
-    ja: { title: 'PomArc', subtitle: 'ポモドーロタイマー＆学習管理アプリ' },
-    en: { title: 'PomArc', subtitle: 'Pomodoro Timer & Study Tracker' },
-    de: { title: 'PomArc', subtitle: 'Pomodoro-Timer & Lernmanagement' },
-    fr: { title: 'PomArc', subtitle: 'Minuteur Pomodoro & Suivi d\'Études' },
-    es: { title: 'PomArc', subtitle: 'Temporizador Pomodoro & Gestión de Estudios' },
-    ko: { title: 'PomArc', subtitle: '포모도로 타이머 & 학습 관리' },
-    'zh-CN': { title: 'PomArc', subtitle: '番茄钟计时器 & 学习管理' },
-    'zh-TW': { title: 'PomArc', subtitle: '番茄鐘計時器 & 學習管理' },
-    'pt-BR': { title: 'PomArc', subtitle: 'Timer Pomodoro & Gerenciamento de Estudos' },
-    it: { title: 'PomArc', subtitle: 'Timer Pomodoro & Gestione Studio' },
-    ru: { title: 'PomArc', subtitle: 'Помодоро таймер и управление обучением' },
-    vi: { title: 'PomArc', subtitle: 'Hẹn giờ Pomodoro & Quản lý học tập' },
-    id: { title: 'PomArc', subtitle: 'Timer Pomodoro & Manajemen Belajar' },
-    tr: { title: 'PomArc', subtitle: 'Pomodoro Zamanlayıcı & Çalışma Yönetimi' },
-    nl: { title: 'PomArc', subtitle: 'Pomodoro Timer & Studiebeheer' },
-    sv: { title: 'PomArc', subtitle: 'Pomodoro-timer & Studiehantering' },
-    no: { title: 'PomArc', subtitle: 'Pomodoro-timer & Studieadministrasjon' },
-    da: { title: 'PomArc', subtitle: 'Pomodoro-timer & Studieadministration' },
-    fi: { title: 'PomArc', subtitle: 'Pomodoro-ajastin & Opiskelun hallinta' },
+    ja: { title: 'StudyTodo', subtitle: 'ポモドーロタイマー＆学習管理アプリ' },
+    en: { title: 'StudyTodo', subtitle: 'Pomodoro Timer & Study Tracker' },
+    de: { title: 'StudyTodo', subtitle: 'Pomodoro-Timer & Lernmanagement' },
+    fr: { title: 'StudyTodo', subtitle: 'Minuteur Pomodoro & Suivi d\'Études' },
+    es: { title: 'StudyTodo', subtitle: 'Temporizador Pomodoro & Gestión de Estudios' },
+    ko: { title: 'StudyTodo', subtitle: '포모도로 타이머 & 학습 관리' },
+    'zh-CN': { title: 'StudyTodo', subtitle: '番茄钟计时器 & 学习管理' },
+    'zh-TW': { title: 'StudyTodo', subtitle: '番茄鐘計時器 & 學習管理' },
+    'pt-BR': { title: 'StudyTodo', subtitle: 'Timer Pomodoro & Gerenciamento de Estudos' },
+    it: { title: 'StudyTodo', subtitle: 'Timer Pomodoro & Gestione Studio' },
+    ru: { title: 'StudyTodo', subtitle: 'Помодоро таймер и управление обучением' },
+    vi: { title: 'StudyTodo', subtitle: 'Hẹn giờ Pomodoro & Quản lý học tập' },
+    id: { title: 'StudyTodo', subtitle: 'Timer Pomodoro & Manajemen Belajar' },
+    tr: { title: 'StudyTodo', subtitle: 'Pomodoro Zamanlayıcı & Çalışma Yönetimi' },
+    nl: { title: 'StudyTodo', subtitle: 'Pomodoro Timer & Studiebeheer' },
+    sv: { title: 'StudyTodo', subtitle: 'Pomodoro-timer & Studiehantering' },
+    no: { title: 'StudyTodo', subtitle: 'Pomodoro-timer & Studieadministrasjon' },
+    da: { title: 'StudyTodo', subtitle: 'Pomodoro-timer & Studieadministration' },
+    fi: { title: 'StudyTodo', subtitle: 'Pomodoro-ajastin & Opiskelun hallinta' },
 };
 
 export default async function Image({ params }: { params: Promise<{ locale: string }> }) {

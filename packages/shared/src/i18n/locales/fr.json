@@ -79,7 +79,7 @@
         "welcomeBack": "Bon retour",
         "createAccount": "Créer un compte",
         "signInDescription": "Synchronisez vos données et continuez à apprendre",
-        "signUpDescription": "Rejoignez PomArc pour sauvegarder vos données",
+        "signUpDescription": "Rejoignez StudyTodo pour sauvegarder vos données",
         "email": "Adresse e-mail",
         "password": "Mot de passe",
         "loginButton": "Se connecter",
@@ -154,7 +154,7 @@
         "catReview": "Révision et partage",
         "catOthers": "Autres fonctions",
         "feedbackTitle": "Demande de feedback",
-        "feedbackDesc": "PomArc évolue avec vos retours. N'hésitez pas à nous envoyer des rapports de bugs ou des suggestions via 'Feedback' en haut à droite de l'écran d'accueil."
+        "feedbackDesc": "StudyTodo évolue avec vos retours. N'hésitez pas à nous envoyer des rapports de bugs ou des suggestions via 'Feedback' en haut à droite de l'écran d'accueil."
     },
     "category": {
         "treeTitle": "Catégories",
