@@ -50,3 +50,34 @@ sudo adduser $USER kvm
    npx expo start
    ```
 3. サーバーが起動したら、キーボードの **`a`** を押すと、エミュレータ内でアプリが起動します。
+
+## 6. トラブルシューティング
+
+### "Error: spawn adb ENOENT" が発生する場合
+
+Expoが Android SDK を見つけられないエラーです。特に Linux ではフォルダ名の大文字・小文字が区別されるため、パスの不一致が原因になることが多いです。
+
+**原因**:
+実際のインストール場所が `~/Android/Sdk` (大文字S) であるのに対し、ツールが `~/Android/sdk` (小文字kms) を探している場合があります。
+
+**解決策**:
+シンボリックリンクを作成して、どちらのパスでもアクセスできるようにします。
+
+```bash
+ln -s ~/Android/Sdk ~/Android/sdk
+```
+
+または、`~/.bashrc` で `ANDROID_HOME` を正しく設定し直してください。
+
+### アプリが白画面になり "Pomarc-Monorepo" と表示される
+
+**原因**:
+プロジェクトのルートディレクトリ (`pomarc-monorepo`) で `npx expo start` を実行していませんか？
+
+**解決策**:
+必ずモバイルアプリのディレクトリに移動してから実行してください。
+
+```bash
+cd apps/mobile
+npx expo start
+```

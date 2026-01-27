@@ -88,6 +88,13 @@
 
 これまでの主要な変更履歴です。
 
+### [Android Emulator Setup] - 2026-01-27
+#### 追加/変更 (Doc & Env)
+- **Androidエミュレータ環境の構築**:
+    - 実機レスでの開発・テスト環境を整備。
+    - `ANDROID_TEST_SETUP.md` にトラブルシューティング（SDKパス問題、実行ディレクトリ）を追記。
+    - シンボリックリンクによる `adb` パス解決を実施。
+
 ### [Refactoring & Maintenance] - 2026-01-23
 #### リファクタリング (Shared/Web/Mobile)
 - **共通ロジックの統合**:
