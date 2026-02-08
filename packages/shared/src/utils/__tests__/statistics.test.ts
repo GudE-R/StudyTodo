@@ -6,9 +6,10 @@ import { subDays, subHours } from 'date-fns';
 const createSession = (date: Date): Session => ({
     id: `session-${date.getTime()}`,
     todoId: 'todo-1',
+    todoTitle: 'Test Todo',
     duration: 1500, // 25 min
     createdAt: date,
-    updatedAt: date,
+    mode: 'pomodoro',
 });
 
 describe('calculateStreak', () => {

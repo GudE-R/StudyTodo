@@ -34,11 +34,11 @@ npm install
 
 ## 2. sharedパッケージのビルド
 
-`@pomarc/shared` は `dist` フォルダを参照しているため、ビルドが必要です。
+`@studytodo/shared` は `dist` フォルダを参照しているため、ビルドが必要です。
 
 // turbo
 ```bash
-npm run build -w @pomarc/shared
+npm run build -w @studytodo/shared
 ```
 
 ## 3. 開発サーバーの起動
@@ -64,7 +64,7 @@ npm run test
 
 ## トラブルシューティング
 
-### `Module not found: Can't resolve '@pomarc/shared'`
+### `Module not found: Can't resolve '@studytodo/shared'`
 
 sharedパッケージがビルドされていません。手順2を実行してください。
 
@@ -79,5 +79,5 @@ sharedパッケージがビルドされていません。手順2を実行して�
 ```bash
 git pull origin main
 npm install
-npm run build -w @pomarc/shared
+npm run build -w @studytodo/shared
 ```

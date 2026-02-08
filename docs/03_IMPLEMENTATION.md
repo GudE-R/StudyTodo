@@ -88,6 +88,12 @@
 
 これまでの主要な変更履歴です。
 
+### [Environment Migration] - 2026-02-09
+#### 変更 (Environment)
+- **開発環境の移行**:
+    - 以前のデュアルブート（SSD分割）構成から、Windowsホスト上のVirtualBoxでの運用へ移行完了。
+    - Linux Mint環境を仮想マシンとして構築・起動可能にした。
+
 ### [Marketing Materials] - 2026-01-27
 #### 追加 (Doc)
 - **マーケティング資料の作成 (`docs/07_MARKETING.md`)**:
