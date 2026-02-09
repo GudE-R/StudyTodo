@@ -31,5 +31,10 @@ description: モバイルアプリ（Expo）の起動方法
     *   **iOS**: 標準のカメラアプリでQRコードを読み取り、Expo Goで開く通知をタップします。
 
 ## トラブルシューティング
+*   **VirtualBox環境の場合**: NAT モードでは物理スマートフォンから接続できません。必ず `--tunnel` オプションを使用してください：
+    ```bash
+    npx expo start --tunnel
+    ```
 *   **接続できない場合**: Windowsのファイアウォール設定でNode.jsの通信が許可されているか確認してください。または、`npx expo start --tunnel` コマンドでトンネル接続を試してください（少し遅くなりますが、ネットワーク制限を回避できます）。
 *   **キャッシュの問題**: 動作がおかしい場合は、`npx expo start -c` でキャッシュをクリアして起動してください。
+*   **Network request failed エラー**: Supabaseプロジェクトが一時停止している可能性があります。[Supabase Dashboard](https://supabase.com/dashboard) でプロジェクトを確認・復帰してください。
