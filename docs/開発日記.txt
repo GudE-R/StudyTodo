@@ -774,3 +774,24 @@ VirtualBox上のLinux Mint環境で開発を再開するため、以下の手順
    - Expo Goでアプリ起動後、`[TypeError: Network request failed]` エラーが多発。
    - 原因: Supabaseプロジェクトが無料プランの非アクティブ期間制限により一時停止していた。
    - 対応: Supabaseダッシュボードからプロジェクトをリストアし、アプリをリロードして正常動作を確認。
+
+2/10
+**モバイル版: iOS DateTimePicker表示バグの修正**
+
+Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面が白くなる問題を修正した。
+
+問題の症状:
+- 日付/時刻ピッカーを開くと白い画面になる
+- スワイプするとスピナーの振動は感じるがUIが見えない
+
+原因:
+- iOSのDateTimePickerで`display="spinner"`使用時、テキスト色がデフォルトで背景色と同じになる
+- ダークモード/ライトモードのテーマに連動していなかった
+
+修正内容:
+1. `textColor={colors.text}` を追加してテキスト色をテーマに合わせる
+2. `themeVariant={isDark ? 'dark' : 'light'}` を追加してiOSのシステムテーマと連動
+3. Date/Time/Duration全てのピッカーに適用
+
+これでTodoCreateModalと同様に、Todo詳細からも正常に日付・時刻を選択できるようになった。
+

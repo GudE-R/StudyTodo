@@ -407,42 +407,103 @@ export const TodoDetailModal = ({
                 </View>
             </View>
 
-            {/* Date Picker */}
+            {/* Category Picker */}
+            <CategoryTreePicker
+                visible={isCategoryPickerVisible}
+                onClose={() => setIsCategoryPickerVisible(false)}
+                categories={categories}
+                selectedId={categoryId}
+                onSelect={(id) => setCategoryId(id)}
+            />
+
+            {/* Date Picker Modal */}
             {showDatePicker && (
-                <DateTimePicker
-                    value={dueDate || new Date()}
-                    mode="date"
-                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={(event, date) => {
-                        setShowDatePicker(false);
-                        if (date) setDueDate(date);
-                    }}
-                />
+                Platform.OS === 'ios' ? (
+                    <Modal visible={showDatePicker} transparent animationType="fade">
+                        <View style={styles.datePickerOverlay}>
+                            <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
+                                <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.datePlaceholder', 'Date')}</Text>
+                                    <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <DateTimePicker
+                                    value={dueDate || new Date()}
+                                    mode="date"
+                                    display="spinner"
+                                    textColor={colors.text}
+                                    themeVariant={isDark ? 'dark' : 'light'}
+                                    onChange={(event, date) => {
+                                        if (date) setDueDate(date);
+                                    }}
+                                    style={styles.datePickerSpinner}
+                                />
+                            </View>
+                        </View>
+                    </Modal>
+                ) : (
+                    <DateTimePicker
+                        value={dueDate || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, date) => {
+                            setShowDatePicker(false);
+                            if (date) setDueDate(date);
+                        }}
+                    />
+                )
             )}
 
-            {/* Time Picker */}
+            {/* Time Picker Modal */}
             {showTimePicker && (
-                <DateTimePicker
-                    value={dueTime ? new Date(`2000-01-01T${dueTime}`) : new Date()}
-                    mode="time"
-                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={(event, date) => {
-                        setShowTimePicker(false);
-                        if (date) setDueTime(format(date, 'HH:mm'));
-                    }}
-                />
+                Platform.OS === 'ios' ? (
+                    <Modal visible={showTimePicker} transparent animationType="fade">
+                        <View style={styles.datePickerOverlay}>
+                            <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
+                                <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.startTime', 'Time')}</Text>
+                                    <TouchableOpacity onPress={() => setShowTimePicker(false)}>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <DateTimePicker
+                                    value={dueTime ? new Date(`2000-01-01T${dueTime}`) : new Date()}
+                                    mode="time"
+                                    display="spinner"
+                                    textColor={colors.text}
+                                    themeVariant={isDark ? 'dark' : 'light'}
+                                    onChange={(event, date) => {
+                                        if (date) setDueTime(format(date, 'HH:mm'));
+                                    }}
+                                    style={styles.datePickerSpinner}
+                                />
+                            </View>
+                        </View>
+                    </Modal>
+                ) : (
+                    <DateTimePicker
+                        value={dueTime ? new Date(`2000-01-01T${dueTime}`) : new Date()}
+                        mode="time"
+                        display="default"
+                        onChange={(event, date) => {
+                            setShowTimePicker(false);
+                            if (date) setDueTime(format(date, 'HH:mm'));
+                        }}
+                    />
+                )
             )}
 
-            {/* Duration Picker (Drum Roll style) */}
+            {/* Duration Picker Modal */}
             {showDurationPicker && (
                 Platform.OS === 'ios' ? (
                     <Modal visible={showDurationPicker} transparent animationType="fade">
-                        <View style={styles.overlay}>
-                            <View style={[styles.container, { backgroundColor: colors.background, paddingBottom: 30 }]}>
-                                <View style={[styles.header, { borderBottomColor: colors.border }]}>
-                                    <Text style={[styles.headerTitle, { color: colors.text }]}>{t('todo.durationPlaceholder', 'Duration')}</Text>
+                        <View style={styles.datePickerOverlay}>
+                            <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
+                                <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.durationPlaceholder', 'Duration')}</Text>
                                     <TouchableOpacity onPress={() => setShowDurationPicker(false)}>
-                                        <Text style={{ color: colors.primary, fontWeight: 'bold', fontSize: 16 }}>{t('common.done', 'Done')}</Text>
+                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <DateTimePicker
@@ -454,6 +515,8 @@ export const TodoDetailModal = ({
                                     })()}
                                     mode="countdown"
                                     display="spinner"
+                                    textColor={colors.text}
+                                    themeVariant={isDark ? 'dark' : 'light'}
                                     minuteInterval={5}
                                     onChange={(event, date) => {
                                         if (date) {
@@ -461,6 +524,7 @@ export const TodoDetailModal = ({
                                             setRecordDuration(minutes.toString());
                                         }
                                     }}
+                                    style={styles.datePickerSpinner}
                                 />
                             </View>
                         </View>
@@ -487,15 +551,6 @@ export const TodoDetailModal = ({
                     />
                 )
             )}
-
-            {/* Category Picker */}
-            <CategoryTreePicker
-                visible={isCategoryPickerVisible}
-                onClose={() => setIsCategoryPickerVisible(false)}
-                categories={categories}
-                selectedId={categoryId}
-                onSelect={(id) => setCategoryId(id)}
-            />
         </Modal>
     );
 };
@@ -721,5 +776,34 @@ const styles = StyleSheet.create({
         borderRadius: 22,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    // DateTimePicker Modal styles
+    datePickerOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end',
+    },
+    datePickerContainer: {
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingBottom: 30,
+    },
+    datePickerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 16,
+        borderBottomWidth: 1,
+    },
+    datePickerTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    datePickerDone: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    datePickerSpinner: {
+        height: 200,
     },
 });

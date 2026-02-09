@@ -428,6 +428,8 @@ export const TodoCreateModal = ({
                                     value={dueDate || new Date()}
                                     mode="date"
                                     display="spinner"
+                                    textColor={colors.text}
+                                    themeVariant={isDark ? 'dark' : 'light'}
                                     onChange={(event, date) => {
                                         if (date) setDueDate(date);
                                     }}
@@ -473,6 +475,8 @@ export const TodoCreateModal = ({
                                             : new Date()}
                                     mode="time"
                                     display="spinner"
+                                    textColor={colors.text}
+                                    themeVariant={isDark ? 'dark' : 'light'}
                                     minuteInterval={5}
                                     onChange={(event, date) => {
                                         if (date) {
