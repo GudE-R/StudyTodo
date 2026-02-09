@@ -419,8 +419,17 @@ export const TodoCreateModal = ({
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        setDueDate(null);
+                                        setShowDatePicker(false);
+                                    }}>
+                                        <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
+                                    </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.selectDate', 'Select Date')}</Text>
-                                    <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                                    <TouchableOpacity onPress={() => {
+                                        if (!dueDate) setDueDate(new Date());
+                                        setShowDatePicker(false);
+                                    }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -458,10 +467,26 @@ export const TodoCreateModal = ({
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        if (showTimePicker === 'start') {
+                                            setDueTime('');
+                                        } else {
+                                            setEndTime('');
+                                        }
+                                        setShowTimePicker(null);
+                                    }}>
+                                        <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
+                                    </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>
                                         {showTimePicker === 'start' ? t('todo.startTime', 'Start Time') : t('todo.endTime', 'End Time')}
                                     </Text>
                                     <TouchableOpacity onPress={() => {
+                                        const timeStr = format(new Date(), 'HH:mm');
+                                        if (showTimePicker === 'start') {
+                                            if (!dueTime) setDueTime(timeStr);
+                                        } else {
+                                            if (!endTime) setEndTime(timeStr);
+                                        }
                                         setShowTimePicker(null);
                                     }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
@@ -812,6 +837,9 @@ const styles = StyleSheet.create({
     datePickerDone: {
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    datePickerCancel: {
+        fontSize: 16,
     },
     datePickerSpinner: {
         height: 200,

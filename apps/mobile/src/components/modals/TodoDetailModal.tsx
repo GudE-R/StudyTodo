@@ -65,6 +65,7 @@ export const TodoDetailModal = ({
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [showDurationPicker, setShowDurationPicker] = useState(false);
     const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
+    const [isSRSPickerVisible, setIsSRSPickerVisible] = useState(false);
 
     // Flatten categories for selection logic
     const categoryOptions = useMemo(() => {
@@ -191,25 +192,7 @@ export const TodoDetailModal = ({
         onClose();
     };
 
-    const showSRSPicker = () => {
-        if (Platform.OS === 'ios') {
-            const options = [t('todo.noSrs', 'No SRS'), ...srsProfiles.map(p => p.name), t('common.cancel', 'Cancel')];
-            ActionSheetIOS.showActionSheetWithOptions(
-                { options, cancelButtonIndex: options.length - 1 },
-                (index) => {
-                    if (index === 0) setSrsInterval('');
-                    else if (index < options.length - 1) setSrsInterval(srsProfiles[index - 1].name);
-                }
-            );
-        } else {
-            const buttons = [
-                { text: t('todo.noSrs', 'No SRS'), onPress: () => setSrsInterval('') },
-                ...srsProfiles.map(p => ({ text: p.name, onPress: () => setSrsInterval(p.name) })),
-                { text: t('common.cancel', 'Cancel'), style: 'cancel' as const },
-            ];
-            Alert.alert(t('srs.listTitle', 'Select SRS'), '', buttons);
-        }
-    };
+
 
     const todoSessions = useMemo(() => {
         if (!todo) return [];
@@ -307,7 +290,7 @@ export const TodoDetailModal = ({
                                 {/* SRS Profile */}
                                 <TouchableOpacity
                                     style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                    onPress={showSRSPicker}
+                                    onPress={() => setIsSRSPickerVisible(true)}
                                 >
                                     <Repeat size={18} color={colors.success} />
                                     <Text style={[styles.gridItemText, { color: colors.text }]} numberOfLines={1}>
@@ -423,8 +406,17 @@ export const TodoDetailModal = ({
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        setDueDate(null);
+                                        setShowDatePicker(false);
+                                    }}>
+                                        <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
+                                    </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.datePlaceholder', 'Date')}</Text>
-                                    <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                                    <TouchableOpacity onPress={() => {
+                                        if (!dueDate) setDueDate(new Date());
+                                        setShowDatePicker(false);
+                                    }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -462,8 +454,19 @@ export const TodoDetailModal = ({
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        setDueTime('');
+                                        setShowTimePicker(false);
+                                    }}>
+                                        <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
+                                    </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.startTime', 'Time')}</Text>
-                                    <TouchableOpacity onPress={() => setShowTimePicker(false)}>
+                                    <TouchableOpacity onPress={() => {
+                                        if (!dueTime) {
+                                            setDueTime(format(new Date(), 'HH:mm'));
+                                        }
+                                        setShowTimePicker(false);
+                                    }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -501,8 +504,19 @@ export const TodoDetailModal = ({
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        setRecordDuration('');
+                                        setShowDurationPicker(false);
+                                    }}>
+                                        <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
+                                    </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.durationPlaceholder', 'Duration')}</Text>
-                                    <TouchableOpacity onPress={() => setShowDurationPicker(false)}>
+                                    <TouchableOpacity onPress={() => {
+                                        if (!recordDuration || recordDuration === '0') {
+                                            setRecordDuration('30');
+                                        }
+                                        setShowDurationPicker(false);
+                                    }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -551,6 +565,32 @@ export const TodoDetailModal = ({
                     />
                 )
             )}
+
+            {/* SRS Picker Modal */}
+            <Modal visible={isSRSPickerVisible} transparent animationType="fade">
+                <TouchableOpacity style={styles.pickerOverlay} onPress={() => setIsSRSPickerVisible(false)}>
+                    <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
+                        <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('srs.selectProfile', 'Select SRS Profile')}</Text>
+                        <ScrollView style={styles.pickerScroll}>
+                            <TouchableOpacity
+                                style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                onPress={() => { setSrsInterval(''); setIsSRSPickerVisible(false); }}
+                            >
+                                <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noSrs', 'No SRS')}</Text>
+                            </TouchableOpacity>
+                            {srsProfiles.map(p => (
+                                <TouchableOpacity
+                                    key={p.id}
+                                    style={[styles.pickerItem, { borderBottomColor: colors.border }]}
+                                    onPress={() => { setSrsInterval(p.name); setIsSRSPickerVisible(false); }}
+                                >
+                                    <Text style={[styles.pickerItemText, { color: colors.text }]}>{p.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </Modal>
     );
 };
@@ -803,7 +843,37 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    datePickerCancel: {
+        fontSize: 16,
+    },
     datePickerSpinner: {
         height: 200,
+    },
+    pickerOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    pickerContainer: {
+        width: '80%',
+        maxHeight: '60%',
+        borderRadius: 16,
+        padding: 16,
+    },
+    pickerTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 12,
+    },
+    pickerScroll: {
+        maxHeight: 300,
+    },
+    pickerItem: {
+        paddingVertical: 14,
+        borderBottomWidth: 1,
+    },
+    pickerItemText: {
+        fontSize: 15,
     },
 });
