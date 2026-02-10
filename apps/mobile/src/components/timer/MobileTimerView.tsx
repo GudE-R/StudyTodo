@@ -1,22 +1,25 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, useWindowDimensions } from 'react-native';
-import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle, ChevronDown } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, useWindowDimensions, Modal, ScrollView } from 'react-native';
+import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle, ChevronDown, X } from 'lucide-react-native';
 import { Svg, Circle } from 'react-native-svg';
-import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
-import { Todo } from '@studytodo/shared';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import { Todo, Session } from '@studytodo/shared';
+import { useRepository } from '../../providers/RepositoryProvider';
 
 interface MobileTimerViewProps {
     todo: Todo;
     onBack: () => void;
     onSaveSession?: (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => void;
+    onCompleteTask?: () => void;
 }
 
 type TimerMode = "pomodoro" | "countdown" | "stopwatch";
 type TimerStatus = "focus" | "break";
 
-export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerViewProps) => {
+export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }: MobileTimerViewProps) => {
     const { width } = useWindowDimensions();
-    const CIRCLE_SIZE = width * 0.7;
+    const repository = useRepository();
+    const CIRCLE_SIZE = width * 0.55;
     const RADIUS = CIRCLE_SIZE / 2 - 10;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -35,18 +38,37 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
     const [isRunning, setIsRunning] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
+    const [showSessionLog, setShowSessionLog] = useState(false);
+    const [sessionLog, setSessionLog] = useState<Session[]>([]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Keep screen awake while timer is running
     useEffect(() => {
         if (isRunning) {
-            activateKeepAwake('timer');
+            activateKeepAwakeAsync('timer');
         } else {
             deactivateKeepAwake('timer');
         }
         return () => { deactivateKeepAwake('timer'); };
     }, [isRunning]);
+
+    // Fetch session log for this todo
+    const fetchSessionLog = useCallback(async () => {
+        try {
+            const all = await repository.getSessions();
+            const filtered = all
+                .filter(s => s.todoId === todo.id)
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            setSessionLog(filtered);
+        } catch (e) {
+            console.error('Failed to fetch sessions:', e);
+        }
+    }, [repository, todo.id]);
+
+    useEffect(() => {
+        fetchSessionLog();
+    }, [fetchSessionLog]);
 
     // Initial Reset on Mount/Mode change
     const resetTimer = useCallback(() => {
@@ -111,6 +133,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                         mode: mode
                     });
                     setIsSaved(true);
+                    fetchSessionLog();
                 }
                 Alert.alert("集中終了！", `${focusDuration}分の記録を保存しました。休憩しましょう。`, [
                     { text: "OK", onPress: () => { setStatus("break"); setIsSaved(false); } }
@@ -130,6 +153,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                     mode: mode
                 });
                 setIsSaved(true);
+                fetchSessionLog();
             }
             Alert.alert("タイマー終了", `${countdownDuration}分の記録を保存しました。`);
         }
@@ -174,6 +198,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                 mode: mode
             });
             setIsSaved(true);
+            fetchSessionLog();
             Alert.alert("保存完了", "記録を保存しました。");
         } else {
             Alert.alert("情報", "記録する時間がありません。");
@@ -246,7 +271,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => { fetchSessionLog(); setShowSessionLog(true); }}>
                     <MoreVertical size={24} color="#666" />
                 </TouchableOpacity>
             </View>
@@ -373,13 +398,76 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                     </TouchableOpacity>
                 )}
 
-                {/* Record Only */}
-                <TouchableOpacity style={styles.recordBtn} onPress={handleSave}>
-                    <CheckCircle size={18} color="#999" />
-                    <Text style={styles.recordText}>記録のみ保存</Text>
-                </TouchableOpacity>
+                {/* Bottom Actions */}
+                <View style={styles.bottomActions}>
+                    <TouchableOpacity style={styles.recordBtn} onPress={handleSave}>
+                        <CheckCircle size={18} color="#999" />
+                        <Text style={styles.recordText}>記録のみ保存</Text>
+                    </TouchableOpacity>
+
+                    {onCompleteTask && (
+                        <TouchableOpacity style={styles.completeBtn} onPress={() => {
+                            const elapsed = getElapsedTime();
+                            if (elapsed > 0 && !isSaved && onSaveSession) {
+                                onSaveSession({
+                                    todoId: todo.id,
+                                    todoTitle: todo.title,
+                                    duration: elapsed,
+                                    mode: mode
+                                });
+                            }
+                            onCompleteTask();
+                        }}>
+                            <CheckCircle size={18} color="#fff" />
+                            <Text style={styles.completeBtnText}>タスク完了</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
 
             </View>
+
+            {/* Session Log Modal */}
+            <Modal visible={showSessionLog} transparent animationType="slide">
+                <View style={styles.logOverlay}>
+                    <View style={styles.logContainer}>
+                        <View style={styles.logHeader}>
+                            <Text style={styles.logTitle}>記録ログ</Text>
+                            <TouchableOpacity onPress={() => setShowSessionLog(false)}>
+                                <X size={24} color="#666" />
+                            </TouchableOpacity>
+                        </View>
+                        <ScrollView style={styles.logScroll}>
+                            {sessionLog.length === 0 ? (
+                                <Text style={styles.logEmpty}>まだ記録がありません</Text>
+                            ) : (
+                                sessionLog.map((s) => {
+                                    const d = new Date(s.createdAt);
+                                    const dateStr = `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+                                    const min = Math.floor(s.duration / 60);
+                                    const sec = s.duration % 60;
+                                    const modeLabel = s.mode === 'pomodoro' ? '🍅' : s.mode === 'countdown' ? '⏱' : '⏱️';
+                                    return (
+                                        <View key={s.id} style={styles.logItem}>
+                                            <Text style={styles.logMode}>{modeLabel}</Text>
+                                            <View style={styles.logInfo}>
+                                                <Text style={styles.logDuration}>{min}分{sec > 0 ? `${sec}秒` : ''}</Text>
+                                                <Text style={styles.logDate}>{dateStr}</Text>
+                                            </View>
+                                        </View>
+                                    );
+                                })
+                            )}
+                        </ScrollView>
+                        {sessionLog.length > 0 && (
+                            <View style={styles.logFooter}>
+                                <Text style={styles.logTotal}>
+                                    合計: {Math.floor(sessionLog.reduce((sum, s) => sum + s.duration, 0) / 60)}分
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -393,8 +481,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        paddingTop: 50, // Safe area
+        padding: 16,
+        paddingTop: 10,
     },
     iconBtn: {
         padding: 8,
@@ -423,9 +511,9 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         paddingHorizontal: 20,
-        gap: 30,
+        paddingBottom: 10,
     },
     taskInfo: {
         alignItems: 'center',
@@ -502,6 +590,11 @@ const styles = StyleSheet.create({
         shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2, shadowRadius: 3, elevation: 4,
     },
+    bottomActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 16,
+    },
     recordBtn: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -512,6 +605,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#6b7280',
         fontWeight: '500',
+    },
+    completeBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        backgroundColor: '#22c55e',
+        borderRadius: 12,
+    },
+    completeBtnText: {
+        fontSize: 15,
+        fontWeight: '700',
+        color: '#fff',
     },
     adjustBtn: {
         padding: 10, backgroundColor: '#fff', borderRadius: 8
@@ -533,6 +640,73 @@ const styles = StyleSheet.create({
     switchBtnText: {
         fontSize: 14,
         fontWeight: '600',
+        color: '#2563eb',
+    },
+    logOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end',
+    },
+    logContainer: {
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        maxHeight: '60%',
+        padding: 20,
+    },
+    logHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    logTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#333',
+    },
+    logScroll: {
+        maxHeight: 300,
+    },
+    logEmpty: {
+        textAlign: 'center',
+        color: '#999',
+        fontSize: 14,
+        paddingVertical: 30,
+    },
+    logItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+        gap: 12,
+    },
+    logMode: {
+        fontSize: 24,
+    },
+    logInfo: {
+        flex: 1,
+    },
+    logDuration: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+    },
+    logDate: {
+        fontSize: 12,
+        color: '#999',
+        marginTop: 2,
+    },
+    logFooter: {
+        paddingTop: 12,
+        borderTopWidth: 1,
+        borderTopColor: '#e5e5e5',
+        alignItems: 'center',
+    },
+    logTotal: {
+        fontSize: 16,
+        fontWeight: '700',
         color: '#2563eb',
     },
 });

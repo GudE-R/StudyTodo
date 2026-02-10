@@ -826,3 +826,20 @@ Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面�
    - カウントダウン完了時 → セッションを自動保存
    - 戻るボタン押下時 → 未保存の記録があれば「破棄/保存して戻る」を選択可能
    - アラートメッセージを日本語に統一
+
+5. 記録ログモーダル:
+   - ヘッダーの「...」ボタンから記録ログを表示
+   - タスクごとの過去のセッション一覧（モード絵文字、時間、日時）
+   - 合計時間をフッターに表示
+   - ボトムシート風のモーダルUI
+
+6. タスク完了ボタン:
+   - 「記録のみ保存」の隣に「タスク完了」ボタンを追加
+   - 未保存の記録があれば自動保存 → タスクを完了 → ホームに戻る
+   - MainLayout_SafeとMainLayoutSimpleの両方にonCompleteTaskを追加
+
+7. レイアウト修正:
+   - ヘッダーpaddingTop: 50→10（SafeAreaView内なので不要）
+   - タイマー円サイズ: width*0.7→0.55（ボタン見切れ防止）
+   - content justifyContent: center→space-evenly
+   - activateKeepAwake → activateKeepAwakeAsync（deprecation警告解消）

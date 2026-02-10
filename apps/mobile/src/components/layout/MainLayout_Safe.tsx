@@ -138,6 +138,11 @@ export const MainLayout = () => {
                             createdAt: new Date(),
                         });
                     }}
+                    onCompleteTask={async () => {
+                        await updateTodo(activeTodo.id, { ...activeTodo, completed: true });
+                        setViewMode("home");
+                        setActiveTodo(null);
+                    }}
                 />
             </SafeAreaView>
         );

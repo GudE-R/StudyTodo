@@ -288,6 +288,11 @@ export const MainLayoutSimple = () => {
                             createdAt: new Date(),
                         });
                     }}
+                    onCompleteTask={async () => {
+                        await updateTodo(activeTodo.id, { ...activeTodo, completed: true });
+                        setViewMode("home");
+                        setActiveTodo(null);
+                    }}
                 />
             </SafeAreaView>
         );
