@@ -298,6 +298,22 @@ export const MainLayoutSimple = () => {
         );
     }
 
+    // PanResponder for Schedule Pane
+    const schedulePanResponder = useRef(
+        PanResponder.create({
+            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 20,
+            onPanResponderRelease: (_, gs) => {
+                if (gs.dx < -50) {
+                    // Swipe Left -> Expand schedule
+                    setScheduleExpanded(true);
+                } else if (gs.dx > 50) {
+                    // Swipe Right -> Collapse schedule
+                    setScheduleExpanded(false);
+                }
+            },
+        })
+    ).current;
+
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
             <AdBanner />
@@ -330,22 +346,13 @@ export const MainLayoutSimple = () => {
                     <Animated.View style={[styles.todoPane, { borderColor: colors.border, flex: todoFlex }]}>
                         <HomeTodoList date={currentDate} onTodoPress={handleTodoPress} />
                     </Animated.View>
+
                     {/* Schedule Pane - Swipe left to expand, right to collapse */}
                     <Animated.View
                         style={[styles.schedulePane, { borderColor: colors.border, flex: scheduleFlex }]}
-                        {...(() => PanResponder.create({
-                            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 20,
-                            onPanResponderRelease: (_, gs) => {
-                                if (gs.dx < -50) {
-                                    // Swipe Left -> Expand schedule
-                                    setScheduleExpanded(true);
-                                } else if (gs.dx > 50) {
-                                    // Swipe Right -> Collapse schedule
-                                    setScheduleExpanded(false);
-                                }
-                            },
-                        }).panHandlers)()}
+                        {...schedulePanResponder.panHandlers}
                     >
+
                         <HomeDaySchedule
                             currentDate={currentDate}
                             onDateChange={setCurrentDate}

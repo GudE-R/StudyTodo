@@ -61,7 +61,8 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
         if (viewMode === 'week') {
             const newDate = subWeeks(viewingMonth, 1);
             setViewingMonth(newDate);
-            // Optionally select first day logic? No, just move view.
+            // Sync selected date with the new week's anchor date
+            onDateSelect?.(newDate);
         } else {
             const newMonth = subMonths(viewingMonth, 1);
             setViewingMonth(newMonth);
@@ -75,6 +76,8 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
         if (viewMode === 'week') {
             const newDate = addWeeks(viewingMonth, 1);
             setViewingMonth(newDate);
+            // Sync selected date with the new week's anchor date
+            onDateSelect?.(newDate);
         } else {
             const newMonth = addMonths(viewingMonth, 1);
             setViewingMonth(newMonth);
