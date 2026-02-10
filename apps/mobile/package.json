@@ -10,15 +10,16 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@studytodo/shared": "*",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
+    "@studytodo/shared": "*",
     "@supabase/supabase-js": "^2.89.0",
     "date-fns": "^4.1.0",
     "expo": "~54.0.29",
     "expo-crypto": "^15.0.8",
     "expo-file-system": "~19.0.21",
     "expo-image-picker": "~17.0.10",
+    "expo-keep-awake": "~15.0.8",
     "expo-localization": "~17.0.8",
     "expo-network": "^8.0.8",
     "expo-secure-store": "~15.0.8",

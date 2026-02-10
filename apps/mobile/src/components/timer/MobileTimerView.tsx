@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, useWindowDimensions } from 'react-native';
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle, ChevronDown } from 'lucide-react-native';
 import { Svg, Circle } from 'react-native-svg';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 import { Todo } from '@studytodo/shared';
 
 interface MobileTimerViewProps {
@@ -33,8 +34,19 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
 
     const [isRunning, setIsRunning] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Keep screen awake while timer is running
+    useEffect(() => {
+        if (isRunning) {
+            activateKeepAwake('timer');
+        } else {
+            deactivateKeepAwake('timer');
+        }
+        return () => { deactivateKeepAwake('timer'); };
+    }, [isRunning]);
 
     // Initial Reset on Mount/Mode change
     const resetTimer = useCallback(() => {
@@ -90,8 +102,18 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
 
         if (mode === "pomodoro") {
             if (status === "focus") {
-                Alert.alert("集中終了！", "お疲れ様でした。休憩しましょう。", [
-                    { text: "OK", onPress: () => setStatus("break") }
+                // Auto-save focus session
+                if (onSaveSession) {
+                    onSaveSession({
+                        todoId: todo.id,
+                        todoTitle: todo.title,
+                        duration: focusDuration * 60,
+                        mode: mode
+                    });
+                    setIsSaved(true);
+                }
+                Alert.alert("集中終了！", `${focusDuration}分の記録を保存しました。休憩しましょう。`, [
+                    { text: "OK", onPress: () => { setStatus("break"); setIsSaved(false); } }
                 ]);
             } else {
                 Alert.alert("休憩終了！", "作業に戻りましょう。", [
@@ -99,7 +121,17 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                 ]);
             }
         } else if (mode === "countdown") {
-            Alert.alert("タイマー終了", "設定した時間が経過しました。");
+            // Auto-save countdown session
+            if (onSaveSession) {
+                onSaveSession({
+                    todoId: todo.id,
+                    todoTitle: todo.title,
+                    duration: countdownDuration * 60,
+                    mode: mode
+                });
+                setIsSaved(true);
+            }
+            Alert.alert("タイマー終了", `${countdownDuration}分の記録を保存しました。`);
         }
     };
 
@@ -123,16 +155,16 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
     const getThemeColor = () => status === "break" ? "#22c55e" : "#2563eb"; // green-500 : blue-600
     const getBgColor = () => status === "break" ? "#f0fdf4" : "#eff6ff"; // green-50 : blue-50
 
+    const getElapsedTime = () => {
+        if (mode === "stopwatch") return stopwatchTime;
+        const total = mode === "pomodoro"
+            ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
+            : countdownDuration * 60;
+        return total - timeLeft;
+    };
+
     const handleSave = () => {
-        let actualDuration = 0;
-        if (mode === "stopwatch") {
-            actualDuration = stopwatchTime;
-        } else {
-            const total = mode === "pomodoro"
-                ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
-                : countdownDuration * 60;
-            actualDuration = total - timeLeft;
-        }
+        const actualDuration = getElapsedTime();
 
         if (actualDuration > 0 && onSaveSession) {
             onSaveSession({
@@ -141,9 +173,38 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                 duration: actualDuration,
                 mode: mode
             });
-            Alert.alert("Saved", "Session recorded successfully");
+            setIsSaved(true);
+            Alert.alert("保存完了", "記録を保存しました。");
         } else {
-            Alert.alert("Info", "No duration to save yet.");
+            Alert.alert("情報", "記録する時間がありません。");
+        }
+    };
+
+    const handleBack = () => {
+        const elapsed = getElapsedTime();
+        if (elapsed > 0 && !isSaved) {
+            Alert.alert(
+                "未保存の記録",
+                `${Math.floor(elapsed / 60)}分${elapsed % 60}秒の記録があります。保存しますか？`,
+                [
+                    { text: "破棄", style: "destructive", onPress: onBack },
+                    {
+                        text: "保存して戻る", onPress: () => {
+                            if (onSaveSession) {
+                                onSaveSession({
+                                    todoId: todo.id,
+                                    todoTitle: todo.title,
+                                    duration: elapsed,
+                                    mode: mode
+                                });
+                            }
+                            onBack();
+                        }
+                    },
+                ]
+            );
+        } else {
+            onBack();
         }
     };
 
@@ -151,7 +212,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
         <View style={[styles.container, { backgroundColor: getBgColor() }]}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={onBack} style={styles.iconBtn}>
+                <TouchableOpacity onPress={handleBack} style={styles.iconBtn}>
                     <ArrowLeft size={24} color="#666" />
                 </TouchableOpacity>
 
@@ -291,6 +352,27 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession }: MobileTimerView
                     )}
                 </View>
 
+                {/* Switch to Stopwatch Button - visible during Pomodoro/Countdown */}
+                {mode !== "stopwatch" && (isRunning || isPaused) && (
+                    <TouchableOpacity
+                        style={styles.switchBtn}
+                        onPress={() => {
+                            let elapsed = 0;
+                            if (mode === "pomodoro" && status === "focus") {
+                                elapsed = focusDuration * 60 - timeLeft;
+                            } else if (mode === "countdown") {
+                                elapsed = countdownDuration * 60 - timeLeft;
+                            }
+                            setStopwatchTime(Math.max(0, elapsed));
+                            setMode("stopwatch");
+                            // Keep running state
+                        }}
+                    >
+                        <ChevronDown size={18} color="#2563eb" style={{ transform: [{ rotate: '-90deg' }] }} />
+                        <Text style={styles.switchBtnText}>ストップウォッチに切替</Text>
+                    </TouchableOpacity>
+                )}
+
                 {/* Record Only */}
                 <TouchableOpacity style={styles.recordBtn} onPress={handleSave}>
                     <CheckCircle size={18} color="#999" />
@@ -322,13 +404,13 @@ const styles = StyleSheet.create({
     modeTabs: {
         flexDirection: 'row',
         backgroundColor: 'rgba(255,255,255,0.5)',
-        borderRadius: 20,
-        padding: 4,
-        gap: 8,
+        borderRadius: 28,
+        padding: 6,
+        gap: 10,
     },
     tab: {
-        padding: 8,
-        borderRadius: 16,
+        padding: 14,
+        borderRadius: 22,
     },
     activeTab: {
         backgroundColor: '#fff',
@@ -436,5 +518,21 @@ const styles = StyleSheet.create({
     },
     adjustText: {
         fontSize: 18, fontWeight: 'bold', paddingHorizontal: 10
-    }
+    },
+    switchBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#2563eb',
+    },
+    switchBtnText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#2563eb',
+    },
 });
