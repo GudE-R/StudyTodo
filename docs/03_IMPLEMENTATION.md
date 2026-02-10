@@ -184,6 +184,8 @@
 - **週表示のアニメーション改善**:
     - `MainLayoutSimple.tsx`: コンテナごと移動させる旧アニメーション（空白が見える原因）を廃止。
     - `HomeCalendar.tsx`: コンポーネント内部で `fadeAnim` と `slideAnim` を実装し、日付変更時にコンテンツがクロスフェード・スライドするなめらかな演出を追加。
+    - また、同週・同月内での日付選択時にはアニメーションしないように判定ロジック (`isSameWeek`/`isSameMonth`) を追加し、操作感を向上。
+
 
 
     - **MainLayoutSelector**: レイアウトモードに応じてDefaultまたはSimpleを切替表示。

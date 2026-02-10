@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Easing } from 'react-native';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth, startOfWeek, endOfWeek, addWeeks, subWeeks, isSameWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
@@ -93,8 +93,22 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
 
     // Effect to trigger animation when viewingMonth changes
     useEffect(() => {
-        // If the month (or week start date) changed, animate!
-        if (prevMonthRef.current.getTime() !== viewingMonth.getTime()) {
+        let shouldAnimate = false;
+
+        // Determine if we should animate based on viewMode
+        if (viewMode === 'week') {
+            // Only animate if the week changed
+            if (!isSameWeek(prevMonthRef.current, viewingMonth, { locale })) {
+                shouldAnimate = true;
+            }
+        } else {
+            // Only animate if the month changed
+            if (!isSameMonth(prevMonthRef.current, viewingMonth)) {
+                shouldAnimate = true;
+            }
+        }
+
+        if (shouldAnimate) {
             const isNext = viewingMonth > prevMonthRef.current;
             const width = 50; // Slide distance
 
@@ -121,10 +135,10 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                     useNativeDriver: true,
                 }),
             ]).start();
-
-            prevMonthRef.current = viewingMonth;
         }
-    }, [viewingMonth]);
+
+        prevMonthRef.current = viewingMonth;
+    }, [viewingMonth, viewMode, locale]);
 
     // Calculate Days to render
     const daysToRender = useMemo(() => {
