@@ -177,7 +177,11 @@
 #### 追加/変更 (Mobile)
 - **Simpleレイアウトの実装**:
     - **LayoutProvider**: レイアウトモード（Default/Simple）をAsyncStorageで永続管理。
-    - **MainLayoutSimple**: 新レイアウトコンポーネント。ヘッダー削除、カレンダー上部配置。
+    - `MainLayoutSimple.tsx`: スケジュールペインの `PanResponder` 生成を `useRef` に移動し、再レンダリングごとの生成コストを削減。
+- **カレンダースワイプの不具合修正**:
+    - `MainLayoutSimple.tsx`: `PanResponder` 内での State 参照不具合 (Stale Closure) を修正。
+    - `calendarMode` を `useRef` で追跡することで、月表示モード時のスワイプ操作が正しく月移動として判定されるようになった。
+
     - **MainLayoutSelector**: レイアウトモードに応じてDefaultまたはSimpleを切替表示。
 - **カレンダー拡張**:
     - **HomeCalendar**: `viewMode` propを追加し、週表示/月表示の切替に対応。

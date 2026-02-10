@@ -856,5 +856,12 @@ Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面�
    - `MainLayoutSimple` でのジェスチャー処理（`PanResponder`）が無駄に再生成されていたのを `useRef` で最適化した。
 
 これで、カレンダー周りの操作感がかなり向上し、バグも解消された。
+
+追記:
+**カレンダーのスワイプ不具合修正**:
+ジェスチャー検知 (PanResponder) 内で `calendarMode` 変数が古い値（初期値の 'week'）を参照し続ける "Stale Closure" 問題が発生していた。
+これにより、月表示にしていてもスワイプすると週移動処理が走ってしまっていた。
+`useRef` を使って常に最新のモードを参照するように修正し、月表示での月移動が正しく機能するようにした。
+
    - content justifyContent: center→space-evenly
    - activateKeepAwake → activateKeepAwakeAsync（deprecation警告解消）

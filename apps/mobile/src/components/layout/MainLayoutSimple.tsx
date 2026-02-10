@@ -147,6 +147,12 @@ export const MainLayoutSimple = () => {
         });
     };
 
+    // Track calendarMode in a ref to avoid stale closures in PanResponder
+    const calendarModeRef = useRef(calendarMode);
+    useEffect(() => {
+        calendarModeRef.current = calendarMode;
+    }, [calendarMode]);
+
     // PanResponder for Calendar Swipe
     const panResponder = useRef(
         PanResponder.create({
@@ -166,8 +172,9 @@ export const MainLayoutSimple = () => {
                     }
                 } else {
                     // Horizontal swipes: navigate weeks or months based on mode
+                    const mode = calendarModeRef.current; // Use ref to get current mode
                     if (gestureState.dx < -50) {
-                        if (calendarMode === 'week') {
+                        if (mode === 'week') {
                             navigateWeek('next');
                         } else {
                             // Month mode: navigate to next month
@@ -178,7 +185,7 @@ export const MainLayoutSimple = () => {
                             });
                         }
                     } else if (gestureState.dx > 50) {
-                        if (calendarMode === 'week') {
+                        if (mode === 'week') {
                             navigateWeek('prev');
                         } else {
                             // Month mode: navigate to previous month
