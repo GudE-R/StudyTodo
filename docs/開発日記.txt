@@ -863,5 +863,10 @@ Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面�
 これにより、月表示にしていてもスワイプすると週移動処理が走ってしまっていた。
 `useRef` を使って常に最新のモードを参照するように修正し、月表示での月移動が正しく機能するようにした。
 
+**週表示のアニメーション改善**:
+週移動時に「空白が見える」「カクつく」という問題があったため、コンテナ全体を動かす実装 (`MainLayoutSimple`) から、カレンダー内部 (`HomeCalendar`) でのフェード＆スライド表示に変更した。
+これにより、切り替えがスムーズになり、ネイティブアプリらしい操作感になった。
+
+
    - content justifyContent: center→space-evenly
    - activateKeepAwake → activateKeepAwakeAsync（deprecation警告解消）

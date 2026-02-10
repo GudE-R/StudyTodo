@@ -116,34 +116,12 @@ export const MainLayoutSimple = () => {
         }).start();
     }, [calendarMode, currentDate]);
 
-    // Week navigation with slide animation
+    // Week navigation (Animation handled in HomeCalendar)
     const navigateWeek = (direction: 'next' | 'prev') => {
-        const slideOut = direction === 'next' ? -300 : 300;
-        const slideIn = direction === 'next' ? 300 : -300;
-
-        // Slide out
-        Animated.timing(calendarTranslateX, {
-            toValue: slideOut,
-            duration: 150,
-            useNativeDriver: false, // Must match height animation
-        }).start(() => {
-            // Change date
-            setCurrentDate(d => {
-                const newDate = new Date(d);
-                newDate.setDate(d.getDate() + (direction === 'next' ? 7 : -7));
-                return newDate;
-            });
-
-            // Reset to opposite side instantly
-            calendarTranslateX.setValue(slideIn);
-
-            // Slide in
-            Animated.spring(calendarTranslateX, {
-                toValue: 0,
-                friction: 8,
-                tension: 50,
-                useNativeDriver: false, // Must match height animation
-            }).start();
+        setCurrentDate(d => {
+            const newDate = new Date(d);
+            newDate.setDate(d.getDate() + (direction === 'next' ? 7 : -7));
+            return newDate;
         });
     };
 

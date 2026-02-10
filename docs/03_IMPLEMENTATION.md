@@ -181,6 +181,10 @@
 - **カレンダースワイプの不具合修正**:
     - `MainLayoutSimple.tsx`: `PanResponder` 内での State 参照不具合 (Stale Closure) を修正。
     - `calendarMode` を `useRef` で追跡することで、月表示モード時のスワイプ操作が正しく月移動として判定されるようになった。
+- **週表示のアニメーション改善**:
+    - `MainLayoutSimple.tsx`: コンテナごと移動させる旧アニメーション（空白が見える原因）を廃止。
+    - `HomeCalendar.tsx`: コンポーネント内部で `fadeAnim` と `slideAnim` を実装し、日付変更時にコンテンツがクロスフェード・スライドするなめらかな演出を追加。
+
 
     - **MainLayoutSelector**: レイアウトモードに応じてDefaultまたはSimpleを切替表示。
 - **カレンダー拡張**:

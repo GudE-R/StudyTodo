@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Easing } from 'react-native';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isSameMonth, startOfWeek, endOfWeek, addWeeks, subWeeks } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
@@ -86,8 +86,49 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
         }
     };
 
+    // Slide Animation
+    const slideAnim = React.useRef(new Animated.Value(0)).current;
+    const fadeAnim = React.useRef(new Animated.Value(1)).current;
+    const prevMonthRef = React.useRef(viewingMonth);
+
+    // Effect to trigger animation when viewingMonth changes
+    useEffect(() => {
+        // If the month (or week start date) changed, animate!
+        if (prevMonthRef.current.getTime() !== viewingMonth.getTime()) {
+            const isNext = viewingMonth > prevMonthRef.current;
+            const width = 50; // Slide distance
+
+            // Reset (in case it was mid-animation?)
+            // Actually, we want to start from "off-screen" if this is a new render?
+            // BUT wait, this component re-renders with new data.
+            // So we need to:
+            // 1. Start with offset (based on direction)
+            // 2. Animate to 0
+
+            slideAnim.setValue(isNext ? width : -width);
+            fadeAnim.setValue(0);
+
+            Animated.parallel([
+                Animated.timing(slideAnim, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: true,
+                    easing: Easing.out(Easing.quad),
+                }),
+                Animated.timing(fadeAnim, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+
+            prevMonthRef.current = viewingMonth;
+        }
+    }, [viewingMonth]);
+
     // Calculate Days to render
     const daysToRender = useMemo(() => {
+        // ... (existing logic)
         if (viewMode === 'week') {
             const start = startOfWeek(viewingMonth, { locale });
             const end = endOfWeek(viewingMonth, { locale });
@@ -96,9 +137,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
             const monthStart = startOfMonth(viewingMonth);
             const monthEnd = endOfMonth(viewingMonth);
             const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-            const startDayOfWeek = monthStart.getDay(); // 0 (Sun) - 6 (Sat). Check locale start? date-fns default is Sun(0).
-            // Proper padding needs to respect locale week start, but for now simple 0-padding
-            // If locale starts on Mon, this needs adjustment. standard date-fns getDay is always Sun=0.
+            const startDayOfWeek = monthStart.getDay();
             return Array.from({ length: startDayOfWeek }).fill(null).concat(days);
         }
     }, [viewingMonth, viewMode, locale]);
@@ -152,7 +191,16 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
             )}
 
             <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-                <View style={[styles.grid, { borderColor: colors.border }]}>
+                <Animated.View
+                    style={[
+                        styles.grid,
+                        {
+                            borderColor: colors.border,
+                            opacity: fadeAnim,
+                            transform: [{ translateX: slideAnim }]
+                        }
+                    ]}
+                >
                     {['0', '1', '2', '3', '4', '5', '6'].map((key) => (
                         <View key={key} style={[styles.headerCell, { borderColor: colors.border }]}>
                             <Text style={[styles.headerText, { color: colors.textMuted }]}>{t(`common.weekdays.${key}`)}</Text>
@@ -204,7 +252,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                             </TouchableOpacity>
                         );
                     })}
-                </View>
+                </Animated.View>
             </ScrollView>
         </View>
     );
