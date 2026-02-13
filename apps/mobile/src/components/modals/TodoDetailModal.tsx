@@ -12,7 +12,7 @@ import {
     ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, Trash2, CalendarRange, ChevronRight } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, CalendarRange, ChevronRight, Hourglass } from 'lucide-react-native';
 import { format, addDays } from 'date-fns';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
@@ -55,6 +55,7 @@ export const TodoDetailModal = ({
     const [content, setContent] = useState('');
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [dueTime, setDueTime] = useState('');
+    const [endTime, setEndTime] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [srsInterval, setSrsInterval] = useState('');
 
@@ -63,13 +64,11 @@ export const TodoDetailModal = ({
     const [isRoutineOpen, setIsRoutineOpen] = useState(false);
 
     // Recording States
-    const [isRecording, setIsRecording] = useState(false);
     const [recordDuration, setRecordDuration] = useState('');
 
     // UI States
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState(false);
-    const [showDurationPicker, setShowDurationPicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState<'start' | 'end' | null>(null);
     const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
     const [isSRSPickerVisible, setIsSRSPickerVisible] = useState(false);
 
@@ -95,8 +94,8 @@ export const TodoDetailModal = ({
             setCategoryId(todo.categoryId || '');
             setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
             setDueTime(todo.dueTime || '');
+            setEndTime(todo.endTime || '');
             setSrsInterval(todo.srsInterval || '');
-            setIsRecording(false);
             setRecordDuration('');
 
             // Initialize routine info if available (Note: Todo type might not carry routineDays explicitly if not stored, 
@@ -128,9 +127,21 @@ export const TodoDetailModal = ({
             categoryId: categoryId || undefined,
             dueDate: dueDate || undefined,
             dueTime: dueTime || undefined,
+            endTime: endTime || undefined,
             srsInterval: srsInterval || undefined,
             routineDays: routineDays.length > 0 ? routineDays : undefined, // Save routine days
             updatedAt: new Date(),
+        };
+
+        const performUpdate = () => {
+            // Handle Recording if duration is present
+            const durationNum = parseInt(recordDuration, 10);
+            if (!isNaN(durationNum) && durationNum > 0) {
+                onRecord(updated, durationNum * 60);
+            } else {
+                onUpdate(updated);
+            }
+            onClose();
         };
 
         // Routine Logic
@@ -163,13 +174,12 @@ export const TodoDetailModal = ({
                 t('srs.confirmTitle', 'SRS Schedule'),
                 t('srs.confirmGenerate', 'SRS profile changed. Generate review schedule?'),
                 [
-                    { text: t('common.no', 'No'), onPress: () => { onUpdate(updated); onClose(); } },
+                    { text: t('common.no', 'No'), onPress: () => performUpdate() },
                     { text: t('common.yes', 'Yes'), onPress: () => { onUpdate(updated, { applySrs: true }); onClose(); } }
                 ]
             );
         } else {
-            onUpdate(updated);
-            onClose();
+            performUpdate();
         }
     };
 
@@ -209,28 +219,6 @@ export const TodoDetailModal = ({
         );
     };
 
-    const handleRecordSubmit = () => {
-        if (!todo) return;
-        const d = parseInt(recordDuration, 10);
-        if (isNaN(d) || d <= 0) {
-            Alert.alert(t('common.error', 'Error'), t('todo.invalidDuration', 'Invalid duration'));
-            return;
-        }
-        const { title: parsedTitle, memo: parsedMemo } = parseContent();
-        onRecord({
-            ...todo,
-            title: parsedTitle,
-            memo: parsedMemo,
-            categoryId: categoryId || undefined,
-            dueDate: dueDate || undefined,
-            dueTime: dueTime || undefined,
-            srsInterval: srsInterval || undefined,
-            updatedAt: new Date(),
-        }, d * 60);
-        setRecordDuration('');
-        setIsRecording(false);
-        onClose();
-    };
 
 
 
@@ -317,11 +305,38 @@ export const TodoDetailModal = ({
                                 {/* Start Time */}
                                 <TouchableOpacity
                                     style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                    onPress={() => setShowTimePicker(true)}
+                                    onPress={() => setShowTimePicker('start')}
                                 >
                                     <Clock size={18} color={colors.primary} />
                                     <Text style={[styles.gridItemText, { color: colors.text }]}>
                                         {dueTime || t('todo.startTime', 'Time')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.gridRow}>
+                                {/* Duration Input */}
+                                <View style={[styles.gridItem, { backgroundColor: colors.surface }]}>
+                                    <Hourglass size={18} color={colors.success} />
+                                    <TextInput
+                                        style={[styles.durationInput, { color: colors.text }]}
+                                        value={recordDuration}
+                                        onChangeText={setRecordDuration}
+                                        placeholder={t('todo.durationPlaceholder', 'Duration (min)')}
+                                        placeholderTextColor={colors.textMuted}
+                                        keyboardType="numeric"
+                                    />
+                                </View>
+
+                                {/* End Time Picker */}
+                                <TouchableOpacity
+                                    style={[styles.gridItem, { backgroundColor: colors.surface, opacity: dueTime ? 1 : 0.5 }]}
+                                    onPress={() => dueTime && setShowTimePicker('end')}
+                                    disabled={!dueTime}
+                                >
+                                    <Clock size={18} color={dueTime ? colors.danger : colors.textMuted} />
+                                    <Text style={[styles.gridItemText, { color: dueTime ? colors.text : colors.textMuted }]}>
+                                        {endTime || t('todo.endTime', 'End Time')}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
@@ -415,71 +430,30 @@ export const TodoDetailModal = ({
 
                     {/* Bottom Actions (Strict Parity) */}
                     <View style={[styles.footer, { borderTopColor: colors.border }]}>
-                        {isRecording ? (
-                            <View style={styles.recordingRow}>
-                                <TouchableOpacity
-                                    style={[styles.durationPickerBtn, { backgroundColor: colors.surface }]}
-                                    onPress={() => setShowDurationPicker(true)}
-                                >
-                                    <Clock size={20} color={colors.primary} />
-                                    <View style={styles.durationValueContainer}>
-                                        <Text style={[styles.durationValueText, { color: colors.text }]}>
-                                            {recordDuration ? (
-                                                <>
-                                                    {parseInt(recordDuration, 10)}
-                                                    <Text style={styles.durationUnitText}>{t('common.minute', 'min')}</Text>
-                                                </>
-                                            ) : (
-                                                <Text style={{ color: colors.textMuted }}>{t('todo.durationPlaceholder', 'Select Duration')}</Text>
-                                            )}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-
-                                <View style={styles.recordActions}>
-                                    <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
-                                        <Save size={20} color="#fff" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
-                                        <X size={20} color={colors.text} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        ) : (
-                            <>
-                                <View style={styles.mainActionContainer}>
-                                    <TouchableOpacity
-                                        style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(34, 197, 94, 0.2)' : '#dcfce7' }]}
-                                        onPress={() => setIsRecording(true)}
-                                    >
-                                        <CheckCircle size={20} color="#16a34a" />
-                                        <Text style={[styles.actionBtnText, { color: '#16a34a' }]}>{t('todo.record')}</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#ffedd5' }]}
-                                        onPress={handleStartNow}
-                                    >
-                                        <Play size={18} color="#d97706" fill="#d97706" />
-                                        <Text style={[styles.actionBtnText, { color: '#d97706' }]}>{t('todo.start')}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.secondaryActionContainer}>
-                                    <TouchableOpacity
-                                        style={[styles.secondaryActionBtn, { backgroundColor: colors.surface }]}
-                                        onPress={handlePostpone}
-                                    >
-                                        <CalendarRange size={16} color={colors.textSecondary} />
-                                        <Text style={[styles.secondaryActionText, { color: colors.textSecondary }]}>{t('todo.postpone')}</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.deleteBtnContainer}
-                                        onPress={handleDelete}
-                                    >
-                                        <Text style={styles.deleteText}>{t('todo.deleteTask')}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </>
-                        )}
+                        <View style={styles.mainActionContainer}>
+                            <TouchableOpacity
+                                style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#ffedd5' }]}
+                                onPress={handleStartNow}
+                            >
+                                <Play size={18} color="#d97706" fill="#d97706" />
+                                <Text style={[styles.actionBtnText, { color: '#d97706' }]}>{t('todo.start')}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.secondaryActionContainer}>
+                            <TouchableOpacity
+                                style={[styles.secondaryActionBtn, { backgroundColor: colors.surface }]}
+                                onPress={handlePostpone}
+                            >
+                                <CalendarRange size={16} color={colors.textSecondary} />
+                                <Text style={[styles.secondaryActionText, { color: colors.textSecondary }]}>{t('todo.postpone')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.deleteBtnContainer}
+                                onPress={handleDelete}
+                            >
+                                <Text style={styles.deleteText}>{t('todo.deleteTask')}</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -544,34 +518,44 @@ export const TodoDetailModal = ({
             {/* Time Picker Modal */}
             {showTimePicker && (
                 Platform.OS === 'ios' ? (
-                    <Modal visible={showTimePicker} transparent animationType="fade">
+                    <Modal visible={!!showTimePicker} transparent animationType="fade">
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
                                     <TouchableOpacity onPress={() => {
-                                        setDueTime('');
-                                        setShowTimePicker(false);
+                                        if (showTimePicker === 'start') setDueTime('');
+                                        if (showTimePicker === 'end') setEndTime('');
+                                        setShowTimePicker(null);
                                     }}>
                                         <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                                     </TouchableOpacity>
-                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.startTime', 'Time')}</Text>
+                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>
+                                        {showTimePicker === 'start' ? t('todo.startTime', 'Time') : t('todo.endTime', 'End Time')}
+                                    </Text>
                                     <TouchableOpacity onPress={() => {
-                                        if (!dueTime) {
-                                            setDueTime(format(new Date(), 'HH:mm'));
-                                        }
-                                        setShowTimePicker(false);
+                                        if (showTimePicker === 'start' && !dueTime) setDueTime(format(new Date(), 'HH:mm'));
+                                        if (showTimePicker === 'end' && !endTime) setEndTime(format(new Date(), 'HH:mm'));
+                                        setShowTimePicker(null);
                                     }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <DateTimePicker
-                                    value={dueTime ? new Date(`2000-01-01T${dueTime}`) : new Date()}
+                                    value={
+                                        (showTimePicker === 'start' ? dueTime : endTime)
+                                            ? new Date(`2000-01-01T${showTimePicker === 'start' ? dueTime : endTime}`)
+                                            : new Date()
+                                    }
                                     mode="time"
                                     display="spinner"
                                     textColor={colors.text}
                                     themeVariant={isDark ? 'dark' : 'light'}
                                     onChange={(event, date) => {
-                                        if (date) setDueTime(format(date, 'HH:mm'));
+                                        if (date) {
+                                            const time = format(date, 'HH:mm');
+                                            if (showTimePicker === 'start') setDueTime(time);
+                                            else setEndTime(time);
+                                        }
                                     }}
                                     style={styles.datePickerSpinner}
                                 />
@@ -580,85 +564,26 @@ export const TodoDetailModal = ({
                     </Modal>
                 ) : (
                     <DateTimePicker
-                        value={dueTime ? new Date(`2000-01-01T${dueTime}`) : new Date()}
+                        value={
+                            (showTimePicker === 'start' ? dueTime : endTime)
+                                ? new Date(`2000-01-01T${showTimePicker === 'start' ? dueTime : endTime}`)
+                                : new Date()
+                        }
                         mode="time"
                         display="default"
                         onChange={(event, date) => {
-                            setShowTimePicker(false);
-                            if (date) setDueTime(format(date, 'HH:mm'));
-                        }}
-                    />
-                )
-            )}
-
-            {/* Duration Picker Modal */}
-            {showDurationPicker && (
-                Platform.OS === 'ios' ? (
-                    <Modal visible={showDurationPicker} transparent animationType="fade">
-                        <View style={styles.datePickerOverlay}>
-                            <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
-                                <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
-                                    <TouchableOpacity onPress={() => {
-                                        setRecordDuration('');
-                                        setShowDurationPicker(false);
-                                    }}>
-                                        <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
-                                    </TouchableOpacity>
-                                    <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.durationPlaceholder', 'Duration')}</Text>
-                                    <TouchableOpacity onPress={() => {
-                                        if (!recordDuration || recordDuration === '0') {
-                                            setRecordDuration('30');
-                                        }
-                                        setShowDurationPicker(false);
-                                    }}>
-                                        <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <DateTimePicker
-                                    value={(() => {
-                                        const d = new Date();
-                                        d.setHours(0);
-                                        d.setMinutes(parseInt(recordDuration || '0', 10));
-                                        return d;
-                                    })()}
-                                    mode="countdown"
-                                    display="spinner"
-                                    textColor={colors.text}
-                                    themeVariant={isDark ? 'dark' : 'light'}
-                                    minuteInterval={5}
-                                    onChange={(event, date) => {
-                                        if (date) {
-                                            const minutes = date.getHours() * 60 + date.getMinutes();
-                                            setRecordDuration(minutes.toString());
-                                        }
-                                    }}
-                                    style={styles.datePickerSpinner}
-                                />
-                            </View>
-                        </View>
-                    </Modal>
-                ) : (
-                    <DateTimePicker
-                        value={(() => {
-                            const d = new Date();
-                            d.setHours(0);
-                            d.setMinutes(parseInt(recordDuration || '0', 10));
-                            return d;
-                        })()}
-                        mode="time"
-                        display="spinner"
-                        is24Hour={true}
-                        minuteInterval={5}
-                        onChange={(event, date) => {
-                            setShowDurationPicker(false);
+                            setShowTimePicker(null);
                             if (date) {
-                                const minutes = date.getHours() * 60 + date.getMinutes();
-                                setRecordDuration(minutes.toString());
+                                const time = format(date, 'HH:mm');
+                                if (showTimePicker === 'start') setDueTime(time);
+                                else setEndTime(time);
                             }
                         }}
                     />
                 )
             )}
+
+
 
             {/* SRS Picker Modal */}
             <Modal visible={isSRSPickerVisible} transparent animationType="fade">
@@ -766,6 +691,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         minHeight: 120,
         paddingTop: 4,
+    },
+    durationInput: {
+        flex: 1,
+        fontSize: 16,
+        fontWeight: '600',
     },
     completedText: {
         textDecorationLine: 'line-through',

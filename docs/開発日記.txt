@@ -883,3 +883,6 @@ Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面�
     - Todo作成時のルーティーン生成ロジックを修正。
     - Todo詳細画面からルーティーン設定（曜日）を変更できる機能を追加。それに伴い `SQLiteRepository` にグループ削除機能、`useMobileTodos` に更新ロジックを追加。
     - SRSとルーティーンボタンのレイアウト詳細を作成画面と統一。
+- **Todo Detail Refactoring**:
+    - `TodoDetailModal` のレイアウトを `TodoCreateModal` と統一。終了時刻・記録時間入力欄を追加。
+    - フッターの「記録」ボタンを削除し、保存ボタンに記録機能を統合（時間入力有無で分岐）。
