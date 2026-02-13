@@ -43,7 +43,7 @@ export const TodoCreateModal = ({
     const { colors, isDark } = useThemeColors();
     const { t, i18n } = useTranslation();
     const locale = getDateFnsLocale(i18n.language);
-    const { addTodo, addRoutineTodos } = useMobileTodos();
+    const { addTodo, addRoutineTodos, addSRSTodos } = useMobileTodos();
     const { profiles: srsProfiles } = useMobileSRS();
     const { addSession } = useMobileSessions();
 
@@ -161,15 +161,25 @@ export const TodoCreateModal = ({
                 } as Todo,
                 routineDays
             );
-        } else {
-            // Normal creation (check for SRS)
-            const newId = generateId();
-            const srsGroupId = srsInterval ? newId : undefined;
+        } else if (srsProfileId) {
+            // SRS creation
+            const profile = srsProfiles.find(p => p.id === srsProfileId);
+            const intervals = profile?.intervals || [1, 3, 7];
 
+            await addSRSTodos(
+                {
+                    ...todoData,
+                    id: generateId(),
+                    createdAt: new Date(),
+                    completed: false,
+                } as Todo,
+                intervals
+            );
+        } else {
+            // Normal creation
             await addTodo({
                 ...todoData,
-                id: newId,
-                srsGroupId,
+                id: generateId(),
                 createdAt: new Date(),
                 completed: false,
             });
@@ -195,10 +205,10 @@ export const TodoCreateModal = ({
             priority: 'medium',
             updatedAt: new Date(),
         };
-        // If SRS is selected, ensure we set srsGroupId and srsProfileId
+        // If SRS is selected, ensure we set srsGroupId
+
         if (srsProfileId) {
             (todoData as any).srsGroupId = generateId();
-            (todoData as any).srsProfileId = srsProfileId;
         }
 
         if (onStartNow) {
@@ -262,6 +272,7 @@ export const TodoCreateModal = ({
     };
 
     const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || t('todo.noCategory', 'No Category');
+    const selectedSrsName = srsProfiles.find(p => p.id === srsProfileId)?.name || '';
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
@@ -342,7 +353,7 @@ export const TodoCreateModal = ({
                             >
                                 <Repeat size={18} color={colors.success} />
                                 <Text style={[styles.srsBtnText, { color: colors.text }]} numberOfLines={1}>
-                                    {srsProfileId ? srsProfiles.find(p => p.id === srsProfileId)?.name : t('todo.noSrs', 'No SRS')}
+                                    {selectedSrsName || t('todo.noSrs', 'No SRS')}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity

@@ -663,5 +663,6 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
     *   **Problem**: SRSタスクが履歴画面でバラバラに表示され、日付も作成日 (`createdAt`) が表示されていたため、学習計画と実績の確認が困難だった。
     *   **Solution**:
         *   `TodoCreateModal`: SRSタスク作成時に `srsGroupId` を生成・付与するように変更。これにより、初回作成時からグループIDを持つようになり、履歴画面でまとめられる。
-        *   `ActivityModal`: 履歴リスト（アコーディオン内）の日付表示を `createdAt` から `dueDate` に変更。フォーマットも `MM/dd (EEE) HH:mm` とし、曜日を表示するように改善。
+        *   **Bug Fix**: SRS選択時に `addSRSTodos` を使用するように修正し、復習用のタスクが一括作成されるようにした。
+        *   `ActivityModal`: 履歴リスト（アコーディオン内）の日付表示を `createdAt` から `dueDate` に変更。フォーマットも `MM/dd (EEE)` とし、時間表示を削除。
 
