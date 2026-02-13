@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 
-import { Todo } from "@studytodo/shared";
+import { Todo, generateSRSTodos, generateSRSTodosForExisting } from "@studytodo/shared";
 import { addDays } from "date-fns";
 import { generateId } from "../lib/utils";
 import { useRepository } from "../providers/RepositoryProvider";
@@ -50,63 +50,20 @@ export function useMobileTodos() {
     };
 
     const addSRSTodos = async (baseTodo: Todo, intervals: number[]) => {
-        const baseId = generateId();
-        const todoWithId: Todo = {
-            ...baseTodo,
-            id: baseId,
-            srsGroupId: baseId,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            completed: false,
-        };
-        const todosToAdd: Todo[] = [todoWithId];
-        const baseDate = baseTodo.dueDate ? new Date(baseTodo.dueDate) : new Date();
-
-        intervals.forEach((days, index) => {
-            const reviewTodo: Todo = {
-                ...baseTodo,
-                id: generateId(),
-                title: `${baseTodo.title} (${index + 1}回目)`,
-                dueDate: addDays(baseDate, days),
-                completed: false,
-                updatedAt: new Date(),
-                createdAt: new Date(),
-                srsGroupId: baseId,
-            };
-            todosToAdd.push(reviewTodo);
-        });
-
+        const todosToAdd = generateSRSTodos(baseTodo, intervals, generateId);
         await repository.addSRSTodos(todosToAdd);
     };
 
     const applySrsToExistingTodo = async (todo: Todo, intervals: number[]) => {
-        const srsGroupId = todo.srsGroupId || todo.id;
+        const { updatedBase, children } = generateSRSTodosForExisting(todo, intervals, generateId);
 
-        if (!todo.srsGroupId) {
-            await repository.updateTodo(todo.id, { srsGroupId });
+        if (updatedBase.srsGroupId !== todo.srsGroupId) {
+            await repository.updateTodo(updatedBase.id, { srsGroupId: updatedBase.srsGroupId });
         }
 
-        const baseDate = todo.dueDate ? new Date(todo.dueDate) : new Date();
-        const todosToAdd: Todo[] = [];
-
-        intervals.forEach((days, index) => {
-            const reviewTodo: Todo = {
-                ...todo,
-                id: generateId(),
-                title: `${todo.title} (${index + 1}回目)`,
-                dueDate: addDays(baseDate, days),
-                completed: false,
-                updatedAt: new Date(),
-                createdAt: new Date(),
-                srsGroupId: srsGroupId,
-                srsInterval: undefined,
-                srsProfileId: undefined
-            };
-            todosToAdd.push(reviewTodo);
-        });
-
-        await repository.addSRSTodos(todosToAdd);
+        await repository.addSRSTodos(children);
     };
+
 
     const addRoutineTodos = async (baseTodo: Todo, routineDays: number[]) => {
         const groupId = generateId();

@@ -1,0 +1,127 @@
+import { renderHook, act } from '@testing-library/react-native';
+import { useTimer } from '../useTimer';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+
+describe('useTimer', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('should initialize with default values', () => {
+        const { result } = renderHook(() => useTimer({}));
+
+        expect(result.current.mode).toBe('pomodoro');
+        expect(result.current.timeLeft).toBe(1500); // 25 min
+        expect(result.current.isActive).toBe(false);
+        expect(result.current.elapsed).toBe(0);
+    });
+
+    it('should initialize with custom values', () => {
+        const { result } = renderHook(() => useTimer({
+            initialMode: 'countdown',
+            initialDuration: 60
+        }));
+
+        expect(result.current.mode).toBe('countdown');
+        expect(result.current.timeLeft).toBe(60);
+    });
+
+    it('should countdown when active', () => {
+        const { result } = renderHook(() => useTimer({ initialDuration: 10 }));
+
+        act(() => {
+            result.current.toggleTimer();
+        });
+
+        expect(result.current.isActive).toBe(true);
+
+        act(() => {
+            vi.advanceTimersByTime(1000);
+        });
+
+        expect(result.current.timeLeft).toBe(9);
+        expect(result.current.elapsed).toBe(1);
+    });
+
+    it('should not countdown when paused', () => {
+        const { result } = renderHook(() => useTimer({ initialDuration: 10 }));
+
+        // Start then pause
+        act(() => {
+            result.current.toggleTimer();
+        });
+        act(() => {
+            result.current.toggleTimer();
+        });
+
+        expect(result.current.isActive).toBe(false);
+
+        act(() => {
+            vi.advanceTimersByTime(1000);
+        });
+
+        expect(result.current.timeLeft).toBe(10);
+    });
+
+    it('should call onComplete when timer reaches 0', () => {
+        const onComplete = vi.fn();
+        const { result } = renderHook(() => useTimer({
+            initialDuration: 2,
+            onComplete
+        }));
+
+        act(() => {
+            result.current.toggleTimer();
+        });
+
+        act(() => {
+            vi.advanceTimersByTime(2000);
+        });
+
+        expect(result.current.timeLeft).toBe(0);
+        expect(result.current.isActive).toBe(false);
+        expect(onComplete).toHaveBeenCalled();
+    });
+
+    it('should handle stopwatch mode', () => {
+        const { result } = renderHook(() => useTimer({
+            initialMode: 'stopwatch',
+            initialDuration: 0
+        }));
+
+        act(() => {
+            result.current.toggleTimer();
+        });
+
+        act(() => {
+            vi.advanceTimersByTime(5000);
+        });
+
+        // In stopwatch mode, timeLeft acts as total time/elapsed
+        expect(result.current.elapsed).toBe(5);
+        expect(result.current.timeLeft).toBe(5);
+    });
+
+    it('should reset timer', () => {
+        const { result } = renderHook(() => useTimer({ initialDuration: 100 }));
+
+        act(() => {
+            result.current.toggleTimer();
+            vi.advanceTimersByTime(10000);
+        });
+
+        expect(result.current.timeLeft).toBe(90);
+
+        act(() => {
+            result.current.resetTimer();
+        });
+
+        expect(result.current.isActive).toBe(false);
+        expect(result.current.timeLeft).toBe(100);
+        expect(result.current.elapsed).toBe(0);
+    });
+});

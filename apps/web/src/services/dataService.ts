@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import { Todo, Session, Category, SRSProfile, Feedback, mapper } from "@studytodo/shared";
+import { Todo, Session, Category, SRSProfile, Feedback, mapper, generateSRSTodos, generateSRSTodosForExisting } from "@studytodo/shared";
 import { addDays } from "date-fns";
 import { generateId } from "@/lib/utils";
 
@@ -24,32 +24,7 @@ export const dataService = {
      * SRSプロファイルに基づいて、複数のTodo(復習)を一括生成・保存します。
      */
     async addSRSTodos(baseTodo: Todo, intervals: number[]) {
-        const baseId = generateId();
-        // Base Todo
-        const todoWithId: Todo = {
-            ...baseTodo,
-            id: baseId,
-            srsGroupId: baseId, // Self-reference for Root
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            completed: false,
-        };
-        const todosToAdd: Todo[] = [todoWithId];
-        const baseDate = baseTodo.dueDate || new Date();
-
-        intervals.forEach((days, index) => {
-            const reviewTodo: Todo = {
-                ...baseTodo,
-                id: generateId(),
-                title: `${baseTodo.title} (${index + 1}回目)`, // Updated format
-                dueDate: addDays(baseDate, days),
-                completed: false,
-                updatedAt: new Date(),
-                createdAt: new Date(),
-                srsGroupId: baseId, // Link to Root
-            };
-            todosToAdd.push(reviewTodo);
-        });
+        const todosToAdd = generateSRSTodos(baseTodo, intervals, generateId);
 
         // Batch insert to Local DB
         await db.transaction('rw', db.todos, async () => {
@@ -65,40 +40,21 @@ export const dataService = {
      * 親タスク(対象Todo)にsrsGroupIdを設定し、子タスク(復習)を生成します。
      */
     async applySrsToExistingTodo(todo: Todo, intervals: number[]) {
-        // 1. Ensure User ID linkage via syncToCloud later, mostly local logic first.
-        const srsGroupId = todo.srsGroupId || todo.id; // Use existing group ID or self as root
+        const { updatedBase, children } = generateSRSTodosForExisting(todo, intervals, generateId);
 
         // Update Base Todo if needed
-        if (!todo.srsGroupId) {
-            await this.updateTodo(todo.id, { srsGroupId });
+        if (updatedBase.srsGroupId !== todo.srsGroupId) {
+            await this.updateTodo(updatedBase.id, { srsGroupId: updatedBase.srsGroupId });
         }
-
-        const baseDate = todo.dueDate || new Date();
-        const todosToAdd: Todo[] = [];
-
-        intervals.forEach((days, index) => {
-            const reviewTodo: Todo = {
-                ...todo,
-                id: generateId(),
-                title: `${todo.title} (${index + 1}回目)`,
-                dueDate: addDays(baseDate, days),
-                completed: false,
-                updatedAt: new Date(),
-                createdAt: new Date(),
-                srsGroupId: srsGroupId,
-                srsInterval: undefined, // Children don't need the profile name
-                srsProfileId: undefined
-            };
-            todosToAdd.push(reviewTodo);
-        });
 
         // Batch insert children
         await db.transaction('rw', db.todos, async () => {
-            await db.todos.bulkAdd(todosToAdd);
+            await db.todos.bulkAdd(children);
         });
 
-        this.syncToCloud("todos", todosToAdd, "upsert");
+        this.syncToCloud("todos", children, "upsert");
     },
+
 
     /**
      * ルーティーン設定に基づいて、今後30日間のタスクを一括生成します。
