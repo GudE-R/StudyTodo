@@ -285,9 +285,10 @@ export const TodoCreateModal = ({
                         />
 
                         {/* Date & Time Grid */}
-                        <View style={styles.gridRow}>
+                        <View style={[styles.gridRow, { alignItems: 'stretch' }]}>
+                            {/* Date (Left Side) */}
                             <TouchableOpacity
-                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
+                                style={[styles.gridItem, { backgroundColor: colors.surface, flex: 1 }]}
                                 onPress={() => setShowDatePicker(true)}
                             >
                                 <Calendar size={18} color={colors.primary} />
@@ -296,29 +297,29 @@ export const TodoCreateModal = ({
                                 </Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                onPress={() => setShowTimePicker('start')}
-                            >
-                                <Clock size={18} color={colors.primary} />
-                                <Text style={[styles.gridText, { color: colors.text }]}>
-                                    {dueTime || t('todo.startTime', 'Start Time')}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                            {/* Times (Right Side Column) */}
+                            <View style={{ flex: 1, gap: 10 }}>
+                                <TouchableOpacity
+                                    style={[styles.gridItem, { backgroundColor: colors.surface, flex: 1 }]}
+                                    onPress={() => setShowTimePicker('start')}
+                                >
+                                    <Clock size={18} color={colors.primary} />
+                                    <Text style={[styles.gridText, { color: colors.text }]}>
+                                        {dueTime || t('todo.startTime', 'Start Time')}
+                                    </Text>
+                                </TouchableOpacity>
 
-                        <View style={styles.gridRow}>
-                            {/* End Time Picker (Full Width) */}
-                            <TouchableOpacity
-                                style={[styles.gridItem, { backgroundColor: colors.surface, opacity: dueTime ? 1 : 0.5 }]}
-                                onPress={() => dueTime && setShowTimePicker('end')}
-                                disabled={!dueTime}
-                            >
-                                <Clock size={18} color={dueTime ? colors.danger : colors.textMuted} />
-                                <Text style={[styles.gridText, { color: dueTime ? colors.text : colors.textMuted }]}>
-                                    {endTime || t('todo.endTime', 'End Time')}
-                                </Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.gridItem, { backgroundColor: colors.surface, opacity: dueTime ? 1 : 0.5, flex: 1 }]}
+                                    onPress={() => dueTime && setShowTimePicker('end')}
+                                    disabled={!dueTime}
+                                >
+                                    <Clock size={18} color={dueTime ? colors.danger : colors.textMuted} />
+                                    <Text style={[styles.gridText, { color: dueTime ? colors.text : colors.textMuted }]}>
+                                        {endTime || t('todo.endTime', 'End Time')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
 
                         {/* SRS Profile & Routine Row */}
