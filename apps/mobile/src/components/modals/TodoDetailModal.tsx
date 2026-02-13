@@ -225,13 +225,10 @@ export const TodoDetailModal = ({
     const handleRecordSubmit = () => {
         if (!todo) return;
         const d = parseInt(recordDuration, 10);
-        if (isNaN(d) || d <= 0) {
-            Alert.alert(t('common.error', 'Error'), t('todo.invalidDuration', 'Invalid duration'));
-            return;
-        }
+
         const { title: parsedTitle, memo: parsedMemo } = parseContent();
 
-        // Create updated todo object but don't save it yet - onRecord handles the update
+        // Create updated todo object
         const updatedTodo = {
             ...todo,
             title: parsedTitle,
@@ -245,7 +242,12 @@ export const TodoDetailModal = ({
             updatedAt: new Date(),
         };
 
-        onRecord(updatedTodo, d * 60);
+        if (!isNaN(d) && d > 0) {
+            onRecord(updatedTodo, d * 60);
+        } else {
+            onUpdate(updatedTodo);
+        }
+
         setRecordDuration('');
         setIsRecording(false);
         onClose();
@@ -451,6 +453,10 @@ export const TodoDetailModal = ({
                     <View style={[styles.footer, { borderTopColor: colors.border }]}>
                         {isRecording ? (
                             <View style={styles.recordingRow}>
+                                <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
+                                    <Save size={20} color="#fff" />
+                                </TouchableOpacity>
+
                                 <TouchableOpacity
                                     style={[styles.durationPickerBtn, { backgroundColor: colors.surface }]}
                                     onPress={() => setShowDurationPicker(true)}
@@ -470,14 +476,9 @@ export const TodoDetailModal = ({
                                     </View>
                                 </TouchableOpacity>
 
-                                <View style={styles.recordActions}>
-                                    <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
-                                        <Save size={20} color="#fff" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
-                                        <X size={20} color={colors.text} />
-                                    </TouchableOpacity>
-                                </View>
+                                <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
+                                    <X size={20} color={colors.text} />
+                                </TouchableOpacity>
                             </View>
                         ) : (
                             <>

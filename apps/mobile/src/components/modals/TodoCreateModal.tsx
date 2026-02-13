@@ -204,10 +204,6 @@ export const TodoCreateModal = ({
             return;
         }
         const durationNum = parseInt(duration, 10) || 0;
-        if (durationNum <= 0) {
-            Alert.alert(t('common.error', 'Error'), t('todo.inputDuration', 'Please enter a duration'));
-            return;
-        }
 
         // Build basic todo data
         const baseData = buildTodoData();
@@ -222,17 +218,19 @@ export const TodoCreateModal = ({
 
         await addTodo(newTodo);
 
-        // Add session
-        await addSession({
-            id: generateId(),
-            todoId: newTodo.id,
-            startTime: new Date(Date.now() - durationNum * 60000),
-            endTime: new Date(),
-            duration: durationNum * 60,
-            todoTitle: newTodo.title,
-            mode: 'pomodoro',
-            createdAt: new Date(),
-        });
+        // Add session only if duration > 0
+        if (durationNum > 0) {
+            await addSession({
+                id: generateId(),
+                todoId: newTodo.id,
+                startTime: new Date(Date.now() - durationNum * 60000),
+                endTime: new Date(),
+                duration: durationNum * 60,
+                todoTitle: newTodo.title,
+                mode: 'pomodoro',
+                createdAt: new Date(),
+            });
+        }
 
         resetForm();
     };
@@ -398,6 +396,10 @@ export const TodoCreateModal = ({
                     <View style={[styles.actions, { borderTopColor: colors.border }]}>
                         {isRecordMode ? (
                             <View style={styles.recordingRow}>
+                                <TouchableOpacity onPress={handleRecord} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
+                                    <Save size={20} color="#fff" />
+                                </TouchableOpacity>
+
                                 <TouchableOpacity
                                     style={[styles.durationPickerBtn, { backgroundColor: colors.surface }]}
                                     onPress={() => setShowDurationPicker(true)}
@@ -417,14 +419,9 @@ export const TodoCreateModal = ({
                                     </View>
                                 </TouchableOpacity>
 
-                                <View style={styles.recordActions}>
-                                    <TouchableOpacity onPress={handleRecord} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
-                                        <Save size={20} color="#fff" />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => setIsRecordMode(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
-                                        <X size={20} color={colors.text} />
-                                    </TouchableOpacity>
-                                </View>
+                                <TouchableOpacity onPress={() => setIsRecordMode(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
+                                    <X size={20} color={colors.text} />
+                                </TouchableOpacity>
                             </View>
                         ) : (
                             <>
