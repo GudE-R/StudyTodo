@@ -162,10 +162,14 @@ export const TodoCreateModal = ({
                 routineDays
             );
         } else {
-            // Normal creation
+            // Normal creation (check for SRS)
+            const newId = generateId();
+            const srsGroupId = srsInterval ? newId : undefined;
+
             await addTodo({
                 ...todoData,
-                id: generateId(),
+                id: newId,
+                srsGroupId,
                 createdAt: new Date(),
                 completed: false,
             });
@@ -191,11 +195,18 @@ export const TodoCreateModal = ({
             priority: 'medium',
             updatedAt: new Date(),
         };
+        // If SRS is selected, ensure we set srsGroupId
+        if (srsInterval) {
+            (todoData as any).srsGroupId = generateId();
+        }
+
         if (onStartNow) {
             onStartNow(todoData);
         }
         resetForm();
     };
+
+
 
     // Record handler
     const handleRecord = async () => {

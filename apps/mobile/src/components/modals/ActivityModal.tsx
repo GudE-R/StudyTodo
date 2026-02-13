@@ -584,7 +584,11 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                                                     )}
                                                                     <View style={styles.historyContent}>
                                                                         <Text style={[styles.historyTitle, { color: colors.text }, todo.completed && styles.completedTitle]}>{todo.title}</Text>
-                                                                        <Text style={[styles.historyMeta, { color: colors.textMuted }]}>{format(new Date(todo.createdAt), 'MM/dd HH:mm')}</Text>
+                                                                        <Text style={[styles.historyMeta, { color: colors.textMuted }]}>
+                                                                            {todo.dueDate
+                                                                                ? format(new Date(todo.dueDate), 'MM/dd (EEE) HH:mm', { locale })
+                                                                                : format(new Date(todo.createdAt), 'MM/dd HH:mm')}
+                                                                        </Text>
                                                                     </View>
                                                                     <View style={[styles.statusBadge, todo.completed ? [styles.statusDone, { backgroundColor: isDark ? '#064e3b' : '#dcfce7' }] : [styles.statusTodo, { backgroundColor: colors.surfaceHighlight }]]}>
                                                                         <Text style={[styles.statusText, { color: todo.completed ? (isDark ? '#4ade80' : '#166534') : colors.textSecondary }]}>{todo.completed ? t('common.done') : t('common.todo')}</Text>
