@@ -118,10 +118,10 @@ export function useMobileTodos() {
     };
 
     const updateTodo = async (id: string, updates: Partial<Todo>) => {
-        // Find current state to check for changes
+        // Find current state before update
         const oldTodo = todos.find(t => t.id === id);
 
-        // Optimistic update (optional) or just wait for refresh
+        // Optimistic update
         await repository.updateTodo(id, updates);
 
         // SRS Date Shift Logic
@@ -129,7 +129,7 @@ export function useMobileTodos() {
             const oldDate = new Date(oldTodo.dueDate);
             const newDate = new Date(updates.dueDate);
 
-            // Normalize to midnight for accurate day diff
+            // Normalize to midnight
             oldDate.setHours(0, 0, 0, 0);
             newDate.setHours(0, 0, 0, 0);
 
@@ -137,21 +137,24 @@ export function useMobileTodos() {
             const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays !== 0 && oldTodo.srsGroupId) {
-                // Determine if this is a Root task or Child task
-                // If it has srsGroupId, we assume it's part of a group.
-                // We should shift ALL tasks in this group to maintain relative schedule.
-
+                // Determine group members
                 const groupTodos = todos.filter(t => t.srsGroupId === oldTodo.srsGroupId && t.id !== id);
 
-                // Shift siblings
+                // Shift subsequent siblings (future relative to the ORIGINAL date of the modified task)
+                // Filter: Only shift tasks that were originally scheduled AFTER this task.
+                // This preserves past history while shifting the future chain.
                 for (const subTodo of groupTodos) {
                     if (subTodo.dueDate) {
                         const subDate = new Date(subTodo.dueDate);
-                        const newSubDate = addDays(subDate, diffDays);
-                        await repository.updateTodo(subTodo.id, {
-                            dueDate: newSubDate,
-                            updatedAt: new Date()
-                        });
+                        // Compare subDate with oldDate. Use simple timestamp comparison.
+                        // We use > (greater than) to only affect tasks *after* this one.
+                        if (subDate.getTime() > oldDate.getTime()) {
+                            const newSubDate = addDays(subDate, diffDays);
+                            await repository.updateTodo(subTodo.id, {
+                                dueDate: newSubDate,
+                                updatedAt: new Date()
+                            });
+                        }
                     }
                 }
             }
