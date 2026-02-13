@@ -43,7 +43,7 @@ export const TodoCreateModal = ({
     const { colors, isDark } = useThemeColors();
     const { t, i18n } = useTranslation();
     const locale = getDateFnsLocale(i18n.language);
-    const { addTodo } = useMobileTodos();
+    const { addTodo, addRoutineTodos } = useMobileTodos();
     const { profiles: srsProfiles } = useMobileSRS();
     const { addSession } = useMobileSessions();
 
@@ -148,12 +148,27 @@ export const TodoCreateModal = ({
             return;
         }
         const todoData = buildTodoData();
-        await addTodo({
-            ...todoData,
-            id: generateId(),
-            createdAt: new Date(),
-            completed: false,
-        });
+
+        if (routineDays.length > 0) {
+            // Routine creation
+            await addRoutineTodos(
+                {
+                    ...todoData,
+                    id: generateId(),
+                    createdAt: new Date(),
+                    completed: false,
+                } as Todo,
+                routineDays
+            );
+        } else {
+            // Normal creation
+            await addTodo({
+                ...todoData,
+                id: generateId(),
+                createdAt: new Date(),
+                completed: false,
+            });
+        }
         resetForm();
     };
 

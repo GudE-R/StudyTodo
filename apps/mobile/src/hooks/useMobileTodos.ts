@@ -139,6 +139,27 @@ export function useMobileTodos() {
         }
     };
 
+    const updateRoutine = async (baseTodo: Todo, routineDays: number[]) => {
+        if (!baseTodo.srsGroupId) return; // Should have a group ID to be updated as a routine
+
+        const groupId = baseTodo.srsGroupId;
+
+        // 1. Delete existing routine todos
+        await repository.deleteTodosByGroupId(groupId);
+
+        // 2. Re-create new routine (reuse logic from addRoutineTodos but with specific ID handling if needed)
+        // Note: addRoutineTodos generates a NEW groupId. For update, we want to KEEP the same groupId concept?
+        // Actually, if we delete all old ones, we can just generate a fresh set. 
+        // If we want to link them, we could reuse the ID, but generating a new group ID is cleaner to avoid conflicts.
+        // However, the UI might expect the same ID. Let's stick to generating a new set, as "Update" here means "Replace Schedule".
+
+        // But wait, addRoutineTodos creates a NEW group ID. 
+        // Let's modify addRoutineTodos slightly or just copy the logic here to control the Group ID?
+        // Let's just use addRoutineTodos. It will create a new group. That's fine as the old group is gone.
+
+        await addRoutineTodos(baseTodo, routineDays);
+    };
+
     const updateTodo = async (id: string, updates: Partial<Todo>) => {
         await repository.updateTodo(id, updates);
     };
@@ -155,6 +176,7 @@ export function useMobileTodos() {
         addSRSTodos,
         applySrsToExistingTodo,
         addRoutineTodos,
+        updateRoutine,
         updateTodo,
         deleteTodo
     };

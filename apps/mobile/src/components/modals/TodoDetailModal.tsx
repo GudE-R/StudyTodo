@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { Todo, Category, SRSProfile, parseTodoContent } from '@studytodo/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
+import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileSRS } from '../../hooks/useMobileSRS';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { CategoryTreePicker } from '../ui/CategoryTreePicker';
@@ -48,6 +49,7 @@ export const TodoDetailModal = ({
     const { categories } = useMobileCategories();
     const { profiles: srsProfiles } = useMobileSRS();
     const { sessions } = useMobileSessions();
+    const { updateRoutine } = useMobileTodos(); // Added hook usage
 
     // Edit States
     const [content, setContent] = useState('');
@@ -55,6 +57,10 @@ export const TodoDetailModal = ({
     const [dueTime, setDueTime] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [srsInterval, setSrsInterval] = useState('');
+
+    // Routine States
+    const [routineDays, setRoutineDays] = useState<number[]>([]);
+    const [isRoutineOpen, setIsRoutineOpen] = useState(false);
 
     // Recording States
     const [isRecording, setIsRecording] = useState(false);
@@ -92,6 +98,14 @@ export const TodoDetailModal = ({
             setSrsInterval(todo.srsInterval || '');
             setIsRecording(false);
             setRecordDuration('');
+
+            // Initialize routine info if available (Note: Todo type might not carry routineDays explicitly if not stored, 
+            // but we can infer or maybe we should have stored it? 
+            // The types.ts has routineDays?: number[]. Assuming it's populated.
+            // If not, we might need to fetch it or just allow setting new routine.
+            // For now, assume it's passed or empty.)
+            setRoutineDays(todo.routineDays || []);
+            setIsRoutineOpen((todo.routineDays?.length || 0) > 0);
         }
     }, [todo, visible]);
 
@@ -106,6 +120,7 @@ export const TodoDetailModal = ({
     const handleUpdate = () => {
         if (!todo) return;
         const { title: parsedTitle, memo: parsedMemo } = parseContent();
+
         const updated: Todo = {
             ...todo,
             title: parsedTitle,
@@ -114,8 +129,33 @@ export const TodoDetailModal = ({
             dueDate: dueDate || undefined,
             dueTime: dueTime || undefined,
             srsInterval: srsInterval || undefined,
+            routineDays: routineDays.length > 0 ? routineDays : undefined, // Save routine days
             updatedAt: new Date(),
         };
+
+        // Routine Logic
+        const oldRoutine = todo.routineDays || [];
+        const isRoutineChanged =
+            routineDays.length !== oldRoutine.length ||
+            !routineDays.every(d => oldRoutine.includes(d));
+
+        if (isRoutineChanged && routineDays.length > 0) {
+            Alert.alert(
+                t('guide.routineTitle', 'Routine'),
+                t('todo.updateRoutineConfirm', 'Update routine schedule? This will regenerate tasks for next 30 days.'),
+                [
+                    { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+                    {
+                        text: t('common.update', 'Update'),
+                        onPress: async () => {
+                            await updateRoutine(updated, routineDays);
+                            onClose();
+                        }
+                    }
+                ]
+            );
+            return;
+        }
 
         // SRS Logic: Check if newly added or changed (Strict parity with Web Alert)
         if (srsInterval && srsInterval !== todo.srsInterval && srsInterval !== '') {
@@ -287,7 +327,7 @@ export const TodoDetailModal = ({
                             </View>
 
                             <View style={styles.gridRow}>
-                                {/* SRS Profile */}
+                                {/* SRS Profile (Flex 1) */}
                                 <TouchableOpacity
                                     style={[styles.gridItem, { backgroundColor: colors.surface }]}
                                     onPress={() => setIsSRSPickerVisible(true)}
@@ -298,9 +338,63 @@ export const TodoDetailModal = ({
                                     </Text>
                                 </TouchableOpacity>
 
-                                {/* Placeholder for balance if needed, or other field */}
-                                <View style={styles.gridItemPlaceholder} />
+                                {/* Routine Toggle (Icon Only) */}
+                                <TouchableOpacity
+                                    style={[
+                                        styles.routineToggle,
+                                        { backgroundColor: isRoutineOpen || routineDays.length > 0 ? 'rgba(168, 85, 247, 0.1)' : colors.surface }
+                                    ]}
+                                    onPress={() => setIsRoutineOpen(!isRoutineOpen)}
+                                >
+                                    <CalendarRange size={18} color={isRoutineOpen || routineDays.length > 0 ? '#a855f7' : colors.icon} />
+                                </TouchableOpacity>
                             </View>
+
+                            {/* Routine Picker (Expandable) */}
+                            {isRoutineOpen && (
+                                <View style={[styles.routineContainer, { backgroundColor: colors.surface }]}>
+                                    <View style={styles.routineHeader}>
+                                        <Text style={[styles.routineLabel, { color: colors.textSecondary }]}>{t('guide.routineTitle', 'Routine Days')}</Text>
+                                        {routineDays.length > 0 && (
+                                            <TouchableOpacity onPress={() => setRoutineDays([])}>
+                                                <Text style={styles.routineClear}>{t('common.clear', 'Clear')}</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
+                                    <View style={styles.weekdayRow}>
+                                        {['0', '1', '2', '3', '4', '5', '6'].map((key, index) => {
+                                            const isSelected = routineDays.includes(index);
+                                            const isWeekend = index === 0 || index === 6;
+                                            return (
+                                                <TouchableOpacity
+                                                    key={key}
+                                                    style={[
+                                                        styles.weekdayBtn,
+                                                        isSelected && styles.weekdayBtnActive,
+                                                        !isSelected && { backgroundColor: colors.background }
+                                                    ]}
+                                                    onPress={() => {
+                                                        if (isSelected) {
+                                                            setRoutineDays(routineDays.filter(d => d !== index));
+                                                        } else {
+                                                            setRoutineDays([...routineDays, index].sort((a, b) => a - b));
+                                                        }
+                                                    }}
+                                                >
+                                                    <Text style={[
+                                                        styles.weekdayText,
+                                                        isSelected && styles.weekdayTextActive,
+                                                        !isSelected && isWeekend && { color: colors.textMuted },
+                                                        !isSelected && !isWeekend && { color: colors.text }
+                                                    ]}>
+                                                        {t(`common.weekdays.${key}`)}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            );
+                                        })}
+                                    </View>
+                                </View>
+                            )}
                         </View>
 
                         {/* Stats Summary (Strict Parity with Web Box) */}
@@ -875,5 +969,54 @@ const styles = StyleSheet.create({
     },
     pickerItemText: {
         fontSize: 15,
+    },
+    // Routine Styles
+    routineToggle: {
+        padding: 12,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    routineContainer: {
+        padding: 12,
+        borderRadius: 12,
+        marginTop: 8,
+    },
+    routineHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    routineLabel: {
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    routineClear: {
+        fontSize: 10,
+        color: '#ef4444',
+    },
+    weekdayRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 4,
+    },
+    weekdayBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    weekdayBtnActive: {
+        backgroundColor: '#3b82f6',
+    },
+    weekdayText: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    weekdayTextActive: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });

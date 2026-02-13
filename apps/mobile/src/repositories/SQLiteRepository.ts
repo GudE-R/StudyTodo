@@ -254,6 +254,22 @@ export class SQLiteRepository implements StorageInterface {
         });
     }
 
+    async deleteTodosByGroupId(groupId: string): Promise<void> {
+        if (!groupId) return;
+
+        // Find all todos in the group first to notify changes later
+        const todosToDelete = await this.db.getAllAsync('SELECT id FROM todos WHERE srsGroupId = ?', [groupId]);
+        if (todosToDelete.length === 0) return;
+
+        // Perform deletion
+        await this.db.runAsync('DELETE FROM todos WHERE srsGroupId = ?', [groupId]);
+
+        // Notify deletions
+        todosToDelete.forEach((t: any) => {
+            this.notifyChange('todos', 'DELETE', { id: t.id });
+        });
+    }
+
     /**
      * SRSプロファイルに基づいて、複数のTodo(復習)を一括生成・保存します。
      */
