@@ -586,8 +586,8 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                                                         <Text style={[styles.historyTitle, { color: colors.text }, todo.completed && styles.completedTitle]}>{todo.title}</Text>
                                                                         <Text style={[styles.historyMeta, { color: colors.textMuted }]}>
                                                                             {todo.dueDate
-                                                                                ? format(new Date(todo.dueDate), 'MM/dd (EEE) HH:mm', { locale })
-                                                                                : format(new Date(todo.createdAt), 'MM/dd HH:mm')}
+                                                                                ? format(new Date(todo.dueDate), 'MM/dd (EEE)', { locale })
+                                                                                : format(new Date(todo.createdAt), 'MM/dd')}
                                                                         </Text>
                                                                     </View>
                                                                     <View style={[styles.statusBadge, todo.completed ? [styles.statusDone, { backgroundColor: isDark ? '#064e3b' : '#dcfce7' }] : [styles.statusTodo, { backgroundColor: colors.surfaceHighlight }]]}>
