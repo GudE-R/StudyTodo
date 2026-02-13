@@ -13,7 +13,7 @@ const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 const LAYOUT_STORAGE_KEY = '@pomarc_layout_mode';
 
 export const LayoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [layoutMode, setLayoutModeState] = useState<LayoutMode>('default');
+    const [layoutMode, setLayoutModeState] = useState<LayoutMode>('simple');
 
     useEffect(() => {
         // Load persisted layout
@@ -51,7 +51,7 @@ export const useLayout = () => {
     // Provider外で使用された場合はデフォルト値を返す（エラーをスローしない）
     if (!context) {
         return {
-            layoutMode: 'default' as LayoutMode,
+            layoutMode: 'simple' as LayoutMode,
             setLayoutMode: async () => { }
         };
     }

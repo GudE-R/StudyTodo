@@ -162,11 +162,15 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
         const map = new Map<string, string>();
         const traverse = (cats: Category[]) => {
             cats.forEach(cat => {
-                if (cat.color) map.set(cat.id, cat.color);
+                // Determine color: use cat.color
+                if (cat.color) {
+                    map.set(cat.id, cat.color);
+                }
                 if (cat.children) traverse(cat.children);
             });
         };
         traverse(categories);
+        console.log('[HomeCalendar] Category Map Size:', map.size, 'Total Categories:', categories.length);
         return map;
     }, [categories]);
 
@@ -180,9 +184,20 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
             const dateKey = format(date, 'yyyy-MM-dd');
 
             if (!map.has(dateKey)) map.set(dateKey, new Set());
-            const color = todo.categoryId ? categoryColorMap.get(todo.categoryId) : null;
-            if (color) map.get(dateKey)?.add(color);
-            else map.get(dateKey)?.add(colors.primary); // Default color if no category color
+
+            let color = colors.primary; // Default
+            if (todo.categoryId) {
+                const catColor = categoryColorMap.get(todo.categoryId);
+                if (catColor) {
+                    color = catColor;
+                } else {
+                    // Debug: Category ID exists but no color found
+                    // This could be because category not loaded yet, or category has no color.
+                    // console.log('[HomeCalendar] Category color not found for:', todo.categoryId);
+                }
+            }
+
+            map.get(dateKey)?.add(color);
         });
         return map;
     }, [todos, categoryColorMap, colors.primary]);

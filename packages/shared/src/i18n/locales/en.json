@@ -121,7 +121,8 @@
     "settings": {
         "title": "Settings",
         "layout": "Layout",
-        "layoutDefault": "Default (Current)",
+        "layoutDefault": "Layout 2",
+        "layoutSimple": "Layout 1",
         "layoutPreview": "Preview",
         "language": "Language",
         "appearance": "Appearance",

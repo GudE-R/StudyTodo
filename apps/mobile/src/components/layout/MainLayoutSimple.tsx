@@ -254,6 +254,22 @@ export const MainLayoutSimple = () => {
         });
     };
 
+    // PanResponder for Schedule Pane
+    const schedulePanResponder = useRef(
+        PanResponder.create({
+            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 20,
+            onPanResponderRelease: (_, gs) => {
+                if (gs.dx < -50) {
+                    // Swipe Left -> Expand schedule
+                    setScheduleExpanded(true);
+                } else if (gs.dx > 50) {
+                    // Swipe Right -> Collapse schedule
+                    setScheduleExpanded(false);
+                }
+            },
+        })
+    ).current;
+
     if (viewMode === "timer" && activeTodo) {
         return (
             <SafeAreaView style={styles.safeArea}>
@@ -282,22 +298,6 @@ export const MainLayoutSimple = () => {
             </SafeAreaView>
         );
     }
-
-    // PanResponder for Schedule Pane
-    const schedulePanResponder = useRef(
-        PanResponder.create({
-            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 20,
-            onPanResponderRelease: (_, gs) => {
-                if (gs.dx < -50) {
-                    // Swipe Left -> Expand schedule
-                    setScheduleExpanded(true);
-                } else if (gs.dx > 50) {
-                    // Swipe Right -> Collapse schedule
-                    setScheduleExpanded(false);
-                }
-            },
-        })
-    ).current;
 
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>

@@ -121,7 +121,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Layout size={20} color={colors.textSecondary} />
                     <Text style={[styles.menuItemText, { color: colors.text }]}>
-                        {layoutMode === 'simple' ? 'Simple' : t('settings.layoutDefault', 'Default')}
+                        {layoutMode === 'simple' ? t('settings.layoutSimple', 'Layout 1') : t('settings.layoutDefault', 'Layout 2')}
                     </Text>
                 </View>
                 <ChevronRight size={20} color={colors.textSecondary} />
@@ -130,70 +130,72 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
             {/* --- クラウド同期 / アカウント設定 --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.cloudSync', 'Cloud Sync')}</Text>
 
-            {user ? (
-                // ログイン済みの場合の表示
-                <View>
-                    {/* ユーザー情報表示 */}
-                    <View style={[styles.userInfo, { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff', borderColor: '#bfdbfe' }]}>
-                        <Text style={[styles.userLabel, { color: '#2563eb' }]}>{t('settings.loggedInAs', 'LOGGED IN AS')}</Text>
-                        <Text style={[styles.userEmail, { color: colors.text }]}>{user.email}</Text>
-                    </View>
+            {
+                user ? (
+                    // ログイン済みの場合の表示
+                    <View>
+                        {/* ユーザー情報表示 */}
+                        <View style={[styles.userInfo, { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff', borderColor: '#bfdbfe' }]}>
+                            <Text style={[styles.userLabel, { color: '#2563eb' }]}>{t('settings.loggedInAs', 'LOGGED IN AS')}</Text>
+                            <Text style={[styles.userEmail, { color: colors.text }]}>{user.email}</Text>
+                        </View>
 
-                    {/* ログアウトボタン */}
+                        {/* ログアウトボタン */}
+                        <TouchableOpacity
+                            style={[styles.actionBtn, { borderColor: user ? '#ef4444' : colors.border, marginTop: 10 }]}
+                            onPress={async () => {
+                                await signOut();
+                                // ログアウト後の処理（必要であれば）
+                            }}
+                        >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>{t('settings.logout', 'Log Out')}</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* 同期実行ボタン */}
+                        <TouchableOpacity
+                            style={[styles.syncBtn, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}
+                            onPress={async () => {
+                                // 同期中でない場合のみ同期を実行
+                                if (user && !isSyncing) {
+                                    await sync(user.id);
+                                }
+                            }}
+                            disabled={isSyncing} // 同期中はボタンを無効化
+                        >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <View>
+                                    <Text style={[styles.syncBtnText, { color: colors.text }]}>
+                                        {isSyncing ? t('common.syncing', "Syncing...") : t('settings.syncNow', "Sync Now")}
+                                    </Text>
+                                    <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 2 }}>
+                                        {lastSyncTime
+                                            ? `${t('settings.lastSynced', 'Last sync')}: ${lastSyncTime.toLocaleTimeString()}`
+                                            : t('settings.backupCloudDescription', "Sync to cloud")}
+                                    </Text>
+                                </View>
+                                {/* 同期中はローディング表示、それ以外は更新アイコンを表示 */}
+                                {isSyncing ? (
+                                    <ActivityIndicator size="small" color={colors.primary} />
+                                ) : (
+                                    <RefreshCw size={20} color={colors.textSecondary} />
+                                )}
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    // 未ログインの場合の表示
                     <TouchableOpacity
-                        style={[styles.actionBtn, { borderColor: user ? '#ef4444' : colors.border, marginTop: 10 }]}
-                        onPress={async () => {
-                            await signOut();
-                            // ログアウト後の処理（必要であれば）
-                        }}
+                        style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}
+                        onPress={() => setShowAuthModal(true)}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>{t('settings.logout', 'Log Out')}</Text>
+                            <Text style={[styles.actionBtnText, { color: colors.text }]}>{t('settings.loginToBackup', 'Log In / Sign Up')}</Text>
                         </View>
                     </TouchableOpacity>
-
-                    {/* 同期実行ボタン */}
-                    <TouchableOpacity
-                        style={[styles.syncBtn, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}
-                        onPress={async () => {
-                            // 同期中でない場合のみ同期を実行
-                            if (user && !isSyncing) {
-                                await sync(user.id);
-                            }
-                        }}
-                        disabled={isSyncing} // 同期中はボタンを無効化
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <View>
-                                <Text style={[styles.syncBtnText, { color: colors.text }]}>
-                                    {isSyncing ? t('common.syncing', "Syncing...") : t('settings.syncNow', "Sync Now")}
-                                </Text>
-                                <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 2 }}>
-                                    {lastSyncTime
-                                        ? `${t('settings.lastSynced', 'Last sync')}: ${lastSyncTime.toLocaleTimeString()}`
-                                        : t('settings.backupCloudDescription', "Sync to cloud")}
-                                </Text>
-                            </View>
-                            {/* 同期中はローディング表示、それ以外は更新アイコンを表示 */}
-                            {isSyncing ? (
-                                <ActivityIndicator size="small" color={colors.primary} />
-                            ) : (
-                                <RefreshCw size={20} color={colors.textSecondary} />
-                            )}
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            ) : (
-                // 未ログインの場合の表示
-                <TouchableOpacity
-                    style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}
-                    onPress={() => setShowAuthModal(true)}
-                >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={[styles.actionBtnText, { color: colors.text }]}>{t('settings.loginToBackup', 'Log In / Sign Up')}</Text>
-                    </View>
-                </TouchableOpacity>
-            )}
+                )
+            }
 
             {/* ガイドセクション (現在非表示) */}
             {/* <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.guide', 'About App')}</Text>
@@ -203,7 +205,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                     <Text style={[styles.guideText, { color: colors.text }]}>{t('guide.title', 'Usage Guide')}</Text>
                 </View>
             </TouchableOpacity> */}
-        </ScrollView>
+        </ScrollView >
     );
 
     /**
@@ -271,26 +273,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 {/* 選択肢表示 */}
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.select', 'Select')}</Text>
 
-                {/* Default Option */}
-                <TouchableOpacity
-                    style={[
-                        styles.languageItem,
-                        { borderBottomColor: colors.border },
-                        layoutMode === 'default' && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' }
-                    ]}
-                    onPress={() => setLayoutMode('default')}
-                >
-                    <Text style={[
-                        styles.languageLabel,
-                        { color: colors.text },
-                        layoutMode === 'default' && { color: colors.primary, fontWeight: 'bold' }
-                    ]}>
-                        {t('settings.layoutDefault', 'Default')}
-                    </Text>
-                    {layoutMode === 'default' && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
-                </TouchableOpacity>
-
-                {/* Simple Option */}
+                {/* Simple Option (Layout 1) */}
                 <TouchableOpacity
                     style={[
                         styles.languageItem,
@@ -304,9 +287,28 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                         { color: colors.text },
                         layoutMode === 'simple' && { color: colors.primary, fontWeight: 'bold' }
                     ]}>
-                        Simple
+                        {t('settings.layoutSimple', 'Layout 1')}
                     </Text>
                     {layoutMode === 'simple' && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
+                </TouchableOpacity>
+
+                {/* Default Option (Layout 2) */}
+                <TouchableOpacity
+                    style={[
+                        styles.languageItem,
+                        { borderBottomColor: colors.border },
+                        layoutMode === 'default' && { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff' }
+                    ]}
+                    onPress={() => setLayoutMode('default')}
+                >
+                    <Text style={[
+                        styles.languageLabel,
+                        { color: colors.text },
+                        layoutMode === 'default' && { color: colors.primary, fontWeight: 'bold' }
+                    ]}>
+                        {t('settings.layoutDefault', 'Layout 2')}
+                    </Text>
+                    {layoutMode === 'default' && <View style={[styles.checkMark, { backgroundColor: colors.primary }]} />}
                 </TouchableOpacity>
             </ScrollView>
         </View>

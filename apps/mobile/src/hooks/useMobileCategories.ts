@@ -19,10 +19,21 @@ export function useMobileCategories() {
         }
     }, [repository]);
 
-    // Initial load
+    // Initial load and Subscription
     useEffect(() => {
         refreshCategories();
-    }, [refreshCategories]);
+
+        const unsubscribe = repository.onDataChange?.((table, type, data) => {
+            if (table === 'categories') {
+                console.log('[useMobileCategories] Data change detected, refreshing...', type);
+                refreshCategories();
+            }
+        });
+
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [refreshCategories, repository]);
 
     const addCategory = async (category: Category) => {
         await repository.addCategory(category);

@@ -123,7 +123,8 @@
     "settings": {
         "title": "設定",
         "layout": "レイアウト",
-        "layoutDefault": "デフォルト (現在)",
+        "layoutDefault": "レイアウト2",
+        "layoutSimple": "レイアウト1",
         "layoutPreview": "プレビュー",
         "language": "言語",
         "appearance": "表示設定",
