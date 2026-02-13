@@ -4,16 +4,19 @@ import { addDays, format, startOfDay, isSameDay } from 'date-fns';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
+import { Todo, Category } from '@studytodo/shared';
+import { useMobileTodos } from '../../hooks/useMobileTodos';
+import { useMobileCategories } from '../../hooks/useMobileCategories';
 
 // ============================================================================
 // Constants
 // ============================================================================
-const SLOT_HEIGHT = 27;
-const SLOTS_PER_DAY = 48;
+const SLOT_HEIGHT = 27; // Height for 30 min slot
+const SLOTS_PER_DAY = 48; // 24 hours * 2
 const HEADER_HEIGHT = 30;
 const DAY_CONTENT_HEIGHT = SLOT_HEIGHT * SLOTS_PER_DAY;
 const ITEM_HEIGHT = HEADER_HEIGHT + DAY_CONTENT_HEIGHT; // Total height per day
-const RANGE = 365; // ±365 days (731 total items, ~2 years)
+const RANGE = 365; // ±365 days
 
 // ============================================================================
 // Types
@@ -34,10 +37,12 @@ interface DayItemProps {
     keptDate: Date | null;
     keptTime: string | null;
     onTimeLongPress?: (date: Date, time: string) => void;
+    todos: Todo[];
+    categoryMap: Map<string, string>;
 }
 
 // ============================================================================
-// TimeSlot Component (Memoized)
+// TimeSlot Component
 // ============================================================================
 const TimeSlot = memo(({
     slotIndex,
@@ -77,7 +82,7 @@ const TimeSlot = memo(({
 });
 
 // ============================================================================
-// CurrentTimeIndicator Component (Memoized)
+// CurrentTimeIndicator Component
 // ============================================================================
 const CurrentTimeIndicator = memo(() => {
     const now = new Date();
@@ -93,7 +98,27 @@ const CurrentTimeIndicator = memo(() => {
 });
 
 // ============================================================================
-// DayItem Component (Memoized)
+// TaskBlock Component
+// ============================================================================
+const TaskBlock = memo(({ todo, top, height, color, onPress }: { todo: Todo, top: number, height: number, color: string, onPress?: () => void }) => {
+    return (
+        <TouchableOpacity
+            style={[
+                styles.taskBlock,
+                { top, height, backgroundColor: color + 'cc', borderColor: color } // Add transparency
+            ]}
+            onPress={onPress}
+            activeOpacity={0.8}
+        >
+            <Text style={styles.taskTitle} numberOfLines={1}>
+                {todo.title}
+            </Text>
+        </TouchableOpacity>
+    );
+});
+
+// ============================================================================
+// DayItem Component
 // ============================================================================
 const DayItem = memo(({
     date,
@@ -102,7 +127,9 @@ const DayItem = memo(({
     dateFormat,
     keptDate,
     keptTime,
-    onTimeLongPress
+    onTimeLongPress,
+    todos,
+    categoryMap
 }: DayItemProps) => {
     const isToday = isSameDay(date, new Date());
 
@@ -116,6 +143,43 @@ const DayItem = memo(({
             return { slotIndex, isKept, timeStr };
         });
     }, [date, keptDate, keptTime]);
+
+    // Compute task blocks
+    const taskBlocks = useMemo(() => {
+        return todos.map(todo => {
+            if (!todo.dueTime) return null;
+            const [h, m] = todo.dueTime.split(':').map(Number);
+            const startMinutes = h * 60 + m;
+            const top = (startMinutes / 30) * SLOT_HEIGHT;
+
+            let height = SLOT_HEIGHT; // Default 30 mins
+            if (todo.endTime) {
+                const [eh, em] = todo.endTime.split(':').map(Number);
+                let endMinutes = eh * 60 + em;
+                if (endMinutes < startMinutes) endMinutes += 24 * 60; // Handle midnight crossing
+                const durationMinutes = endMinutes - startMinutes;
+                height = (durationMinutes / 30) * SLOT_HEIGHT;
+            } else {
+                // Default to 1 hour (2 slots) if no end time
+                height = SLOT_HEIGHT * 2;
+            }
+
+            // Min height
+            height = Math.max(height, SLOT_HEIGHT / 2);
+
+            const color = (todo.categoryId ? categoryMap.get(todo.categoryId) : null) || colors.primary;
+
+            return (
+                <TaskBlock
+                    key={todo.id}
+                    todo={todo}
+                    top={top}
+                    height={height}
+                    color={color}
+                />
+            );
+        });
+    }, [todos, categoryMap, colors.primary]);
 
     return (
         <View style={{ height: ITEM_HEIGHT }}>
@@ -138,6 +202,9 @@ const DayItem = memo(({
                     />
                 ))}
 
+                {/* Task Overlays */}
+                {taskBlocks}
+
                 {/* Current Time Indicator */}
                 {isToday && <CurrentTimeIndicator />}
             </View>
@@ -159,6 +226,38 @@ export const HomeDaySchedule = ({
     const { t, i18n } = useTranslation();
     const locale = getDateFnsLocale(i18n.language);
     const dateFormat = t('common.dateFormat', 'MMM d (EEE)');
+
+    // Data Hooks
+    const { todos, refreshTodos } = useMobileTodos();
+    const { categories } = useMobileCategories();
+
+    // Cache Category Colors
+    const categoryMap = useMemo(() => {
+        const map = new Map<string, string>();
+        const traverse = (cats: Category[]) => {
+            cats.forEach(cat => {
+                if (cat.color) map.set(cat.id, cat.color);
+                if (cat.children) traverse(cat.children);
+            });
+        };
+        traverse(categories);
+        return map;
+    }, [categories]);
+
+    // Group todos by Date Key
+    const todosByDate = useMemo(() => {
+        const map = new Map<string, Todo[]>();
+        todos.forEach(todo => {
+            if (!todo.dueDate || todo.completed) return;
+
+            const d = new Date(todo.dueDate);
+            if (isNaN(d.getTime())) return;
+            const key = format(d, 'yyyy-MM-dd');
+            if (!map.has(key)) map.set(key, []);
+            map.get(key)?.push(todo);
+        });
+        return map;
+    }, [todos]);
 
     const listRef = useRef<FlatList<Date>>(null);
     const isProgrammaticScroll = useRef(false);
@@ -240,17 +339,24 @@ export const HomeDaySchedule = ({
     }, []);
 
     // Render item
-    const renderItem = useCallback(({ item }: { item: Date }) => (
-        <DayItem
-            date={item}
-            colors={colors}
-            locale={locale}
-            dateFormat={dateFormat}
-            keptDate={keptDate}
-            keptTime={keptTime}
-            onTimeLongPress={onTimeLongPress}
-        />
-    ), [colors, locale, dateFormat, keptDate, keptTime, onTimeLongPress]);
+    const renderItem = useCallback(({ item }: { item: Date }) => {
+        const dateKey = format(item, 'yyyy-MM-dd');
+        const dayTodos = todosByDate.get(dateKey) || [];
+
+        return (
+            <DayItem
+                date={item}
+                colors={colors}
+                locale={locale}
+                dateFormat={dateFormat}
+                keptDate={keptDate}
+                keptTime={keptTime}
+                onTimeLongPress={onTimeLongPress}
+                todos={dayTodos}
+                categoryMap={categoryMap}
+            />
+        );
+    }, [colors, locale, dateFormat, keptDate, keptTime, onTimeLongPress, todosByDate, categoryMap]);
 
     // Key extractor
     const keyExtractor = useCallback((item: Date) => item.toISOString(), []);
@@ -301,21 +407,27 @@ const styles = StyleSheet.create({
     hourSlot: {
         height: SLOT_HEIGHT,
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+    },
+    keptSlot: {
+        backgroundColor: 'rgba(249, 115, 22, 0.1)', // Orange-ish tint
     },
     hourText: {
-        width: 50,
-        textAlign: 'right',
-        paddingRight: 10,
-        fontSize: 12,
+        width: 40,
+        fontSize: 10,
+        marginRight: 10,
+    },
+    keptText: {
+        fontWeight: 'bold',
+        color: '#f97316',
     },
     hourLine: {
         flex: 1,
-        height: 1,
     },
     currentTimeLine: {
         position: 'absolute',
-        left: 50,
+        left: 50, // Skip time text width
         right: 0,
         flexDirection: 'row',
         alignItems: 'center',
@@ -325,19 +437,31 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: 'red',
-        marginLeft: -4,
+        backgroundColor: '#ef4444', // Red
+        marginRight: -4,
     },
     line: {
         flex: 1,
         height: 1,
-        backgroundColor: 'red',
+        backgroundColor: '#ef4444',
     },
-    keptSlot: {
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    // New Styles for Task Blocks
+    taskBlock: {
+        position: 'absolute',
+        left: 60, // After time text and some padding
+        right: 10,
+        borderRadius: 4,
+        borderLeftWidth: 3,
+        padding: 2,
+        justifyContent: 'center',
+        zIndex: 5,
     },
-    keptText: {
-        color: '#3b82f6',
+    taskTitle: {
+        fontSize: 10,
+        color: '#fff',
         fontWeight: 'bold',
-    },
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 1,
+    }
 });
