@@ -666,6 +666,10 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
         *   例: 4回目の予定を2日遅らせた場合、5回目以降の予定も2日遅れるが、完了済みの1〜3回目は変更されない。
         *   これにより、過去の履歴を維持しつつ、未来のスケジュールの整合性を保つ。
 
+### [Testing Documentation] - 2026-02-14
+*   **テスト手順書の作成**:
+    *   Login, Sync (Upload/Download), Realtime Sync の手動テスト手順を `docs/TESTING_PROCEDURES.md` に策定した。
+
 ### [SRS History Grouping & Date Fix] - 2026-02-13
 *   **SRS履歴のグルーピングと日付表示修正**:
     *   **Problem**: SRSタスクが履歴画面でバラバラに表示され、日付も作成日 (`createdAt`) が表示されていたため、学習計画と実績の確認が困難だった。
