@@ -645,3 +645,9 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
         *   **Layout Alignment**:
             *   `TodoCreateModal` と `TodoDetailModal` の日時入力レイアウトを変更。
             *   左側に日付（縦いっぱい）、右側に開始時間・終了時間を縦並びに配置し、視認性を向上。
+
+### [Git Configuration Fix] - 2026-02-13
+*   **Git設定の修正**:
+    *   `user.email` が誤って設定されていたため、Githubのヒートマップに反映されない問題を修正。
+    *   正しいメールアドレス (`gude1228@outlook.jp`) に変更。
+    *   `git filter-branch` を使用して、過去のコミット（21件）のAuthor情報も修正し、履歴を整合させた。
