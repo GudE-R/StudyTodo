@@ -76,7 +76,7 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 
 ### リファクタリング / 技術的負債
 - [x] **共通ロジックの統合**: TodoDetailModalのテキスト解析ロジックをpackages/sharedへ移動。
-- [x] **テストコードの拡充**: コンポーネントテスト、統合テストの追加（Web/Mobile/Shared）。
+- [x] **テストコードの拡充**: コンポーネントテスト、統合テストの追加（Web/Mobile/Shared）。(2026-02-13 SRS Refactoring完了)
 - [ ] **ActivityModal.tsxの分割**: 約900行の巨大ファイルをAnalyticsTab、HistoryTab、ShareTabに分割。
 - [ ] **高速化**: アプリケーション全体のパフォーマンスチューニング。
 - [ ] **カスタムアイコン画像の同期**: カテゴリのカスタム画像アイコンをSupabase Storageで同期（Web/Mobile間）。
