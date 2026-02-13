@@ -118,7 +118,44 @@ export function useMobileTodos() {
     };
 
     const updateTodo = async (id: string, updates: Partial<Todo>) => {
+        // Find current state to check for changes
+        const oldTodo = todos.find(t => t.id === id);
+
+        // Optimistic update (optional) or just wait for refresh
         await repository.updateTodo(id, updates);
+
+        // SRS Date Shift Logic
+        if (oldTodo && updates.dueDate && oldTodo.dueDate) {
+            const oldDate = new Date(oldTodo.dueDate);
+            const newDate = new Date(updates.dueDate);
+
+            // Normalize to midnight for accurate day diff
+            oldDate.setHours(0, 0, 0, 0);
+            newDate.setHours(0, 0, 0, 0);
+
+            const diffTime = newDate.getTime() - oldDate.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays !== 0 && oldTodo.srsGroupId) {
+                // Determine if this is a Root task or Child task
+                // If it has srsGroupId, we assume it's part of a group.
+                // We should shift ALL tasks in this group to maintain relative schedule.
+
+                const groupTodos = todos.filter(t => t.srsGroupId === oldTodo.srsGroupId && t.id !== id);
+
+                // Shift siblings
+                for (const subTodo of groupTodos) {
+                    if (subTodo.dueDate) {
+                        const subDate = new Date(subTodo.dueDate);
+                        const newSubDate = addDays(subDate, diffDays);
+                        await repository.updateTodo(subTodo.id, {
+                            dueDate: newSubDate,
+                            updatedAt: new Date()
+                        });
+                    }
+                }
+            }
+        }
     };
 
     const deleteTodo = async (id: string) => {
