@@ -126,7 +126,12 @@ export const TodoCreateModal = ({
     // Build todo data
     const buildTodoData = (): Omit<Todo, 'id' | 'createdAt' | 'completed'> => {
         const { title, notes } = parseContent();
-        const effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
+        let effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
+
+        // If SRS or Routine is selected but no date is set, default to Today
+        if (!effectiveDate && (srsProfileId || routineDays.length > 0)) {
+            effectiveDate = new Date();
+        }
 
         return {
             title: title || '無題',
@@ -135,6 +140,7 @@ export const TodoCreateModal = ({
             endTime: endTime || undefined,
             categoryId: categoryId || undefined,
             srsProfileId: srsProfileId || undefined,
+            srsInterval: selectedSrsName || undefined,
             memo: notes,
             priority: 'medium',
             routineDays: routineDays.length > 0 ? routineDays : undefined,

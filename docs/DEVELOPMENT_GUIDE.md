@@ -194,3 +194,15 @@ if (!date) {
 - [03_IMPLEMENTATION.md](./03_IMPLEMENTATION.md) - 実装状況と変更履歴
 - [04_FUTURE.md](./04_FUTURE.md) - 将来の計画
 - [ANDROID_TEST_SETUP.md](./ANDROID_TEST_SETUP.md) - Androidエミュレータでのテスト手順
+
+## 9. トラブルシューティング
+
+### 9.1 共有パッケージのエクスポートが見つからない
+`Module '...' has no exported member '...'` エラーが発生する場合：
+
+1. `packages/shared` がビルドされているか確認してください。
+   ```bash
+   npm run build -w @studytodo/shared
+   ```
+2. VS Code等のエディタを再起動するか、TypeScriptサーバを再起動してください。
+3. `packages/shared/dist/index.d.ts` に対象のエクスポートが含まれているか確認してください。

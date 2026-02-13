@@ -97,7 +97,15 @@ export const TodoDetailModal = ({
             setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
             setDueTime(todo.dueTime || '');
             setEndTime(todo.endTime || '');
-            setSrsInterval(todo.srsInterval || '');
+
+            // SRS Logic: Fallback to profile name if srsInterval is empty but profileId exists
+            let initialSrsInterval = todo.srsInterval || '';
+            if (!initialSrsInterval && todo.srsProfileId) {
+                const profile = srsProfiles.find(p => p.id === todo.srsProfileId);
+                if (profile) initialSrsInterval = profile.name;
+            }
+            setSrsInterval(initialSrsInterval);
+
             setIsRecording(false);
             setRecordDuration('');
 

@@ -127,7 +127,12 @@ export function TodoCreateModal({
         }
         const { title: parsedTitle, notes } = parseContent();
         // Only set dueDate if time is also set, otherwise just add to todolist
-        const effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
+        let effectiveDate = dueTime ? ensureDateIfTimeSet() : (dueDate ?? undefined);
+
+        // If SRS or Routine is selected but no date is set, default to Today
+        if (!effectiveDate && (srsInterval || routineDays.length > 0)) {
+            effectiveDate = new Date();
+        }
 
         onCreate({
             title: parsedTitle || t("noTitle"),
