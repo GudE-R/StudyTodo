@@ -53,7 +53,7 @@ export const TodoCreateModal = ({
     const [dueTime, setDueTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [categoryId, setCategoryId] = useState('');
-    const [srsInterval, setSrsInterval] = useState('');
+    const [srsProfileId, setSrsProfileId] = useState('');
     const [duration, setDuration] = useState('');
     const [isRecordMode, setIsRecordMode] = useState(false);
     const [routineDays, setRoutineDays] = useState<number[]>([]);
@@ -134,7 +134,7 @@ export const TodoCreateModal = ({
             dueTime: dueTime || undefined,
             endTime: endTime || undefined,
             categoryId: categoryId || undefined,
-            srsInterval: srsInterval || undefined,
+            srsProfileId: srsProfileId || undefined,
             memo: notes,
             priority: 'medium',
             routineDays: routineDays.length > 0 ? routineDays : undefined,
@@ -190,14 +190,15 @@ export const TodoCreateModal = ({
             dueDate: now,
             dueTime: format(now, 'HH:mm'),
             categoryId: categoryId || undefined,
-            srsInterval: srsInterval || undefined,
+            srsProfileId: srsProfileId || undefined,
             memo: notes,
             priority: 'medium',
             updatedAt: new Date(),
         };
-        // If SRS is selected, ensure we set srsGroupId
-        if (srsInterval) {
+        // If SRS is selected, ensure we set srsGroupId and srsProfileId
+        if (srsProfileId) {
             (todoData as any).srsGroupId = generateId();
+            (todoData as any).srsProfileId = srsProfileId;
         }
 
         if (onStartNow) {
@@ -252,7 +253,7 @@ export const TodoCreateModal = ({
         setDueTime('');
         setEndTime('');
         setCategoryId('');
-        setSrsInterval('');
+        setSrsProfileId('');
         setRoutineDays([]);
         setIsRoutineOpen(false);
         setDuration('');
@@ -341,7 +342,7 @@ export const TodoCreateModal = ({
                             >
                                 <Repeat size={18} color={colors.success} />
                                 <Text style={[styles.srsBtnText, { color: colors.text }]} numberOfLines={1}>
-                                    {srsInterval || t('todo.noSrs', 'No SRS')}
+                                    {srsProfileId ? srsProfiles.find(p => p.id === srsProfileId)?.name : t('todo.noSrs', 'No SRS')}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -681,7 +682,7 @@ export const TodoCreateModal = ({
                         <ScrollView style={styles.pickerScroll}>
                             <TouchableOpacity
                                 style={[styles.pickerItem, { borderBottomColor: colors.border }]}
-                                onPress={() => { setSrsInterval(''); setShowSRSPicker(false); }}
+                                onPress={() => { setSrsProfileId(''); setShowSRSPicker(false); }}
                             >
                                 <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noSrs', 'No SRS')}</Text>
                             </TouchableOpacity>
@@ -689,7 +690,7 @@ export const TodoCreateModal = ({
                                 <TouchableOpacity
                                     key={p.id}
                                     style={[styles.pickerItem, { borderBottomColor: colors.border }]}
-                                    onPress={() => { setSrsInterval(p.name); setShowSRSPicker(false); }}
+                                    onPress={() => { setSrsProfileId(p.id); setShowSRSPicker(false); }}
                                 >
                                     <Text style={[styles.pickerItemText, { color: colors.text }]}>{p.name}</Text>
                                 </TouchableOpacity>
