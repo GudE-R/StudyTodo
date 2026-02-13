@@ -886,3 +886,18 @@ Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面�
 - **Todo Detail Refactoring**:
     - `TodoDetailModal` のレイアウトを `TodoCreateModal` と統一。終了時刻・記録時間入力欄を追加。
     - フッターの「記録」ボタンを削除し、保存ボタンに記録機能を統合（時間入力有無で分岐）。
+
+**Todo Recording UI Review (2026-02-13)**:
+ユーザーからのフィードバックにより、`TodoDetailModal` の記録UIを以前の形（フッターのボタンでモード切り替え）に戻した。
+また、`TodoCreateModal` もこの操作感に合わせて統一した。
+- `TodoDetailModal`:
+    - `isRecording` ステートを復活。
+    - Duration入力をメイングリッドから削除。
+    - フッターに「記録」ボタンを配置し、押下時に時間入力と保存ボタンを表示するトグル形式に変更。
+- `TodoCreateModal`:
+    - `isRecordMode` ステートを実装。
+    - Duration入力をメイングリッドから削除。
+    - フッターに「記録（チェックマーク）」ボタンを追加。
+    - 記録モード時はフッターが緑色になり、時間入力欄と「保存（チェック）」ボタンが表示される。
+    - 作成と同時にセッション履歴 (`Session`) も作成されるようにロジックを追加。
+    - `useEffect` の依存配列修正や、`addSession` の型エラー修正なども実施。
