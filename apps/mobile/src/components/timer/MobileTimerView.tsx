@@ -19,7 +19,7 @@ type TimerStatus = "focus" | "break";
 export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }: MobileTimerViewProps) => {
     const { width } = useWindowDimensions();
     const repository = useRepository();
-    const CIRCLE_SIZE = width * 0.55;
+    const CIRCLE_SIZE = width * 0.8;
     const RADIUS = CIRCLE_SIZE / 2 - 10;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -481,8 +481,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 16,
-        paddingTop: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        width: '100%',
     },
     iconBtn: {
         padding: 8,
@@ -511,9 +512,9 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'space-evenly',
-        paddingHorizontal: 20,
-        paddingBottom: 10,
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingTop: 20,
     },
     taskInfo: {
         alignItems: 'center',
@@ -543,7 +544,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     timeText: {
-        fontSize: 60,
+        fontSize: 80,
         fontWeight: 'bold',
         color: '#1f2937',
         fontVariant: ['tabular-nums'],
@@ -569,7 +570,7 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     playBtn: {
-        width: 80, height: 80, borderRadius: 40,
+        width: 64, height: 64, borderRadius: 32,
         justifyContent: 'center', alignItems: 'center',
         shadowColor: "#000", shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3, shadowRadius: 5, elevation: 8,
@@ -577,7 +578,7 @@ const styles = StyleSheet.create({
     btnFocus: { backgroundColor: '#2563eb' },
     btnBreak: { backgroundColor: '#22c55e' },
     pauseBtn: {
-        width: 80, height: 80, borderRadius: 40,
+        width: 64, height: 64, borderRadius: 32,
         backgroundColor: '#eab308',
         justifyContent: 'center', alignItems: 'center',
         shadowColor: "#000", shadowOffset: { width: 0, height: 4 },
@@ -593,7 +594,10 @@ const styles = StyleSheet.create({
     bottomActions: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 16,
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 20,
+        paddingBottom: 20,
     },
     recordBtn: {
         flexDirection: 'row',

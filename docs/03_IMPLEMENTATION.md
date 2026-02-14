@@ -690,3 +690,10 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
   - Updated  to use  for filtering , , , and .
   - Added unit tests in .
 - **Verification**: Ran unit tests confirming recursive category matching logic.
+
+### [Timer UI Redesign] - 2026-02-15
+- **Goal**: Maximize timer visibility and minimize distractions.
+- **Changes**:
+  - Updated  to increase timer circle size (80% width) and font size.
+  - Reduced header/footer padding to use full screen width.
+  - Reduced Play/Pause button size to 64px.
