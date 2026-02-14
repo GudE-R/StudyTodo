@@ -19,7 +19,7 @@ type TimerStatus = "focus" | "break";
 export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }: MobileTimerViewProps) => {
     const { width } = useWindowDimensions();
     const repository = useRepository();
-    const CIRCLE_SIZE = width * 0.8;
+    const CIRCLE_SIZE = width * 0.88;
     const RADIUS = CIRCLE_SIZE / 2 - 10;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -514,11 +514,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
-        paddingTop: 20,
+        paddingTop: 10,
     },
     taskInfo: {
         alignItems: 'center',
-        gap: 10,
+        gap: 5,
     },
     statusBadge: {
         paddingHorizontal: 12,

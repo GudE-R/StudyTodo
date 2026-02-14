@@ -697,3 +697,5 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
   - Updated  to increase timer circle size (80% width) and font size.
   - Reduced header/footer padding to use full screen width.
   - Reduced Play/Pause button size to 64px.
+
+- **Refinement**: Adjusted layout to move task info higher and further increased timer size to 88% width.
