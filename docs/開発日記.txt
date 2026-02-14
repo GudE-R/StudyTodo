@@ -987,3 +987,6 @@ Githubのヒートマップがまだ反映されないため、徹底的な対�
 - categoriesのツリー構造を考慮した再帰判定ロジック(isCategoryMatch)を導入。
 
 - categoryUtils.test.tsのLintエラー（describe, it, expectが未定義）を修正するため、apps/mobile/tsconfig.jsonに"types": ["vitest/globals"]を追加。
+
+- categoryUtils.tsを新規作成した際に、既存のbuildCategoryTree関数を誤って削除していたため復元。
+- テストファイルをsrc/lib/__tests__/categoryUtils.test.tsに統合。

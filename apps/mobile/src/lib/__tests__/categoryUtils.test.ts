@@ -67,3 +67,87 @@ describe('buildCategoryTree', () => {
         expect(result[0].id).toBe("child");
     });
 });
+
+// --- Added tests for getDescendantIds and isCategoryMatch ---
+
+import { getDescendantIds, isCategoryMatch } from '../categoryUtils';
+
+const createCategoryForSearch = (id: string, parentId?: string): Category => ({
+    id,
+    name: `Category ${id}`,
+    parentId,
+    level: 'medium',
+    order: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+});
+
+describe('categoryUtils extended', () => {
+    const categories: Category[] = [
+        createCategoryForSearch('A'),
+        createCategoryForSearch('B', 'A'),
+        createCategoryForSearch('C', 'A'),
+        createCategoryForSearch('D', 'B'),
+        createCategoryForSearch('E', 'B'),
+        createCategoryForSearch('F', 'C'),
+        createCategoryForSearch('G', 'C'),
+        createCategoryForSearch('H'), // Independent
+    ];
+
+    describe('getDescendantIds', () => {
+        it('should return only self for leaf node', () => {
+            const result = getDescendantIds('D', categories);
+            expect(result.size).toBe(1);
+            expect(result.has('D')).toBe(true);
+        });
+
+        it('should return self and direct children', () => {
+            const result = getDescendantIds('B', categories);
+            expect(result.size).toBe(3); // B, D, E
+            expect(result.has('B')).toBe(true);
+            expect(result.has('D')).toBe(true);
+            expect(result.has('E')).toBe(true);
+        });
+
+        it('should return self and all descendants (deep)', () => {
+            const result = getDescendantIds('A', categories);
+            expect(result.size).toBe(7); // A, B, C, D, E, F, G
+            expect(result.has('A')).toBe(true);
+            expect(result.has('B')).toBe(true);
+            expect(result.has('C')).toBe(true);
+            expect(result.has('D')).toBe(true);
+            expect(result.has('E')).toBe(true);
+            expect(result.has('F')).toBe(true);
+            expect(result.has('G')).toBe(true);
+            expect(result.has('H')).toBe(false);
+        });
+
+        it('should return only self if independent node', () => {
+            const result = getDescendantIds('H', categories);
+            expect(result.size).toBe(1);
+            expect(result.has('H')).toBe(true);
+        });
+    });
+
+    describe('isCategoryMatch', () => {
+        it('should return true if filter is all', () => {
+            expect(isCategoryMatch('A', 'all', categories)).toBe(true);
+        });
+
+        it('should return true if ids match', () => {
+            expect(isCategoryMatch('A', 'A', categories)).toBe(true);
+        });
+
+        it('should return true if target is descendant of filter', () => {
+            expect(isCategoryMatch('D', 'A', categories)).toBe(true);
+            expect(isCategoryMatch('F', 'A', categories)).toBe(true);
+            expect(isCategoryMatch('D', 'B', categories)).toBe(true);
+        });
+
+        it('should return false if target is NOT descendant of filter', () => {
+            expect(isCategoryMatch('C', 'B', categories)).toBe(false);
+            expect(isCategoryMatch('H', 'A', categories)).toBe(false);
+            expect(isCategoryMatch('A', 'B', categories)).toBe(false);
+        });
+    });
+});

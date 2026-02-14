@@ -48,3 +48,35 @@ export const isCategoryMatch = (targetCategoryId: string | undefined, filterCate
     const descendantIds = getDescendantIds(filterCategoryId, categories);
     return descendantIds.has(targetCategoryId);
 };
+
+/**
+ * フラットなカテゴリリストをツリー構造に変換します。
+ * @param categories フラットなカテゴリリスト
+ * @returns ツリー構造のカテゴリリスト（ルート要素の配列）
+ */
+export const buildCategoryTree = (categories: Category[]): Category[] => {
+    // IDをキーにしたマップを作成
+    const map = new Map<string, Category>();
+    const roots: Category[] = [];
+
+    // 全てのカテゴリをマップに登録し、children配列を初期化
+    categories.forEach(cat => {
+        // オブジェクトのコピーを作成して変更を加える
+        map.set(cat.id, { ...cat, children: [] });
+    });
+
+    // 親子関係を構築
+    categories.forEach(cat => {
+        const node = map.get(cat.id);
+        if (!node) return;
+
+        if (cat.parentId && map.has(cat.parentId)) {
+            const parent = map.get(cat.parentId);
+            parent!.children!.push(node);
+        } else {
+            roots.push(node);
+        }
+    });
+
+    return roots;
+};
