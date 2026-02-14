@@ -985,3 +985,5 @@ Githubのヒートマップがまだ反映されないため、徹底的な対�
 2/14
 - アクティビティ画面で親カテゴリ選択時に、子カテゴリの集計時間が合算されるように修正。
 - categoriesのツリー構造を考慮した再帰判定ロジック(isCategoryMatch)を導入。
+
+- categoryUtils.test.tsのLintエラー（describe, it, expectが未定義）を修正するため、apps/mobile/tsconfig.jsonに"types": ["vitest/globals"]を追加。
