@@ -677,3 +677,8 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
         *   `TodoCreateModal`: SRSタスク作成時に `srsGroupId` を生成・付与するように変更。これにより、初回作成時からグループIDを持つようになり、履歴画面でまとめられる。
         *   **Bug Fix**: SRS選択時に `addSRSTodos` を使用するように修正し、復習用のタスクが一括作成されるようにした。
         *   `ActivityModal`: 履歴リスト（アコーディオン内）の日付表示を `createdAt` から `dueDate` に変更。フォーマットも `MM/dd (EEE)` とし、時間表示を削除。
+
+### [Git Author Standardization] - 2026-02-14
+*   **Git Author/Committer 統一**:
+    *   Githubヒートマップ反映問題の追加対応として、Author名とCommitter名を全て `GudE-R` に、メールアドレスを `gude1228@outlook.jp` に統一。
+    *   表記揺れ（`Gude` vs `GudE-R`, `Gude1228` vs `gude1228`）を解消し、Githubの集計漏れを防ぐ。
