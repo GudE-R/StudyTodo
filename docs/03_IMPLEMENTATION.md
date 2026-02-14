@@ -682,3 +682,11 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
 *   **Git Author/Committer 統一**:
     *   Githubヒートマップ反映問題の追加対応として、Author名とCommitter名を全て `GudE-R` に、メールアドレスを `gude1228@outlook.jp` に統一。
     *   表記揺れ（`Gude` vs `GudE-R`, `Gude1228` vs `gude1228`）を解消し、Githubの集計漏れを防ぐ。
+
+### [Activity Logic Update] - 2026-02-14
+- **Goal**: Include sub-category duration in parent category aggregation in Activity view.
+- **Changes**:
+  - Created  with  and .
+  - Updated  to use  for filtering , , , and .
+  - Added unit tests in .
+- **Verification**: Ran unit tests confirming recursive category matching logic.

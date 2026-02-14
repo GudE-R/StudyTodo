@@ -15,6 +15,7 @@ import { captureRef } from 'react-native-view-shot';
 import { shareAsync } from 'expo-sharing';
 import { calculateStreak } from '@studytodo/shared';
 import { ShareCard } from '../activity/ShareCard';
+import { isCategoryMatch } from '../../lib/categoryUtils';
 
 interface ActivityModalProps {
     visible: boolean;
@@ -123,7 +124,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
 
             if (filterCategory !== 'all') {
                 const todo = todos.find(t => t.id === session.todoId);
-                if (!todo || todo.categoryId !== filterCategory) return;
+                if (!todo || !isCategoryMatch(todo.categoryId, filterCategory, categories)) return;
             }
 
             if (range === "year") {
@@ -156,7 +157,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
             // If filterCategory is set, PieChart will show only that category (100%).
             if (filterCategory !== 'all') {
                 const todo = todos.find(t => t.id === session.todoId);
-                if (!todo || todo.categoryId !== filterCategory) return;
+                if (!todo || !isCategoryMatch(todo.categoryId, filterCategory, categories)) return;
             }
 
             const todo = todos.find(t => t.id === session.todoId);
@@ -190,7 +191,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
 
         return todos.filter(t => {
             if (!t.completed) return false;
-            if (filterCategory !== 'all' && t.categoryId !== filterCategory) return false;
+            if (filterCategory !== 'all' && !isCategoryMatch(t.categoryId, filterCategory, categories)) return false;
             return isWithinInterval(new Date(t.createdAt), { start, end });
         }).length;
     }, [todos, range, filterCategory]);
@@ -199,7 +200,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     // --- History Logic ---
     const historyList = useMemo(() => {
         const filtered = todos.filter(t => {
-            if (historyFilterCategory !== 'all' && t.categoryId !== historyFilterCategory) return false;
+            if (historyFilterCategory !== 'all' && !isCategoryMatch(t.categoryId, historyFilterCategory, categories)) return false;
             if (historyFilterStatus === 'completed' && !t.completed) return false;
             if (historyFilterStatus === 'incomplete' && t.completed) return false;
             return true;

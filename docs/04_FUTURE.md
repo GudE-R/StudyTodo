@@ -145,3 +145,6 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
  
 記録 (26-30)
  ✅ UI Revert & Alignment
+
+- [ ] Activity: Implement date range picker for custom periods.
+- [ ] Activity: Optimize category aggregation if category tree becomes very large (caching).
