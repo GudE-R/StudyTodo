@@ -16,6 +16,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
     // Reset state when modal opens? Or keep it? 
@@ -24,6 +25,11 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     const handleAuth = async () => {
         if (!email || !password) {
             Alert.alert("Error", "Please enter both email and password");
+            return;
+        }
+
+        if (!isLoginMode && password !== confirmPassword) {
+            Alert.alert("Error", "Passwords do not match");
             return;
         }
 
@@ -44,6 +50,13 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const toggleMode = () => {
+        setIsLoginMode(!isLoginMode);
+        // Reset password fields on mode switch for security/usability
+        setPassword("");
+        setConfirmPassword("");
     };
 
     return (
@@ -101,6 +114,24 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                             </View>
                         </View>
 
+                        {/* Confirm Password Input - Only for Sign Up */}
+                        {!isLoginMode && (
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.label, { color: colors.text }]}>Confirm Password</Text>
+                                <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}>
+                                    <Lock size={20} color={colors.textSecondary} style={styles.inputIcon} />
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text }]}
+                                        placeholder="••••••••"
+                                        placeholderTextColor={colors.textSecondary}
+                                        value={confirmPassword}
+                                        onChangeText={setConfirmPassword}
+                                        secureTextEntry
+                                    />
+                                </View>
+                            </View>
+                        )}
+
                         {/* Submit Button */}
                         <TouchableOpacity
                             style={[styles.submitBtn, loading && styles.disabledBtn]}
@@ -126,7 +157,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                         {/* Toggle Mode */}
                         <TouchableOpacity
                             style={styles.toggleBtn}
-                            onPress={() => setIsLoginMode(!isLoginMode)}
+                            onPress={toggleMode}
                         >
                             <Text style={styles.toggleText}>
                                 {isLoginMode

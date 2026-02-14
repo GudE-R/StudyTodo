@@ -683,6 +683,14 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
     *   Githubヒートマップ反映問題の追加対応として、Author名とCommitter名を全て `GudE-R` に、メールアドレスを `gude1228@outlook.jp` に統一。
     *   表記揺れ（`Gude` vs `GudE-R`, `Gude1228` vs `gude1228`）を解消し、Githubの集計漏れを防ぐ。
 
+### [Signup Improvements] - 2026-02-15
+- **Goal**: Prevent user errors during sign-up by adding password confirmation.
+- **Changes**:
+  - Updated `AuthModal` to include a "Confirm Password" field in Sign Up mode.
+  - Added validation logic to ensure passwords match before submitting.
+  - Cleared password fields when switching between Login and Sign Up modes for security.
+- **Verification**: Verified with TypeScript check and user confirmation.
+
 ### [Activity Logic Update] - 2026-02-14
 - **Goal**: Include sub-category duration in parent category aggregation in Activity view.
 - **Changes**:
