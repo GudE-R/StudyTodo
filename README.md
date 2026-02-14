@@ -13,6 +13,12 @@ This repository contains all the functionality for Supabase CLI.
 - [x] Generating types directly from your database schema
 - [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
+## Layout Preview (Mobile)
+
+| Layout 1 (Simple) | Layout 2 (Default) |
+|:---:|:---:|
+| ![Layout 1](docs/images/layout_1_simple.png) | ![Layout 2](docs/images/layout_2_default.png) |
+
 ## Getting started
 
 ### Install the CLI
