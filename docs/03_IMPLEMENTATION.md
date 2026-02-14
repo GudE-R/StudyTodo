@@ -683,6 +683,15 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
     *   Githubヒートマップ反映問題の追加対応として、Author名とCommitter名を全て `GudE-R` に、メールアドレスを `gude1228@outlook.jp` に統一。
     *   表記揺れ（`Gude` vs `GudE-R`, `Gude1228` vs `gude1228`）を解消し、Githubの集計漏れを防ぐ。
 
+### [Layout Selection Improvement] - 2026-02-15
+- **Goal**: Prevent accidental layout changes and provide clear preview.
+- **Changes**:
+  - Implemented "Confirm before Apply" flow for layout selection in `SettingsModal`.
+  - Added temporary `selectedLayout` state for previews.
+  - Added "Save" button to modal header to confirm layout changes.
+  - Updated layout preview images with actual screenshots.
+- **Verification**: Verified manual testing of layout switching and UI updates.
+
 ### [Signup Improvements] - 2026-02-15
 - **Goal**: Prevent user errors during sign-up by adding password confirmation.
 - **Changes**:
