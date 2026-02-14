@@ -17,7 +17,7 @@ This repository contains all the functionality for Supabase CLI.
 
 | Layout 1 (Simple) | Layout 2 (Default) |
 |:---:|:---:|
-| ![Layout 1](docs/images/layout_1_simple.png) | ![Layout 2](docs/images/layout_2_default.png) |
+| ![Layout 1](docs/images/layout_1.PNG) | ![Layout 2](docs/images/layout_2.PNG) |
 
 ## Getting started
 
