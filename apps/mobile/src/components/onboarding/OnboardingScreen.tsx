@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { CheckSquare, Clock, Brain, BarChart3, ArrowRight } from 'lucide-react-native';
+import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare } from 'lucide-react-native';
 import { OnboardingSlide, OnboardingSlideData } from './OnboardingSlide';
 import { Paginator } from './Paginator';
 import { useTheme } from '../../providers/ThemeProvider';
@@ -54,6 +54,13 @@ export const OnboardingScreen = () => {
             description: t('onboarding.slides.analytics.description'),
             Icon: BarChart3,
             color: '#8b5cf6', // violet-500
+        },
+        {
+            id: '6',
+            title: t('onboarding.slides.feedback.title'),
+            description: t('onboarding.slides.feedback.description'),
+            Icon: MessageSquare,
+            color: '#ec4899', // pink-500
         },
     ], [t]);
 

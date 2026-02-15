@@ -77,6 +77,10 @@
             "analytics": {
                 "title": "Visualize Progress",
                 "description": "Track your growth with detailed analytics and charts."
+            },
+            "feedback": {
+                "title": "Your Feedback Matters",
+                "description": "Help us improve StudyTodo by sharing your thoughts and feature requests."
             }
         }
     },
