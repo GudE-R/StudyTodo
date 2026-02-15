@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare } from 'lucide-react-native';
+import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare, Calendar } from 'lucide-react-native';
 import { OnboardingSlide, OnboardingSlideData } from './OnboardingSlide';
 import { Paginator } from './Paginator';
 import { useTheme } from '../../providers/ThemeProvider';
@@ -33,6 +33,13 @@ export const OnboardingScreen = () => {
             description: t('onboarding.slides.manage.description'),
             Icon: CheckSquare,
             color: '#f59e0b', // amber-500
+        },
+        {
+            id: '7',
+            title: t('onboarding.slides.calendar.title'),
+            description: t('onboarding.slides.calendar.description'),
+            Icon: Calendar,
+            color: '#06b6d4', // cyan-500
         },
         {
             id: '3',

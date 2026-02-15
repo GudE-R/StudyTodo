@@ -64,7 +64,11 @@
             },
             "manage": {
                 "title": "Manage Tasks",
-                "description": "Integrated with Calendar and Schedule. Long-press to Keep date/time, and organize with Categories."
+                "description": "Create tasks, organize with categories, and set priorities to stay on top of your work."
+            },
+            "calendar": {
+                "title": "Calendar Integration",
+                "description": "Integrated with Schedule. Long-press to Keep date/time for continuous task creation."
             },
             "focus": {
                 "title": "Boost Focus",
