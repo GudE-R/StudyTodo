@@ -18,10 +18,12 @@ graph TD
     
     subgraph Onboarding Flow
         Slide1[1. Welcome] --> Slide2[2. Manage Tasks]
-        Slide2 --> Slide3[3. Timer & Focus]
-        Slide3 --> Slide4[4. SRS (忘却曲線)]
-        Slide4 --> Slide5[5. Analytics & Sync]
-        Slide5 --> Complete[完了/ログイン]
+        Slide2 --> Slide3[3. Calendar Integration]
+        Slide3 --> Slide4[4. Timer & Focus]
+        Slide4 --> Slide5[5. Automate (SRS/Routine)]
+        Slide5 --> Slide6[6. Analytics]
+        Slide6 --> Slide7[7. Feedback]
+        Slide7 --> Complete[完了/ログイン]
     end
     
     Complete --> SetFlag[完了フラグ保存]
@@ -32,8 +34,9 @@ graph TD
 - **State Management**: React Context (`OnboardingProvider`)
 - **Persistence**: `@react-native-async-storage/async-storage`
 - **Animations**: `react-native-reanimated` (既存導入済み)
+- **Internationalization**: `i18next` / `react-i18next` (日/英対応)
 - **UI Components**:
-    - `FlatList` (pagingEnabled) または `Animated.ScrollView` を使用してカルーセルを実装。
+    - `FlatList` (pagingEnabled) を使用してカルーセルを実装。
     - `lucide-react-native` アイコンを使用。
 
 ## 5. 実装詳細
@@ -64,12 +67,15 @@ providers/
     - 全画面のカルーセル（スワイプ可能）。
     - 下部にナビゲーションボタン（「次へ」「スキップ」「はじめる」）。
     - ページインジケーター。
+    - **多言語対応**: `useTranslation` フックを使用し、端末設定に合わせて言語を切り替え。
 - **Slides**:
-    1.  **Welcome**: ロゴ、アプリ名、キャッチコピー。
-    2.  **Manage**: Todo作成
-    3.  **Focus**: タイマー機能の紹介。
-    4.  **Memory**: SRS（忘却曲線）の紹介。
-    5.  **Visualize**: 分析と同期機能の紹介。
+    1.  **Welcome**: アプリの概要。
+    2.  **Manage**: タスク作成、カテゴリ整理（優先度なし）。
+    3.  **Calendar**: カレンダー・スケジュール連携、キープ機能。
+    4.  **Focus**: 3種類のタイマー（ポモドーロ、カウントダウン、ストップウォッチ）。
+    5.  **Automate**: SRS（間隔反復）とルーティーン機能による学習計画の自動化。
+    6.  **Visualize**: 分析機能。
+    7.  **Feedback**: フィードバックの送付依頼。
 
 #### 統合
 - `App.tsx` または `MainLayoutSelector.tsx` を修正。
@@ -78,21 +84,23 @@ providers/
 
 ## 6. タスクリスト
 
-- [ ] **Step 1: Provider Implementation**
-    - [ ] `apps/mobile/src/providers/OnboardingProvider.tsx` を作成。
-    - [ ] `App.tsx` に Provider を追加。
+- [x] **Step 1: Provider Implementation**
+    - [x] `apps/mobile/src/providers/OnboardingProvider.tsx` を作成。
+    - [x] `App.tsx` に Provider を追加。
 
-- [ ] **Step 2: UI Components Implementation**
-    - [ ] `apps/mobile/src/components/onboarding/` ディレクトリ作成。
-    - [ ] `OnboardingSlide.tsx` (レイアウトとデザイン) 作成。
-    - [ ] `Paginator.tsx` (インジケーター) 作成。
-    - [ ] `OnboardingScreen.tsx` (統合ロジック) 作成。
+- [x] **Step 2: UI Components Implementation**
+    - [x] `apps/mobile/src/components/onboarding/` ディレクトリ作成。
+    - [x] `OnboardingSlide.tsx` (レイアウトとデザイン) 作成。
+    - [x] `Paginator.tsx` (インジケーター) 作成。
+    - [x] `OnboardingScreen.tsx` (統合ロジック) 作成。
 
-- [ ] **Step 3: Integration**
-    - [ ] `MainLayoutSelector` (または `AppContent`) に分岐ロジックを追加。
-    - [ ] スタイリング調整 (Dark mode 対応)。
+- [x] **Step 3: Integration & I18n**
+    - [x] `MainLayoutSelector` (または `AppContent`) に分岐ロジックを追加。
+    - [x] スタイリング調整 (Dark mode 対応)。
+    - [x] 多言語対応 (日本語/英語) の実装。
 
-- [ ] **Step 4: Verification**
-    - [ ] 初期起動でオンボーディングが表示されるか確認。
-    - [ ] 「完了」後にメイン画面へ遷移するか確認。
-    - [ ] 再起動時にオンボーディングが表示されないことを確認。
+- [x] **Step 4: Verification & Refinement**
+    - [x] 初期起動でオンボーディングが表示されるか確認。
+    - [x] 「完了」後にメイン画面へ遷移するか確認。
+    - [x] 再起動時にオンボーディングが表示されないことを確認。
+    - [x] ユーザーフィードバックに基づく修正（文言変更、スライド追加）。

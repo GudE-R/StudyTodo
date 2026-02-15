@@ -1,12 +1,12 @@
-
 import React, { useRef, useState, useMemo } from 'react';
 import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare, Calendar, Cloud } from 'lucide-react-native';
+import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare, Calendar } from 'lucide-react-native';
 import { OnboardingSlide, OnboardingSlideData } from './OnboardingSlide';
 import { Paginator } from './Paginator';
 import { useTheme } from '../../providers/ThemeProvider';
 import { useOnboarding } from '../../providers/OnboardingProvider';
+import { useAuth } from '../../providers/AuthProvider';
 
 const { width } = Dimensions.get('window');
 
@@ -14,6 +14,7 @@ export const OnboardingScreen = () => {
     const { t } = useTranslation();
     const { colors } = useTheme();
     const { completeOnboarding } = useOnboarding();
+    const { signIn } = useAuth(); // Assuming basic access or we just navigate to main
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef = useRef<FlatList>(null);
@@ -53,13 +54,6 @@ export const OnboardingScreen = () => {
             description: t('onboarding.slides.srs.description'),
             Icon: Brain,
             color: '#22c55e', // green-500
-        },
-        {
-            id: '8',
-            title: t('onboarding.slides.sync.title'),
-            description: t('onboarding.slides.sync.description'),
-            Icon: Cloud,
-            color: '#3b82f6', // blue-500 repeated or maybe a different shade
         },
         {
             id: '5',
