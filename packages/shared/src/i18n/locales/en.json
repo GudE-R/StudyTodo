@@ -68,7 +68,7 @@
             },
             "calendar": {
                 "title": "Calendar Integration",
-                "description": "Integrated with Schedule. Long-press to Keep date/time for continuous task creation."
+                "description": "Integrated with Schedule. Long-press dates or times to skip selection when creating tasks."
             },
             "focus": {
                 "title": "Boost Focus",
