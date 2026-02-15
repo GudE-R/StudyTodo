@@ -684,35 +684,34 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
     *   表記揺れ（`Gude` vs `GudE-R`, `Gude1228` vs `gude1228`）を解消し、Githubの集計漏れを防ぐ。
 
 ### [Layout Selection Improvement] - 2026-02-15
-- **Goal**: Prevent accidental layout changes and provide clear preview.
-- **Changes**:
-  - Implemented "Confirm before Apply" flow for layout selection in `SettingsModal`.
-  - Added temporary `selectedLayout` state for previews.
-  - Added "Save" button to modal header to confirm layout changes.
-  - Updated layout preview images with actual screenshots.
-- **Verification**: Verified manual testing of layout switching and UI updates.
+- **目的**: 誤操作によるレイアウト変更を防ぎ、明確なプレビューを提供する。
+- **変更点**:
+  - `SettingsModal` におけるレイアウト選択を「適用前に確認」するフローに変更。
+  - プレビュー用に一時的な `selectedLayout` ステートを追加。
+  - レイアウト変更を確定するための「保存」ボタンをモーダルヘッダーに追加。
+  - レイアウトプレビュー画像を実際のスクリーンショットに更新。
+- **検証**: レイアウト切り替えとUI更新の手動テストを実施し確認。
 
 ### [Signup Improvements] - 2026-02-15
-- **Goal**: Prevent user errors during sign-up by adding password confirmation.
-- **Changes**:
-  - Updated `AuthModal` to include a "Confirm Password" field in Sign Up mode.
-  - Added validation logic to ensure passwords match before submitting.
-  - Cleared password fields when switching between Login and Sign Up modes for security.
-- **Verification**: Verified with TypeScript check and user confirmation.
+- **目的**: パスワード確認機能を追加し、サインアップ時のユーザーエラーを防止する。
+- **変更点**:
+  - `AuthModal` を更新し、サインアップモードに「パスワード確認」フィールドを追加。
+  - 送信前にパスワードが一致することを確認するバリデーションロジックを追加。
+  - セキュリティのため、ログイン/サインアップモード切り替え時にパスワードフィールドをクリアするように変更。
+- **検証**: TypeScriptチェックとユーザーによる動作確認を実施。
 
 ### [Activity Logic Update] - 2026-02-14
-- **Goal**: Include sub-category duration in parent category aggregation in Activity view.
-- **Changes**:
-  - Created  with  and .
-  - Updated  to use  for filtering , , , and .
-  - Added unit tests in .
-- **Verification**: Ran unit tests confirming recursive category matching logic.
+- **目的**: アクティビティ画面において、サブカテゴリの時間を親カテゴリの集計に含める。
+- **変更点**:
+  - `getAllChildCategoryIds` と `getCategoryHierarchy` を含む `categoryUtils.ts` を作成。
+  - `ActivityModal` を更新し、`stats`, `history`, `chart`, `heatmap` のフィルタリングに `getAllChildCategoryIds` を使用するように変更。
+  - `categoryUtils.test.ts` にユニットテストを追加。
+- **検証**: 再帰的なカテゴリマッチングロジックを確認するユニットテストを実行。
 
 ### [Timer UI Redesign] - 2026-02-15
-- **Goal**: Maximize timer visibility and minimize distractions.
-- **Changes**:
-  - Updated  to increase timer circle size (80% width) and font size.
-  - Reduced header/footer padding to use full screen width.
-  - Reduced Play/Pause button size to 64px.
-
-- **Refinement**: Adjusted layout to move task info higher and further increased timer size to 88% width.
+- **目的**: タイマーの視認性を最大化し、気が散る要素を最小限にする。
+- **変更点**:
+  - `MobileTimerView` を更新し、タイマーサークルのサイズ（幅80%）とフォントサイズを拡大。
+  - ヘッダー/フッターのパディングを削減し、画面幅を最大限に使用するように変更。
+  - 再生/一時停止ボタンのサイズを64pxに縮小。
+  - **改善**: レイアウトを調整し、タスク情報をより上部に配置、タイマーサイズを幅88%にさらに拡大。
