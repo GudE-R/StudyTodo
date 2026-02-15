@@ -8,6 +8,7 @@ import { RepositoryProvider } from './src/providers/RepositoryProvider';
 import { AuthProvider } from './src/providers/AuthProvider';
 import { ThemeProvider, useTheme } from './src/providers/ThemeProvider';
 import { LayoutProvider } from './src/providers/LayoutProvider';
+import { OnboardingProvider } from './src/providers/OnboardingProvider';
 
 function AppContent() {
   const { isDark } = useTheme();
@@ -29,18 +30,21 @@ export default function App() {
             アプリ起動時に保存された設定を読み込み、切り替えを可能にします。
           */}
           <LayoutProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <SafeAreaProvider>
-                {/* 
-                  現在のレイアウト設定に基づいて、適切なメイン画面コンポーネント
-                  （MainLayout または MainLayoutSimple）を自動的に選択して表示します。
-                */}
-                <AppContent />
-              </SafeAreaProvider>
-            </GestureHandlerRootView>
+            <OnboardingProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <SafeAreaProvider>
+                  {/* 
+                    現在のレイアウト設定に基づいて、適切なメイン画面コンポーネント
+                    （MainLayout または MainLayoutSimple）を自動的に選択して表示します。
+                  */}
+                  <AppContent />
+                </SafeAreaProvider>
+              </GestureHandlerRootView>
+            </OnboardingProvider>
           </LayoutProvider>
         </ThemeProvider>
       </AuthProvider>
     </RepositoryProvider>
+
   );
 }
