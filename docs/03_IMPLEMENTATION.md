@@ -387,11 +387,18 @@
 #### 追加/変更 (Web)
 - **15言語対応完了**:
     - 初期5言語 (日本語, 英語, ドイツ語, フランス語, スペイン語) に加え、新たに10言語を追加。
-    - **追加言語**: 韓国語 (ko), 中国語 (簡体: zh-CN, 繁体: zh-TW), ポルトガル語 (pt-BR), イタリア語 (it), ロシア語 (ru), ベトナム語 (vi), インドネシア語 (id), トルコ語 (tr), オランダ語 (nl)。
-- **設定最適化**:
-    - `apps/web/src/middleware.ts` のマッチャー正規表現を全15言語に対応するよう更新。
-    - `packages/shared/src/i18n/locales/*.json` に翻訳ファイルを追加・整備。
-    - `apps/web/src/lib/date-fns-locales.ts` に全言語分の `date-fns` ロケールマッピングを追加。
+    - **追加言語**: 韓国語 (ko), 中国語 (簡体: zh-CN, 繁体: zh-TW), ポルトガル語 (pt-BR), イタリア語 (it), ロシア語 (ru),
+- **多言語対応 (i18n):**
+  - **ライブラリ:** `i18next`, `react-i18next`, `expo-localization` を使用し、英語・日本語に対応。
+  - **設定:** `apps/mobile/src/i18n/index.ts` で設定。端末の言語設定を自動検知し、未対応言語の場合は英語にフォールバック。
+  - **Localeファイル:** `packages/shared/src/i18n/locales/` に `ja.json` と `en.json` を配置。
+  - **オンボーディング:** スライド内容（タイトル、説明文）を全て多言語化。ユーザーフィードバックに基づき、「カレンダー連携（拡大機能）」「フィードバック機能」「タイマー3種」などの説明を精緻化。
+
+- **オンボーディング機能:**
+  - **構成:** 全7スライド（Welcome, Manage, Calendar, Focus, Automate, Scale, Feedback）。
+  - **UI:** `OnboardingScreen` (カルーセル), `Paginator` (ドットインジケーター), `OnboardingSlide` (スライドコンポーネント)。
+  - **永続化:** `AsyncStorage` を使用して完了状態を保存し、次回起動時はスキップ。
+- `apps/web/src/lib/date-fns-locales.ts` に全言語分の `date-fns` ロケールマッピングを追加。
 - **バグ修正**:
     - 新規言語が日本語にフォールバックされる問題を、サーバーキャッシュクリア (開発サーバーの再起動) と設定ファイルの整合性確認により解決。
 
