@@ -71,8 +71,8 @@
                 "description": "Use the Pomodoro timer to focus deeply and track your study time."
             },
             "srs": {
-                "title": "Smart Review",
-                "description": "SRS (Spaced Repetition) helps you review at the perfect time so you remember more in less time."
+                "title": "Automate Learning",
+                "description": "Create weekly routines and custom SRS profiles to automate your study schedule."
             },
             "analytics": {
                 "title": "Visualize Progress",
