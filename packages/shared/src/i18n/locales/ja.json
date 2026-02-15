@@ -60,7 +60,7 @@
         "slides": {
             "welcome": {
                 "title": "StudyTodoへようこそ",
-                "description": "タスク管理、タイマー、SRS、分析機能が一つになった学習アプリです。"
+                "description": "タスク・スケジュール管理、タイマー、SRS、分析機能が一つになった学習アプリです。"
             },
             "manage": {
                 "title": "タスク管理",
