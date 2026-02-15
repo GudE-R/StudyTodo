@@ -68,7 +68,7 @@
             },
             "calendar": {
                 "title": "Calendar Integration",
-                "description": "Swipe to navigate Calendar and Schedule. Long-press dates or times to skip selection when creating tasks."
+                "description": "Swipe to expand Calendar and Schedule. Long-press dates or times to skip selection when creating tasks."
             },
             "focus": {
                 "title": "Boost Focus",
@@ -206,7 +206,7 @@
         "timerTitle": "Timer & Recording",
         "timerDesc": "Features Pomodoro, Countdown, and Stopwatch modes. Study records are automatically saved and reflected in analytics upon completion.",
         "calendarTitle": "Calendar & Schedule",
-        "calendarDesc": "Swipe to navigate seamlessly through the Calendar and Schedule. Long-press to create tasks directly, or view past/future events effortlessly.",
+        "calendarDesc": "Swipe to expand the Calendar and Schedule. Long-press to create tasks directly, or view past/future events effortlessly.",
         "srsTitle": "SRS (Spaced Repetition)",
         "srsDesc": "Automated review management. Apply SRS profiles to tasks, and optimal review dates based on the forgetting curve will be auto-scheduled.",
         "categoryTitle": "Category Management",
