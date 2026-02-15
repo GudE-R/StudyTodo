@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { CheckSquare, Clock, Brain, BarChart3, ArrowRight } from 'lucide-react-native';
@@ -10,45 +10,6 @@ import { useAuth } from '../../providers/AuthProvider';
 
 const { width } = Dimensions.get('window');
 
-// Data for slides
-const slides: OnboardingSlideData[] = [
-    {
-        id: '1',
-        title: 'Welcome to StudyTodo',
-        description: 'The all-in-one app for learning: Tasks, Timer, SRS, and Analytics.',
-        Icon: CheckSquare, // Placeholder icon for logo
-        color: '#3b82f6', // blue-500
-    },
-    {
-        id: '2',
-        title: 'Manage Tasks',
-        description: 'Create tasks, organize with categories, and set priorities to stay on top of your work.',
-        Icon: CheckSquare,
-        color: '#f59e0b', // amber-500
-    },
-    {
-        id: '3',
-        title: 'Boost Focus',
-        description: 'Use the Pomodoro timer to focus deeply and track your study time.',
-        Icon: Clock,
-        color: '#ef4444', // red-500
-    },
-    {
-        id: '4',
-        title: 'Smart Review',
-        description: 'Master any subject with Spaced Repetition System (SRS).',
-        Icon: Brain,
-        color: '#22c55e', // green-500
-    },
-    {
-        id: '5',
-        title: 'Visualize Progress',
-        description: 'Track your growth with detailed analytics and charts.',
-        Icon: BarChart3,
-        color: '#8b5cf6', // violet-500
-    },
-];
-
 export const OnboardingScreen = () => {
     const { t } = useTranslation();
     const { colors } = useTheme();
@@ -57,6 +18,44 @@ export const OnboardingScreen = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef = useRef<FlatList>(null);
+
+    const slides: OnboardingSlideData[] = useMemo(() => [
+        {
+            id: '1',
+            title: t('onboarding.slides.welcome.title'),
+            description: t('onboarding.slides.welcome.description'),
+            Icon: CheckSquare, // Placeholder icon for logo
+            color: '#3b82f6', // blue-500
+        },
+        {
+            id: '2',
+            title: t('onboarding.slides.manage.title'),
+            description: t('onboarding.slides.manage.description'),
+            Icon: CheckSquare,
+            color: '#f59e0b', // amber-500
+        },
+        {
+            id: '3',
+            title: t('onboarding.slides.focus.title'),
+            description: t('onboarding.slides.focus.description'),
+            Icon: Clock,
+            color: '#ef4444', // red-500
+        },
+        {
+            id: '4',
+            title: t('onboarding.slides.srs.title'),
+            description: t('onboarding.slides.srs.description'),
+            Icon: Brain,
+            color: '#22c55e', // green-500
+        },
+        {
+            id: '5',
+            title: t('onboarding.slides.analytics.title'),
+            description: t('onboarding.slides.analytics.description'),
+            Icon: BarChart3,
+            color: '#8b5cf6', // violet-500
+        },
+    ], [t]);
 
     const viewableItemsChanged = useRef(({ viewableItems }: any) => {
         if (viewableItems && viewableItems.length > 0) {
@@ -107,7 +106,7 @@ export const OnboardingScreen = () => {
                     {currentIndex < slides.length - 1 ? (
                         <>
                             <TouchableOpacity onPress={handleSkip} style={styles.skipButton}>
-                                <Text style={[styles.skipText, { color: colors.textSecondary }]}>Skip</Text>
+                                <Text style={[styles.skipText, { color: colors.textSecondary }]}>{t('onboarding.skip')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={scrollToNext}
@@ -121,7 +120,7 @@ export const OnboardingScreen = () => {
                             onPress={completeOnboarding}
                             style={[styles.getStartedButton, { backgroundColor: colors.primary }]}
                         >
-                            <Text style={styles.getStartedText}>Get Started</Text>
+                            <Text style={styles.getStartedText}>{t('onboarding.getStarted')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>

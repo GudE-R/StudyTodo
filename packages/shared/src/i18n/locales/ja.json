@@ -53,6 +53,33 @@
             "year": "年間"
         }
     },
+    "onboarding": {
+        "skip": "スキップ",
+        "next": "次へ",
+        "getStarted": "始める",
+        "slides": {
+            "welcome": {
+                "title": "StudyTodoへようこそ",
+                "description": "タスク管理、タイマー、SRS、分析機能が一つになった学習アプリです。"
+            },
+            "manage": {
+                "title": "タスク管理",
+                "description": "タスクを作成しましょう。"
+            },
+            "focus": {
+                "title": "集中力を高める",
+                "description": "ポモドーロタイマーを使って深く集中し、学習時間を記録しましょう。"
+            },
+            "srs": {
+                "title": "スマートな復習",
+                "description": "SRS（間隔反復システム）で、忘却曲線に基づいた最適なタイミングで復習できます。"
+            },
+            "analytics": {
+                "title": "成長の可視化",
+                "description": "詳細な分析とチャートで、学習の進捗と成長をトラッキングしましょう。"
+            }
+        }
+    },
     "home": {
         "title": "ホーム",
         "newTodo": "新規TODO",

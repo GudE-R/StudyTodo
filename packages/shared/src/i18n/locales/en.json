@@ -53,6 +53,33 @@
             "year": "Year"
         }
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "welcome": {
+                "title": "Welcome to StudyTodo",
+                "description": "Record, Measure, Plan - All in one. Maximize learning with Pomodoro and Spaced Repetition."
+            },
+            "manage": {
+                "title": "Manage Tasks",
+                "description": "Create tasks, organize with categories, and set priorities to stay on top of your work."
+            },
+            "focus": {
+                "title": "Boost Focus",
+                "description": "Use the Pomodoro timer to focus deeply and track your study time."
+            },
+            "srs": {
+                "title": "Smart Review",
+                "description": "Master any subject with Spaced Repetition System (SRS)."
+            },
+            "analytics": {
+                "title": "Visualize Progress",
+                "description": "Track your growth with detailed analytics and charts."
+            }
+        }
+    },
     "home": {
         "title": "Home",
         "newTodo": "New Todo",
