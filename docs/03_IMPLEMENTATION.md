@@ -91,6 +91,16 @@
 
 これまでの主要な変更履歴です。
 
+### [Technical Debt Cleanup] - 2026-02-16
+#### リファクタリング (Mobile)
+- **`console.log` の `__DEV__` ガード化**:
+    - 本番ビルドで不要なログ出力を抑制するため、Mobile版の全 `console.log` (17件) を `if (__DEV__)` ガードで囲んだ。
+    - 対象ファイル: `useMobileRealtimeSync.ts`, `useMobileSync.ts`, `useMobileTodos.ts`, `useMobileCategories.ts`, `OfflineQueueRepository.ts`, `HomeCalendar.tsx`
+- **デッドコードの削除**:
+    - 未使用ファイル10件を削除し、コードベースを整理。
+    - 削除ファイル: `MobileTodoCreateModal.tsx` (旧版), `LayoutV2.tsx`, `ExpandablePane.tsx`, `TimerModal.tsx`, `widgets/` ディレクトリ全体 (6ファイル)
+- **不要ファイルの削除**: `test_schedule.js` (ルート), `plan.txt` (Mobile) を削除。
+
 ### [Mobile Onboarding] - 2026-02-15
 #### 追加 (Mobile)
 - **オンボーディングフローの実装**:

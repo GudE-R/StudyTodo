@@ -25,7 +25,7 @@ export function useMobileCategories() {
 
         const unsubscribe = repository.onDataChange?.((table, type, data) => {
             if (table === 'categories') {
-                console.log('[useMobileCategories] Data change detected, refreshing...', type);
+                if (__DEV__) console.log('[useMobileCategories] Data change detected, refreshing...', type);
                 refreshCategories();
             }
         });

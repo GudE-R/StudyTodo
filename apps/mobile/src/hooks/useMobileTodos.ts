@@ -35,7 +35,7 @@ export function useMobileTodos() {
         // Subscribe to repository changes to get realtime updates
         const unsubscribe = repository.onDataChange((table, type, data) => {
             if (table === 'todos') {
-                console.log('[useMobileTodos] Data change detected, refreshing...', type);
+                if (__DEV__) console.log('[useMobileTodos] Data change detected, refreshing...', type);
                 refreshTodos();
             }
         });

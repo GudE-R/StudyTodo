@@ -1,4 +1,0 @@
-Plan:
-1. MobileDaySchedule.tsx: keyExtractor にガードを追加
-2. SQLiteRepository.ts: 既知のカラムのみを UPDATE 対象にするよう修正
-3. mapper.ts (mobile): fromSupabase で estimated_time を estimatedDuration にマッピング、または未知のカラムを警告付きで無視する検討

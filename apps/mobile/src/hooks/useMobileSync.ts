@@ -14,7 +14,7 @@ export function useMobileSync() {
     const sync = async (uId: string) => {
         if (isSyncing) return;
         setIsSyncing(true);
-        console.log("Starting Mobile Full Sync...");
+        if (__DEV__) console.log("Starting Mobile Full Sync...");
 
         try {
             // ... (existing sync content - fetching cloud/local)
@@ -113,7 +113,7 @@ export function useMobileSync() {
                 await supabase.from('sessions').upsert(mappedExports);
             }
 
-            console.log("Mobile Full Sync Complete.");
+            if (__DEV__) console.log("Mobile Full Sync Complete.");
             setLastSyncTime(new Date());
 
         } catch (error) {

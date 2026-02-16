@@ -21,7 +21,7 @@ async function processOfflineQueue(userId: string): Promise<void> {
     const items = await offlineQueue.getAll();
     if (items.length === 0) return;
 
-    console.log(`[MobileOfflineQueue] Processing ${items.length} queued items...`);
+    if (__DEV__) console.log(`[MobileOfflineQueue] Processing ${items.length} queued items...`);
 
     // allowedFieldsMap は @studytodo/shared からインポート
 
@@ -56,7 +56,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
     useEffect(() => {
         if (!userId) return;
 
-        console.log('Initializing Mobile Realtime Sync...');
+        if (__DEV__) console.log('Initializing Mobile Realtime Sync...');
 
         // Process any pending offline changes on startup
         processOfflineQueue(userId);
@@ -81,7 +81,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                         filter: `user_id=eq.${userId}`
                     },
                     async (payload) => {
-                        console.log(`Mobile: Cloud change detected in ${config.supabase}:`, payload.eventType);
+                        if (__DEV__) console.log(`Mobile: Cloud change detected in ${config.supabase}:`, payload.eventType);
 
                         isProcessingCloudChange.current = true;
                         try {
@@ -109,7 +109,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                                 const shouldUpdate = !localItem || compareDates(cloudUpdatedAt, localUpdatedAt) > 0;
 
                                 if (shouldUpdate) {
-                                    console.log(`Mobile: Applying cloud update to ${config.sqlite}:`, cloudItemId);
+                                    if (__DEV__) console.log(`Mobile: Applying cloud update to ${config.sqlite}:`, cloudItemId);
                                     if (config.sqlite === 'todos') {
                                         const cloudItem = rawCloudItem as unknown as Todo;
                                         if (!localItem) await repo.addTodo(cloudItem);
@@ -129,7 +129,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                                 }
                             } else if (payload.eventType === 'DELETE') {
                                 const oldItem = payload.old;
-                                console.log(`Mobile: Cloud deletion detected in ${config.sqlite}:`, oldItem.id);
+                                if (__DEV__) console.log(`Mobile: Cloud deletion detected in ${config.sqlite}:`, oldItem.id);
                                 if (config.sqlite === 'todos') await repo.deleteTodo(oldItem.id);
                                 else if (config.sqlite === 'categories') await repo.deleteCategory(oldItem.id);
                                 else if (config.sqlite === 'srsProfiles') await repo.deleteSRSProfile(oldItem.id);
@@ -142,7 +142,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                     }
                 )
                 .subscribe((status) => {
-                    console.log(`[MobileSync] Channel ${config.supabase} status: ${status}`);
+                    if (__DEV__) console.log(`[MobileSync] Channel ${config.supabase} status: ${status}`);
                 });
         });
 
@@ -151,7 +151,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
             // Skip if this change was triggered by the cloud sync above or by a full sync
             if (isProcessingCloudChange.current) return;
 
-            console.log(`Mobile: Local change detected in ${table}:`, type);
+            if (__DEV__) console.log(`Mobile: Local change detected in ${table}:`, type);
 
             // allowedFieldsMap から取得
             const allowedFields = allowedFieldsMap[table];
@@ -161,7 +161,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                 const online = await isOnline();
 
                 if (!online) {
-                    console.log('[Mobile] Offline, queuing change:', table, type);
+                    if (__DEV__) console.log('[Mobile] Offline, queuing change:', table, type);
                     await offlineQueue.add({ table, operation: type, data });
                     return;
                 }

@@ -170,7 +170,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
             });
         };
         traverse(categories);
-        console.log('[HomeCalendar] Category Map Size:', map.size, 'Total Categories:', categories.length);
+        if (__DEV__) console.log('[HomeCalendar] Category Map Size:', map.size, 'Total Categories:', categories.length);
         return map;
     }, [categories]);
 
@@ -191,9 +191,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                 if (catColor) {
                     color = catColor;
                 } else {
-                    // Debug: Category ID exists but no color found
-                    // This could be because category not loaded yet, or category has no color.
-                    // console.log('[HomeCalendar] Category color not found for:', todo.categoryId);
+                    // Category has no color or not yet loaded
                 }
             }
 

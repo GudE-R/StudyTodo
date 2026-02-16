@@ -36,7 +36,7 @@ export class OfflineQueueRepository implements SyncQueueInterface {
             'INSERT INTO sync_queue (id, tableName, operation, data, createdAt, retryCount) VALUES (?, ?, ?, ?, ?, ?)',
             [id, item.table, item.operation, dataJson, createdAt, 0]
         );
-        console.log('[OfflineQueue] Added item:', id, item.table, item.operation);
+        if (__DEV__) console.log('[OfflineQueue] Added item:', id, item.table, item.operation);
     }
 
     async getAll(): Promise<SyncQueueItem[]> {
@@ -61,12 +61,12 @@ export class OfflineQueueRepository implements SyncQueueInterface {
 
     async remove(id: string): Promise<void> {
         this.db.runSync('DELETE FROM sync_queue WHERE id = ?', [id]);
-        console.log('[OfflineQueue] Removed item:', id);
+        if (__DEV__) console.log('[OfflineQueue] Removed item:', id);
     }
 
     async clear(): Promise<void> {
         this.db.runSync('DELETE FROM sync_queue');
-        console.log('[OfflineQueue] Cleared all items');
+        if (__DEV__) console.log('[OfflineQueue] Cleared all items');
     }
 
     async incrementRetry(id: string): Promise<void> {
