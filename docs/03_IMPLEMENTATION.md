@@ -100,6 +100,11 @@
     - 未使用ファイル10件を削除し、コードベースを整理。
     - 削除ファイル: `MobileTodoCreateModal.tsx` (旧版), `LayoutV2.tsx`, `ExpandablePane.tsx`, `TimerModal.tsx`, `widgets/` ディレクトリ全体 (6ファイル)
 - **不要ファイルの削除**: `test_schedule.js` (ルート), `plan.txt` (Mobile) を削除。
+- **型安全性の向上**:
+    - `@ts-ignore` / `as any` 17箇所をすべて型安全なコードに置き換え。
+    - Mobile: `CategoryEditor`(5箇所), `CategoryTreePicker`(2箇所), `TodoCreateModal`(1箇所), `IconPickerModal`(1箇所), `i18n/index.ts`(1箇所)
+    - Web: `useRealtimeSync`(3箇所), `AdBanner`(1箇所), `request.ts`(1箇所), `layout.tsx`(1箇所)
+    - 主な手法: 不要キャスト削除、`LanguageDetectorAsyncModule`型付与、Dexie `Table`型ヘルパー、`window.adsbygoogle`型宣言、`readonly string[]`キャスト
 
 ### [Mobile Onboarding] - 2026-02-15
 #### 追加 (Mobile)

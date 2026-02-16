@@ -196,7 +196,7 @@ export default async function RootLayout(props: {
   const { children } = props;
 
   // 提供されたロケールが有効であることを確認
-  if (!routing.locales.includes(locale as any)) {
+  if (!(routing.locales as readonly string[]).includes(locale)) {
     notFound();
   }
 

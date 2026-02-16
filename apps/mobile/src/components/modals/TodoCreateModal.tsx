@@ -214,7 +214,7 @@ export const TodoCreateModal = ({
         // If SRS is selected, ensure we set srsGroupId
 
         if (srsProfileId) {
-            (todoData as any).srsGroupId = generateId();
+            todoData.srsGroupId = generateId();
         }
 
         if (onStartNow) {

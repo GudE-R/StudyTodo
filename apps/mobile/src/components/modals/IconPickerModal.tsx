@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Search, ImagePlus, Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { documentDirectory } from 'expo-file-system/legacy';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { POPULAR_ICONS, CategoryIcon } from '../ui/CategoryIcon';
 
@@ -78,7 +79,7 @@ export const IconPickerModal: React.FC<IconPickerModalProps> = ({
     const saveAndSelectImage = async (tempUri: string) => {
         try {
             // Create icons directory if it doesn't exist
-            const iconsDir = `${(FileSystem as any).documentDirectory}category-icons/`;
+            const iconsDir = `${documentDirectory}category-icons/`;
             const dirInfo = await FileSystem.getInfoAsync(iconsDir);
             if (!dirInfo.exists) {
                 await FileSystem.makeDirectoryAsync(iconsDir, { intermediates: true });

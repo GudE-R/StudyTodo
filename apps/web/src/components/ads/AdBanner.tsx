@@ -2,6 +2,12 @@
 
 import React, { useEffect } from "react";
 
+declare global {
+    interface Window {
+        adsbygoogle: Record<string, unknown>[];
+    }
+}
+
 interface AdBannerProps {
     slot?: string;
     style?: React.CSSProperties;
@@ -22,7 +28,6 @@ export function AdBanner({ slot, style, format = "auto", responsive = "true" }: 
         if (!clientId) return;
 
         try {
-            // @ts-ignore
             (window.adsbygoogle = window.adsbygoogle || []).push({});
         } catch (err) {
             console.error("AdSense error:", err);

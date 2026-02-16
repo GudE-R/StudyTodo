@@ -2,16 +2,23 @@ import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { db } from '@/lib/db';
 import { mapper, compareDates } from '@studytodo/shared';
+import { Table } from 'dexie';
+
+type DexieTableName = 'todos' | 'categories' | 'srsProfiles' | 'sessions';
+
+function getTable(name: DexieTableName): Table {
+    return db[name] as Table;
+}
 
 export function useRealtimeSync(userId: string | undefined) {
     useEffect(() => {
         if (!userId) return;
 
         const tables = [
-            { supabase: 'todos', dexie: 'todos' },
-            { supabase: 'categories', dexie: 'categories' },
-            { supabase: 'srs_profiles', dexie: 'srsProfiles' },
-            { supabase: 'sessions', dexie: 'sessions' }
+            { supabase: 'todos', dexie: 'todos' as DexieTableName },
+            { supabase: 'categories', dexie: 'categories' as DexieTableName },
+            { supabase: 'srs_profiles', dexie: 'srsProfiles' as DexieTableName },
+            { supabase: 'sessions', dexie: 'sessions' as DexieTableName }
         ];
 
         const channels = tables.map(table => {
@@ -26,24 +33,23 @@ export function useRealtimeSync(userId: string | undefined) {
                         filter: `user_id=eq.${userId}`
                     },
                     async (payload) => {
+                        const dexieTable = getTable(table.dexie);
+
                         if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
                             const cloudItem = mapper.fromSupabase(payload.new);
 
                             // Get local item to compare updatedAt
-                            // @ts-ignore
-                            const localItem = await db[table.dexie].get(cloudItem.id);
+                            const localItem = await dexieTable.get(cloudItem.id);
 
                             const cloudUpdatedAt = (cloudItem as { updatedAt?: Date | string }).updatedAt;
                             const localUpdatedAt = (localItem as { updatedAt?: Date | string } | undefined)?.updatedAt;
 
                             if (!localItem || compareDates(cloudUpdatedAt, localUpdatedAt) > 0) {
-                                // @ts-ignore
-                                await db[table.dexie].put(cloudItem);
+                                await dexieTable.put(cloudItem);
                             }
                         } else if (payload.eventType === 'DELETE') {
                             const oldItem = payload.old;
-                            // @ts-ignore
-                            await db[table.dexie].delete(oldItem.id);
+                            await dexieTable.delete(oldItem.id);
                         }
                     }
                 )

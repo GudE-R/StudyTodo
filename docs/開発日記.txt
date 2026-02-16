@@ -1086,3 +1086,56 @@ Githubのヒートマップがまだ反映されないため、徹底的な対�
 
 全テスト（84件）がパスすることを確認。
 次の技術的負債として、ActivityModal.tsxの分割、@ts-ignore/as anyの解消、テストカバレッジの向上が残っている。
+
+---
+
+**2026-02-16 (朝): 型安全性の向上**
+
+@ts-ignore / as any 17箇所をすべて型安全なコードに置き換えた。
+
+1. **不要なキャスト削除（Mobile 8箇所）**:
+   - `CategoryEditor.tsx`(5箇所)、`CategoryTreePicker.tsx`(2箇所): shared Category型にcustomIconUriが既に定義済みなのでas any不要。
+   - `TodoCreateModal.tsx`(1箇所): srsGroupIdもTodo型に定義済みなのでas any不要。
+
+2. **expo-file-systemのAPI変更対応（1箇所）**:
+   - `IconPickerModal.tsx`: 新APIでdocumentDirectoryはlegacyエクスポートに移動。`expo-file-system/legacy`からインポート。
+
+3. **i18nextの型修正（1箇所）**:
+   - `i18n/index.ts`: `LanguageDetectorAsyncModule`型をインポートし、detect関数のシグネチャをi18nextの正しい型に合わせた。
+
+4. **Dexieの動的テーブルアクセス（Web 3箇所）**:
+   - `useRealtimeSync.ts`: `DexieTableName`型と`getTable()`ヘルパー関数で型安全な動的アクセスを実現。
+
+5. **window拡張型宣言（Web 1箇所）**:
+   - `AdBanner.tsx`: `declare global`で`window.adsbygoogle`の型を宣言。
+
+6. **readonly配列の安全なキャスト（Web 2箇所）**:
+   - `request.ts`、`layout.tsx`: `as any`を`as readonly string[]`に置き換え。
+
+テスト全84件パス。技術的負債の優先度1タスク完了。
+
+---
+
+**2026-02-16 (朝): 型安全性の向上**
+
+@ts-ignore / as any 17箇所をすべて型安全なコードに置き換えた。
+
+1. **不要なキャスト削除（Mobile 8箇所）**:
+   - CategoryEditor(5), CategoryTreePicker(2), TodoCreateModal(1): shared型に既にフィールド存在。
+
+2. **expo-file-system対応（1箇所）**:
+   - IconPickerModal: documentDirectoryをlegacyモジュールからインポート。
+
+3. **i18next型修正（1箇所）**:
+   - i18n/index.ts: LanguageDetectorAsyncModule型を付与。
+
+4. **Dexie動的テーブルアクセス（Web 3箇所）**:
+   - useRealtimeSync: DexieTableName型とgetTable()ヘルパーで型安全化。
+
+5. **window拡張型宣言（Web 1箇所）**:
+   - AdBanner: declare globalでwindow.adsbygoogleの型宣言。
+
+6. **readonly配列キャスト（Web 2箇所）**:
+   - request.ts, layout.tsx: as anyをas readonly string[]に置き換え。
+
+テスト全84件パス。技術的負債の優先度1タスク完了。

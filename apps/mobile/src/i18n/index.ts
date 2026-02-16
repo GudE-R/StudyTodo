@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import type { LanguageDetectorAsyncModule } from 'i18next';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'intl-pluralrules';
@@ -46,34 +47,37 @@ const resources = {
     'zh-TW': { translation: zhTW },
 };
 
-const LANGUAGE_DETECTOR = {
+const LANGUAGE_DETECTOR: LanguageDetectorAsyncModule = {
     type: 'languageDetector',
     async: true,
-    detect: async (callback: (lang: string) => void) => {
+    detect: async (callback: (lng: string | readonly string[] | undefined) => void | undefined): Promise<string | readonly string[] | undefined> => {
         try {
             const stored = await AsyncStorage.getItem('user-language');
             if (stored) {
-                return callback(stored);
+                callback(stored);
+                return stored;
             }
 
             const locales = Localization.getLocales();
-            // Use the first locale's language code or tag
-            // For Chinese/Portuguese, we might need tag to distinguish variants
-            // expo-localization returns languageTag like 'en-US', 'ja-JP'
-            // languageCode like 'en', 'ja'
-
             const primary = locales[0];
-            if (!primary) return callback('en');
+            if (!primary) {
+                callback('en');
+                return 'en';
+            }
 
             // Try tag match first (e.g. pt-BR)
             if (primary.languageTag && resources[primary.languageTag as keyof typeof resources]) {
-                return callback(primary.languageTag);
+                callback(primary.languageTag);
+                return primary.languageTag;
             }
 
             // Fallback to language code (e.g. ja)
-            return callback(primary.languageCode ?? 'en');
+            const lang = primary.languageCode ?? 'en';
+            callback(lang);
+            return lang;
         } catch (e) {
             callback('en');
+            return 'en';
         }
     },
     init: () => { },
@@ -86,7 +90,7 @@ const LANGUAGE_DETECTOR = {
 
 i18n
     .use(initReactI18next)
-    .use(LANGUAGE_DETECTOR as any)
+    .use(LANGUAGE_DETECTOR)
     .init({
         resources,
         fallbackLng: 'en',
