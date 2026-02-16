@@ -72,4 +72,54 @@ describe('SRS Logic', () => {
         expect(updatedBase.srsGroupId).toBe('root-id');
         expect(children[0].srsGroupId).toBe('root-id');
     });
+
+    it('空のintervals配列の場合、baseTodoのみ返す', () => {
+        idCounter = 0;
+        const result = generateSRSTodos(baseTodo, [], mockGenerateId);
+
+        expect(result).toHaveLength(1);
+        expect(result[0].title).toBe('Test Task');
+        expect(result[0].srsGroupId).toBe(result[0].id);
+    });
+
+    it('dueDateがない場合、現在日付からの相対日付で生成される', () => {
+        idCounter = 0;
+        const noDueDateTodo: Todo = {
+            ...baseTodo,
+            dueDate: undefined,
+        };
+
+        const result = generateSRSTodos(noDueDateTodo, [1, 3], mockGenerateId);
+
+        expect(result).toHaveLength(3); // 1 base + 2 reviews
+        // review dates should exist
+        expect(result[1].dueDate).toBeDefined();
+        expect(result[2].dueDate).toBeDefined();
+    });
+
+    it('generateSRSTodosForExisting で空intervalsの場合、childrenは空', () => {
+        idCounter = 0;
+        const existingTodo: Todo = { ...baseTodo, id: 'existing-id' };
+
+        const { updatedBase, children } = generateSRSTodosForExisting(existingTodo, [], mockGenerateId);
+
+        expect(updatedBase.srsGroupId).toBe('existing-id');
+        expect(children).toHaveLength(0);
+    });
+
+    it('reviewTodoのsrsProfileIdとsrsIntervalはundefined', () => {
+        idCounter = 0;
+        const todoWithProfile: Todo = {
+            ...baseTodo,
+            srsProfileId: 'profile-1',
+            srsInterval: 'ebbinghaus',
+        };
+
+        const result = generateSRSTodos(todoWithProfile, [1], mockGenerateId);
+
+        expect(result).toHaveLength(2);
+        // Review todo should NOT have profileId/interval
+        expect(result[1].srsProfileId).toBeUndefined();
+        expect(result[1].srsInterval).toBeUndefined();
+    });
 });

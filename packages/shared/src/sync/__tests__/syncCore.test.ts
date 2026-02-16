@@ -155,4 +155,35 @@ describe('processTableSync', () => {
         expect(handlers.onExport).not.toHaveBeenCalled();
         expect(result).toEqual({ imported: 0, updated: 0, exported: 0 });
     });
+
+    it('onImport がエラーをスローした場合に例外が伝播する', async () => {
+        handlers.onImport = vi.fn().mockRejectedValue(new Error('Import failed'));
+        const cloudItems: SyncItem[] = [{ id: '1', updatedAt: '2025-01-01T10:00:00.000Z' }];
+
+        await expect(processTableSync([], cloudItems, handlers)).rejects.toThrow('Import failed');
+    });
+
+    it('onExport がエラーをスローした場合に例外が伝播する', async () => {
+        handlers.onExport = vi.fn().mockRejectedValue(new Error('Export failed'));
+        const localItems: SyncItem[] = [{ id: '1', updatedAt: '2025-01-01T10:00:00.000Z' }];
+
+        await expect(processTableSync(localItems, [], handlers)).rejects.toThrow('Export failed');
+    });
+
+    it('大量アイテム（100件）を正しく処理する', async () => {
+        const localItems: SyncItem[] = Array.from({ length: 50 }, (_, i) => ({
+            id: `local-${i}`,
+            updatedAt: '2025-01-01T10:00:00.000Z'
+        }));
+        const cloudItems: SyncItem[] = Array.from({ length: 50 }, (_, i) => ({
+            id: `cloud-${i}`,
+            updatedAt: '2025-01-01T10:00:00.000Z'
+        }));
+
+        const result = await processTableSync(localItems, cloudItems, handlers);
+
+        expect(result.imported).toBe(50);
+        expect(result.exported).toBe(50);
+        expect(result.updated).toBe(0);
+    });
 });

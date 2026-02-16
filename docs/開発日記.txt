@@ -1139,3 +1139,21 @@ Githubのヒートマップがまだ反映されないため、徹底的な対�
    - request.ts, layout.tsx: as anyをas readonly string[]に置き換え。
 
 テスト全84件パス。技術的負債の優先度1タスク完了。
+
+## 2026-02-16 テストカバレッジ向上
+
+テスト総数を84件から120件に増加（+36件）。
+
+ビジネスロジックの純粋関数化:
+- generateRoutineTodos: ルーティンTodo生成ロジックをuseMobileTodosからshared/domain/routineTodos.tsへ切り出し (テスト9件)
+- calculateSrsDateShifts: SRS日付シフトロジックをuseMobileTodosからshared/domain/srsDateShift.tsへ切り出し (テスト7件)
+
+エッジケーステスト追加:
+- syncCore.test.ts: ハンドラーエラー伝播、大量アイテム処理 (+3件)
+- srs.test.ts: 空intervals、dueDate未指定、srsProfileId除外 (+4件)
+
+useMobileTodos.tsリファクタリング:
+- インライン実装を共有純粋関数呼び出しに置き換え
+- コード量30行以上削減、date-fnsの直接依存も削除
+
+テスト結果: Shared 93件, Web 14件, Mobile 13件 = 計120件パス。

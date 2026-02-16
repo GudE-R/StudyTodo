@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 
-import { Todo, generateSRSTodos, generateSRSTodosForExisting } from "@studytodo/shared";
-import { addDays } from "date-fns";
+import { Todo, generateSRSTodos, generateSRSTodosForExisting, generateRoutineTodos, calculateSrsDateShifts } from "@studytodo/shared";
 import { generateId } from "../lib/utils";
 import { useRepository } from "../providers/RepositoryProvider";
 import { SQLiteRepository } from "../repositories/SQLiteRepository";
@@ -66,33 +65,9 @@ export function useMobileTodos() {
 
 
     const addRoutineTodos = async (baseTodo: Todo, routineDays: number[]) => {
-        const groupId = generateId();
-        const now = new Date();
-        const todosToAdd: Todo[] = [];
-
-        for (let i = 0; i < 30; i++) {
-            const date = addDays(now, i);
-            const dayOfWeek = date.getDay();
-
-            if (routineDays.includes(dayOfWeek)) {
-                const routineTodo: Todo = {
-                    ...baseTodo,
-                    id: generateId(),
-                    dueDate: date,
-                    completed: false,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                    srsGroupId: groupId,
-                };
-                if (todosToAdd.length === 0) {
-                    routineTodo.id = groupId;
-                }
-                todosToAdd.push(routineTodo);
-            }
-        }
-
+        const todosToAdd = generateRoutineTodos(baseTodo, routineDays, generateId);
         if (todosToAdd.length > 0) {
-            await repository.addSRSTodos(todosToAdd); // Using addSRSTodos for bulk add
+            await repository.addSRSTodos(todosToAdd);
         }
     };
 
@@ -124,39 +99,22 @@ export function useMobileTodos() {
         // Optimistic update
         await repository.updateTodo(id, updates);
 
-        // SRS Date Shift Logic
-        if (oldTodo && updates.dueDate && oldTodo.dueDate) {
-            const oldDate = new Date(oldTodo.dueDate);
-            const newDate = new Date(updates.dueDate);
+        // SRS Date Shift Logic (using shared pure function)
+        if (oldTodo && updates.dueDate && oldTodo.dueDate && oldTodo.srsGroupId) {
+            const groupTodos = todos.filter(t => t.srsGroupId === oldTodo.srsGroupId);
+            const shifts = calculateSrsDateShifts(
+                id,
+                new Date(oldTodo.dueDate),
+                new Date(updates.dueDate),
+                oldTodo.srsGroupId,
+                groupTodos
+            );
 
-            // Normalize to midnight
-            oldDate.setHours(0, 0, 0, 0);
-            newDate.setHours(0, 0, 0, 0);
-
-            const diffTime = newDate.getTime() - oldDate.getTime();
-            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays !== 0 && oldTodo.srsGroupId) {
-                // Determine group members
-                const groupTodos = todos.filter(t => t.srsGroupId === oldTodo.srsGroupId && t.id !== id);
-
-                // Shift subsequent siblings (future relative to the ORIGINAL date of the modified task)
-                // Filter: Only shift tasks that were originally scheduled AFTER this task.
-                // This preserves past history while shifting the future chain.
-                for (const subTodo of groupTodos) {
-                    if (subTodo.dueDate) {
-                        const subDate = new Date(subTodo.dueDate);
-                        // Compare subDate with oldDate. Use simple timestamp comparison.
-                        // We use > (greater than) to only affect tasks *after* this one.
-                        if (subDate.getTime() > oldDate.getTime()) {
-                            const newSubDate = addDays(subDate, diffDays);
-                            await repository.updateTodo(subTodo.id, {
-                                dueDate: newSubDate,
-                                updatedAt: new Date()
-                            });
-                        }
-                    }
-                }
+            for (const shift of shifts) {
+                await repository.updateTodo(shift.id, {
+                    dueDate: shift.newDueDate,
+                    updatedAt: new Date()
+                });
             }
         }
     };

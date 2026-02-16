@@ -105,6 +105,15 @@
     - Mobile: `CategoryEditor`(5箇所), `CategoryTreePicker`(2箇所), `TodoCreateModal`(1箇所), `IconPickerModal`(1箇所), `i18n/index.ts`(1箇所)
     - Web: `useRealtimeSync`(3箇所), `AdBanner`(1箇所), `request.ts`(1箇所), `layout.tsx`(1箇所)
     - 主な手法: 不要キャスト削除、`LanguageDetectorAsyncModule`型付与、Dexie `Table`型ヘルパー、`window.adsbygoogle`型宣言、`readonly string[]`キャスト
+- **テストカバレッジの向上**:
+    - テスト総数: 84 → 120件（+36件）
+    - ビジネスロジックの純粋関数化:
+        - `generateRoutineTodos`: ルーティンTodo生成ロジックを`useMobileTodos`から`packages/shared/src/domain/routineTodos.ts`へ切り出し (テスト9件)
+        - `calculateSrsDateShifts`: SRS日付シフトロジックを`useMobileTodos`から`packages/shared/src/domain/srsDateShift.ts`へ切り出し (テスト7件)
+    - エッジケーステスト追加:
+        - `syncCore.test.ts`: ハンドラーエラー伝播、大量アイテム処理 (+3件)
+        - `srs.test.ts`: 空intervals、dueDate未指定、srsProfileId/srsInterval除外 (+4件)
+    - `useMobileTodos.ts`: 共有純粋関数への置き換えでコード量30行以上削減
 
 ### [Mobile Onboarding] - 2026-02-15
 #### 追加 (Mobile)
