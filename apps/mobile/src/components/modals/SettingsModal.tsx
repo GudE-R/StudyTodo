@@ -5,10 +5,12 @@ import React from 'react';
 // TouchableOpacity: タップ可能なボタン（押すと少し透明になる）
 // Modal: 画面最前面に表示されるウィンドウ
 // StyleSheet: スタイル定義用
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndicator, ScrollView, FlatList, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndicator, ScrollView, FlatList, Image, Platform } from 'react-native';
 
 // アイコンライブラリからのインポート
-import { X, Moon, Sun, Monitor, RefreshCw, Languages, ChevronRight, ArrowLeft, Layout } from 'lucide-react-native';
+import { X, Moon, Sun, Monitor, RefreshCw, Languages, ChevronRight, ArrowLeft, Layout, Bell } from 'lucide-react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // アプリケーション固有の機能をインポート（カスタムフックなど）
 import { useAuth } from '../../providers/AuthProvider'; // 認証状態管理
@@ -18,6 +20,7 @@ import { useMobileSync } from '../../hooks/useMobileSync'; // データ同期機
 import { useTranslation } from 'react-i18next'; // 多言語対応
 import { SUPPORTED_LANGUAGES } from '../../i18n/languages'; // サポート言語リスト
 import { useLayout } from '../../providers/LayoutProvider';
+import { useNotification } from '../../hooks/useNotification';
 
 // Propsの型定義
 // 親コンポーネントから受け取るデータの型を指定します
@@ -25,6 +28,9 @@ interface SettingsModalProps {
     visible: boolean; // モーダルの表示状態
     onClose: () => void; // モーダルを閉じるための関数
 }
+
+const REMINDER_ENABLED_KEY = '@pomarc_reminder_enabled';
+const REMINDER_TIME_KEY = '@pomarc_reminder_time';
 
 /**
  * 設定画面モーダルコンポーネント
@@ -46,6 +52,9 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     const { t, i18n } = useTranslation();
     const { layoutMode, setLayoutMode } = useLayout();
 
+    // 通知フック
+    const { scheduleDailyReminder, cancelNotification, requestPermissions } = useNotification();
+
     // --- State (状態管理) ---
 
     // ログインモーダルの表示状態
@@ -54,7 +63,34 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // 現在表示しているビューの切り替え ('main' | 'language' | 'layout')
     const [view, setView] = React.useState<'main' | 'language' | 'layout'>('main');
 
+    // リマインダー設定
+    const [reminderEnabled, setReminderEnabled] = React.useState(false);
+    const [reminderTime, setReminderTime] = React.useState(new Date());
+    const [showTimePicker, setShowTimePicker] = React.useState(false); // For Android
+
     // --- Side Effects (副作用) ---
+
+    // 設定のロード
+    React.useEffect(() => {
+        const loadSettings = async () => {
+            try {
+                const enabled = await AsyncStorage.getItem(REMINDER_ENABLED_KEY);
+                const time = await AsyncStorage.getItem(REMINDER_TIME_KEY);
+
+                if (enabled !== null) setReminderEnabled(enabled === 'true');
+                if (time !== null) setReminderTime(new Date(time));
+                else {
+                    // デフォルトは9:00
+                    const defaultTime = new Date();
+                    defaultTime.setHours(9, 0, 0, 0);
+                    setReminderTime(defaultTime);
+                }
+            } catch (e) {
+                console.error("Failed to load settings", e);
+            }
+        };
+        loadSettings();
+    }, []);
 
     // モーダルの開閉状態(visible)が変わった時に実行される処理
     // モーダルが閉じられたら、次回開く時のために表示を 'main' に戻しておく
@@ -63,6 +99,51 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     }, [visible]);
 
     // --- Helper Functions (表示用ヘルパー関数) ---
+
+    const updateReminder = async (enabled: boolean, time: Date) => {
+        try {
+            if (enabled) {
+                const hasPermission = await requestPermissions();
+                if (!hasPermission) {
+                    alert(t('settings.permissionRequired', 'Notification permission is required for reminders.'));
+                    setReminderEnabled(false);
+                    return;
+                }
+
+                await scheduleDailyReminder(
+                    time.getHours(),
+                    time.getMinutes(),
+                    t('notification.dailyReminderTitle', "Time to learn!"),
+                    t('notification.dailyReminderBody', "Let's check your tasks for today.")
+                );
+            } else {
+                await cancelNotification('daily-reminder');
+            }
+
+            await AsyncStorage.setItem(REMINDER_ENABLED_KEY, String(enabled));
+            await AsyncStorage.setItem(REMINDER_TIME_KEY, time.toISOString());
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const toggleReminder = (value: boolean) => {
+        setReminderEnabled(value);
+        updateReminder(value, reminderTime);
+    };
+
+    const onTimeChange = (event: any, selectedDate?: Date) => {
+        if (Platform.OS === 'android') {
+            setShowTimePicker(false);
+        }
+
+        if (selectedDate) {
+            setReminderTime(selectedDate);
+            if (reminderEnabled) {
+                updateReminder(true, selectedDate);
+            }
+        }
+    };
 
     // テーマ選択ボタンを描画する関数
     const renderThemeOption = (label: string, icon: any, mode: ThemeMode) => {
@@ -126,6 +207,56 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 </View>
                 <ChevronRight size={20} color={colors.textSecondary} />
             </TouchableOpacity>
+
+            {/* --- 通知設定 (Notification) --- */}
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.notification', 'Notification')}</Text>
+            <View style={[styles.menuItem, { borderColor: colors.border, flexDirection: 'column', alignItems: 'flex-start' }]}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Bell size={20} color={colors.textSecondary} />
+                        <Text style={[styles.menuItemText, { color: colors.text }]}>{t('settings.dailyReminder', 'Daily Reminder')}</Text>
+                    </View>
+                    <Switch
+                        value={reminderEnabled}
+                        onValueChange={toggleReminder}
+                        trackColor={{ true: colors.primary }}
+                    />
+                </View>
+
+                {reminderEnabled && (
+                    <View style={{ marginTop: 15, width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Text style={{ color: colors.textSecondary }}>{t('settings.reminderTime', 'Daily at')}</Text>
+                        {Platform.OS === 'android' ? (
+                            <TouchableOpacity
+                                onPress={() => setShowTimePicker(true)}
+                                style={{ padding: 8, backgroundColor: isDark ? '#1e293b' : '#f1f5f9', borderRadius: 8 }}
+                            >
+                                <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
+                                    {reminderTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </Text>
+                            </TouchableOpacity>
+                        ) : (
+                            <DateTimePicker
+                                value={reminderTime}
+                                mode="time"
+                                display="default"
+                                onChange={onTimeChange}
+                                themeVariant={isDark ? 'dark' : 'light'}
+                                style={{ width: 100 }}
+                            />
+                        )}
+                    </View>
+                )}
+
+                {Platform.OS === 'android' && showTimePicker && (
+                    <DateTimePicker
+                        value={reminderTime}
+                        mode="time"
+                        display="default"
+                        onChange={onTimeChange}
+                    />
+                )}
+            </View>
 
             {/* --- クラウド同期 / アカウント設定 --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.cloudSync', 'Cloud Sync')}</Text>

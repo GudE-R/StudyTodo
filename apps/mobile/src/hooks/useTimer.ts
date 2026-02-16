@@ -1,15 +1,25 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+import { useNotification } from './useNotification';
+
 export type TimerMode = 'pomodoro' | 'countdown' | 'stopwatch';
 
 interface UseTimerProps {
     initialMode?: TimerMode;
     initialDuration?: number; // in seconds
     onComplete?: () => void;
+    notificationTitle?: string;
+    notificationBody?: string;
 }
 
-export function useTimer({ initialMode = 'pomodoro', initialDuration = 1500, onComplete }: UseTimerProps) {
+export function useTimer({
+    initialMode = 'pomodoro',
+    initialDuration = 1500,
+    onComplete,
+    notificationTitle = "Timer Completed",
+    notificationBody = "Time is up!"
+}: UseTimerProps) {
     const [mode, setMode] = useState<TimerMode>(initialMode);
     const [timeLeft, setTimeLeft] = useState(initialDuration);
     const [isActive, setIsActive] = useState(false);
@@ -18,6 +28,9 @@ export function useTimer({ initialMode = 'pomodoro', initialDuration = 1500, onC
     // Refs for interval and callback ensuring latest closure availability
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const onCompleteRef = useRef(onComplete);
+    const notificationIdRef = useRef<string | null>(null);
+
+    const { scheduleTimerNotification, cancelNotification } = useNotification();
 
     useEffect(() => {
         onCompleteRef.current = onComplete;
@@ -43,13 +56,28 @@ export function useTimer({ initialMode = 'pomodoro', initialDuration = 1500, onC
     useEffect(() => {
         if (isActive) {
             intervalRef.current = setInterval(tick, 1000);
+
+            // Schedule notification if not stopwatch
+            if (mode !== 'stopwatch') {
+                scheduleTimerNotification(timeLeft, notificationTitle, notificationBody)
+                    .then(id => { notificationIdRef.current = id; });
+            }
+
         } else {
             if (intervalRef.current) clearInterval(intervalRef.current);
+            // Cancel notification
+            if (notificationIdRef.current) {
+                cancelNotification(notificationIdRef.current);
+                notificationIdRef.current = null;
+            }
         }
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
+            if (notificationIdRef.current) {
+                cancelNotification(notificationIdRef.current);
+            }
         };
-    }, [isActive, tick]);
+    }, [isActive, tick]); // timeLeft is not in dependency array to avoid rescheduling every second
 
     const toggleTimer = () => setIsActive(!isActive);
 

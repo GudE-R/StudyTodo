@@ -177,7 +177,15 @@
         "exportCsvDescription": "Session history for analysis",
         "logoutConfirm": "Logged out successfully",
         "backupConfirm": "Export all data in JSON format?",
-        "exportConfirm": "Export study records in CSV format?"
+        "exportConfirm": "Export study records in CSV format?",
+        "notification": "Notification",
+        "dailyReminder": "Daily Reminder",
+        "reminderTime": "Daily at",
+        "permissionRequired": "Notification permission is required for reminders."
+    },
+    "notification": {
+        "dailyReminderTitle": "Time to learn!",
+        "dailyReminderBody": "Let's check your tasks for today."
     },
     "feedback": {
         "title": "Feedback",

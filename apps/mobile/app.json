@@ -32,7 +32,15 @@
     "plugins": [
       "expo-sqlite",
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
+      ]
     ]
   }
 }

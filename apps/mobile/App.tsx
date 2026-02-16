@@ -1,7 +1,19 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
+import * as Notifications from 'expo-notifications';
 import './src/i18n'; // Initialize i18n
 import { MainLayoutSelector } from './src/components/layout/MainLayoutSelector';
+
+// Configure notification handler
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RepositoryProvider } from './src/providers/RepositoryProvider';

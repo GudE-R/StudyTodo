@@ -179,7 +179,15 @@
         "exportCsvDescription": "分析用のセッション履歴",
         "logoutConfirm": "ログアウトしました",
         "backupConfirm": "全てのデータをJSON形式でバックアップしますか？",
-        "exportConfirm": "学習記録をCSV形式でエクスポートしますか？"
+        "exportConfirm": "学習記録をCSV形式でエクスポートしますか？",
+        "notification": "通知",
+        "dailyReminder": "学習リマインダー",
+        "reminderTime": "通知時間",
+        "permissionRequired": "リマインダーを使用するには通知権限が必要です。"
+    },
+    "notification": {
+        "dailyReminderTitle": "学習の時間です！",
+        "dailyReminderBody": "今日のタスクを確認して、学習を始めましょう。"
     },
     "feedback": {
         "title": "フィードバック",
