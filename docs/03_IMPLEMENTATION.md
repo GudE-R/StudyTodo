@@ -776,3 +776,19 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
         - `SettingsModal` にリマインダー設定（ON/OFF、時間設定）を追加。Android/iOSのUI差異（DateTimePicker）を吸収。
         - **永続化**: リマインダー設定は `AsyncStorage` に保存し、アプリ再起動後も設定を維持。
     - **多言語化**: 通知タイトル・本文および設定画面のテキストを日/英対応。
+
+### [Activity Modal Refactoring] - 2026-02-16
+#### リファクタリング (Mobile)
+- **目的**: 巨大化した `ActivityModal.tsx` (約1000行) の保守性向上と関心の分離。
+- **変更点**:
+    - **フック抽出**: 
+        - `useActivityAnalytics`: グラフデータ計算、期間フィルタリング、集計ロジック。
+        - `useActivityHistory`: 履歴リストの生成、フィルタ、グループ化、選択・削除ロジック。
+    - **コンポーネント分割**:
+        - `ActivityCharts`: 棒グラフ・円グラフの表示。
+        - `ActivitySummary`: 集中時間・完了数のカード表示。
+        - `ActivityHistory`: 履歴リスト表示と操作UI。
+    - **成果**: 
+        - `ActivityModal.tsx` を約250行まで削減。
+        - 各コンポーネントの責務が明確化され、テストと保守が容易に。
+        - ロジックの再利用性が向上（Web版への移植も視野）。

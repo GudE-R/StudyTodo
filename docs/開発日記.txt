@@ -1157,3 +1157,16 @@ useMobileTodos.tsリファクタリング:
 - コード量30行以上削減、date-fnsの直接依存も削除
 
 テスト結果: Shared 93件, Web 14件, Mobile 13件 = 計120件パス。
+
+## 2026-02-16 ActivityModalリファクタリング (Mobile)
+
+ActivityModal.tsx (1000行) をリファクタリングし、以下の構成に分割。
+- hooks/useActivityAnalytics.ts: 分析ロジック
+- hooks/useActivityHistory.ts: 履歴操作ロジック
+- components/activity/ActivityCharts.tsx
+- components/activity/ActivitySummary.tsx
+- components/activity/ActivityHistory.tsx
+
+ActivityModal本体は250行まで削減し、ViewとStateの管理に集中させた。
+ロジックをフックに切り出したことで、テストが容易になり、将来的なWeb版とのロジック共有もやりやすくなった。
+tscチェック通過、機能回帰なし。
