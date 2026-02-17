@@ -154,3 +154,4 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 
 - [ ] Activity: Implement date range picker for custom periods.
 - [ ] Activity: Optimize category aggregation if category tree becomes very large (caching).
+- [x] **Androidビルドエラーの修正**: Gradleキャッシュ破損によるロックファイルエラーを解消。
