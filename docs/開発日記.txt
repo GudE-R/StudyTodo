@@ -1214,3 +1214,6 @@ docs/STORE_METADATA.md と docs/PRIVACY_POLICY.md に保存。
 アプリ名は「StudyTodo」、キーワードとして「忘却曲線」「ポモドーロ」「学習者向け」を反映させた。
 広告の最適化やProプランの実装は、初期リリース後（v1.1以降）に見送ることになった。
 まずは現在の機能セット（基本機能＋バナー広告＋通知）でリリースを目指す。
+ユーザーの希望により、Windows環境へのファイル転送をGit経由ではなく共有フォルダ経由で行うことにした。
+共有フォルダ /media/sf_To-LinuxMint/PomArc_Transfer へ、node_modules等を除外してプロジェクトファイルをコピーした。
+Windowsビルドガイドもこれに合わせて更新した。
