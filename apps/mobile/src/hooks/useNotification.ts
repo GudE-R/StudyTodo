@@ -1,9 +1,17 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { useCallback } from 'react';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 export const useNotification = () => {
     const requestPermissions = useCallback(async () => {
+        if (isExpoGo) {
+            console.log('Notifications are not supported in Expo Go');
+            return false;
+        }
+
         if (Platform.OS === 'android') {
             await Notifications.setNotificationChannelAsync('default', {
                 name: 'default',
@@ -26,6 +34,8 @@ export const useNotification = () => {
 
     const scheduleTimerNotification = useCallback(
         async (seconds: number, title: string, body: string) => {
+            if (isExpoGo) return;
+
             // Cancel any existing notifications first to avoid duplicates if necessary
             // But for timer, we usually just schedule a new one.
 
@@ -48,19 +58,16 @@ export const useNotification = () => {
     );
 
     const cancelNotification = useCallback(async (identifier: string) => {
+        if (isExpoGo) return;
         await Notifications.cancelScheduledNotificationAsync(identifier);
     }, []);
 
     const scheduleDailyReminder = useCallback(
         async (hour: number, minute: number, title: string, body: string) => {
+            if (isExpoGo) return;
+
             // First, cancel all existing daily reminders to avoid duplicates
-            // In a real app, we might want to track the ID of the daily reminder
-            // For now, let's assume one daily reminder.
-            // A better approach is to use a specific identifier or category, 
-            // but expo-notifications manages IDs. We can store the ID in AsyncStorage if needed.
-            // For simplicity/v1: cancel all scheduled notifications might be too aggressive if we have other notifications.
-            // Let's rely on the calling component to manage cancellation if changing time, 
-            // or we can implement a specific logic here.
+            // ... (comment remains same)
 
             // For now, functionality to just schedule:
             const identifier = await Notifications.scheduleNotificationAsync({
@@ -82,6 +89,7 @@ export const useNotification = () => {
     );
 
     const cancelAllNotifications = useCallback(async () => {
+        if (isExpoGo) return;
         await Notifications.cancelAllScheduledNotificationsAsync();
     }, []);
 

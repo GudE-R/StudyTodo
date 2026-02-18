@@ -1,35 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 
-// 開発環境ではテスト用IDを使用する
-// 本番用IDは環境変数などで管理することを推奨します
-const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx';
+// Expo Goかを判定
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 export const AdBanner = () => {
+    const [BannerComponent, setBannerComponent] = useState<any>(null);
+    const [adUnitId, setAdUnitId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    if (error) {
+    useEffect(() => {
+        if (isExpoGo) {
+            // Expo Goでは何もしない（またはプレースホルダー表示）
+            return;
+        }
+
+        const loadAdMob = async () => {
+            try {
+                // Dynamic import to avoid crash in Expo Go
+                const { BannerAd, BannerAdSize, TestIds } = require('react-native-google-mobile-ads');
+
+                const id = __DEV__ ? TestIds.BANNER : 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx';
+                setAdUnitId(id);
+                setBannerComponent(() => {
+                    // Return a component that renders the BannerAd
+                    return (props: any) => (
+                        <BannerAd
+                            unitId={id}
+                            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                            requestOptions={{
+                                requestNonPersonalizedAdsOnly: true,
+                            }}
+                            onAdFailedToLoad={(error: any) => {
+                                console.error('Ad failed to load: ', error);
+                                props.onError(error.message);
+                            }}
+                        />
+                    );
+                });
+
+            } catch (e) {
+                console.warn('AdMob module not found or failed to load:', e);
+                setError('AdMob not available');
+            }
+        };
+
+        loadAdMob();
+    }, []);
+
+    if (isExpoGo) {
         return (
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>Ad failed to load: {error}</Text>
+            <View style={styles.placeholderContainer}>
+                <Text style={styles.placeholderText}>Ads are disabled in Expo Go</Text>
             </View>
         );
     }
 
+    if (error) {
+        return null; // エラー時は非表示（または開発用エラー表示）
+    }
+
+    if (!BannerComponent || !adUnitId) {
+        return null; // ロード中
+    }
+
     return (
         <View style={styles.container}>
-            <BannerAd
-                unitId={adUnitId}
-                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-                requestOptions={{
-                    requestNonPersonalizedAdsOnly: true,
-                }}
-                onAdFailedToLoad={(error) => {
-                    console.error('Ad failed to load: ', error);
-                    setError(error.message);
-                }}
-            />
+            <BannerComponent onError={setError} />
         </View>
     );
 };
@@ -38,19 +76,19 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        // 高さ指定は削除し、広告サイズに合わせる
         width: '100%',
     },
-    errorContainer: {
+    placeholderContainer: {
         height: 50,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#e0e0e0',
         justifyContent: 'center',
         alignItems: 'center',
+        width: '100%',
         borderBottomWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#ccc'
     },
-    errorText: {
-        color: '#888',
+    placeholderText: {
+        color: '#666',
         fontSize: 12,
     }
 });
