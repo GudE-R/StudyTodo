@@ -6,6 +6,7 @@ import { useThemeColors } from '../../providers/ThemeProvider';
 import { useRepository } from '../../providers/RepositoryProvider';
 import { useAuth } from '../../providers/AuthProvider';
 import { generateId, Feedback } from '@studytodo/shared';
+import { supabase } from '../../lib/supabase';
 
 interface FeedbackModalProps {
     visible: boolean;
@@ -49,6 +50,29 @@ export const FeedbackModal = ({ visible, onClose }: FeedbackModalProps) => {
             };
 
             await repository.addFeedback(feedback);
+
+            // If user is NOT logged in, manual send to Supabase
+            // (Logged in users are handled by useMobileRealtimeSync)
+            if (!user) {
+                const createdAtStr = feedback.createdAt instanceof Date
+                    ? feedback.createdAt.toISOString()
+                    : new Date(feedback.createdAt).toISOString();
+
+                const { error } = await supabase.from('feedbacks').insert({
+                    id: feedback.id,
+                    user_id: null,
+                    content: feedback.content,
+                    type: feedback.type,
+                    device_info: feedback.deviceInfo,
+                    version: feedback.version,
+                    created_at: createdAtStr,
+                });
+
+                if (error) {
+                    console.error('Failed to send anonymous feedback:', error);
+                    throw error;
+                }
+            }
 
             setIsSuccess(true);
             setTimeout(() => {
