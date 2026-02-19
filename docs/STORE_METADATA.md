@@ -73,7 +73,7 @@ Todo,ポモドーロ,忘却曲線,学習,勉強,タイマー,集中,SRS,暗記,�
 StudyTodo - Focus Timer & ToDo
 
 #### Short Description (80 chars max)
-The ultimate ToDo app for learners, combining spaced repetition and Pomodoro timer.
+Ultimate ToDo for learners. Spaced Repetition & Pomodoro timer.
 
 #### Full Description (4000 chars max)
 **StudyTodo** is an all-in-one ToDo app designed to maximize learning efficiency.
@@ -126,4 +126,4 @@ StudyTodo is an all-in-one ToDo app designed to maximize learning efficiency.
 ... (See above)
 
 #### Keywords (100 chars max, comma separated)
-Todo,Pomodoro,Spaced Repetition,Study,Timer,Focus,SRS,Memory,Review,Plan,Routine,Exam,Certification,StudyTodo
+Todo,SRS,Pomodoro,Study,Timer,Focus,Memory,Review,Plan,Routine,Exam,Certification,StudyTodo

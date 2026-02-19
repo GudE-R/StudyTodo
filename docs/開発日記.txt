@@ -1258,3 +1258,7 @@ Google Play Consoleのデータセーフティフォーム入力に伴い、PRIV
 ストア掲載情報の英語版を作成し、STORE_METADATA.mdに追加した。
 これまで日本語のみだったが、アプリ自体の多言語化（19言語対応）に合わせて、ストア情報も英語を用意することで、グローバル展開の準備を整えた。
 「Spaced Repetition System (SRS)」や「Intuitive Schedule Integration」など、英語圏のユーザーに響くような表現を心がけた。
+
+【ストア情報更新】英語版の文字数調整
+英語版のShort DescriptionとKeywordsがストアの文字数制限（それぞれ80文字、100文字）を超えていたため、修正を行った。
+"The ultimate ToDo app..." -> "Ultimate ToDo..." のように冠詞を削ったり、重複する単語を削除して、意味を損なわずにコンパクトにした。
