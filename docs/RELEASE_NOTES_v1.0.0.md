@@ -39,3 +39,25 @@
 - **SNSシェア**: 学習の成果をSNSにシェアしてモチベーションアップ。
 - **クラウド同期**: アカウントを作成すれば、複数端末でのデータ連携が可能です。
 - **その他**: 通知機能、テーマ・レイアウト変更機能、アプリ内フィードバック機能など。
+
+---
+
+## English (Short Version)
+**StudyTodo: Focus Timer & Smart Planner**
+- **SRS Learning**: Automated review scheduling based on forgetting curves.
+- **Smart Todos**: Organize with folders, priorities, and tags.
+- **Visual Schedule**: Drag-and-drop daily planning linked with calendar.
+- **3 Action Modes**: Record, Measure (Timer), and Create tasks.
+- **Routine**: Easy recurring task setup.
+- **Analytics**: Visualize study habits with charts.
+- **Sync**: Cloud sync across devices.
+
+## 日本語 (簡易版)
+**StudyTodo: 集中タイマー＆学習管理**
+- **SRS (分散学習)**: 忘却曲線に基づいた復習の自動スケジュール。
+- **スマートToDo**: フォルダ・タグ・優先度でタスク整理。
+- **ビジュアル予定**: カレンダー連動のドラッグ＆ドロップスケジュール。
+- **3つのモード**: 記録・計測（タイマー）・作成で学習を管理。
+- **ルーティーン**: 曜日指定で繰り返しタスクを簡単作成。
+- **分析**: グラフで学習習慣を可視化。
+- **同期**: アカウント作成で複数端末同期。
