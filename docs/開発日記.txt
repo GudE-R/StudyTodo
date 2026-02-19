@@ -1287,3 +1287,8 @@ Vercelのデプロイを試行したが、リモートでの npm install 時に�
 【Web】デプロイ完了確認
 - デプロイ先: https://pom-arc-web-wx4z.vercel.app
 - 内容: 「StudyTodo」へのリブランディング、プライバシーポリシーのメールアドレス更新が本番環境に反映されていることを確認。
+
+2026-02-19: Vercel連携とリダイレクト設定の修正
+- vercel.json にリダイレクトルールを追加 (/privacy -> /ja/privacy)
+- Next.js v15+ (v16) の規約に従い、middleware.ts ではなく proxy.ts を使用するように構成を維持しつつ、マッチャーを修正
+- ストア用のプライバシーポリシーURLを確定

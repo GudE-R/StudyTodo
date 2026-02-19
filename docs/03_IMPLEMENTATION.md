@@ -124,6 +124,7 @@
 - **状況報告**:
     - ローカルビルド (`npm run build`) は正常完了を確認。
     - Vercelデプロイ (`https://pom-arc-web-wx4z.vercel.app`) にて「**StudyTodo**」への名称変更およびプライバシーポリシーのメールアドレス更新が反映されていることを確認。
+    - `/privacy` からの自動リダイレクト設定を行い、審査用URLのアクセシビリティを改善。
 
 
 ### [Feedback Enhancement] - 2026-02-19
@@ -866,3 +867,6 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
     - Androidビルド時に発生していた  エラーを特定。
     - 原因はGradleキャッシュまたはロックファイルの破損。
     -  ディレクトリを削除し、Gradleキャッシュをリセットすることで解決を図った。
+- Vercelリダイレクト設定の追加: `/privacy` -> `/ja/privacy` ([vercel.json](file:///home/gude/Dev/PomArc/vercel.json))
+- Next.jsミドルウェア設定の修正: `proxy.ts` のマッチャーに `/privacy` を追加し、Next.js v15+ の規約に準拠
+- ストアメタデータのリファレンスURLを検証済みURLに更新 ([STORE_METADATA.md](file:///home/gude/Dev/PomArc/docs/STORE_METADATA.md))

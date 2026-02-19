@@ -2,5 +2,12 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "framework": "nextjs",
     "installCommand": "npm install",
-    "buildCommand": "npm run build -w @studytodo/web"
+    "buildCommand": "npm run build -w @studytodo/web",
+    "redirects": [
+        {
+            "source": "/privacy",
+            "destination": "/ja/privacy",
+            "permanent": true
+        }
+    ]
 }
