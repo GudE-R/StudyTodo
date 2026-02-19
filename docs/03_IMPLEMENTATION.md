@@ -123,7 +123,7 @@
     - Vercelデプロイ安定化のため、Node.jsバージョンを 20 に固定し、`vercel.json` を追加。
 - **状況報告**:
     - ローカルビルド (`npm run build`) は正常完了を確認。
-    - Vercelのリモートビルドは `npm install` 時のトークンエラーにより一時中断（コードはプッシュ済み）。
+    - Vercelデプロイ (`https://pom-arc-web-wx4z.vercel.app`) にて「**StudyTodo**」への名称変更およびプライバシーポリシーのメールアドレス更新が反映されていることを確認。
 
 
 ### [Feedback Enhancement] - 2026-02-19

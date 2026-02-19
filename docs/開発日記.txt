@@ -1278,3 +1278,12 @@ Webアプリの名称を「PomArc」から「StudyTodo」に正式に変更し�
 
 また、Webアプリのビルド時に `middleware.ts` と `proxy.ts` の競合エラーが発生したため、`middleware.ts` を削除して解決した。
 最後に `npx vercel --prod` でVercelへのデプロイを実施する。
+
+(追記)
+Vercelのデプロイを試行したが、リモートでの npm install 時にトークンエラー（Access token expired）が発生し、難航。
+ローカルビルドは正常に完了することを確認済み。対策として Node.js バージョンの指定（20.x）や vercel.json の追加を行ったが、リモート環境の問題で継続中。
+コードの改修とGitへのプッシュはすべて完了した。
+
+【Web】デプロイ完了確認
+- デプロイ先: https://pom-arc-web-wx4z.vercel.app
+- 内容: 「StudyTodo」へのリブランディング、プライバシーポリシーのメールアドレス更新が本番環境に反映されていることを確認。
