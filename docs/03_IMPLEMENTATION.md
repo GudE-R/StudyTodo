@@ -116,7 +116,7 @@
     - `export.ts`: エクスポートファイル名を `studytodo_backup_...` / `studytodo_sessions_...` に変更。
     - `ThemeContext.tsx`: ローカルストレージキーを `studytodo-theme` に変更（ユーザーのテーマ設定はリセットされます）。
 - **プライバシーポリシーの修正**:
-    - `docs/PRIVACY_POLICY.md` および `apps/web/src/app/[locale]/privacy/page.tsx` 内の連絡先メールアドレスを `gude1228@outlook.jp` に更新。
+    - `docs/PRIVACY_POLICY.md` および `apps/web/src/app/[locale]/privacy/page.tsx` 内の連絡先メールアドレスを `studytodoapp@gmail.com` に更新。
 - **ビルド修正**:
     - `apps/web/src` 内で `middleware.ts` と `proxy.ts` が競合していたため、`middleware.ts` を削除し `proxy.ts` を採用（ビルド警告への対応）。
 

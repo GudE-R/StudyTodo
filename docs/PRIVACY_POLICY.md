@@ -50,5 +50,4 @@ Our services are not intended for use by children under the age of 13. We do not
 We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
 
 ## Contact Us
-If you have any questions about this Privacy Policy, please contact us at:
-gude1228@outlook.jp
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at [studytodoapp@gmail.com](mailto:studytodoapp@gmail.com).
