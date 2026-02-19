@@ -1238,3 +1238,8 @@ EAS Buildはクラウドビルドなので、ローカルOSに依存せず実行
 初回実行時にRLSポリシーエラーが発生したため、`supabase/migrations/20260219100000_enable_anonymous_feedback.sql` を作成し、`feedbacks` テーブルの `user_id` をNullableに変更、および未認証ユーザー用のINSERTポリシーを追加した。
 【追加修正】スケジュールのデフォルト表示時間
 Todo作成時に終了時間が未入力の場合、スケジュール上の表示時間をデフォルトの1時間から15分（0.5スロット）に変更した。これにより、予定が詰まっている場合でも視認性が向上する。
+本番ビルドに向けたAdMob IDの設定を実施。
+セキュリティのため、直接コードに記述していたIDを環境変数 (EXPO_PUBLIC_*) に移行。
+app.json を app.config.ts にリファクタリングし、process.env からIDを読み込むように変更。
+.env ファイルに本番用AdMob IDとSupabase設定を集約した。
+.env は gitignore されているため、リポジトリにはコミットされない（セキュアな状態）。

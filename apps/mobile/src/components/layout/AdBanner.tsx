@@ -20,8 +20,18 @@ export const AdBanner = () => {
             try {
                 // Dynamic import to avoid crash in Expo Go
                 const { BannerAd, BannerAdSize, TestIds } = require('react-native-google-mobile-ads');
+                const { Platform } = require('react-native');
 
-                const id = __DEV__ ? TestIds.BANNER : 'ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx';
+                let id = TestIds.BANNER;
+
+                if (!__DEV__) {
+                    if (Platform.OS === 'android') {
+                        id = Constants.expoConfig?.extra?.admobAndroidBannerId || TestIds.BANNER;
+                    } else if (Platform.OS === 'ios') {
+                        id = Constants.expoConfig?.extra?.admobIosBannerId || TestIds.BANNER;
+                    }
+                }
+
                 setAdUnitId(id);
                 setBannerComponent(() => {
                     // Return a component that renders the BannerAd
