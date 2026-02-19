@@ -134,7 +134,7 @@ CREATE INDEX sessions_created_at_idx ON public.sessions(created_at);
 -- ユーザーからのバグ報告・機能要望
 CREATE TABLE public.feedbacks (
   id UUID PRIMARY KEY,
-  user_id UUID REFERENCES auth.users NOT NULL,
+  user_id UUID REFERENCES auth.users, -- Nullable for anonymous feedback
   type TEXT NOT NULL CHECK (type IN ('bug', 'request', 'other')),
   content TEXT NOT NULL,
   device_info TEXT,                   -- デバイス情報
@@ -146,6 +146,8 @@ CREATE TABLE public.feedbacks (
 ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can insert their own feedbacks" ON public.feedbacks
   FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Allow anonymous feedback insert" ON public.feedbacks
+  FOR INSERT WITH CHECK (auth.uid() IS NULL);
 CREATE POLICY "Users can view their own feedbacks" ON public.feedbacks
   FOR SELECT USING (auth.uid() = user_id);
 

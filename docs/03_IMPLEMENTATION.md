@@ -96,6 +96,9 @@
 - **未ログインユーザーのフィードバック送信**:
     - `FeedbackModal` を修正し、未ログインユーザーの場合でも `supabase` に直接フィードバックを挿入するようにロジックを追加。
     - ログインユーザーは既存の同期システム (`useMobileRealtimeSync`) を使用し、未ログインユーザーはモーダルから直接 `insert` を実行することで、全てのユーザーからのフィードバックを確実に収集できるようにした。
+- **RLSポリシー修正 (Database)**:
+    - `feedbacks` テーブルの `user_id` をNullableに変更。
+    - 未認証ユーザー (`auth.uid() IS NULL`) からのINSERTを許可するポリシー `Allow anonymous feedback insert` を追加。
 
 ### [AdMob Integration] - 2026-02-19
 #### 追加 (Mobile)
