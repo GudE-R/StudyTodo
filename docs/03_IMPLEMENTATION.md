@@ -99,6 +99,11 @@
     - **文字数調整**: 英語版のShort Description (80文字以内) と Keywords (100文字以内) が制限を超えていたため、表現を簡潔に修正。
     - **Webページ修正**: プライバシーポリシーのページ（Web版）が404エラーになる問題を修正。`middleware.ts`を作成し、多言語ルーティング（`[locale]`）が正しく機能するように設定。また、コンテンツを最新のポリシー（AdMob/Supabase対応）に合わせて更新し、日/英の表示切り替えに対応。
     - **目的**: ユーザーに「効率的な計画作成」というメリットを訴求するため、およびGoogle Play Consoleの審査要件を満たすため。
+- **iOSリリース準備**:
+    - `APPLE_RELEASE_GUIDE.md`: Apple Developer Program への登録および API キー発行の手順書を作成。
+    - `SCREENSHOT_PLAN.md`: クラウドMacを使用したiOS用スクリーンショット撮影の計画書を作成。
+    - `app.config.ts`: iOS 用の `bundleIdentifier` と `buildNumber` ("1.0.1") を設定。
+    - `eas.json`: iOS 用の `submit` 設定（プレースホルダ）を追加。Linux からの自動アップロードの準備を完了。
 
 ### [Privacy Policy Update] - 2026-02-19
 #### ドキュメント更新

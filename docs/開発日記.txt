@@ -1292,3 +1292,9 @@ Vercelのデプロイを試行したが、リモートでの npm install 時に�
 - vercel.json にリダイレクトルールを追加 (/privacy -> /ja/privacy)
 - Next.js v15+ (v16) の規約に従い、middleware.ts ではなく proxy.ts を使用するように構成を維持しつつ、マッチャーを修正
 - ストア用のプライバシーポリシーURLを確定
+
+【iOS】リリース準備完了
+- Apple Developer Program 登録ガイドの作成
+- スクリーンショット撮影計画の策定
+- app.config.ts / eas.json の iOS 向け最適化設定
+- Linux からの EAS Build & Submit 環境の整備
