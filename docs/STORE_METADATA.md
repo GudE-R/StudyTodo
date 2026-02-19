@@ -130,3 +130,11 @@ StudyTodo is an all-in-one ToDo app designed to maximize learning efficiency.
 
 #### Keywords (100 chars max, comma separated)
 Todo,SRS,Pomodoro,Study,Timer,Focus,Memory,Review,Plan,Routine,Exam,Certification,StudyTodo
+
+---
+
+## Common Metadata
+
+### Privacy Policy URL
+https://pom-arc-web-wx4z.vercel.app/ja/privacy
+
