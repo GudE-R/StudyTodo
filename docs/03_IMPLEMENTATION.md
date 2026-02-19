@@ -91,34 +91,30 @@
 
 これまでの主要な変更履歴です。
 
-### [Store Metadata Update] - 2026-02-19
-#### ドキュメント更新
-- **STORE_METADATA.md**:
-    - **機能説明の追加**: カレンダーとスケジュールの連携による直感的なタスク作成（長押しでの日時指定）についての記述を追加。
-    - **多言語対応**: ストア掲載情報の英語版を追加。Google Play StoreおよびApp Store向けのタイトル、説明文、キーワードを翻訳し、海外ユーザーへの訴求力を強化。
-    - **文字数調整**: 英語版のShort Description (80文字以内) と Keywords (100文字以内) が制限を超えていたため、表現を簡潔に修正。
-    - **Webページ修正**: プライバシーポリシーのページ（Web版）が404エラーになる問題を修正。`middleware.ts`を作成し、多言語ルーティング（`[locale]`）が正しく機能するように設定。また、コンテンツを最新のポリシー（AdMob/Supabase対応）に合わせて更新し、日/英の表示切り替えに対応。
-    - **目的**: ユーザーに「効率的な計画作成」というメリットを訴求するため、およびGoogle Play Consoleの審査要件を満たすため。
-
-### [Privacy Policy Update] - 2026-02-19
-#### ドキュメント更新
-- **プライバシーポリシーの改訂**:
-    - **収集データの明確化**: ユーザーアカウント作成時のEmail収集と、AdMobによるデバイスID/広告データ収集を明記。
-    - **第三者サービス**: Supabase（認証・DB）とGoogle AdMobの使用を明示し、それぞれの役割とデータ保護について追記。
-    - **目的**: Google Play Consoleのデータセーフティ要件およびAdMobポリシーへの準拠。
-
 ### [Web App Renaming & Privacy Policy Fix] - 2026-02-19
 #### 変更 (Web)
 - **Webアプリの名称変更 (PomArc -> StudyTodo)**:
-    - `robots.ts`, `sitemap.ts`: ベースURLを `https://pomarc.app` から `https://studytodo.app` に更新。
+    - リブランディングに伴い、アプリ内の「PomArc」表記を「StudyTodo」に変更。
+    - `robots.ts`, `sitemap.ts`: ベースURLの更新。
     - `ActivityModal.tsx`: シェアカードのタイトルを `StudyTodo Share` に変更。
     - `share-image.ts`: ダウンロードファイル名を `studytodo-stats.png` に変更。
-    - `export.ts`: エクスポートファイル名を `studytodo_backup_...` / `studytodo_sessions_...` に変更。
-    - `ThemeContext.tsx`: ローカルストレージキーを `studytodo-theme` に変更（ユーザーのテーマ設定はリセットされます）。
+    - `export.ts`: エクスポートファイル名のプレフィックスを `studytodo` に変更。
+    - `ThemeContext.tsx`: LocalStorageキーを `studytodo-theme` に変更。
 - **プライバシーポリシーの修正**:
     - `docs/PRIVACY_POLICY.md` および `apps/web/src/app/[locale]/privacy/page.tsx` 内の連絡先メールアドレスを `studytodoapp@gmail.com` に更新。
-- **ビルド修正**:
-    - `apps/web/src` 内で `middleware.ts` と `proxy.ts` が競合していたため、`middleware.ts` を削除し `proxy.ts` を採用（ビルド警告への対応）。
+- **ビルド・デプロイ調整**:
+    - `middleware.ts` と `proxy.ts` の競合を解消するため、`middleware.ts` を削除。
+    - Vercelデプロイ安定化のため、Node.jsバージョンを 20 に固定し、`vercel.json` を追加。
+- **状況報告**:
+    - ローカルビルド (`npm run build`) は正常完了を確認。
+    - Vercelのリモートビルドは `npm install` 時のトークンエラーにより一時中断（コードはプッシュ済み）。
+
+### [Store Metadata Update] - 2026-02-19
+#### ドキュメント更新
+- **STORE_METADATA.md**:
+    - 機能説明の拡充、多言語対応（英語版タイトル・説明文の追加）。
+    - ページ修正：プライバシーポリシーページの404エラー解決と多言語ルーティング対応。
+
 
 ### [Feedback Enhancement] - 2026-02-19
 #### 追加/修正 (Mobile)
