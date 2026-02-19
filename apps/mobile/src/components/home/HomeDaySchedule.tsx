@@ -160,8 +160,8 @@ const DayItem = memo(({
                 const durationMinutes = endMinutes - startMinutes;
                 height = (durationMinutes / 30) * SLOT_HEIGHT;
             } else {
-                // Default to 1 hour (2 slots) if no end time
-                height = SLOT_HEIGHT * 2;
+                // Default to 15 mins (0.5 slot) if no end time
+                height = SLOT_HEIGHT * 0.5;
             }
 
             // Min height
