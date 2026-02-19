@@ -35,7 +35,7 @@ export const exportToJson = async () => {
             srsProfiles,
         };
 
-        const fileName = `pomarc_backup_${format(new Date(), "yyyyMMdd_HHmm")}.json`;
+        const fileName = `studytodo_backup_${format(new Date(), "yyyyMMdd_HHmm")}.json`;
         downloadFile(JSON.stringify(data, null, 2), fileName, "application/json");
         return true;
     } catch (error) {
@@ -69,7 +69,7 @@ export const exportSessionsToCsv = async () => {
             ...rows.map(r => r.join(","))
         ].join("\n");
 
-        const fileName = `pomarc_sessions_${format(new Date(), "yyyyMMdd")}.csv`;
+        const fileName = `studytodo_sessions_${format(new Date(), "yyyyMMdd")}.csv`;
         // UTF-8 BOMを追加してExcelでの文字化けを防ぐ
         const bom = "\uFEFF";
         downloadFile(bom + csvContent, fileName, "text/csv");

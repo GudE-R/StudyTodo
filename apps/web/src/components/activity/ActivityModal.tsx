@@ -359,7 +359,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                 // write loading message
                 newWindow.document.write(`
                     <html>
-                        <head><title>PomArc Share</title></head>
+                        <head><title>StudyTodo Share</title></head>
                         <body style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;background:#f9fafb;">
                             <div style="text-align:center;">
                                 <h2 style="color:#374151;">Generating image...</h2>

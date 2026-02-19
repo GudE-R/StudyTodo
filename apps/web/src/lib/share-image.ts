@@ -17,7 +17,7 @@ export const generateAndCopyImage = async (node: HTMLElement): Promise<boolean> 
     }
 };
 
-export const downloadImage = async (node: HTMLElement, fileName: string = 'pomarc-stats.png') => {
+export const downloadImage = async (node: HTMLElement, fileName: string = 'studytodo-stats.png') => {
     try {
         const dataUrl = await toPng(node, { cacheBust: true, pixelRatio: 2 });
         const link = document.createElement('a');

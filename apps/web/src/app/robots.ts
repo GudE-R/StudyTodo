@@ -5,7 +5,7 @@ import { MetadataRoute } from 'next';
  * 検索エンジンのクロール指示を提供
  */
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pomarc.app';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://studytodo.app';
 
     return {
         rules: [

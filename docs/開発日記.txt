@@ -1268,3 +1268,13 @@ Google Play Consoleで「プライバシーポリシーのページが見つか�
 調査の結果、Next.js (next-intl) のミドルウェア設定  が欠落しており、 ディレクトリへのルーティングが正しく行われていなかったことが原因と判明。
  を作成し、 や  へのアクセスが可能になるように修正した。
 あわせて、ページ内容 () を最新のポリシー（モバイル版で作成したもの）に同期し、ロケールに応じた言語で表示するようにした。
+
+2/19 (Web App Renaming)
+Webアプリの名称を「PomArc」から「StudyTodo」に正式に変更した。
+これに伴い、以下の修正を行った：
+1.  **コードベースの置換**: `robots.ts`, `sitemap.ts`, `ActivityModal`, `export.ts` などに含まれる `pomarc` の表記を `studytodo` に変更。
+2.  **テーマ設定の移行**: LocalStorageキーを `pomarc-theme` から `studytodo-theme` に変更。
+3.  **プライバシーポリシー**: 連絡先メールアドレスをプレースホルダーから実アドレス (`gude1228@outlook.jp`) に更新。
+
+また、Webアプリのビルド時に `middleware.ts` と `proxy.ts` の競合エラーが発生したため、`middleware.ts` を削除して解決した。
+最後に `npx vercel --prod` でVercelへのデプロイを実施する。

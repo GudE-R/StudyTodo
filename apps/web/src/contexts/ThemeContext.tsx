@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
-        const stored = localStorage.getItem("pomarc-theme") as Theme | null;
+        const stored = localStorage.getItem("studytodo-theme") as Theme | null;
         if (stored && ["light", "dark", "system"].includes(stored)) {
             setThemeState(stored);
         }
@@ -45,7 +45,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (!mounted) return;
 
         // LocalStorageに保存
-        localStorage.setItem("pomarc-theme", theme);
+        localStorage.setItem("studytodo-theme", theme);
 
         // 実際に適用するテーマを決定
         let effectiveTheme: "light" | "dark";

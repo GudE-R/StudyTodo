@@ -129,7 +129,9 @@ export default function PrivacyPage() {
                                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">5. お問い合わせ</h2>
                                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                         本プライバシーポリシーに関するご質問は、以下までお問い合わせください：<br />
-                                        [サポートメールアドレスまたは問い合わせフォーム]
+                                        <a href="mailto:gude1228@outlook.jp" className="text-green-600 hover:underline">
+                                            gude1228@outlook.jp
+                                        </a>
                                     </p>
                                 </section>
                             </>
@@ -226,7 +228,9 @@ export default function PrivacyPage() {
                                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">5. Contact Us</h2>
                                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                         If you have any questions about this Privacy Policy, please contact us at:<br />
-                                        [Your Support Email or Contact Form Link]
+                                        <a href="mailto:gude1228@outlook.jp" className="text-green-600 hover:underline">
+                                            gude1228@outlook.jp
+                                        </a>
                                     </p>
                                 </section>
                             </>

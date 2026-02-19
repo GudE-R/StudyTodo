@@ -107,6 +107,19 @@
     - **第三者サービス**: Supabase（認証・DB）とGoogle AdMobの使用を明示し、それぞれの役割とデータ保護について追記。
     - **目的**: Google Play Consoleのデータセーフティ要件およびAdMobポリシーへの準拠。
 
+### [Web App Renaming & Privacy Policy Fix] - 2026-02-19
+#### 変更 (Web)
+- **Webアプリの名称変更 (PomArc -> StudyTodo)**:
+    - `robots.ts`, `sitemap.ts`: ベースURLを `https://pomarc.app` から `https://studytodo.app` に更新。
+    - `ActivityModal.tsx`: シェアカードのタイトルを `StudyTodo Share` に変更。
+    - `share-image.ts`: ダウンロードファイル名を `studytodo-stats.png` に変更。
+    - `export.ts`: エクスポートファイル名を `studytodo_backup_...` / `studytodo_sessions_...` に変更。
+    - `ThemeContext.tsx`: ローカルストレージキーを `studytodo-theme` に変更（ユーザーのテーマ設定はリセットされます）。
+- **プライバシーポリシーの修正**:
+    - `docs/PRIVACY_POLICY.md` および `apps/web/src/app/[locale]/privacy/page.tsx` 内の連絡先メールアドレスを `gude1228@outlook.jp` に更新。
+- **ビルド修正**:
+    - `apps/web/src` 内で `middleware.ts` と `proxy.ts` が競合していたため、`middleware.ts` を削除し `proxy.ts` を採用（ビルド警告への対応）。
+
 ### [Feedback Enhancement] - 2026-02-19
 #### 追加/修正 (Mobile)
 - **未ログインユーザーのフィードバック送信**:
