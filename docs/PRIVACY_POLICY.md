@@ -1,36 +1,23 @@
-# プライバシーポリシー
+# Privacy Policy for StudyTodo
 
-**最終更新日: 2026年2月19日**
+**Last updated:** 2026-02-19
 
-**StudyTodo**（以下、「本アプリ」といいます）は、ユーザーの個人情報の保護を重視しています。本プライバシーポリシーでは、本アプリにおけるユーザー情報の取り扱いについてご説明します。
+## Introduction
+StudyTodo ("we", "our", or "us") respects your privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our mobile application.
 
-## 1. 収集する情報
-本アプリは「Local First」の原則に基づいて設計されており、ユーザーが作成したTodo、学習履歴、設定情報などのデータは、原則として**ユーザーの端末内（ローカルストレージ）**にのみ保存されます。
-当方がサーバー側で個人を特定できる情報を収集・保存することはありません。
+## Information We Collect
+### 1. Camera and Images
+Our application requests access to your device's Camera and Photo Library.
+- **Purpose**: To allow you to take photos or select existing images to use as custom icons for your Todo categories or profile.
+- **Storage**: These images are stored locally on your device or uploaded to our secure cloud storage (Supabase) solely for the purpose of displaying them within the app.
+- **Sharing**: We do not share your photos or camera data with third parties.
 
-## 2. 外部サービスによる情報収集
-本アプリは広告配信のために、第三者のサービスプロバイダを利用しています。これらのサービスは、ユーザーの興味に応じた広告を表示するために、端末識別子や位置情報などの非個人情報を収集する場合があります。
+### 2. User Data
+If you create an account, we store your email address and encrypted password to manage your account and sync your data across devices.
 
-### AdMob (Google Inc.)
-本アプリでは、広告配信ツールとして AdMob を使用しています。AdMob により収集される情報については、Google のプライバシーポリシーをご確認ください。
-- [Google ポリシーと規約](https://policies.google.com/technologies/ads?hl=ja)
+## Data Security
+We use industry-standard encryption to protect your data both in transit and at rest.
 
-## 3. データの利用目的
-収集された（または端末内で処理された）情報は、以下の目的のために利用されます：
-- アプリの基本機能（Todo管理、タイマー、SRS生成など）の提供
-- 設定の保存（テーマ、言語など）
-- 広告の配信および最適化
-
-## 4. 情報の第三者提供
-法令に基づく場合や、上記「外部サービス」による広告配信機能を除き、ユーザーの同意なく第三者に個人情報を提供することはありません。
-
-## 5. 免責事項
-本アプリの利用により生じた損害やトラブルについて、開発者は一切の責任を負わないものとします。
-
-## 6. プライバシーポリシーの変更
-本ポリシーの内容は、必要に応じて変更されることがあります。重要な変更がある場合は、アプリ内または本ドキュメントの更新を通じて通知します。
-
-## 7. お問い合わせ
-本プライバシーポリシーに関するご質問は、以下の連絡先までお問い合わせください。
-
-[開発者連絡先メールアドレス（プレースホルダー）]
+## Contact Us
+If you have any questions about this Privacy Policy, please contact us at:
+[Your Support Email or Contact Form Link]

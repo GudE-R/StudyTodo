@@ -5,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: "StudyTodo",
   slug: "studytodo",
   scheme: "studytodo",
-  version: "1.0.0",
+  version: "1.0.1",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -61,7 +61,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     admobAndroidBannerId: process.env.EXPO_PUBLIC_ADMOB_ANDROID_BANNER_ID,
     admobIosBannerId: process.env.EXPO_PUBLIC_ADMOB_IOS_BANNER_ID,
     eas: {
-      projectId: "your-project-id" // This will be auto-filled by EAS if missing
+      projectId: "cfd433f3-e082-435b-b951-34b9c052fdd8"
     }
   }
 });
