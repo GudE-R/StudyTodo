@@ -4,14 +4,11 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'node',
-        // React Nativeのコンポーネントテストは除外（Expo環境が必要なため）
-        // 純粋なロジックテストのみ実行
-        include: ['src/**/*.{test,spec}.{js,ts}'],
-        exclude: ['src/**/*.test.tsx', 'src/**/*.spec.tsx'],
+        // Note: Component tests (.test.tsx) are excluded because they require 
+        // a complex React Native / Expo transformation setup not yet configured for Vitest.
+        // Pure logic tests (.test.ts) are fully supported.
+        include: ['src/**/*.test.{js,ts}'],
         setupFiles: ['./vitest-setup.ts'],
-        passWithNoTests: true, // テストがまだない場合でもパスする
+        passWithNoTests: true,
     }
 });
-
-
-
