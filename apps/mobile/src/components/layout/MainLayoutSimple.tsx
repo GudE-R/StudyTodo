@@ -141,17 +141,17 @@ export const MainLayoutSimple = () => {
             onPanResponderRelease: (_, gestureState) => {
                 // Vertical swipes: toggle calendar mode
                 if (Math.abs(gestureState.dy) > Math.abs(gestureState.dx)) {
-                    if (gestureState.dy > 50) {
+                    if (gestureState.dy > 30) {
                         // Swipe Down -> Expand to Month
                         setCalendarMode('month');
-                    } else if (gestureState.dy < -50) {
+                    } else if (gestureState.dy < -30) {
                         // Swipe Up -> Collapse to Week
                         setCalendarMode('week');
                     }
                 } else {
                     // Horizontal swipes: navigate weeks or months based on mode
                     const mode = calendarModeRef.current; // Use ref to get current mode
-                    if (gestureState.dx < -50) {
+                    if (gestureState.dx < -40) {
                         if (mode === 'week') {
                             navigateWeek('next');
                         } else {
@@ -162,7 +162,7 @@ export const MainLayoutSimple = () => {
                                 return newDate;
                             });
                         }
-                    } else if (gestureState.dx > 50) {
+                    } else if (gestureState.dx > 40) {
                         if (mode === 'week') {
                             navigateWeek('prev');
                         } else {

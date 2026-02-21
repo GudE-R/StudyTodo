@@ -217,7 +217,11 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                 </View>
             )}
 
-            <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollContainer}
+                contentContainerStyle={styles.scrollContent}
+                scrollEnabled={false}
+            >
                 <Animated.View
                     style={[
                         styles.grid,
