@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Todo, Category } from '@studytodo/shared';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
+import { calculateTopPosition, slotIndexToTimeStr, isHalfHourSlot } from '../../lib/scheduleUtils';
 
 // ============================================================================
 // Constants
@@ -14,8 +15,9 @@ import { useMobileCategories } from '../../hooks/useMobileCategories';
 const SLOT_HEIGHT = 27; // Height for 30 min slot
 const SLOTS_PER_DAY = 48; // 24 hours * 2
 const HEADER_HEIGHT = 30;
+const TIME_LABEL_OFFSET = 15; // Offset to center time label on the line
 const DAY_CONTENT_HEIGHT = SLOT_HEIGHT * SLOTS_PER_DAY;
-const ITEM_HEIGHT = HEADER_HEIGHT + DAY_CONTENT_HEIGHT; // Total height per day
+const ITEM_HEIGHT = HEADER_HEIGHT + DAY_CONTENT_HEIGHT + TIME_LABEL_OFFSET; // Total height per day
 const RANGE = 365; // ±365 days
 
 // ============================================================================
@@ -55,10 +57,8 @@ const TimeSlot = memo(({
     colors: any;
     onLongPress?: () => void;
 }) => {
-    const hour = Math.floor(slotIndex / 2);
-    const minutes = (slotIndex % 2) * 30;
-    const timeStr = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    const isHalfHour = minutes === 30;
+    const timeStr = slotIndexToTimeStr(slotIndex);
+    const isHalfHour = isHalfHourSlot(slotIndex);
 
     return (
         <TouchableOpacity
@@ -66,17 +66,23 @@ const TimeSlot = memo(({
             activeOpacity={1}
             onLongPress={onLongPress}
         >
-            <Text style={[styles.hourText, { color: colors.textMuted }, isKept && styles.keptText]}>
-                {!isHalfHour || isKept ? timeStr : ''}
-            </Text>
-            <View
-                style={[
-                    styles.hourLine,
-                    isHalfHour
-                        ? { borderBottomWidth: 1, borderStyle: 'dashed', borderColor: colors.border }
-                        : { backgroundColor: colors.border, height: 1.5 }
-                ]}
-            />
+            <View style={styles.hourLineContainer}>
+                <Text
+                    style={[styles.hourText, { color: colors.textMuted }, isKept && styles.keptText]}
+                    testID={`time-label-${timeStr}`}
+                >
+                    {!isHalfHour || isKept ? timeStr : ''}
+                </Text>
+                <View
+                    style={[
+                        styles.hourLine,
+                        isHalfHour
+                            ? { borderBottomWidth: 1, borderStyle: 'dashed', borderColor: colors.border }
+                            : { backgroundColor: colors.border, height: 1 }
+                    ]}
+                    testID={`hour-line-${timeStr}`}
+                />
+            </View>
         </TouchableOpacity>
     );
 });
@@ -87,7 +93,7 @@ const TimeSlot = memo(({
 const CurrentTimeIndicator = memo(() => {
     const now = new Date();
     const minutes = now.getHours() * 60 + now.getMinutes();
-    const top = (minutes / 30) * SLOT_HEIGHT;
+    const top = calculateTopPosition(minutes, SLOT_HEIGHT, TIME_LABEL_OFFSET);
 
     return (
         <View style={[styles.currentTimeLine, { top }]}>
@@ -136,9 +142,7 @@ const DayItem = memo(({
     // Pre-compute time slots
     const slots = useMemo(() => {
         return Array.from({ length: SLOTS_PER_DAY }, (_, slotIndex) => {
-            const hour = Math.floor(slotIndex / 2);
-            const minutes = (slotIndex % 2) * 30;
-            const timeStr = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            const timeStr = slotIndexToTimeStr(slotIndex);
             const isKept = !!(keptTime === timeStr && keptDate && isSameDay(date, keptDate));
             return { slotIndex, isKept, timeStr };
         });
@@ -150,7 +154,7 @@ const DayItem = memo(({
             if (!todo.dueTime) return null;
             const [h, m] = todo.dueTime.split(':').map(Number);
             const startMinutes = h * 60 + m;
-            const top = (startMinutes / 30) * SLOT_HEIGHT;
+            const top = calculateTopPosition(startMinutes, SLOT_HEIGHT, TIME_LABEL_OFFSET);
 
             let height = SLOT_HEIGHT; // Default 30 mins
             if (todo.endTime) {
@@ -401,11 +405,20 @@ const styles = StyleSheet.create({
         fontSize: 11,
     },
     dayContent: {
-        height: DAY_CONTENT_HEIGHT,
+        height: DAY_CONTENT_HEIGHT + TIME_LABEL_OFFSET,
         position: 'relative',
+        paddingTop: TIME_LABEL_OFFSET,
     },
     hourSlot: {
         height: SLOT_HEIGHT,
+        position: 'relative',
+    },
+    hourLineContainer: {
+        position: 'absolute',
+        top: -10, // Center on the line
+        left: 0,
+        right: 0,
+        height: 20,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 10,

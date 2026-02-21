@@ -1,5 +1,5 @@
 import React, { useRef, useState, useMemo } from 'react';
-import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare, Calendar } from 'lucide-react-native';
 import { OnboardingSlide, OnboardingSlideData } from './OnboardingSlide';
@@ -8,9 +8,8 @@ import { useTheme } from '../../providers/ThemeProvider';
 import { useOnboarding } from '../../providers/OnboardingProvider';
 import { useAuth } from '../../providers/AuthProvider';
 
-const { width } = Dimensions.get('window');
-
 export const OnboardingScreen = () => {
+    const { width } = useWindowDimensions();
     const { t } = useTranslation();
     const { colors } = useTheme();
     const { completeOnboarding } = useOnboarding();
@@ -109,6 +108,11 @@ export const OnboardingScreen = () => {
                     onViewableItemsChanged={viewableItemsChanged}
                     viewabilityConfig={viewConfig}
                     ref={slidesRef}
+                    getItemLayout={(_, index) => ({
+                        length: width,
+                        offset: width * index,
+                        index,
+                    })}
                 />
             </View>
 

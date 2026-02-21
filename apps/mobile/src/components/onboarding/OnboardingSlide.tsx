@@ -1,9 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { LucideIcon } from 'lucide-react-native';
 import { useTheme } from '../../providers/ThemeProvider';
-
-const { width } = Dimensions.get('window');
 
 export type OnboardingSlideData = {
     id: string;
@@ -18,20 +16,23 @@ type OnboardingSlideProps = {
 };
 
 export const OnboardingSlide = ({ item }: OnboardingSlideProps) => {
+    const { width } = useWindowDimensions();
     const { colors } = useTheme();
 
     return (
         <View style={[styles.container, { width }]}>
-            <View style={[styles.iconContainer, { backgroundColor: item.color + '20' }]}>
-                <item.Icon size={64} color={item.color} />
-            </View>
-            <View style={styles.textContainer}>
-                <Text style={[styles.title, { color: colors.text }]}>
-                    {item.title}
-                </Text>
-                <Text style={[styles.description, { color: colors.textSecondary }]}>
-                    {item.description}
-                </Text>
+            <View style={styles.innerContainer}>
+                <View style={[styles.iconContainer, { backgroundColor: item.color + '20' }]}>
+                    <item.Icon size={64} color={item.color} />
+                </View>
+                <View style={styles.textContainer}>
+                    <Text style={[styles.title, { color: colors.text }]}>
+                        {item.title}
+                    </Text>
+                    <Text style={[styles.description, { color: colors.textSecondary }]}>
+                        {item.description}
+                    </Text>
+                </View>
             </View>
         </View>
     );
@@ -42,7 +43,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 40,
+        padding: 20,
+    },
+    innerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        maxWidth: 500,
+        width: '100%',
     },
     iconContainer: {
         width: 120,
