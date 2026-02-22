@@ -91,6 +91,15 @@
 
 これまでの主要な変更履歴です。
 
+### [Development Build] - 2026-02-22
+#### 追加 (Mobile)
+- **開発用ビルド（Development Build）の作成**:
+    - AndroidおよびiOS（シミュレータ用）の開発用ビルドを作成。
+    - `expo-dev-client` をインストールし、`eas build --profile development` でビルドを実行。
+    - iOSについてはLinux環境での利便性を考慮し、シミュレータ用のプロファイル `development_simulator` を `eas.json` に追加して実行。
+- **環境整備**:
+    - `eas.json` にシミュレータビルド用の設定を追加。
+
 ### [Store Metadata Update] - 2026-02-19
 #### ドキュメント更新
 - **STORE_METADATA.md**:
