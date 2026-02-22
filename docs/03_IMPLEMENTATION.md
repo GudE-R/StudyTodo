@@ -100,6 +100,14 @@
 - **環境整備**:
     - `eas.json` にシミュレータビルド用の設定を追加。
 
+### [Android Production Build] - 2026-02-22
+#### 追加 (Mobile)
+- **プロダクション用ビルド（.aab）の作成**:
+    - クローズドテスト向けに Android 用の .aab ファイルを生成。
+    - **Version**: 1.0.1
+    - **Version Code**: 12
+    - `eas build --platform android --profile production` を実行。
+
 ### [Store Metadata Update] - 2026-02-19
 #### ドキュメント更新
 - **STORE_METADATA.md**:

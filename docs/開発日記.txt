@@ -1316,3 +1316,9 @@ Androidで1ヶ月表示から1週間表示に戻しにくい問題を解消し�
  AndroidとiOSの両方で開発用ビルド（Development Build）を作成した。
  iOSについてはLinuxからのビルドであるため、シミュレータ用のプロファイルを追加してEAS Buildで実行。
  Androidも順調にビルド中。これで実機やシミュレータでの開発クライアント利用が可能になる。
+
+2/22 (22:00)
+**Android クローズドテスト準備**
+- Android プロダクションビルド（.aab）の作成完了。
+- Version 1.0.1 (Code 12)。
+- Google Play Console でのクローズドテスト（20名/14日間）の準備を開始。
