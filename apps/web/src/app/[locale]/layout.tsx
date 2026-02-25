@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 多言語メタデータ定義
+// Web App Metadata Configuration (Triggered build for domain update)
 const seoData: Record<string, { title: string; description: string }> = {
   ja: {
     title: "StudyTodo - ポモドーロタイマー＆学習管理アプリ",
