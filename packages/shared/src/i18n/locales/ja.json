@@ -338,8 +338,7 @@
         "featureSyncDesc": "デバイス間でデータをリアルタイム同期",
         "supportTitle": "お困りですか？",
         "supportDesc": "ご質問、不具合の報告、またはフィードバックがある場合は、お気軽にお問い合わせください。サポートチームが通常24〜48時間以内に返信いたします。",
-        "officialSupport": "公式サポート",
-        "operatingHours": "営業時間: 月曜〜金曜 9:00〜18:00"
+        "officialSupport": "公式サポート"
     },
     "share": {
         "streak": "{{count}}日連続",

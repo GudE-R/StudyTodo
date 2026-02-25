@@ -186,9 +186,6 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                         >
                             studytodoapp@gmail.com
                         </a>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {welcomeT("operatingHours")}
-                        </p>
                     </div>
                 </section>
             </main>
