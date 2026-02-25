@@ -24,19 +24,43 @@ iOSアプリを App Store で公開するには、Apple Developer Program への
 EAS（Expo）を使って Linux やサーバから自動的にビルド・提出を行うために、API キーを発行しておくと非常にスムーズです。これにより、Apple ID の 2段階認証を毎回手動で行う必要がなくなります。
 
 1.  [App Store Connect](https://appstoreconnect.apple.com/) にログインします。
-2.  **「ユーザとアクセス」** を選択します。
-3.  **「キー」** タブ（または「APIキー」）をクリックします。
-4.  **「キーを生成」** をクリックします。
+2.  **「ユーザとアクセス」** (Users and Access) を選択します。
+3.  **「統合」** (Integrations) タブを選択します。
+    - 以前の「キー」タブはこの中に移動されました。
+4.  左側のメニューから **「App Store Connect API」** を選択します。
+5.  **「キーを生成」** または **「＋」** をクリックします。
     - 名前: `EAS API Key` など任意
     - アクセス権: **「管理者」** または **「アプリ管理」** を推奨
-5.  生成された **Issuer ID** と **キーID** をメモし、**キーファイル (.p8)** をダウンロードします。
+6.  生成された **Issuer ID** と **キーID** をメモし、**キーファイル (.p8)** をダウンロードします。
     > [!WARNING]
     > キーファイルは一度しかダウンロードできません。大切に保管してください。
 
-## 3. アプリの作成
+## 3. App ID (Identifier) の登録
+
+App Store Connect で「新規 App」を作成する前に、Apple Developer Program のポータルで **App ID** を登録する必要があります。
+
+1.  [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list) にアクセスします。
+2.  **「Identifiers」** の横の **「＋」** ボタンをクリックします。
+3.  **「App IDs」** を選択して 「Continue」 をクリック。
+4.  タイプは **「App」** を選択して 「Continue」。
+5.  詳細を入力：
+    - **Description**: `StudyTodo` （管理上の名前です。ストアには表示されないので短くてOKです）
+    - **Bundle ID**: **「Explicit」** を選択し、`com.studytodo.app` と入力。（`app.config.ts` の `bundleIdentifier` と一致させる）
+6.  **「Continue」** -> **「Register」** をクリックして完了です。
+
+> [!NOTE]
+> **「機能 (Capabilities)」の選択について**
+> 登録時に「Push Notifications」などの機能を有効にするか選ぶ項目がありますが、これらは**後からいつでも変更可能**です。最初はデフォルトのままでも問題ありません。何か特定の機能（ iCloud や Apple でサインインなど）が必要になった際に追加設定できます。
+
+> [!TIP]
+> **EAS による自動登録**: `npx eas credentials` や `npx eas build` を実行した際に、まだ App ID が登録されていない場合、EAS が自動的に作成するか聞いてくれることがあります。その場合は、ポータルでの手動操作は不要です。
+
+## 4. アプリの作成
 
 App Store Connect の「マイ App」から、新しいアプリを登録します。
 - **名称**: StudyTodo
-- **プライマリ言語**: 日本語
+- **プライマリ言語**: **English (U.S.)** を推奨
+    > [!TIP]
+    > グローバル展開を考えている場合、プライマリ言語を English (U.S.) に設定しておくと、他の言語が用意されていない地域（北欧や中東など）でデフォルトの言語として英語が表示されるため、より多くのユーザーに内容を理解してもらえます。日本語の内容は「ローカライズ」として別途追加できます。
 - **バンドルID**: `com.studytodo.app` (app.config.ts と一致させる必要があります)
 - **SKU**: `studytodo-ios-v1` などの一意のID
