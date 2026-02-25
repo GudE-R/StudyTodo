@@ -1322,3 +1322,14 @@ Androidで1ヶ月表示から1週間表示に戻しにくい問題を解消し�
 - Android プロダクションビルド（.aab）の作成完了。
 - Version 1.0.1 (Code 12)。
 - Google Play Console でのクローズドテスト（20名/14日間）の準備を開始。
+
+2/25
+**iOSリリース要件の再整理と非Mac環境対応の明記**
+- iOSリリースのために物理的なMacやCloud Macが必須かどうかを再調査。
+- 調査結果：
+    - **ビルド・提出**: Expo EAS Build/Submit を使用することで、Linux環境からでも Apple への申請が可能。
+    - **スクリーンショット**: 物理iPhoneでの撮影 + オンラインジェネレータ（AppScreens 等）を組み合わせることで、Mac（シミュレータ）なしでも App Store Connect 用の必須解像度画像を生成可能。
+- 成果物:
+    - `APPLE_RELEASE_GUIDE.md`: EASによる非Macリリースフローを追記。
+    - `SCREENSHOT_PLAN.md`: 「方法 B: Mac を使用しない場合」を追加。
+- これにより、開発者が Mac を所持していない場合でも Linux 環境のみで iOS リリースを完結できる道筋が明確になった。

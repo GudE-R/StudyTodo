@@ -91,6 +91,13 @@
 
 これまでの主要な変更履歴です。
 
+### [iOS Release Documentation Update] - 2026-02-25
+#### 追加/修正 (Docs)
+- **iOSリリースの非Mac環境対応の明記**:
+    - **APPLE_RELEASE_GUIDE.md**: Expo EAS (Build/Submit) を利用することで、Linux環境からビルド・提出が完結できる旨を追記。
+    - **SCREENSHOT_PLAN.md**: 物理デバイスとオンラインジェネレータ（AppScreens等）を組み合わせた、Macを使用しないスクリーンショット作成手順を追加。
+    - **目的**: iOSリリースにおける物理的なMac（またはクラウドMac）の必要性を再評価し、より柔軟な開発フローを提示するため。
+
 ### [Development Build] - 2026-02-22
 #### 追加 (Mobile)
 - **開発用ビルド（Development Build）の作成**:
@@ -107,6 +114,13 @@
     - **Version**: 1.0.1
     - **Version Code**: 12
     - `eas build --platform android --profile production` を実行。
+
+### [Android Production Build] - 2026-02-22 (2回目)
+#### 追加 (Mobile)
+- **再ビルド（v13）による衝突回避**:
+    - Google Play Console での「バージョンコード 12 重複」を解消するため再ビルド。
+    - **Version**: 1.0.1
+    - **Version Code**: 13
 
 ### [Store Metadata Update] - 2026-02-19
 #### ドキュメント更新

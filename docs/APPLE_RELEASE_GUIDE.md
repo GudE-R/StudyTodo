@@ -13,12 +13,15 @@ iOSアプリを App Store で公開するには、Apple Developer Program への
     - **個人**として登録する場合、身分証明書の提示が求められることがあります。
     - 年会費: **99米ドル**（約15,000円前後、年更新）
 
+    > [!NOTE]
+    > **Macは必須ではありません**: 2026年現在、Expo EAS (Build/Submit) を使用することで、LinuxやWindows環境からでも iOSアプリのビルドと App Store への提出が完結できます。物理的なMacが必要になるのは、ネイティブコードの深いデバッグや、Xcode固有の機能を使用する場合に限られます。
+
 3.  **確認待ち**:
     - 支払いが完了した後、登録が承認されるまで数時間〜数日かかる場合があります。
 
 ## 2. App Store Connect API キーの発行 (EAS Build/Submit 用)
 
-EAS（Expo）を使って Linux やサーバから自動的にビルド・提出を行うために、API キーを発行しておくと非常にスムーズです。
+EAS（Expo）を使って Linux やサーバから自動的にビルド・提出を行うために、API キーを発行しておくと非常にスムーズです。これにより、Apple ID の 2段階認証を毎回手動で行う必要がなくなります。
 
 1.  [App Store Connect](https://appstoreconnect.apple.com/) にログインします。
 2.  **「ユーザとアクセス」** を選択します。
