@@ -71,7 +71,7 @@ App Store Connect の「マイ App」から、新しいアプリを登録しま�
     > - スペースは文字数を消費するため、入れないのが一般的です（例: `Todo,Timer,SRS,Study`）。
     > - 重複する単語やアプリ名自体を入れる必要はありません。
 
-- **サポートURL**: `https://studytodo.vercel.app/ja` (または `.../en`)
+- **サポートURL**: `https://studytodo.app/ja` (または `.../en`)
     - ※以前、プライバシーポリシーに記載されていた連絡先は `studytodoapp@gmail.com` でした。
 
 ## 5. 多言語対応（ローカライズ）の設定

@@ -169,7 +169,7 @@
     - Vercelデプロイ安定化のため、Node.jsバージョンを 20 に固定し、`vercel.json` を追加。
 - **状況報告**:
     - ローカルビルド (`npm run build`) は正常完了を確認。
-    - Vercelデプロイ (`https://pom-arc-web-wx4z.vercel.app`) にて「**StudyTodo**」への名称変更およびプライバシーポリシーのメールアドレス更新が反映されていることを確認。
+    - Vercelデプロイ (`https://studytodo.app`) にて「**StudyTodo**」への名称変更およびプライバシーポリシーのメールアドレス更新が反映されていることを確認。
     - `/privacy` からの自動リダイレクト設定を行い、審査用URLのアクセシビリティを改善。
 
 

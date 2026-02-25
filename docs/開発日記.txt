@@ -374,7 +374,7 @@ Web版をVercelにデプロイすることに成功した。
    - `page.tsx`の`isFirstTimeUser`判定に`!user`と`!authLoading`を追加
    - `auth/page.tsx`のuseEffectで`authLoading`を確認してからリダイレクトするよう修正
 
-**公開URL:** https://pom-arc-web-wx4z.vercel.app/
+**公開URL:** https://studytodo.app/
 
 **モバイル版開発開始:**
 Web版のデプロイが完了したため、モバイル版の開発に着手した。
@@ -1285,7 +1285,7 @@ Vercelのデプロイを試行したが、リモートでの npm install 時に�
 コードの改修とGitへのプッシュはすべて完了した。
 
 【Web】デプロイ完了確認
-- デプロイ先: https://pom-arc-web-wx4z.vercel.app
+- デプロイ先: https://studytodo.app
 - 内容: 「StudyTodo」へのリブランディング、プライバシーポリシーのメールアドレス更新が本番環境に反映されていることを確認。
 
 2026-02-19: Vercel連携とリダイレクト設定の修正
