@@ -51,7 +51,9 @@
             "week": "週間",
             "month": "月間",
             "year": "年間"
-        }
+        },
+        "privacyPolicy": "プライバシーポリシー",
+        "termsOfService": "利用規約"
     },
     "onboarding": {
         "skip": "スキップ",

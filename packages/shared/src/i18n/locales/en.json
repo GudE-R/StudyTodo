@@ -51,7 +51,9 @@
             "week": "Week",
             "month": "Month",
             "year": "Year"
-        }
+        },
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service"
     },
     "onboarding": {
         "skip": "Skip",
