@@ -91,6 +91,11 @@
 
 これまでの主要な変更履歴です。
 
+### [Revenue Prediction & Improvement Analysis] - 2026-02-25
+#### 追加 (Docs)
+- **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
+- **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
+
 ### [iOS Release Documentation Update] - 2026-02-25
 #### 追加/修正 (Docs)
 - **iOSリリースの非Mac環境対応の明記**:
