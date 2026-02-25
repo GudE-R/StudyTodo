@@ -104,6 +104,11 @@ StudyTodo: 学習の記録、計測、予定を効率的に管理
 
 ---
 
+## English (Promotional Text - Sanitized)
+Master your learning habits with StudyTodo. Efficient SRS scheduling, smart focus timers, and beautiful analytics - all in one app. Start your productive journey today.
+
+---
+
 ## English (Full Description for App Store - Sanitized)
 Transform your learning experience with StudyTodo, the all-in-one productivity assistant designed specifically for students and lifelong learners. Whether you are prepping for exams, mastering a new language, or managing daily tasks, StudyTodo provides the structure you need to succeed.
 
@@ -126,6 +131,11 @@ Visualize your progress with detailed activity analytics. Track your study durat
 - Beautiful UI: Choose from dark and light modes with customizable layouts to suit your style.
 - Goal Focused: Complete tasks directly from the timer screen to see instant results.
 
+
+---
+
+## 日本語 (プロモーション用テキスト - サニタイズ版)
+StudyTodoで学習を効率化。科学的な復習スケジュール、集中タイマー、活動分析を1つのアプリに。今日から理想の学習習慣を身につけましょう。
 
 ---
 
