@@ -1359,3 +1359,8 @@ Androidで1ヶ月表示から1週間表示に戻しにくい問題を解消し�
 2/25 (さらに追記2)
 - ランディングページのサポートセクションから「営業時間」の項目を削除。
 - 翻訳ファイル (ja.json, en.json) から `operatingHours` キーを削除。
+
+2/25 (さらに追記3)
+- AdSenseの `adsbygoogle.push()` 重複呼び出しによるエラーを修正。
+- `AdBanner.tsx` に `useRef` を導入し、コンポーネント単位での初期化状態と DOM の `data-adsbygoogle-status` をチェックするように変更。
+- 万が一重複が発生した場合でも、"already have ads" エラーを捕捉してログ出力を抑制するように調整。

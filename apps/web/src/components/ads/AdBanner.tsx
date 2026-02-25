@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 declare global {
     interface Window {
@@ -23,14 +23,27 @@ interface AdBannerProps {
  */
 export function AdBanner({ slot, style, format = "auto", responsive = "true" }: AdBannerProps) {
     const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+    const adRef = useRef<HTMLModElement>(null);
+    const initializedRef = useRef(false);
 
     useEffect(() => {
-        if (!clientId) return;
+        if (!clientId || initializedRef.current) return;
+
+        // すでにAdSenseによって処理されているかチェック
+        if (adRef.current?.getAttribute("data-adsbygoogle-status") === "done") {
+            initializedRef.current = true;
+            return;
+        }
 
         try {
             (window.adsbygoogle = window.adsbygoogle || []).push({});
+            initializedRef.current = true;
         } catch (err) {
-            console.error("AdSense error:", err);
+            // "All 'ins' elements... already have ads" エラーは無視して動作を継続させる
+            const error = err as Error;
+            if (!error.message?.includes("already have ads")) {
+                console.error("AdSense error:", err);
+            }
         }
     }, [clientId]);
 
@@ -50,6 +63,7 @@ export function AdBanner({ slot, style, format = "auto", responsive = "true" }: 
     return (
         <div className="w-full overflow-hidden" style={style}>
             <ins
+                ref={adRef}
                 className="adsbygoogle"
                 style={{ display: "block", ...style }}
                 data-ad-client={clientId}
