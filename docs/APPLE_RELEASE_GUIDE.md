@@ -45,7 +45,7 @@ App Store Connect で「新規 App」を作成する前に、Apple Developer Pro
 4.  タイプは **「App」** を選択して 「Continue」。
 5.  詳細を入力：
     - **Description**: `StudyTodo` （管理上の名前です。ストアには表示されないので短くてOKです）
-    - **Bundle ID**: **「Explicit」** を選択し、`com.studytodo.app` と入力。（`app.config.ts` の `bundleIdentifier` と一致させる）
+    - **Bundle ID**: **「Explicit」** を選択し、`com.studytodo.vercel.app` と入力。（`app.config.ts` の `bundleIdentifier` と一致させる）
 6.  **「Continue」** -> **「Register」** をクリックして完了です。
 
 > [!NOTE]
@@ -62,7 +62,7 @@ App Store Connect の「マイ App」から、新しいアプリを登録しま�
 - **プライマリ言語**: **English (U.S.)** を推奨
     > [!TIP]
     > グローバル展開を考えている場合、プライマリ言語を English (U.S.) に設定しておくと、他の言語が用意されていない地域（北欧や中東など）でデフォルトの言語として英語が表示されるため、より多くのユーザーに内容を理解してもらえます。日本語の内容は「ローカライズ」として別途追加できます。
-- **バンドルID**: `com.studytodo.app` (app.config.ts と一致させる必要があります)
+- **バンドルID**: `com.studytodo.vercel.app` (app.config.ts と一致させる必要があります)
 - **SKU**: `studytodo-ios-v1` などの一意のID
 - **キーワード**: 最大 100 文字
     > [!TIP]
@@ -71,7 +71,7 @@ App Store Connect の「マイ App」から、新しいアプリを登録しま�
     > - スペースは文字数を消費するため、入れないのが一般的です（例: `Todo,Timer,SRS,Study`）。
     > - 重複する単語やアプリ名自体を入れる必要はありません。
 
-- **サポートURL**: `https://studytodo.app/ja` (または `.../en`)
+- **サポートURL**: `https://studytodo.vercel.app/ja` (または `.../en`)
     - ※以前、プライバシーポリシーに記載されていた連絡先は `studytodoapp@gmail.com` でした。
 
 ## 5. 多言語対応（ローカライズ）の設定

@@ -136,5 +136,5 @@ Todo,SRS,Pomodoro,Study,Timer,Focus,Memory,Review,Plan,Routine,Exam,Certificatio
 ## Common Metadata
 
 ### Privacy Policy URL
-https://studytodo.app/ja/privacy
+https://studytodo.vercel.app/ja/privacy
 
