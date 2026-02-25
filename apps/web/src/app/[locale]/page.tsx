@@ -21,7 +21,7 @@ import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { WelcomeScreen } from "@/components/onboarding/WelcomeScreen";
+import { LandingPage } from "@/components/landing/LandingPage";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
@@ -292,13 +292,13 @@ export default function Home() {
     );
   }
 
-  // 初回アクセス判定: 未ログイン & データが空の場合にウェルカム画面を表示
+  // 初回アクセス判定: 未ログイン & データが空の場合にランディングページを表示
   // 認証ロード中は判定をスキップ（ちらつき防止）
   const isFirstTimeUser = !authLoading && !user && todos.length === 0 && sessions.length === 0;
 
   if (showWelcome && isFirstTimeUser) {
     return (
-      <WelcomeScreen
+      <LandingPage
         onGetStarted={() => {
           router.push(`/${locale}/auth`);
         }}
