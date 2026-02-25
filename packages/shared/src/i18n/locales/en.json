@@ -305,6 +305,9 @@
         "downloadOnly": "Download Image Only"
     },
     "welcome": {
+        "heroTitle": "Record, Measure, Plan.",
+        "heroTitleHighlight": "All in one place.",
+        "heroSubtitle": "Maximize your learning efficiency with Pomodoro timers and Spaced Repetition.",
         "subtitle": "Record, Measure, Plan - All in one. Maximize learning with Pomodoro and Spaced Repetition",
         "getStarted": "Get Started",
         "alreadyHaveAccount": "Login",
@@ -316,7 +319,11 @@
         "featureAnalytics": "Learning Analytics",
         "featureAnalyticsDesc": "Visualize growth with graphs and heatmaps",
         "featureSync": "Cloud Sync",
-        "featureSyncDesc": "Real-time sync across all your devices"
+        "featureSyncDesc": "Real-time sync across all your devices",
+        "supportTitle": "Need Help?",
+        "supportDesc": "If you have any questions, encountering issues, or want to share feedback, we're here to help. Our support team typically responds within 24-48 hours.",
+        "officialSupport": "Official Support",
+        "operatingHours": "Operating Hours: Monday - Friday, 9:00 - 18:00 (JST)"
     },
     "share": {
         "streak": "{{count}} Days Streak",

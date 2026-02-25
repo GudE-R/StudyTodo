@@ -321,6 +321,9 @@
         "last7Days": "過去7日間の活動"
     },
     "welcome": {
+        "heroTitle": "記録、計測、計画。",
+        "heroTitleHighlight": "これ一つで。",
+        "heroSubtitle": "ポモドーロタイマーと忘却曲線に基づく復習で、あなたの学習効率を最大化します。",
         "subtitle": "記録、計測、計画これ一つ。ポモドーロと忘却曲線で学習を最大化",
         "getStarted": "始める",
         "alreadyHaveAccount": "ログイン",
@@ -332,7 +335,11 @@
         "featureAnalytics": "学習分析",
         "featureAnalyticsDesc": "グラフとヒートマップで成長を可視化",
         "featureSync": "クラウド同期",
-        "featureSyncDesc": "デバイス間でデータをリアルタイム同期"
+        "featureSyncDesc": "デバイス間でデータをリアルタイム同期",
+        "supportTitle": "お困りですか？",
+        "supportDesc": "ご質問、不具合の報告、またはフィードバックがある場合は、お気軽にお問い合わせください。サポートチームが通常24〜48時間以内に返信いたします。",
+        "officialSupport": "公式サポート",
+        "operatingHours": "営業時間: 月曜〜金曜 9:00〜18:00"
     },
     "share": {
         "streak": "{{count}}日連続",
