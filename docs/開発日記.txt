@@ -1364,3 +1364,17 @@ Androidで1ヶ月表示から1週間表示に戻しにくい問題を解消し�
 - AdSenseの `adsbygoogle.push()` 重複呼び出しによるエラーを修正。
 - `AdBanner.tsx` に `useRef` を導入し、コンポーネント単位での初期化状態と DOM の `data-adsbygoogle-status` をチェックするように変更。
 - 万が一重複が発生した場合でも、"already have ads" エラーを捕捉してログ出力を抑制するように調整。
+
+2/25 (さらに追記4)
+- iOSの本番用ビルド（production profile）を開始。ストア提出用の .ipa ファイルを生成中。
+
+2/25 (さらに追記5)
+- iOS 本番用ビルド成功 (Build ID: eb41c42b-eb0c-42e6-899c-40c8b3e0387d).
+- App Store Connect への提出（Submit）準備完了。
+
+2/26
+TestFlightで広告バナーが表示されない不具合を調査・修正した。
+原因はAdMobの初期化処理（mobileAds().initialize()）の呼び出し漏れだった。
+また、EAS Buildでの環境変数（AdMob ID）の設定漏れの可能性についても指摘。
+AdBanner.tsxを修正し、初期化処理を追加した。
+EAS Secretsに環境変数を追加して再ビルドするよう助言。

@@ -19,8 +19,11 @@ export const AdBanner = () => {
         const loadAdMob = async () => {
             try {
                 // Dynamic import to avoid crash in Expo Go
-                const { BannerAd, BannerAdSize, TestIds } = require('react-native-google-mobile-ads');
+                const { BannerAd, BannerAdSize, TestIds, mobileAds } = require('react-native-google-mobile-ads');
                 const { Platform } = require('react-native');
+
+                // Initialize AdMob
+                await mobileAds().initialize();
 
                 let id = TestIds.BANNER;
 
