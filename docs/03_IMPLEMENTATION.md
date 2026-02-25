@@ -108,12 +108,13 @@
     - `AdBanner.tsx` にて `mobileAds().initialize()` を明示的に呼び出すように修正。これにより、本番ビルド（TestFlight等）で広告モジュールが正しく初期化されない問題を解決。
     - **環境変数の警告**: EAS Buildにおいて環境変数が未設定の場合のデバッグログを追加し、設定漏れを検知しやすく改善。
 
-### [iOS Release Documentation Update] - 2026-02-25
+### [iOS Release Screenshot Strategy Update] - 2026-02-26
 #### 追加/修正 (Docs)
-- **iOSリリースの非Mac環境対応の明記**:
-    - **APPLE_RELEASE_GUIDE.md**: Expo EAS (Build/Submit) を利用することで、Linux環境からビルド・提出が完結できる旨を追記。
-    - **SCREENSHOT_PLAN.md**: 物理デバイスとオンラインジェネレータ（AppScreens等）を組み合わせた、Macを使用しないスクリーンショット作成手順を追加。
-    - **目的**: iOSリリースにおける物理的なMac（またはクラウドMac）の必要性を再評価し、より柔軟な開発フローを提示するため。
+- **スクリーンショット撮影方針の変更**:
+    - Web / Mobile 間のレイアウト差異を考慮し、ブラウザエミュレーション案から「クラウド Mac による iOS シミュレータ撮影」へ方針を転換。
+    - **SCREENSHOT_PLAN.md**: クラウド Mac 環境での撮影手順（Xcode シミュレータの起動、解像度設定、画像転送）を追記し、最新の App Store 要件（6.5"/6.7", 13"）を明確化。
+    - **eas.json**: クラウド Mac での即時シミュレータ実行を支援するため、`development_simulator` プロファイルを追加。
+    - **目的**: 審査を確実に通すための、100% 正確なモバイル版 UI スクリーンショットを効率的に準備するため。
 
 ### [Development Build] - 2026-02-22
 #### 追加 (Mobile)
