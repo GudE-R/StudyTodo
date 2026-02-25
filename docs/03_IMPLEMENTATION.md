@@ -1,5 +1,9 @@
 # StudyTodo 実装の記録 (Implementation)
 
+- Web版ドメインを `studytodo.vercel.app` に変更
+- App Store提出用のリリースノート、キーワード、サポート情報の整備
+- App Store Connect APIキーとApp IDの登録手順のドキュメント化
+
 現在の実装状況と、これまでの変更履歴を記録するドキュメントです。
 
 ## 1. 現在の実装状況 (Specs)
