@@ -1395,4 +1395,6 @@ AdMobの初期化修正が含まれており、TestFlight等での最終確認�
 2/26 (AdMob表示不具合の修正と再ビルド)
 TestFlight版にてAdMobバナーが表示されないという報告を受け調査。
 原因は、EAS Build環境（クラウド）に .env ファイルの環境変数（AdMob App ID等）がアップロードされておらず、プラグインに正しいIDが渡っていなかったことだった。
-`eas env:push production --path .env.local` を実行して環境変数をEASのProduction環境へ適応させ、再度 Android(v15) および iOS の本番ビルドを開始した。
+`eas env:push production --path .env.local` を実行して環境変数をEASのProduction環境へ適応させ、再度 Android(v15) および iOS(v1.0.6) の本番ビルドを開始した。
+ビルド完了後、iOS版はTestFlightへの提出（Submit）を完了した。
+Android版については、Play Consoleへのアップロードは完了しているものの、クローズドテストに必要な20名のテスター確保待ち（募集フェーズ）のため、現在ここで進行がストップしている状態である。
