@@ -102,6 +102,15 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [Production Build v1.0.1] - 2026-02-26
+#### 追加 (Mobile)
+- **本番用ビルドの再作成**:
+    - AdMobの初期化修正を反映した最新の本番ビルド（Android/iOS）を実行。
+    - **Version**: 1.0.1
+    - **Android**: .aab ファイルの生成 (`eas build --platform android --profile production`)
+    - **iOS**: .ipa ファイルの生成 (`eas build --platform ios --profile production`)
+    - **目的**: 審査提出およびTestFlightでの最終確認用。
+
 ### [AdMob Fix for TestFlight] - 2026-02-26
 #### 修正 (Mobile)
 - **AdMobの初期化処理の追加**:
