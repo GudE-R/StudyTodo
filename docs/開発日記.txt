@@ -1391,3 +1391,8 @@ Web版とモバイル版のレイアウト差異を考慮し、ブラウザ撮�
 Androidについてはバージョンコードを 14 にインクリメントしてビルド完了（.aab）。
 iOSについても同様に本番プロファイルでビルドを実施し、正常完了を確認（.ipa）。
 AdMobの初期化修正が含まれており、TestFlight等での最終確認を行う予定。
+
+2/26 (AdMob表示不具合の修正と再ビルド)
+TestFlight版にてAdMobバナーが表示されないという報告を受け調査。
+原因は、EAS Build環境（クラウド）に .env ファイルの環境変数（AdMob App ID等）がアップロードされておらず、プラグインに正しいIDが渡っていなかったことだった。
+`eas env:push production --path .env.local` を実行して環境変数をEASのProduction環境へ適応させ、再度 Android(v15) および iOS の本番ビルドを開始した。
