@@ -90,6 +90,8 @@
 *   **Testing**: Vitest (全ワークスペース)
     *   **Note**: 全ワークスペースで Vitest を使用。Mobile版のReact Nativeコンポーネントテストは環境制約から除外し、純粋なロジックテストのみ実行。実機がない場合のテスト手順は [ANDROID_TEST_SETUP.md](./ANDROID_TEST_SETUP.md) を参照。
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
+*   **Developer Tools**:
+    *   **Gemini CLI**: CLI based AI agent for codebase understanding and automation.
 
 ---
 
@@ -101,6 +103,13 @@
 #### 追加 (Docs)
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
+
+### [Gemini CLI Setup] - 2026-02-28
+#### 追加 (Tools)
+- **Gemini CLI の導入**:
+    - ターミナルから Gemini 3 モデル（Flash/Pro）を利用可能な `@google/gemini-cli` をグローバルインストール。
+    - コード解析、自動化スクリプト生成、トラブルシューティングなどの開発支援ツールとして活用。
+    - **目的**: 開発効率の向上と、AI エージェントによるワークフローの自動化。
 
 ### [Production Build v1.0.1] - 2026-02-26
 #### 追加 (Mobile)
