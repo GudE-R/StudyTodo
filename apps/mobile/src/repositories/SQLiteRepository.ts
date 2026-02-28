@@ -10,7 +10,7 @@ export class SQLiteRepository implements StorageInterface {
     private onChangeListeners: ((table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void)[] = [];
 
     constructor() {
-        this.db = SQLite.openDatabaseSync('pomarc.db');
+        this.db = SQLite.openDatabaseSync('studytodo.db');
         this.init();
     }
 

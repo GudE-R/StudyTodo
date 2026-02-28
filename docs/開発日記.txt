@@ -1437,3 +1437,20 @@ Claude Pro サブスクリプションまたは API クレジットを使用し�
 
 **結果:** テスト総数 172→188件（+16件）。全テスト pass（shared 93件, mobile 60件, web 35件）。
 `useTimer.test.ts.skip` はReact Hook依存のため純粋ロジックテストに変換が困難であり、スキップのまま維持する判断をした。
+
+2/28 (pomarc → studytodo マイグレーション)
+モバイルアプリ内に残存していた旧名称「pomarc」を全て「studytodo」に移行した。
+
+**対象（6箇所）:**
+- AsyncStorageキー: `@pomarc_theme_mode`, `@pomarc_layout_mode`, `@pomarc_reminder_enabled`, `@pomarc_reminder_time`
+- SQLite DB名: `pomarc.db` → `studytodo.db`（SQLiteRepository, OfflineQueueRepository）
+
+**実装:**
+- `migrateLegacyStorage.ts` を新規作成。初回起動時に旧キー→新キーの値コピー＆削除、DBファイルのリネームを行うマイグレーション処理。
+- `App.tsx` でProvider構築前にマイグレーションを実行し、既存ユーザーのデータ消失を防止。
+- WAL/SHMジャーナルファイルの移行にも対応。二重実行防止フラグ (`@studytodo_migration_v1_done`) 付き。
+- `expo-file-system/legacy` サブモジュールを使用（v19のAPI変更に対応）。
+
+**学び:**
+- expo-file-system v19では `documentDirectory` 等が `expo-file-system/legacy` に移動している。既存コード（IconPickerModal.tsx）が先行して対応していたため、同じパターンを踏襲。
+- DBリネーム時はWAL/SHMファイルも忘れず移行する必要がある。これを怠るとデータ不整合のリスクがある。

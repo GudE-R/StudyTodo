@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
 import './src/i18n'; // Initialize i18n
 import { MainLayoutSelector } from './src/components/layout/MainLayoutSelector';
+import { runMigrations } from './src/utils/migrateLegacyStorage';
 
 // Configure notification handler
 Notifications.setNotificationHandler({
@@ -33,6 +34,17 @@ function AppContent() {
 }
 
 export default function App() {
+  const [isMigrationDone, setIsMigrationDone] = useState(false);
+
+  useEffect(() => {
+    // pomarc → studytodo マイグレーション
+    // Provider構築（=DB初期化）前に完了させる必要がある
+    runMigrations().then(() => setIsMigrationDone(true));
+  }, []);
+
+  // マイグレーション完了まで描画をブロック（スプラッシュ画面表示中に実行）
+  if (!isMigrationDone) return null;
+
   return (
     <RepositoryProvider>
       <AuthProvider>

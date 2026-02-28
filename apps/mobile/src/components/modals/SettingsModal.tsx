@@ -29,8 +29,8 @@ interface SettingsModalProps {
     onClose: () => void; // モーダルを閉じるための関数
 }
 
-const REMINDER_ENABLED_KEY = '@pomarc_reminder_enabled';
-const REMINDER_TIME_KEY = '@pomarc_reminder_time';
+const REMINDER_ENABLED_KEY = '@studytodo_reminder_enabled';
+const REMINDER_TIME_KEY = '@studytodo_reminder_time';
 
 /**
  * 設定画面モーダルコンポーネント

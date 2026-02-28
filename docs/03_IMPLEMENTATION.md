@@ -105,6 +105,14 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [Legacy Storage Migration] - 2026-02-28
+#### 修正 (Migration)
+- **`pomarc` → `studytodo` マイグレーション**:
+    - `migrateLegacyStorage.ts` を新規作成。AsyncStorageキー4箇所とSQLite DB名（`pomarc.db` → `studytodo.db`）の移行処理を実装。
+    - `App.tsx` で Provider 構築前にマイグレーションを実行し、既存ユーザーのデータ消失を防止。
+    - WAL/SHM ジャーナルファイルの移行にも対応。二重実行防止フラグ付き。
+    - 対象: `ThemeProvider.tsx`, `LayoutProvider.tsx`, `SettingsModal.tsx`, `SQLiteRepository.ts`, `OfflineQueueRepository.ts`
+
 ### [Test Coverage Improvement] - 2026-02-28
 #### 追加 (Testing)
 - **テストカバレッジの大幅強化**:

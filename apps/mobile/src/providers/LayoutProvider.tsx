@@ -10,7 +10,7 @@ interface LayoutContextType {
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 
-const LAYOUT_STORAGE_KEY = '@pomarc_layout_mode';
+const LAYOUT_STORAGE_KEY = '@studytodo_layout_mode';
 
 export const LayoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [layoutMode, setLayoutModeState] = useState<LayoutMode>('simple');

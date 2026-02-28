@@ -48,7 +48,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = '@pomarc_theme_mode';
+const THEME_STORAGE_KEY = '@studytodo_theme_mode';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const systemScheme = useColorScheme();

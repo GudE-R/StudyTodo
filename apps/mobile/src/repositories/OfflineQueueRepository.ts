@@ -10,7 +10,7 @@ export class OfflineQueueRepository implements SyncQueueInterface {
     private db: SQLite.SQLiteDatabase;
 
     constructor() {
-        this.db = SQLite.openDatabaseSync('pomarc.db');
+        this.db = SQLite.openDatabaseSync('studytodo.db');
         this.init();
     }
 
