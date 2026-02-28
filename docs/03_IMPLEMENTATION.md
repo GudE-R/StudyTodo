@@ -105,6 +105,12 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [Timer Core Logic Extraction] - 2026-02-28
+#### リファクタリング (Refactoring)
+- **`timerCore.ts` に純粋関数を抽出**: tick, resetTimerState, createInitialState, calculateProgress, formatTime の5関数。
+- **`useTimer.ts` をtimerCoreベースにリファクタリング**: React Hook依存を最小化。
+- **`timerCore.test.ts` で24テスト作成**: 全モード（pomodoro/countdown/stopwatch）の動作、境界値、連続tick、フォーマットをカバー。
+
 ### [Sync Logic Unification] - 2026-02-28
 #### リファクタリング (Refactoring)
 - **Web/Mobile共通同期ロジック統合**:

@@ -1475,3 +1475,8 @@ handleTodoUpdateはSimple側のSRS適用ロジックを含む上位互換で統�
 2/28 (Web/Mobile共通ロジック抽出)
 useMobileSync.ts(146→107行)とuseSync.ts(187→150行)に重複していたインラインprocessTableを、@studytodo/sharedのprocessTableSync + allowedFieldsMapに統合。
 コア同期ロジック（import/update/export判定）の重複を排除。テスト: Mobile 60件、Shared 93件、全pass。
+
+2/28 (useTimer 純粋ロジック抽出)
+useTimer.ts のコアロジックを timerCore.ts に純粋関数として抽出（tick, resetTimerState, createInitialState, calculateProgress, formatTime）。
+timerCore.test.ts で24テスト作成、全pass。useTimer.ts をtimerCoreベースにリファクタリング。
+合計テスト: Mobile 84件（60+24件）全pass。
