@@ -99,8 +99,8 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 | 2 | **不要ファイルの除外** | ✅ 完了 | `build_error.txt`(510KB) と `studytodo_transfer.zip`(21MB) を `.gitignore` 追加 + `git rm --cached` で除外。(2026-02-28) |
 | 3 | **巨大コンポーネントの分割** | ✅ 完了 | 4コンポーネントからカスタムフック抽出（`useTodoDetailForm`, `useTodoCreateForm`, `useMobileTimer`, `useSettingsForm`）。合計約44%行数削減。(2026-02-28) |
 | 4 | **MainLayout デッドコード削除** | ✅ 完了 | デッドコード `MainLayout.tsx` を削除。`MainLayout_Safe.tsx`・`MainLayoutSimple.tsx` の共通ハンドラ9個を `useTodoHandlers.ts` に抽出し両コンポーネントを大幅削減。(2026-02-28) |
-| 5 | **同期ロジックのテスト追加** | ⬜ 未着手 | `useMobileSync.ts`(146行), `useSync.ts`(186行) がテスト未作成。データ整合性の保証に重要だが、Supabaseモックの複雑さから後回し |
-| 6 | **Web/Mobile共通ロジック抽出** | ⬜ 未着手 | 同期ロジック(`processTable`)がほぼ同一実装で両側に存在。`packages/shared` への統合で保守性向上。ただしUIフレームワーク差異があるため完全統合は困難 |
+| 5 | **同期ロジックのテスト追加** | ✅ 整備済み | `@studytodo/shared` に `syncCore.test.ts`(12件), `mapper.test.ts`(13件), `date.test.ts`(21件) が既に存在。`processTableSync` は純粋関数として共通化済みで包括的にテスト済み。93件全pass。(2026-02-28確認) |
+| 6 | **Web/Mobile共通ロジック抽出** | ✅ 完了 | `useMobileSync.ts`・`useSync.ts` のインライン `processTable` を shared の `processTableSync` + `allowedFieldsMap` に統合。コア同期ロジックの重複を排除。(2026-02-28) |
 | 7 | **`useTimer.test.ts.skip` の対応** | ⏭️ スキップ | React Hook依存のため `.ts` テストでは実行不可。Mobile Vitest設定が `.tsx` を除外しているため、現状では純粋ロジック抽出が限定的。環境改善後に再検討 |
 | 8 | **高速化** | ⬜ 未着手 | アプリケーション全体のパフォーマンスチューニング。現時点で深刻なボトルネックは報告されていない |
 | 9 | **カスタムアイコン画像の同期** | ⬜ 未着手 | Supabase Storageを使ったWeb/Mobile間の画像同期。実装コスト高 |

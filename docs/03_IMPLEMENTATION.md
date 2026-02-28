@@ -105,6 +105,13 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [Sync Logic Unification] - 2026-02-28
+#### リファクタリング (Refactoring)
+- **Web/Mobile共通同期ロジック統合**:
+    - `useMobileSync.ts`(146行→107行)、`useSync.ts`(187行→150行) のインライン `processTable` を `@studytodo/shared` の `processTableSync` + `allowedFieldsMap` に置き換え。
+    - Web固有の Dexie transaction `source='sync'` 設定は handlers 内で維持。
+    - Session の専用ロジック（updatedAt比較なし）はMobile側に維持。
+
 ### [MainLayout Dead Code Removal] - 2026-02-28
 #### リファクタリング (Refactoring)
 - **デッドコード `MainLayout.tsx`(234行) を削除**:

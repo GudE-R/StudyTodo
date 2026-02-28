@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { mapper, allowedFieldsMap, compareDates, Session } from "@studytodo/shared";
+import { mapper, allowedFieldsMap, Session, processTableSync, SyncItem } from "@studytodo/shared";
 import { useRepository } from "../providers/RepositoryProvider";
 
 import { useMobileRealtimeSync } from "./useMobileRealtimeSync";
@@ -17,7 +17,6 @@ export function useMobileSync() {
         if (__DEV__) console.log("Starting Mobile Full Sync...");
 
         try {
-            // ... (existing sync content - fetching cloud/local)
             const { data: cloudTodos, error: todoError } = await supabase.from('todos').select('*');
             const { data: cloudSessions, error: sessionError } = await supabase.from('sessions').select('*');
             const { data: cloudCategories, error: catError } = await supabase.from('categories').select('*');
@@ -33,74 +32,36 @@ export function useMobileSync() {
             const localCategories = await repo.getCategories();
             const localSrs = await repo.getSRSProfiles();
 
-            const processTable = async (
+            // 共通 processTableSync を使用したヘルパー
+            const syncTable = async (
                 localItems: any[],
-                cloudItems: any[],
+                cloudRawItems: any[],
                 repoMethods: {
                     add: (item: any) => Promise<void>,
                     update: (id: string, updates: any) => Promise<void>
                 },
                 supabaseTableName: string
             ) => {
-                const cloudMap = new Map(cloudItems.map(i => [i.id, mapper.fromSupabase(i)]));
-                const localMap = new Map(localItems.map(i => [i.id, i]));
+                // クラウドデータを fromSupabase で変換
+                const cloudItems = cloudRawItems.map(i => mapper.fromSupabase(i)) as SyncItem[];
 
-                const toImport: any[] = [];
-                const toUpdateLocal: any[] = [];
-                const toExport: any[] = [];
-
-                for (const [id, rawCloudItem] of cloudMap) {
-                    const localItem = localMap.get(id);
-                    if (!localItem) {
-                        toImport.push(rawCloudItem);
-                    } else {
-                        // Use shared compareDates utility
-                        const cloudUpdatedAt = (rawCloudItem as { updatedAt?: Date | string }).updatedAt;
-                        const localUpdatedAt = (localItem as { updatedAt?: Date | string }).updatedAt;
-                        const comparison = compareDates(cloudUpdatedAt, localUpdatedAt);
-
-                        if (comparison > 0) {
-                            toUpdateLocal.push(rawCloudItem);
-                        } else if (comparison < 0) {
-                            toExport.push(localItem);
-                        }
+                await processTableSync(localItems as SyncItem[], cloudItems, {
+                    onImport: async (item) => { await repoMethods.add(item); },
+                    onUpdate: async (id, item) => { await repoMethods.update(id, item as any); },
+                    onExport: async (items) => {
+                        const fields = allowedFieldsMap[supabaseTableName];
+                        const mapped = items.map(item => mapper.toSupabase(item as unknown as Record<string, unknown>, uId, fields));
+                        const { error } = await supabase.from(supabaseTableName).upsert(mapped);
+                        if (error) throw error;
                     }
-                }
-
-                for (const [id, localItem] of localMap) {
-                    if (!cloudMap.has(id)) {
-                        toExport.push(localItem);
-                    }
-                }
-
-                for (const item of toImport) {
-                    await repoMethods.add(item);
-                }
-                for (const item of toUpdateLocal) {
-                    await repoMethods.update(item.id, item);
-                }
-
-                if (toExport.length > 0) {
-                    let allowedFields: string[] | undefined;
-                    // ... (allowedFields definition)
-                    if (supabaseTableName === 'categories') {
-                        allowedFields = ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'];
-                    } else if (supabaseTableName === 'todos') {
-                        allowedFields = ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'];
-                    } else if (supabaseTableName === 'srs_profiles') {
-                        allowedFields = ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'];
-                    }
-                    const mappedExports = toExport.map(item => mapper.toSupabase(item, uId, allowedFields));
-                    const { error } = await supabase.from(supabaseTableName).upsert(mappedExports);
-                    if (error) throw error;
-                }
+                });
             };
 
-            await processTable(localCategories, cloudCategories, { add: (i) => repo.addCategory(i), update: (id, u) => repo.updateCategory(id, u) }, 'categories');
-            await processTable(localSrs, cloudSrs, { add: (i) => repo.addSRSProfile(i), update: (id, u) => repo.updateSRSProfile(id, u) }, 'srs_profiles');
-            await processTable(localTodos, cloudTodos, { add: (i) => repo.addTodo(i), update: (id, u) => repo.updateTodo(id, u) }, 'todos');
+            await syncTable(localCategories, cloudCategories, { add: (i) => repo.addCategory(i), update: (id, u) => repo.updateCategory(id, u) }, 'categories');
+            await syncTable(localSrs, cloudSrs, { add: (i) => repo.addSRSProfile(i), update: (id, u) => repo.updateSRSProfile(id, u) }, 'srs_profiles');
+            await syncTable(localTodos, cloudTodos, { add: (i) => repo.addTodo(i), update: (id, u) => repo.updateTodo(id, u) }, 'todos');
 
-            // Sessions logic
+            // Sessions は updatedAt がないため専用ロジック
             const sessionCloudMap = new Map(cloudSessions.map(i => [i.id, mapper.fromSupabase(i)]));
             const sessionLocalMap = new Map(localSessions.map(i => [i.id, i]));
             for (const [id, rawCloudItem] of sessionCloudMap) {
@@ -108,8 +69,8 @@ export function useMobileSync() {
             }
             const sessionsToExport = localSessions.filter(s => !sessionCloudMap.has(s.id));
             if (sessionsToExport.length > 0) {
-                const allowedSessionFields = ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt'];
-                const mappedExports = sessionsToExport.map(item => mapper.toSupabase(item as unknown as Record<string, unknown>, uId, allowedSessionFields));
+                const fields = allowedFieldsMap['sessions'];
+                const mappedExports = sessionsToExport.map(item => mapper.toSupabase(item as unknown as Record<string, unknown>, uId, fields));
                 await supabase.from('sessions').upsert(mappedExports);
             }
 

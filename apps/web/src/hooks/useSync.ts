@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { db } from "@/lib/db";
-import { mapper, allowedFieldsMap, compareDates } from "@studytodo/shared";
+import { mapper, allowedFieldsMap, processTableSync, SyncItem } from "@studytodo/shared";
 import { useRealtimeSync } from "./useRealtimeSync";
 import { initNetworkListener, processOfflineQueue } from "@/lib/offlineQueue";
 import type { Table } from "dexie";
@@ -25,7 +25,6 @@ export function useSync() {
         db.setUserId(uId);
 
         try {
-            // ... (fetching cloud/local data)
             const { data: cloudTodos, error: todoError } = await supabase.from('todos').select('*');
             const { data: cloudSessions, error: sessionError } = await supabase.from('sessions').select('*');
             const { data: cloudCategories, error: catError } = await supabase.from('categories').select('*');
@@ -71,74 +70,42 @@ export function useSync() {
             const filteredLocalCategories = await db.categories.toArray();
             const filteredLocalSrs = await db.srsProfiles.toArray();
 
-            const processTable = async (
+            // 共通 processTableSync を使用したヘルパー
+            const syncTable = async (
                 localItems: any[],
-                cloudItems: any[],
+                cloudRawItems: any[],
                 tableName: 'categories' | 'todos' | 'sessions' | 'srsProfiles',
                 supabaseTableName: string
             ) => {
-                const cloudMap = new Map(cloudItems.map(i => [i.id, mapper.fromSupabase(i)]));
-                const localMap = new Map(localItems.map(i => [i.id, i]));
+                // クラウドデータを fromSupabase で変換
+                const cloudItems = cloudRawItems.map(i => mapper.fromSupabase(i)) as SyncItem[];
 
-                const toImport: any[] = [];
-                const toExport: any[] = [];
-
-                for (const [id, cloudItem] of cloudMap) {
-                    const localItem = localMap.get(id);
-                    if (!localItem) {
-                        toImport.push(cloudItem);
-                    } else {
-                        const cloudUpdatedAt = (cloudItem as { updatedAt?: Date | string }).updatedAt;
-                        const localUpdatedAt = (localItem as { updatedAt?: Date | string }).updatedAt;
-                        const comparison = compareDates(cloudUpdatedAt, localUpdatedAt);
-
-                        if (comparison > 0) {
-                            toImport.push(cloudItem);
-                        } else if (comparison < 0) {
-                            toExport.push(localItem);
-                        }
+                await processTableSync(localItems as SyncItem[], cloudItems, {
+                    onImport: async (item) => {
+                        await db.transaction('rw', db[tableName], (trans) => {
+                            (trans as unknown as { source: string }).source = 'sync';
+                            return (db[tableName] as Table).put(item);
+                        });
+                    },
+                    onUpdate: async (_id, item) => {
+                        await db.transaction('rw', db[tableName], (trans) => {
+                            (trans as unknown as { source: string }).source = 'sync';
+                            return (db[tableName] as Table).put(item);
+                        });
+                    },
+                    onExport: async (items) => {
+                        const fields = allowedFieldsMap[supabaseTableName];
+                        const mapped = items.map(item => mapper.toSupabase(item as unknown as Record<string, unknown>, uId, fields));
+                        const { error } = await supabase.from(supabaseTableName).upsert(mapped);
+                        if (error) throw error;
                     }
-                }
-
-                for (const [id, localItem] of localMap) {
-                    if (!cloudMap.has(id)) {
-                        toExport.push(localItem);
-                    }
-                }
-
-                // Apply changes using transaction with source='sync' to prevent loops
-                if (toImport.length > 0) {
-                    await db.transaction('rw', db[tableName], (trans) => {
-                        (trans as unknown as { source: string }).source = 'sync';
-                        return (db[tableName] as Table).bulkPut(toImport);
-                    });
-                }
-
-                if (toExport.length > 0) {
-                    let allowedFields: string[] | undefined;
-                    // ... (allowedFields definition)
-                    if (supabaseTableName === 'categories') {
-                        allowedFields = ['id', 'name', 'parentId', 'level', 'isDefault', 'order', 'createdAt', 'updatedAt', 'icon'];
-                    } else if (supabaseTableName === 'todos') {
-                        allowedFields = ['id', 'title', 'completed', 'createdAt', 'updatedAt', 'dueDate', 'categoryId', 'estimatedDuration', 'actualDuration', 'priority', 'notes', 'tags', 'srsLevel', 'nextReviewDate', 'srsProfileId', 'reviewHistory', 'memo', 'range', 'srsInterval', 'srsGroupId'];
-                    } else if (supabaseTableName === 'srs_profiles') {
-                        allowedFields = ['id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'];
-                    } else if (supabaseTableName === 'sessions') {
-                        allowedFields = ['id', 'todoId', 'todoTitle', 'startTime', 'endTime', 'duration', 'mode', 'createdAt'];
-                    }
-
-                    const mappedExports = toExport.map(item => mapper.toSupabase(item, uId, allowedFields));
-                    const { error } = await supabase.from(supabaseTableName).upsert(mappedExports);
-                    if (error) throw error;
-                }
-
-                return { imported: toImport.length, exported: toExport.length };
+                });
             };
 
-            await processTable(filteredLocalCategories, cloudCategories, 'categories', 'categories');
-            await processTable(filteredLocalSrs, cloudSrs, 'srsProfiles', 'srs_profiles');
-            await processTable(localTodos, cloudTodos, 'todos', 'todos');
-            await processTable(localSessions, cloudSessions, 'sessions', 'sessions');
+            await syncTable(filteredLocalCategories, cloudCategories, 'categories', 'categories');
+            await syncTable(filteredLocalSrs, cloudSrs, 'srsProfiles', 'srs_profiles');
+            await syncTable(localTodos, cloudTodos, 'todos', 'todos');
+            await syncTable(localSessions, cloudSessions, 'sessions', 'sessions');
 
             setLastSyncTime(new Date());
 
@@ -162,7 +129,6 @@ export function useSync() {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
                 setUserId(session.user.id);
-                // Also set it on db directly for direct writes before sync finishes
                 db.setUserId(session.user.id);
                 await sync(session.user.id);
 

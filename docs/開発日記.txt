@@ -1471,3 +1471,7 @@ MainLayout.tsx(234行)がMainLayoutSelectorから参照されていないデッ�
 MainLayout_Safe.tsx(272行)とMainLayoutSimple.tsx(437行)に重複していた9個の共通ハンドラをuseTodoHandlers.tsに抽出。
 handleTodoUpdateはSimple側のSRS適用ロジックを含む上位互換で統合。
 結果: MainLayout_Safe 272→130行、MainLayoutSimple 437→225行。テスト60件全pass。
+
+2/28 (Web/Mobile共通ロジック抽出)
+useMobileSync.ts(146→107行)とuseSync.ts(187→150行)に重複していたインラインprocessTableを、@studytodo/sharedのprocessTableSync + allowedFieldsMapに統合。
+コア同期ロジック（import/update/export判定）の重複を排除。テスト: Mobile 60件、Shared 93件、全pass。
