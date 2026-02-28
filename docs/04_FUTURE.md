@@ -96,7 +96,7 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 | # | タスク | 状態 | 理由・備考 |
 |---|--------|------|------------|
 | 1 | **`pomarc` 残存の修正（6箇所）** | ✅ 完了 | マイグレーションユーティリティ (`migrateLegacyStorage.ts`) を作成し、AsyncStorageキー4箇所 + DB名2箇所を移行。App起動時に自動実行、二重実行防止フラグ付き。(2026-02-28) |
-| 2 | **不要ファイルの除外** | ⬜ 未着手 | `build_error.txt`(510KB) と `studytodo_transfer.zip`(21MB) がリポジトリに残存。`.gitignore` 追加 + `git rm --cached` で即対応可能。リスク低 |
+| 2 | **不要ファイルの除外** | ✅ 完了 | `build_error.txt`(510KB) と `studytodo_transfer.zip`(21MB) を `.gitignore` 追加 + `git rm --cached` で除外。(2026-02-28) |
 | 3 | **巨大コンポーネントの分割** | ⬜ 未着手 | `TodoDetailModal`(1087行), `TodoCreateModal`(1021行), `MobileTimerView`(716行), `SettingsModal`(712行) が単一ファイル。カスタムフック抽出 + サブコンポーネント分割が有効 |
 | 4 | **MainLayout デッドコード削除** | ⬜ 未着手 | `MainLayout.tsx`(234行) が `MainLayoutSelector` から参照されておらずデッドコードの可能性。確認後削除。`MainLayout_Safe.tsx` と `MainLayoutSimple.tsx` の共通ハンドラも `useTodoHandlers` に抽出可能 |
 | 5 | **同期ロジックのテスト追加** | ⬜ 未着手 | `useMobileSync.ts`(146行), `useSync.ts`(186行) がテスト未作成。データ整合性の保証に重要だが、Supabaseモックの複雑さから後回し |

@@ -11,3 +11,8 @@ yarn-error.log*
 pnpm-debug.log*
 .vercel
 .env*.local
+
+# Temporary / generated files
+build_error.txt
+*.transfer.zip
+studytodo_transfer.zip
