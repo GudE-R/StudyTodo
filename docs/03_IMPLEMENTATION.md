@@ -105,6 +105,20 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [Test Coverage Improvement] - 2026-02-28
+#### 追加 (Testing)
+- **テストカバレッジの大幅強化**:
+    - テスト総数: 172 → 188件（+16件）
+    - **Mobile (`apps/mobile`)**:
+        - `SQLiteRepository.test.ts`: init、シリアライズ（toDB/fromDB）、全CRUD操作（Todo/Category/SRS/Session）、onDataChangeリスナーの包括的テスト（28件）を新規作成。
+        - `OfflineQueueRepository.test.ts`: add、getAll、remove、clear、incrementRetryの全メソッドテスト（10件）を新規作成。
+    - **Web (`apps/web`)**:
+        - `statistics.test.ts`: `calculateStreak`のストリーク計算テスト（9件）を新規作成。
+        - `utils.test.ts`: `cn`（クラスマージ）、`generateId`（UUID生成）、`buildCategoryTree`（ツリー構築）のテスト（12件）を新規作成。
+    - **テスト基盤修正**:
+        - `vitest-setup.ts` に React Native の `__DEV__` グローバル変数定義を追加。
+    - **目的**: リポジトリ層とユーティリティ関数のリグレッション防止。
+
 ### [Gemini CLI Setup] - 2026-02-28
 #### 追加 (Tools)
 - **Gemini CLI の導入**:

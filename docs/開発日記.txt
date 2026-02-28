@@ -1415,3 +1415,25 @@ Anthropic 公式の CLI ツール「Claude Code」(@anthropic-ai/claude-code) �
 Gemini CLI と同様にターミナルから直接 AI を呼び出せるが、こちらは Claude 3.5 Sonnet 等の高度な推論モデルに特化している。
 Claude Pro サブスクリプションまたは API クレジットを使用して、よりスマートなコード生成やリファクタリングの提案が期待できる。
 これで Gemini と Claude の両方をターミナルから自在に使い分けられる環境が整った。
+
+2/28 (テストカバレッジ改善)
+コードベースのリサーチを行い、テストが不足しているモジュールを特定した。
+その結果に基づき、以下の4つのテストファイルを新規作成した。
+
+**Mobile (apps/mobile):**
+1. `SQLiteRepository.test.ts` (28テスト): データ永続化層の包括的テスト。
+   - init（テーブル作成）、toDB/fromDB（シリアライズ）、全CRUD操作、onDataChangeリスナーをカバー。
+   - 課題: expo-sqliteのモックで `openDatabaseSync` が毎回新インスタンスを返す問題があり、共有モックDBパターンで解決。
+2. `OfflineQueueRepository.test.ts` (10テスト): オフラインキュー全メソッドのテスト。
+   - `__DEV__` グローバル未定義エラーが発生し、`vitest-setup.ts` に定義を追加して対処。
+
+**Web (apps/web):**
+3. `statistics.test.ts` (9テスト): ストリーク計算ロジックのテスト。fakeTimersで「今日」を固定し、連続日・ギャップ・同日複数セッション等のパターンを検証。
+4. `utils.test.ts` (12テスト): cn（Tailwindクラスマージ）、generateId（UUID生成）、buildCategoryTree（ツリー構築）の3関数テスト。
+
+**テスト基盤修正:**
+- `vitest-setup.ts` に `(globalThis as any).__DEV__ = true` を追加。React Nativeの `__DEV__` ガード付きログがテスト環境でも動作するように。
+- TypeScript型エラー23件を修正（`MockDb` インターフェース定義、`mock.calls` のキャスト統一）。
+
+**結果:** テスト総数 172→188件（+16件）。全テスト pass（shared 93件, mobile 60件, web 35件）。
+`useTimer.test.ts.skip` はReact Hook依存のため純粋ロジックテストに変換が困難であり、スキップのまま維持する判断をした。

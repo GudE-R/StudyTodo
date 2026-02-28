@@ -1,5 +1,8 @@
 import { vi } from 'vitest';
 
+// Mock React Native __DEV__ global
+(globalThis as any).__DEV__ = true;
+
 // Mock expo-sqlite
 vi.mock('expo-sqlite', () => ({
     openDatabaseSync: vi.fn(() => ({

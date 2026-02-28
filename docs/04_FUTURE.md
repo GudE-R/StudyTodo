@@ -83,7 +83,7 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 
 ### リファクタリング / 技術的負債
 - [x] **共通ロジックの統合**: TodoDetailModalのテキスト解析ロジックをpackages/sharedへ移動。
-- [x] **テストコードの拡充**: コンポーネントテスト、統合テストの追加（Web/Mobile/Shared）。テストカバレッジ向上: 84→120件。ビジネスロジック（ルーティンTodo生成、SRS日付シフト）を純粋関数として切り出しテスト化。(2026-02-16)
+- [x] **テストコードの拡充**: コンポーネントテスト、統合テストの追加（Web/Mobile/Shared）。テストカバレッジ向上: 84→120→188件。ビジネスロジック（ルーティンTodo生成、SRS日付シフト）を純粋関数として切り出しテスト化。リポジトリ層（SQLiteRepository、OfflineQueueRepository）とWeb ユーティリティ（statistics、utils）のテストを追加。(2026-02-28)
 - [x] **デッドコードの削除**: 未使用ファイル10件（MobileTodoCreateModal, LayoutV2, ExpandablePane, TimerModal, widgets/）を削除。(2026-02-16)
 - [x] **console.logの整理**: Mobile版の全console.log(17件)を`__DEV__`ガードで囲み、本番ビルドでの出力を抑制。(2026-02-16)
 - [x] **ActivityModal.tsxの分割**: 約900行の巨大ファイルをAnalyticsTab、HistoryTab、ShareTabに分割。(2026-02-16)
