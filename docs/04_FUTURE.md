@@ -98,7 +98,7 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 | 1 | **`pomarc` 残存の修正（6箇所）** | ✅ 完了 | マイグレーションユーティリティ (`migrateLegacyStorage.ts`) を作成し、AsyncStorageキー4箇所 + DB名2箇所を移行。App起動時に自動実行、二重実行防止フラグ付き。(2026-02-28) |
 | 2 | **不要ファイルの除外** | ✅ 完了 | `build_error.txt`(510KB) と `studytodo_transfer.zip`(21MB) を `.gitignore` 追加 + `git rm --cached` で除外。(2026-02-28) |
 | 3 | **巨大コンポーネントの分割** | ✅ 完了 | 4コンポーネントからカスタムフック抽出（`useTodoDetailForm`, `useTodoCreateForm`, `useMobileTimer`, `useSettingsForm`）。合計約44%行数削減。(2026-02-28) |
-| 4 | **MainLayout デッドコード削除** | ⬜ 未着手 | `MainLayout.tsx`(234行) が `MainLayoutSelector` から参照されておらずデッドコードの可能性。確認後削除。`MainLayout_Safe.tsx` と `MainLayoutSimple.tsx` の共通ハンドラも `useTodoHandlers` に抽出可能 |
+| 4 | **MainLayout デッドコード削除** | ✅ 完了 | デッドコード `MainLayout.tsx` を削除。`MainLayout_Safe.tsx`・`MainLayoutSimple.tsx` の共通ハンドラ9個を `useTodoHandlers.ts` に抽出し両コンポーネントを大幅削減。(2026-02-28) |
 | 5 | **同期ロジックのテスト追加** | ⬜ 未着手 | `useMobileSync.ts`(146行), `useSync.ts`(186行) がテスト未作成。データ整合性の保証に重要だが、Supabaseモックの複雑さから後回し |
 | 6 | **Web/Mobile共通ロジック抽出** | ⬜ 未着手 | 同期ロジック(`processTable`)がほぼ同一実装で両側に存在。`packages/shared` への統合で保守性向上。ただしUIフレームワーク差異があるため完全統合は困難 |
 | 7 | **`useTimer.test.ts.skip` の対応** | ⏭️ スキップ | React Hook依存のため `.ts` テストでは実行不可。Mobile Vitest設定が `.tsx` を除外しているため、現状では純粋ロジック抽出が限定的。環境改善後に再検討 |

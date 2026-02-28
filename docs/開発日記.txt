@@ -1465,3 +1465,9 @@ Claude Pro サブスクリプションまたは API クレジットを使用し�
 - useSettingsForm.ts: リマインダー設定ロジック（AsyncStorage読み書き, 通知スケジュール, permissionチェック）を抽出。
 
 結果: 合計約3540行→約1980行（44%削減）。テスト60件全pass。
+
+2/28 (MainLayout デッドコード削除)
+MainLayout.tsx(234行)がMainLayoutSelectorから参照されていないデッドコードと判明し、削除。
+MainLayout_Safe.tsx(272行)とMainLayoutSimple.tsx(437行)に重複していた9個の共通ハンドラをuseTodoHandlers.tsに抽出。
+handleTodoUpdateはSimple側のSRS適用ロジックを含む上位互換で統合。
+結果: MainLayout_Safe 272→130行、MainLayoutSimple 437→225行。テスト60件全pass。

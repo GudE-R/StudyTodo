@@ -105,6 +105,14 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [MainLayout Dead Code Removal] - 2026-02-28
+#### リファクタリング (Refactoring)
+- **デッドコード `MainLayout.tsx`(234行) を削除**:
+    - `MainLayoutSelector.tsx` からの参照なしを確認、安全に削除。
+- **共通ハンドラの統合**:
+    - `useTodoHandlers.ts` を新規作成。`MainLayout_Safe.tsx` と `MainLayoutSimple.tsx` に重複していた9個のハンドラ（Keep操作、Todo CRUD、タイマー制御、モーダル管理）を統合。
+    - `MainLayout_Safe.tsx`(272行→130行)、`MainLayoutSimple.tsx`(437行→225行) に削減。
+
 ### [Component Refactoring] - 2026-02-28
 #### リファクタリング (Refactoring)
 - **巨大コンポーネント4ファイルのカスタムフック抽出**:
