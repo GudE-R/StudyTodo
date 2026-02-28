@@ -194,8 +194,8 @@
 
 ### [Web App Renaming & Privacy Policy Fix] - 2026-02-19
 #### 変更 (Web)
-- **Webアプリの名称変更 (PomArc -> StudyTodo)**:
-    - リブランディングに伴い、アプリ内の「PomArc」表記を「StudyTodo」に変更。
+- **Webアプリの名称変更 (StudyTodo -> StudyTodo)**:
+    - リブランディングに伴い、アプリ内の「StudyTodo」表記を「StudyTodo」に変更。
     - `robots.ts`, `sitemap.ts`: ベースURLの更新。
     - `ActivityModal.tsx`: シェアカードのタイトルを `StudyTodo Share` に変更。
     - `share-image.ts`: ダウンロードファイル名を `studytodo-stats.png` に変更。
@@ -300,7 +300,7 @@
 
 ### [Project Renaming] - 2026-01-27
 #### 変更 (All)
-- **プロジェクト名の変更 (PomArc -> StudyTodo)**:
+- **プロジェクト名の変更 (StudyTodo -> StudyTodo)**:
     - ユーザー要望によりプロジェクト名、パッケージスコープ、DB名、設定ファイルを一括変更。
     - `@pomarc/shared` -> `@studytodo/shared`
     - `apps/web`, `apps/mobile` の全インポートパスを置換。
@@ -979,6 +979,6 @@ Web版リリースに向けて、こうした「使い勝手」の部分を詰�
     - Androidビルド時に発生していた  エラーを特定。
     - 原因はGradleキャッシュまたはロックファイルの破損。
     -  ディレクトリを削除し、Gradleキャッシュをリセットすることで解決を図った。
-- Vercelリダイレクト設定の追加: `/privacy` -> `/ja/privacy` ([vercel.json](file:///home/gude/Dev/PomArc/vercel.json))
+- Vercelリダイレクト設定の追加: `/privacy` -> `/ja/privacy` ([vercel.json](file:///home/gude/Dev/StudyTodo/vercel.json))
 - Next.jsミドルウェア設定の修正: `proxy.ts` のマッチャーに `/privacy` を追加し、Next.js v15+ の規約に準拠
-- ストアメタデータのリファレンスURLを検証済みURLに更新 ([STORE_METADATA.md](file:///home/gude/Dev/PomArc/docs/STORE_METADATA.md))
+- ストアメタデータのリファレンスURLを検証済みURLに更新 ([STORE_METADATA.md](file:///home/gude/Dev/StudyTodo/docs/STORE_METADATA.md))

@@ -1,5 +1,5 @@
 -- ============================================================
--- PomArc Database Reset
+-- StudyTodo Database Reset
 -- WARNING: This will DELETE ALL DATA!
 -- ============================================================
 

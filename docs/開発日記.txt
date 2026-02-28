@@ -682,7 +682,7 @@ Androidでは同等の機能として時計型（またはリスト型）の時�
 これで実機を繋がなくても開発・テストができるようになった。バッテリーを気にせず開発できるのは大きい。
 
 1/27
-Project Renaming (PomArc -> StudyTodo):
+Project Renaming (StudyTodo -> StudyTodo):
 Web版・Mobile版のプロジェクト名、パッケージ名、設定ファイルを一括置換。
 @pomarc/shared -> @studytodo/shared
 importパスの修正とnpm installによる依存関係解決を実施。
@@ -705,7 +705,7 @@ ASO用キーワードと日/英のバリエーションを整理。
    - `Macrium Reflect` や `dd` コマンドの使用も検討したが、手順の複雑さとリスクを考慮し断念。
 
 2. **方針転換 (Clean Install + Restore)**:
-   - すでにUSBメモリに `PomArc` プロジェクトや `.config` などの設定ファイルをバックアップしていたため、新規インストールでの移行に切り替えた。
+   - すでにUSBメモリに `StudyTodo` プロジェクトや `.config` などの設定ファイルをバックアップしていたため、新規インストールでの移行に切り替えた。
 
 3. **VirtualBox 環境構築**:
    - ホストマシン: Windows (32GB RAM, 24 Core CPU)
@@ -720,7 +720,7 @@ ASO用キーワードと日/英のバリエーションを整理。
      - USBデバイスフィルタを設定し、USBメモリからのデータ復元を実施。
 
 4. **環境復元**:
-   - USBから `~/PomArc` プロジェクトを復元し `npm install` で環境再構築。
+   - USBから `~/StudyTodo` プロジェクトを復元し `npm install` で環境再構築。
    - VS Code / Google Antigravity IDE をセットアップ。
    - これにより、Windows上で開発しながらゲームなども並行して行える環境が整った。
 
@@ -1215,7 +1215,7 @@ docs/STORE_METADATA.md と docs/PRIVACY_POLICY.md に保存。
 広告の最適化やProプランの実装は、初期リリース後（v1.1以降）に見送ることになった。
 まずは現在の機能セット（基本機能＋バナー広告＋通知）でリリースを目指す。
 ユーザーの希望により、Windows環境へのファイル転送をGit経由ではなく共有フォルダ経由で行うことにした。
-共有フォルダ /media/sf_To-LinuxMint/PomArc_Transfer へ、node_modules等を除外してプロジェクトファイルをコピーした。
+共有フォルダ /media/sf_To-LinuxMint/StudyTodo_Transfer へ、node_modules等を除外してプロジェクトファイルをコピーした。
 Windowsビルドガイドもこれに合わせて更新した。
 ユーザーの意向により、本番ビルドをWindowsではなくLinux環境からEAS Buildで行う方針に変更。
 不要になったWindows用ガイド（WINDOWS_BUILD_GUIDE.md等）と、共有フォルダへの転送データを削除した。
@@ -1270,7 +1270,7 @@ Google Play Consoleで「プライバシーポリシーのページが見つか�
 あわせて、ページ内容 () を最新のポリシー（モバイル版で作成したもの）に同期し、ロケールに応じた言語で表示するようにした。
 
 2/19 (Web App Renaming)
-Webアプリの名称を「PomArc」から「StudyTodo」に正式に変更した。
+Webアプリの名称を「StudyTodo」から「StudyTodo」に正式に変更した。
 これに伴い、以下の修正を行った：
 1.  **コードベースの置換**: `robots.ts`, `sitemap.ts`, `ActivityModal`, `export.ts` などに含まれる `pomarc` の表記を `studytodo` に変更。
 2.  **テーマ設定の移行**: LocalStorageキーを `pomarc-theme` から `studytodo-theme` に変更。
@@ -1347,7 +1347,7 @@ Androidで1ヶ月表示から1週間表示に戻しにくい問題を解消し�
 - 独自ドメイン (studytodo.app) ではなく、無料の Vercel サブドメイン (studytodo.vercel.app) を使用するように全設定を統一。
 - 環境変数 NEXT_PUBLIC_BASE_URL を更新し、ドキュメント内のURLを一斉置換。
 - Vercelダッシュボードの設定変更により、新しいURLでの正常アクセスを確認。
-- これですべての「PomArc」リファレンスが「StudyTodo」に統合され、リリース準備が完了。
+- これですべての「StudyTodo」リファレンスが「StudyTodo」に統合され、リリース準備が完了。
 
 2/25 (さらに追記)
 サポートURL用ランディングページのデザイン・文言の改善。

@@ -23,14 +23,14 @@ Error: Turbopack build failed with 205 errors:
 ./src/app/globals.css
 Error evaluating Node.js code
 Error: Cannot find module '@vercel/turbopack/postcss'
-    [at /home/gude/Dev/PomArc/apps/web/.next/build/chunks/[root-of-the-server]__b52c8c2f._.js:80:15]
-    [at module evaluation (/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[root-of-the-server]__b52c8c2f._.js:83:3)]
-    at instantiateModule (turbopack:///[turbopack]/nodejs/runtime.ts:226:5) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack]_runtime.js:740:9]
-    at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime.ts:259:10) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack]_runtime.js:763:12]
-    at Context.esmImport [as i] (turbopack:///[turbopack]/shared/runtime-utils.ts:347:18) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack]_runtime.js:228:20]
-    [at /home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack-node]_transforms_postcss_ts_6920245c._.js:8:16]
+    [at /home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[root-of-the-server]__b52c8c2f._.js:80:15]
+    [at module evaluation (/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[root-of-the-server]__b52c8c2f._.js:83:3)]
+    at instantiateModule (turbopack:///[turbopack]/nodejs/runtime.ts:226:5) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack]_runtime.js:740:9]
+    at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime.ts:259:10) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack]_runtime.js:763:12]
+    at Context.esmImport [as i] (turbopack:///[turbopack]/shared/runtime-utils.ts:347:18) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack]_runtime.js:228:20]
+    [at /home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack-node]_transforms_postcss_ts_6920245c._.js:8:16]
     [at process.processTicksAndRejections (node:internal/process/task_queues:95:5)]
-    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:75:20) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[root-of-the-server]__974941ed._.js:427:24]
+    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:75:20) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[root-of-the-server]__974941ed._.js:427:24]
 
 Import trace:
   Client Component Browser:
@@ -5416,10 +5416,10 @@ Import traces:
 https://nextjs.org/docs/messages/module-not-found
 
 
-    at instantiateModule (turbopack:///[turbopack]/nodejs/runtime.ts:226:5) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack]_runtime.js:740:9])
-    at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime.ts:259:10) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack]_runtime.js:763:12])
-    at Context.esmImport [as i] (turbopack:///[turbopack]/shared/runtime-utils.ts:347:18) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[turbopack]_runtime.js:228:20])
-    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:75:20) [/home/gude/Dev/PomArc/apps/web/.next/build/chunks/[root-of-the-server]__974941ed._.js:427:24])
+    at instantiateModule (turbopack:///[turbopack]/nodejs/runtime.ts:226:5) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack]_runtime.js:740:9])
+    at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime.ts:259:10) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack]_runtime.js:763:12])
+    at Context.esmImport [as i] (turbopack:///[turbopack]/shared/runtime-utils.ts:347:18) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[turbopack]_runtime.js:228:20])
+    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:75:20) [/home/gude/Dev/StudyTodo/apps/web/.next/build/chunks/[root-of-the-server]__974941ed._.js:427:24])
     at <unknown> (./src/i18n/request.ts:14:26)
     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
     at ./node_modules/ (hello-pangea/dnd/dist/dnd.esm.js:7:1)
@@ -5689,9 +5689,9 @@ https://nextjs.org/docs/messages/module-not-found
     at <unknown> (https://nextjs.org/docs/messages/module-not-found)
 npm error Lifecycle script `build` failed with error:
 npm error code 1
-npm error path /home/gude/Dev/PomArc/apps/web
+npm error path /home/gude/Dev/StudyTodo/apps/web
 npm error workspace @studytodo/web@0.1.0
-npm error location /home/gude/Dev/PomArc/apps/web
+npm error location /home/gude/Dev/StudyTodo/apps/web
 npm error command failed
 npm error command sh -c next build
 Error: Command "npm run build" exited with 1
