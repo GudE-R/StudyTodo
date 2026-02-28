@@ -1398,3 +1398,8 @@ TestFlight版にてAdMobバナーが表示されないという報告を受け�
 `eas env:push production --path .env.local` を実行して環境変数をEASのProduction環境へ適応させ、再度 Android(v15) および iOS(v1.0.6) の本番ビルドを開始した。
 ビルド完了後、iOS版はTestFlightへの提出（Submit）を完了した。
 Android版については、Play Consoleへのアップロードは完了しているものの、クローズドテストに必要な20名のテスター確保待ち（募集フェーズ）のため、現在ここで進行がストップしている状態である。
+
+2/28 (iOS却下問題の解決)
+iOSの提出が一時却下されたが、無事に解決。
+App Storeでの公開に向けて再度ステータスが進行中。
+Androidは引き続きテスター募集中。
