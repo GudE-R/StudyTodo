@@ -92,6 +92,7 @@
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 *   **Developer Tools**:
     *   **Gemini CLI**: CLI based AI agent for codebase understanding and automation.
+    *   **Claude Code**: Anthropic's official CLI tool for coding assistance and file manipulation.
 
 ---
 
@@ -110,6 +111,13 @@
     - ターミナルから Gemini 3 モデル（Flash/Pro）を利用可能な `@google/gemini-cli` をグローバルインストール。
     - コード解析、自動化スクリプト生成、トラブルシューティングなどの開発支援ツールとして活用。
     - **目的**: 開発効率の向上と、AI エージェントによるワークフローの自動化。
+
+### [Claude Code CLI Setup] - 2026-02-28
+#### 追加 (Tools)
+- **Claude Code の導入**:
+    - Anthropic 公式の CLI ツール `@anthropic-ai/claude-code` をグローバルインストール。
+    - Claude 3.5 Sonnet 等の強力なモデルをターミナルから直接利用可能。
+    - **目的**: Gemini と並行して、最新の Claude モデルによる高度な推論とコード生成を活用するため。
 
 ### [Production Build v1.0.1] - 2026-02-26
 #### 追加 (Mobile)
