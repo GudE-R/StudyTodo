@@ -105,6 +105,15 @@
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
 - **目的**: 中長期的な収益化戦略の策定と、ユーザー継続率向上のための施策を整理するため。
 
+### [Component Refactoring] - 2026-02-28
+#### リファクタリング (Refactoring)
+- **巨大コンポーネント4ファイルのカスタムフック抽出**:
+    - `TodoDetailModal`(1088行→590行): `useTodoDetailForm.ts` にstate/handlers/computed抽出
+    - `TodoCreateModal`(1022行→500行): `useTodoCreateForm.ts` にstate/helpers/handlers抽出
+    - `MobileTimerView`(717行→250行): `useMobileTimer.ts` にタイマーエンジン全体抽出
+    - `SettingsModal`(713行→640行): `useSettingsForm.ts` にリマインダー設定ロジック抽出
+    - 合計: 約3540行→約1980行（**44%削減**）、ロジックとUIの責務分離を実現
+
 ### [Legacy Storage Migration] - 2026-02-28
 #### 修正 (Migration)
 - **`pomarc` → `studytodo` マイグレーション**:

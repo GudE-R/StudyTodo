@@ -10,7 +10,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndica
 // アイコンライブラリからのインポート
 import { X, Moon, Sun, Monitor, RefreshCw, Languages, ChevronRight, ArrowLeft, Layout, Bell } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // アプリケーション固有の機能をインポート（カスタムフックなど）
 import { useAuth } from '../../providers/AuthProvider'; // 認証状態管理
@@ -20,7 +20,7 @@ import { useMobileSync } from '../../hooks/useMobileSync'; // データ同期機
 import { useTranslation } from 'react-i18next'; // 多言語対応
 import { SUPPORTED_LANGUAGES } from '../../i18n/languages'; // サポート言語リスト
 import { useLayout } from '../../providers/LayoutProvider';
-import { useNotification } from '../../hooks/useNotification';
+import { useSettingsForm } from '../../hooks/useSettingsForm';
 
 // Propsの型定義
 // 親コンポーネントから受け取るデータの型を指定します
@@ -29,8 +29,6 @@ interface SettingsModalProps {
     onClose: () => void; // モーダルを閉じるための関数
 }
 
-const REMINDER_ENABLED_KEY = '@studytodo_reminder_enabled';
-const REMINDER_TIME_KEY = '@studytodo_reminder_time';
 
 /**
  * 設定画面モーダルコンポーネント
@@ -52,8 +50,8 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     const { t, i18n } = useTranslation();
     const { layoutMode, setLayoutMode } = useLayout();
 
-    // 通知フック
-    const { scheduleDailyReminder, cancelNotification, requestPermissions } = useNotification();
+    // リマインダー設定フック
+    const { reminderEnabled, reminderTime, showTimePicker, setShowTimePicker, toggleReminder, onTimeChange } = useSettingsForm();
 
     // --- State (状態管理) ---
 
@@ -63,35 +61,6 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // 現在表示しているビューの切り替え ('main' | 'language' | 'layout')
     const [view, setView] = React.useState<'main' | 'language' | 'layout'>('main');
 
-    // リマインダー設定
-    const [reminderEnabled, setReminderEnabled] = React.useState(false);
-    const [reminderTime, setReminderTime] = React.useState(new Date());
-    const [showTimePicker, setShowTimePicker] = React.useState(false); // For Android
-
-    // --- Side Effects (副作用) ---
-
-    // 設定のロード
-    React.useEffect(() => {
-        const loadSettings = async () => {
-            try {
-                const enabled = await AsyncStorage.getItem(REMINDER_ENABLED_KEY);
-                const time = await AsyncStorage.getItem(REMINDER_TIME_KEY);
-
-                if (enabled !== null) setReminderEnabled(enabled === 'true');
-                if (time !== null) setReminderTime(new Date(time));
-                else {
-                    // デフォルトは9:00
-                    const defaultTime = new Date();
-                    defaultTime.setHours(9, 0, 0, 0);
-                    setReminderTime(defaultTime);
-                }
-            } catch (e) {
-                console.error("Failed to load settings", e);
-            }
-        };
-        loadSettings();
-    }, []);
-
     // モーダルの開閉状態(visible)が変わった時に実行される処理
     // モーダルが閉じられたら、次回開く時のために表示を 'main' に戻しておく
     React.useEffect(() => {
@@ -99,51 +68,6 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     }, [visible]);
 
     // --- Helper Functions (表示用ヘルパー関数) ---
-
-    const updateReminder = async (enabled: boolean, time: Date) => {
-        try {
-            if (enabled) {
-                const hasPermission = await requestPermissions();
-                if (!hasPermission) {
-                    alert(t('settings.permissionRequired', 'Notification permission is required for reminders.'));
-                    setReminderEnabled(false);
-                    return;
-                }
-
-                await scheduleDailyReminder(
-                    time.getHours(),
-                    time.getMinutes(),
-                    t('notification.dailyReminderTitle', "Time to learn!"),
-                    t('notification.dailyReminderBody', "Let's check your tasks for today.")
-                );
-            } else {
-                await cancelNotification('daily-reminder');
-            }
-
-            await AsyncStorage.setItem(REMINDER_ENABLED_KEY, String(enabled));
-            await AsyncStorage.setItem(REMINDER_TIME_KEY, time.toISOString());
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const toggleReminder = (value: boolean) => {
-        setReminderEnabled(value);
-        updateReminder(value, reminderTime);
-    };
-
-    const onTimeChange = (event: any, selectedDate?: Date) => {
-        if (Platform.OS === 'android') {
-            setShowTimePicker(false);
-        }
-
-        if (selectedDate) {
-            setReminderTime(selectedDate);
-            if (reminderEnabled) {
-                updateReminder(true, selectedDate);
-            }
-        }
-    };
 
     // テーマ選択ボタンを描画する関数
     const renderThemeOption = (label: string, icon: any, mode: ThemeMode) => {

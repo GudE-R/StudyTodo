@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import {
     View,
     Text,
@@ -7,22 +7,16 @@ import {
     StyleSheet,
     Modal,
     ScrollView,
-    Alert,
     Platform,
-    ActionSheetIOS,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, CalendarRange, ChevronRight, Hourglass } from 'lucide-react-native';
-import { format, addDays } from 'date-fns';
-import { getDateFnsLocale } from '../../lib/date-fns-locales';
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, CalendarRange, ChevronRight } from 'lucide-react-native';
+import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { Todo, Category, SRSProfile, parseTodoContent } from '@studytodo/shared';
+import { Todo } from '@studytodo/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
-import { useMobileCategories } from '../../hooks/useMobileCategories';
-import { useMobileTodos } from '../../hooks/useMobileTodos';
-import { useMobileSRS } from '../../hooks/useMobileSRS';
-import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { CategoryTreePicker } from '../ui/CategoryTreePicker';
+import { useTodoDetailForm } from '../../hooks/useTodoDetailForm';
 
 interface TodoDetailModalProps {
     visible: boolean;
@@ -44,233 +38,11 @@ export const TodoDetailModal = ({
     onRecord
 }: TodoDetailModalProps) => {
     const { colors, isDark } = useThemeColors();
-    const { t, i18n } = useTranslation();
-    const locale = getDateFnsLocale(i18n.language);
-    const { categories } = useMobileCategories();
-    const { profiles: srsProfiles } = useMobileSRS();
-    const { sessions } = useMobileSessions();
-    const { updateRoutine } = useMobileTodos(); // Added hook usage
+    const { t } = useTranslation();
 
-    // Edit States
-    const [content, setContent] = useState('');
-    const [dueDate, setDueDate] = useState<Date | null>(null);
-    const [dueTime, setDueTime] = useState('');
-    const [endTime, setEndTime] = useState('');
-    const [categoryId, setCategoryId] = useState('');
-    const [srsInterval, setSrsInterval] = useState('');
-
-    // Routine States
-    const [routineDays, setRoutineDays] = useState<number[]>([]);
-    const [isRoutineOpen, setIsRoutineOpen] = useState(false);
-
-    // Recording States
-    const [isRecording, setIsRecording] = useState(false);
-    const [recordDuration, setRecordDuration] = useState('');
-
-    // UI States
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState<'start' | 'end' | null>(null);
-    const [showDurationPicker, setShowDurationPicker] = useState(false);
-    const [isCategoryPickerVisible, setIsCategoryPickerVisible] = useState(false);
-    const [isSRSPickerVisible, setIsSRSPickerVisible] = useState(false);
-
-    // Flatten categories for selection logic
-    const categoryOptions = useMemo(() => {
-        const options: { value: string; label: string }[] = [];
-        const traverse = (cats: Category[], prefix = '') => {
-            cats.forEach(cat => {
-                const label = prefix ? `${prefix} > ${cat.name}` : cat.name;
-                options.push({ value: cat.id, label });
-                if (cat.children) traverse(cat.children, label);
-            });
-        };
-        traverse(categories);
-        return options;
-    }, [categories]);
-
-    // Initialize states when todo is opened (Strict parity with Web)
-    useEffect(() => {
-        if (todo && visible) {
-            const initialContent = todo.memo ? `${todo.title}\n${todo.memo}` : (todo.title || '');
-            setContent(initialContent);
-            setCategoryId(todo.categoryId || '');
-            setDueDate(todo.dueDate ? new Date(todo.dueDate) : null);
-            setDueTime(todo.dueTime || '');
-            setEndTime(todo.endTime || '');
-
-            // SRS Logic: Fallback to profile name if srsInterval is empty but profileId exists
-            let initialSrsInterval = todo.srsInterval || '';
-            if (!initialSrsInterval && todo.srsProfileId) {
-                const profile = srsProfiles.find(p => p.id === todo.srsProfileId);
-                if (profile) initialSrsInterval = profile.name;
-            }
-            setSrsInterval(initialSrsInterval);
-
-            setIsRecording(false);
-            setRecordDuration('');
-
-            // Initialize routine info if available (Note: Todo type might not carry routineDays explicitly if not stored, 
-            // but we can infer or maybe we should have stored it? 
-            // The types.ts has routineDays?: number[]. Assuming it's populated.
-            // If not, we might need to fetch it or just allow setting new routine.
-            // For now, assume it's passed or empty.)
-            setRoutineDays(todo.routineDays || []);
-            setIsRoutineOpen((todo.routineDays?.length || 0) > 0);
-        }
-    }, [todo, visible]);
-
-    // parseContent logic (Strict parity with Web)
-    const parseContent = () => {
-        const cat = categoryOptions.find(c => c.value === categoryId);
-        const fallbackTitle = cat ? (cat.label.split(' > ').pop() || cat.label) : undefined;
-
-        return parseTodoContent(content, fallbackTitle, t('todo.noTitle', 'Untitled'));
-    };
-
-    const handleUpdate = () => {
-        if (!todo) return;
-        const { title: parsedTitle, memo: parsedMemo } = parseContent();
-
-        const updated: Todo = {
-            ...todo,
-            title: parsedTitle,
-            memo: parsedMemo,
-            categoryId: categoryId || undefined,
-            dueDate: dueDate || undefined,
-            dueTime: dueTime || undefined,
-            endTime: endTime || undefined,
-            srsInterval: srsInterval || undefined,
-            routineDays: routineDays.length > 0 ? routineDays : undefined, // Save routine days
-            updatedAt: new Date(),
-        };
-
-        const performUpdate = () => {
-            // Handle Recording if duration is present
-            const durationNum = parseInt(recordDuration, 10);
-            if (!isNaN(durationNum) && durationNum > 0) {
-                onRecord(updated, durationNum * 60);
-            } else {
-                onUpdate(updated);
-            }
-            onClose();
-        };
-
-        // Routine Logic
-        const oldRoutine = todo.routineDays || [];
-        const isRoutineChanged =
-            routineDays.length !== oldRoutine.length ||
-            !routineDays.every(d => oldRoutine.includes(d));
-
-        if (isRoutineChanged && routineDays.length > 0) {
-            Alert.alert(
-                t('guide.routineTitle', 'Routine'),
-                t('todo.updateRoutineConfirm', 'Update routine schedule? This will regenerate tasks for next 30 days.'),
-                [
-                    { text: t('common.cancel', 'Cancel'), style: 'cancel' },
-                    {
-                        text: t('common.update', 'Update'),
-                        onPress: async () => {
-                            await updateRoutine(updated, routineDays);
-                            onClose();
-                        }
-                    }
-                ]
-            );
-            return;
-        }
-
-        // SRS Logic: Check if newly added or changed (Strict parity with Web Alert)
-        if (srsInterval && srsInterval !== todo.srsInterval && srsInterval !== '') {
-            Alert.alert(
-                t('srs.confirmTitle', 'SRS Schedule'),
-                t('srs.confirmGenerate', 'SRS profile changed. Generate review schedule?'),
-                [
-                    { text: t('common.no', 'No'), onPress: () => performUpdate() },
-                    { text: t('common.yes', 'Yes'), onPress: () => { onUpdate(updated, { applySrs: true }); onClose(); } }
-                ]
-            );
-        } else {
-            performUpdate();
-        }
-    };
-
-    const handleStartNow = () => {
-        if (!todo) return;
-        const { title: parsedTitle, memo: parsedMemo } = parseContent();
-        onStartNow({
-            ...todo,
-            title: parsedTitle,
-            memo: parsedMemo,
-            categoryId: categoryId || undefined,
-            dueDate: dueDate || undefined,
-            dueTime: dueTime || undefined,
-            srsInterval: srsInterval || undefined,
-            updatedAt: new Date(),
-        });
-        onClose();
-    };
-
-    const handlePostpone = () => {
-        if (!todo) return;
-        const currentDate = dueDate || new Date();
-        const nextDate = addDays(currentDate, 1);
-        onUpdate({ ...todo, dueDate: nextDate, updatedAt: new Date() });
-        onClose();
-    };
-
-    const handleDelete = () => {
-        if (!todo) return;
-        Alert.alert(
-            t('todo.deleteTask', 'Delete Task'),
-            t('todo.deleteConfirm', 'Are you sure?'),
-            [
-                { text: t('common.cancel', 'Cancel'), style: 'cancel' },
-                { text: t('common.delete', 'Delete'), style: 'destructive', onPress: () => { onDelete(todo.id); onClose(); } },
-            ]
-        );
-    };
-
-    const handleRecordSubmit = () => {
-        if (!todo) return;
-        const d = parseInt(recordDuration, 10);
-
-        const { title: parsedTitle, memo: parsedMemo } = parseContent();
-
-        // Create updated todo object
-        const updatedTodo = {
-            ...todo,
-            title: parsedTitle,
-            memo: parsedMemo,
-            categoryId: categoryId || undefined,
-            dueDate: dueDate || undefined,
-            dueTime: dueTime || undefined,
-            endTime: endTime || undefined,
-            srsInterval: srsInterval || undefined,
-            routineDays: routineDays.length > 0 ? routineDays : undefined,
-            updatedAt: new Date(),
-        };
-
-        if (!isNaN(d) && d > 0) {
-            onRecord(updatedTodo, d * 60);
-        } else {
-            onUpdate(updatedTodo);
-        }
-
-        setRecordDuration('');
-        setIsRecording(false);
-        onClose();
-    };
-
-
-
-
-    const todoSessions = useMemo(() => {
-        if (!todo) return [];
-        return sessions.filter(s => s.todoId === todo.id);
-    }, [sessions, todo]);
-
-    const totalMinutes = Math.floor(todoSessions.reduce((acc, s) => acc + s.duration, 0) / 60);
-    const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || t('todo.noCategory', 'No Category');
+    const form = useTodoDetailForm({
+        visible, todo, onClose, onStartNow, onDelete, onUpdate, onRecord
+    });
 
     if (!visible || !todo) return null;
 
@@ -279,11 +51,11 @@ export const TodoDetailModal = ({
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
 
-                    {/* Header (Web Parity) */}
+                    {/* Header */}
                     <View style={[styles.header, { borderBottomColor: colors.border }]}>
                         <Text style={[styles.headerTitle, { color: colors.text }]}>{t('todo.detailTitle', 'Task Details')}</Text>
                         <View style={styles.headerRight}>
-                            <TouchableOpacity onPress={handleUpdate} style={styles.saveBtn}>
+                            <TouchableOpacity onPress={form.handleUpdate} style={styles.saveBtn}>
                                 <Text style={[styles.saveBtnText, { color: colors.primary }]}>{t('common.save', 'Save')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={onClose} style={styles.closeBtnIcon}>
@@ -294,19 +66,19 @@ export const TodoDetailModal = ({
 
                     <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
 
-                        {/* Category (Strict Parity with Web Top-Level Choice) */}
+                        {/* Category */}
                         <TouchableOpacity
                             style={[styles.inputRow, { backgroundColor: colors.surface }]}
-                            onPress={() => setIsCategoryPickerVisible(true)}
+                            onPress={() => form.setIsCategoryPickerVisible(true)}
                         >
                             <Tag size={18} color={colors.textMuted} />
                             <Text style={[styles.inputText, { color: colors.text }]} numberOfLines={1}>
-                                {selectedCategoryLabel}
+                                {form.selectedCategoryLabel}
                             </Text>
                             <ChevronRight size={16} color={colors.textMuted} />
                         </TouchableOpacity>
 
-                        {/* Merged Content Input (Strict Parity) */}
+                        {/* Content Input */}
                         <View style={styles.contentInputWrapper}>
                             <View style={styles.statusIconWrapper}>
                                 {todo.completed ? (
@@ -321,8 +93,8 @@ export const TodoDetailModal = ({
                                     { color: colors.text },
                                     todo.completed && styles.completedText
                                 ]}
-                                value={content}
-                                onChangeText={setContent}
+                                value={form.content}
+                                onChangeText={form.setContent}
                                 placeholder={t('todo.contentPlaceholder')}
                                 placeholderTextColor={colors.textMuted}
                                 multiline
@@ -332,80 +104,80 @@ export const TodoDetailModal = ({
 
                         <View style={styles.gridContainer}>
                             <View style={[styles.gridRow, { alignItems: 'stretch' }]}>
-                                {/* Due Date (Left Side) - Spans Height */}
+                                {/* Due Date */}
                                 <TouchableOpacity
                                     style={[styles.gridItem, { backgroundColor: colors.surface, flex: 1, height: '100%', justifyContent: 'center' }]}
-                                    onPress={() => setShowDatePicker(true)}
+                                    onPress={() => form.setShowDatePicker(true)}
                                 >
                                     <Calendar size={18} color={colors.primary} />
                                     <Text style={[styles.gridItemText, { color: colors.text }]} numberOfLines={1}>
-                                        {dueDate ? format(dueDate, "yyyy-MM-dd") : t('todo.datePlaceholder', 'Date')}
+                                        {form.dueDate ? format(form.dueDate, "yyyy-MM-dd") : t('todo.datePlaceholder', 'Date')}
                                     </Text>
                                 </TouchableOpacity>
 
-                                {/* Times (Right Side Column) */}
+                                {/* Times */}
                                 <View style={{ flex: 1, gap: 10 }}>
                                     <TouchableOpacity
                                         style={[styles.gridItem, { backgroundColor: colors.surface, flex: 1 }]}
-                                        onPress={() => setShowTimePicker('start')}
+                                        onPress={() => form.setShowTimePicker('start')}
                                     >
                                         <Clock size={18} color={colors.primary} />
                                         <Text style={[styles.gridItemText, { color: colors.text }]}>
-                                            {dueTime || t('todo.startTime', 'Time')}
+                                            {form.dueTime || t('todo.startTime', 'Time')}
                                         </Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
-                                        style={[styles.gridItem, { backgroundColor: colors.surface, opacity: dueTime ? 1 : 0.5, flex: 1 }]}
-                                        onPress={() => dueTime && setShowTimePicker('end')}
-                                        disabled={!dueTime}
+                                        style={[styles.gridItem, { backgroundColor: colors.surface, opacity: form.dueTime ? 1 : 0.5, flex: 1 }]}
+                                        onPress={() => form.dueTime && form.setShowTimePicker('end')}
+                                        disabled={!form.dueTime}
                                     >
-                                        <Clock size={18} color={dueTime ? colors.danger : colors.textMuted} />
-                                        <Text style={[styles.gridItemText, { color: dueTime ? colors.text : colors.textMuted }]}>
-                                            {endTime || t('todo.endTime', 'End Time')}
+                                        <Clock size={18} color={form.dueTime ? colors.danger : colors.textMuted} />
+                                        <Text style={[styles.gridItemText, { color: form.dueTime ? colors.text : colors.textMuted }]}>
+                                            {form.endTime || t('todo.endTime', 'End Time')}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
 
                             <View style={styles.gridRow}>
-                                {/* SRS Profile (Flex 1) */}
+                                {/* SRS Profile */}
                                 <TouchableOpacity
                                     style={[styles.gridItem, { backgroundColor: colors.surface }]}
-                                    onPress={() => setIsSRSPickerVisible(true)}
+                                    onPress={() => form.setIsSRSPickerVisible(true)}
                                 >
                                     <Repeat size={18} color={colors.success} />
                                     <Text style={[styles.gridItemText, { color: colors.text }]} numberOfLines={1}>
-                                        {srsInterval || t('todo.noSrs', 'No SRS')}
+                                        {form.srsInterval || t('todo.noSrs', 'No SRS')}
                                     </Text>
                                 </TouchableOpacity>
 
-                                {/* Routine Toggle (Icon Only) */}
+                                {/* Routine Toggle */}
                                 <TouchableOpacity
                                     style={[
                                         styles.routineToggle,
-                                        { backgroundColor: isRoutineOpen || routineDays.length > 0 ? 'rgba(168, 85, 247, 0.1)' : colors.surface }
+                                        { backgroundColor: form.isRoutineOpen || form.routineDays.length > 0 ? 'rgba(168, 85, 247, 0.1)' : colors.surface }
                                     ]}
-                                    onPress={() => setIsRoutineOpen(!isRoutineOpen)}
+                                    onPress={() => form.setIsRoutineOpen(!form.isRoutineOpen)}
                                 >
-                                    <CalendarRange size={18} color={isRoutineOpen || routineDays.length > 0 ? '#a855f7' : colors.icon} />
+                                    <CalendarRange size={18} color={form.isRoutineOpen || form.routineDays.length > 0 ? '#a855f7' : colors.icon} />
                                 </TouchableOpacity>
                             </View>
 
-                            {/* Routine Picker (Expandable) */}
-                            {isRoutineOpen && (
+                            {/* Routine Picker */}
+                            {form.isRoutineOpen && (
                                 <View style={[styles.routineContainer, { backgroundColor: colors.surface }]}>
                                     <View style={styles.routineHeader}>
                                         <Text style={[styles.routineLabel, { color: colors.textSecondary }]}>{t('guide.routineTitle', 'Routine Days')}</Text>
-                                        {routineDays.length > 0 && (
-                                            <TouchableOpacity onPress={() => setRoutineDays([])}>
+                                        {form.routineDays.length > 0 && (
+                                            <TouchableOpacity onPress={() => form.setRoutineDays([])}>
                                                 <Text style={styles.routineClear}>{t('common.clear', 'Clear')}</Text>
                                             </TouchableOpacity>
                                         )}
                                     </View>
                                     <View style={styles.weekdayRow}>
                                         {['0', '1', '2', '3', '4', '5', '6'].map((key, index) => {
-                                            const isSelected = routineDays.includes(index);
+                                            const isSelected = form.routineDays.includes(index);
                                             const isWeekend = index === 0 || index === 6;
                                             return (
                                                 <TouchableOpacity
@@ -417,9 +189,9 @@ export const TodoDetailModal = ({
                                                     ]}
                                                     onPress={() => {
                                                         if (isSelected) {
-                                                            setRoutineDays(routineDays.filter(d => d !== index));
+                                                            form.setRoutineDays(form.routineDays.filter(d => d !== index));
                                                         } else {
-                                                            setRoutineDays([...routineDays, index].sort((a, b) => a - b));
+                                                            form.setRoutineDays([...form.routineDays, index].sort((a, b) => a - b));
                                                         }
                                                     }}
                                                 >
@@ -439,7 +211,7 @@ export const TodoDetailModal = ({
                             )}
                         </View>
 
-                        {/* Stats Summary (Strict Parity with Web Box) */}
+                        {/* Stats Summary */}
                         <View style={styles.statsSection}>
                             <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t('todo.statsTitle', 'Learning History').toUpperCase()}</Text>
                             <View style={[styles.statsBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : '#eff6ff' }]}>
@@ -447,7 +219,7 @@ export const TodoDetailModal = ({
                                 <View style={styles.statsTextColumn}>
                                     <Text style={[styles.statsSmallLabel, { color: colors.textSecondary }]}>{t('todo.results', 'Results')}</Text>
                                     <Text style={[styles.statsValueText, { color: colors.text }]}>
-                                        {todoSessions.length}回 ({totalMinutes}分)
+                                        {form.todoSessions.length}回 ({form.totalMinutes}分)
                                     </Text>
                                 </View>
                             </View>
@@ -455,24 +227,24 @@ export const TodoDetailModal = ({
 
                     </ScrollView>
 
-                    {/* Bottom Actions (Strict Parity) */}
+                    {/* Bottom Actions */}
                     <View style={[styles.footer, { borderTopColor: colors.border }]}>
-                        {isRecording ? (
+                        {form.isRecording ? (
                             <View style={styles.recordingRow}>
-                                <TouchableOpacity onPress={handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
+                                <TouchableOpacity onPress={form.handleRecordSubmit} style={[styles.recordActionBtn, { backgroundColor: colors.success }]}>
                                     <Save size={20} color="#fff" />
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={[styles.durationPickerBtn, { backgroundColor: colors.surface }]}
-                                    onPress={() => setShowDurationPicker(true)}
+                                    onPress={() => form.setShowDurationPicker(true)}
                                 >
                                     <Clock size={20} color={colors.primary} />
                                     <View style={styles.durationValueContainer}>
                                         <Text style={[styles.durationValueText, { color: colors.text }]}>
-                                            {recordDuration ? (
+                                            {form.recordDuration ? (
                                                 <>
-                                                    {parseInt(recordDuration, 10)}
+                                                    {parseInt(form.recordDuration, 10)}
                                                     <Text style={styles.durationUnitText}>{t('common.minute', 'min')}</Text>
                                                 </>
                                             ) : (
@@ -482,7 +254,7 @@ export const TodoDetailModal = ({
                                     </View>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity onPress={() => setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
+                                <TouchableOpacity onPress={() => form.setIsRecording(false)} style={[styles.recordActionBtn, { backgroundColor: colors.surface }]}>
                                     <X size={20} color={colors.text} />
                                 </TouchableOpacity>
                             </View>
@@ -491,14 +263,14 @@ export const TodoDetailModal = ({
                                 <View style={styles.mainActionContainer}>
                                     <TouchableOpacity
                                         style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(34, 197, 94, 0.2)' : '#dcfce7' }]}
-                                        onPress={() => setIsRecording(true)}
+                                        onPress={() => form.setIsRecording(true)}
                                     >
                                         <CheckCircle size={20} color="#16a34a" />
                                         <Text style={[styles.actionBtnText, { color: '#16a34a' }]}>{t('todo.record')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={[styles.actionBtn, { backgroundColor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#ffedd5' }]}
-                                        onPress={handleStartNow}
+                                        onPress={form.handleStartNow}
                                     >
                                         <Play size={18} color="#d97706" fill="#d97706" />
                                         <Text style={[styles.actionBtnText, { color: '#d97706' }]}>{t('todo.start')}</Text>
@@ -507,14 +279,14 @@ export const TodoDetailModal = ({
                                 <View style={styles.secondaryActionContainer}>
                                     <TouchableOpacity
                                         style={[styles.secondaryActionBtn, { backgroundColor: colors.surface }]}
-                                        onPress={handlePostpone}
+                                        onPress={form.handlePostpone}
                                     >
                                         <CalendarRange size={16} color={colors.textSecondary} />
                                         <Text style={[styles.secondaryActionText, { color: colors.textSecondary }]}>{t('todo.postpone')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={styles.deleteBtnContainer}
-                                        onPress={handleDelete}
+                                        onPress={form.handleDelete}
                                     >
                                         <Text style={styles.deleteText}>{t('todo.deleteTask')}</Text>
                                     </TouchableOpacity>
@@ -527,42 +299,42 @@ export const TodoDetailModal = ({
 
             {/* Category Picker */}
             <CategoryTreePicker
-                visible={isCategoryPickerVisible}
-                onClose={() => setIsCategoryPickerVisible(false)}
-                categories={categories}
-                selectedId={categoryId}
-                onSelect={(id) => setCategoryId(id)}
+                visible={form.isCategoryPickerVisible}
+                onClose={() => form.setIsCategoryPickerVisible(false)}
+                categories={form.categories}
+                selectedId={form.categoryId}
+                onSelect={(id) => form.setCategoryId(id)}
             />
 
             {/* Date Picker Modal */}
-            {showDatePicker && (
+            {form.showDatePicker && (
                 Platform.OS === 'ios' ? (
-                    <Modal visible={showDatePicker} transparent animationType="fade">
+                    <Modal visible={form.showDatePicker} transparent animationType="fade">
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
                                     <TouchableOpacity onPress={() => {
-                                        setDueDate(null);
-                                        setShowDatePicker(false);
+                                        form.setDueDate(null);
+                                        form.setShowDatePicker(false);
                                     }}>
                                         <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                                     </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.datePlaceholder', 'Date')}</Text>
                                     <TouchableOpacity onPress={() => {
-                                        if (!dueDate) setDueDate(new Date());
-                                        setShowDatePicker(false);
+                                        if (!form.dueDate) form.setDueDate(new Date());
+                                        form.setShowDatePicker(false);
                                     }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <DateTimePicker
-                                    value={dueDate || new Date()}
+                                    value={form.dueDate || new Date()}
                                     mode="date"
                                     display="spinner"
                                     textColor={colors.text}
                                     themeVariant={isDark ? 'dark' : 'light'}
                                     onChange={(event, date) => {
-                                        if (date) setDueDate(date);
+                                        if (date) form.setDueDate(date);
                                     }}
                                     style={styles.datePickerSpinner}
                                 />
@@ -571,46 +343,46 @@ export const TodoDetailModal = ({
                     </Modal>
                 ) : (
                     <DateTimePicker
-                        value={dueDate || new Date()}
+                        value={form.dueDate || new Date()}
                         mode="date"
                         display="default"
                         onChange={(event, date) => {
-                            setShowDatePicker(false);
-                            if (date) setDueDate(date);
+                            form.setShowDatePicker(false);
+                            if (date) form.setDueDate(date);
                         }}
                     />
                 )
             )}
 
             {/* Time Picker Modal */}
-            {showTimePicker && (
+            {form.showTimePicker && (
                 Platform.OS === 'ios' ? (
-                    <Modal visible={!!showTimePicker} transparent animationType="fade">
+                    <Modal visible={!!form.showTimePicker} transparent animationType="fade">
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
                                     <TouchableOpacity onPress={() => {
-                                        if (showTimePicker === 'start') setDueTime('');
-                                        if (showTimePicker === 'end') setEndTime('');
-                                        setShowTimePicker(null);
+                                        if (form.showTimePicker === 'start') form.setDueTime('');
+                                        if (form.showTimePicker === 'end') form.setEndTime('');
+                                        form.setShowTimePicker(null);
                                     }}>
                                         <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                                     </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>
-                                        {showTimePicker === 'start' ? t('todo.startTime', 'Time') : t('todo.endTime', 'End Time')}
+                                        {form.showTimePicker === 'start' ? t('todo.startTime', 'Time') : t('todo.endTime', 'End Time')}
                                     </Text>
                                     <TouchableOpacity onPress={() => {
-                                        if (showTimePicker === 'start' && !dueTime) setDueTime(format(new Date(), 'HH:mm'));
-                                        if (showTimePicker === 'end' && !endTime) setEndTime(format(new Date(), 'HH:mm'));
-                                        setShowTimePicker(null);
+                                        if (form.showTimePicker === 'start' && !form.dueTime) form.setDueTime(format(new Date(), 'HH:mm'));
+                                        if (form.showTimePicker === 'end' && !form.endTime) form.setEndTime(format(new Date(), 'HH:mm'));
+                                        form.setShowTimePicker(null);
                                     }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <DateTimePicker
                                     value={
-                                        (showTimePicker === 'start' ? dueTime : endTime)
-                                            ? new Date(`2000-01-01T${showTimePicker === 'start' ? dueTime : endTime}`)
+                                        (form.showTimePicker === 'start' ? form.dueTime : form.endTime)
+                                            ? new Date(`2000-01-01T${form.showTimePicker === 'start' ? form.dueTime : form.endTime}`)
                                             : new Date()
                                     }
                                     mode="time"
@@ -620,8 +392,8 @@ export const TodoDetailModal = ({
                                     onChange={(event, date) => {
                                         if (date) {
                                             const time = format(date, 'HH:mm');
-                                            if (showTimePicker === 'start') setDueTime(time);
-                                            else setEndTime(time);
+                                            if (form.showTimePicker === 'start') form.setDueTime(time);
+                                            else form.setEndTime(time);
                                         }
                                     }}
                                     style={styles.datePickerSpinner}
@@ -632,45 +404,43 @@ export const TodoDetailModal = ({
                 ) : (
                     <DateTimePicker
                         value={
-                            (showTimePicker === 'start' ? dueTime : endTime)
-                                ? new Date(`2000-01-01T${showTimePicker === 'start' ? dueTime : endTime}`)
+                            (form.showTimePicker === 'start' ? form.dueTime : form.endTime)
+                                ? new Date(`2000-01-01T${form.showTimePicker === 'start' ? form.dueTime : form.endTime}`)
                                 : new Date()
                         }
                         mode="time"
                         display="default"
                         onChange={(event, date) => {
-                            setShowTimePicker(null);
+                            form.setShowTimePicker(null);
                             if (date) {
                                 const time = format(date, 'HH:mm');
-                                if (showTimePicker === 'start') setDueTime(time);
-                                else setEndTime(time);
+                                if (form.showTimePicker === 'start') form.setDueTime(time);
+                                else form.setEndTime(time);
                             }
                         }}
                     />
                 )
             )}
 
-
-
             {/* Duration Picker Modal */}
-            {showDurationPicker && (
+            {form.showDurationPicker && (
                 Platform.OS === 'ios' ? (
-                    <Modal visible={showDurationPicker} transparent animationType="fade">
+                    <Modal visible={form.showDurationPicker} transparent animationType="fade">
                         <View style={styles.datePickerOverlay}>
                             <View style={[styles.datePickerContainer, { backgroundColor: colors.background }]}>
                                 <View style={[styles.datePickerHeader, { borderBottomColor: colors.border }]}>
                                     <TouchableOpacity onPress={() => {
-                                        setRecordDuration('');
-                                        setShowDurationPicker(false);
+                                        form.setRecordDuration('');
+                                        form.setShowDurationPicker(false);
                                     }}>
                                         <Text style={[styles.datePickerCancel, { color: colors.textSecondary }]}>{t('common.cancel', 'Cancel')}</Text>
                                     </TouchableOpacity>
                                     <Text style={[styles.datePickerTitle, { color: colors.text }]}>{t('todo.durationPlaceholder', 'Duration')}</Text>
                                     <TouchableOpacity onPress={() => {
-                                        if (!recordDuration || recordDuration === '0') {
-                                            setRecordDuration('30');
+                                        if (!form.recordDuration || form.recordDuration === '0') {
+                                            form.setRecordDuration('30');
                                         }
-                                        setShowDurationPicker(false);
+                                        form.setShowDurationPicker(false);
                                     }}>
                                         <Text style={[styles.datePickerDone, { color: colors.primary }]}>{t('common.done', 'Done')}</Text>
                                     </TouchableOpacity>
@@ -679,7 +449,7 @@ export const TodoDetailModal = ({
                                     value={(() => {
                                         const d = new Date();
                                         d.setHours(0);
-                                        d.setMinutes(parseInt(recordDuration || '0', 10));
+                                        d.setMinutes(parseInt(form.recordDuration || '0', 10));
                                         return d;
                                     })()}
                                     mode="countdown"
@@ -690,7 +460,7 @@ export const TodoDetailModal = ({
                                     onChange={(event, date) => {
                                         if (date) {
                                             const minutes = date.getHours() * 60 + date.getMinutes();
-                                            setRecordDuration(minutes.toString());
+                                            form.setRecordDuration(minutes.toString());
                                         }
                                     }}
                                     style={styles.datePickerSpinner}
@@ -703,7 +473,7 @@ export const TodoDetailModal = ({
                         value={(() => {
                             const d = new Date();
                             d.setHours(0);
-                            d.setMinutes(parseInt(recordDuration || '0', 10));
+                            d.setMinutes(parseInt(form.recordDuration || '0', 10));
                             return d;
                         })()}
                         mode="time"
@@ -711,10 +481,10 @@ export const TodoDetailModal = ({
                         is24Hour={true}
                         minuteInterval={5}
                         onChange={(event, date) => {
-                            setShowDurationPicker(false);
+                            form.setShowDurationPicker(false);
                             if (date) {
                                 const minutes = date.getHours() * 60 + date.getMinutes();
-                                setRecordDuration(minutes.toString());
+                                form.setRecordDuration(minutes.toString());
                             }
                         }}
                     />
@@ -722,22 +492,22 @@ export const TodoDetailModal = ({
             )}
 
             {/* SRS Picker Modal */}
-            <Modal visible={isSRSPickerVisible} transparent animationType="fade">
-                <TouchableOpacity style={styles.pickerOverlay} onPress={() => setIsSRSPickerVisible(false)}>
+            <Modal visible={form.isSRSPickerVisible} transparent animationType="fade">
+                <TouchableOpacity style={styles.pickerOverlay} onPress={() => form.setIsSRSPickerVisible(false)}>
                     <View style={[styles.pickerContainer, { backgroundColor: colors.background }]}>
                         <Text style={[styles.pickerTitle, { color: colors.text }]}>{t('srs.selectProfile', 'Select SRS Profile')}</Text>
                         <ScrollView style={styles.pickerScroll}>
                             <TouchableOpacity
                                 style={[styles.pickerItem, { borderBottomColor: colors.border }]}
-                                onPress={() => { setSrsInterval(''); setIsSRSPickerVisible(false); }}
+                                onPress={() => { form.setSrsInterval(''); form.setIsSRSPickerVisible(false); }}
                             >
                                 <Text style={[styles.pickerItemText, { color: colors.textSecondary }]}>{t('todo.noSrs', 'No SRS')}</Text>
                             </TouchableOpacity>
-                            {srsProfiles.map(p => (
+                            {form.srsProfiles.map(p => (
                                 <TouchableOpacity
                                     key={p.id}
                                     style={[styles.pickerItem, { borderBottomColor: colors.border }]}
-                                    onPress={() => { setSrsInterval(p.name); setIsSRSPickerVisible(false); }}
+                                    onPress={() => { form.setSrsInterval(p.name); form.setIsSRSPickerVisible(false); }}
                                 >
                                     <Text style={[styles.pickerItemText, { color: colors.text }]}>{p.name}</Text>
                                 </TouchableOpacity>
@@ -788,9 +558,7 @@ const styles = StyleSheet.create({
     closeBtnIcon: {
         padding: 4,
     },
-    content: {
-        // Removed flex: 1 to allow auto-height behavior
-    },
+    content: {},
     scrollContent: {
         padding: 16,
         gap: 20,
@@ -799,21 +567,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 12,
-        borderRadius: 14,
+        borderRadius: 12,
         gap: 10,
     },
     inputText: {
         flex: 1,
-        fontSize: 14,
-        fontWeight: '500',
+        fontSize: 15,
     },
     contentInputWrapper: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        gap: 12,
+        gap: 10,
     },
     statusIconWrapper: {
-        marginTop: 6,
+        marginTop: 4,
     },
     checkboxCircle: {
         width: 24,
@@ -823,41 +590,77 @@ const styles = StyleSheet.create({
     },
     contentInput: {
         flex: 1,
-        fontSize: 19,
-        fontWeight: 'bold',
-        minHeight: 120,
-        paddingTop: 4,
-    },
-    durationInput: {
-        flex: 1,
         fontSize: 16,
-        fontWeight: '600',
+        lineHeight: 24,
+        minHeight: 80,
+        textAlignVertical: 'top',
     },
     completedText: {
         textDecorationLine: 'line-through',
         opacity: 0.5,
     },
     gridContainer: {
-        gap: 12,
+        gap: 10,
     },
     gridRow: {
         flexDirection: 'row',
-        gap: 12,
+        gap: 10,
     },
     gridItem: {
-        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         padding: 12,
-        borderRadius: 14,
-        gap: 10,
-    },
-    gridItemPlaceholder: {
+        borderRadius: 12,
+        gap: 8,
         flex: 1,
     },
     gridItemText: {
         fontSize: 14,
+    },
+    routineToggle: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    routineContainer: {
+        borderRadius: 12,
+        padding: 12,
+    },
+    routineHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    routineLabel: {
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    routineClear: {
+        fontSize: 12,
+        color: '#ef4444',
+    },
+    weekdayRow: {
+        flexDirection: 'row',
+        gap: 6,
+    },
+    weekdayBtn: {
         flex: 1,
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderRadius: 8,
+    },
+    weekdayBtnActive: {
+        backgroundColor: '#a855f7',
+    },
+    weekdayText: {
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    weekdayTextActive: {
+        color: '#fff',
     },
     statsSection: {
         gap: 8,
@@ -865,35 +668,64 @@ const styles = StyleSheet.create({
     sectionLabel: {
         fontSize: 11,
         fontWeight: 'bold',
-        marginLeft: 4,
+        letterSpacing: 1,
     },
     statsBox: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 14,
-        borderRadius: 14,
+        borderRadius: 12,
         gap: 12,
     },
     statsTextColumn: {
         flex: 1,
     },
     statsSmallLabel: {
-        fontSize: 10,
-        marginBottom: 2,
+        fontSize: 11,
     },
     statsValueText: {
-        fontSize: 15,
-        fontWeight: '600',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     footer: {
         padding: 16,
         borderTopWidth: 1,
-        gap: 12,
-        paddingBottom: Platform.OS === 'ios' ? 36 : 16,
+        gap: 10,
+    },
+    recordingRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
+    recordActionBtn: {
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    durationPickerBtn: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 12,
+        gap: 8,
+    },
+    durationValueContainer: {
+        flex: 1,
+    },
+    durationValueText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    durationUnitText: {
+        fontSize: 12,
+        fontWeight: 'normal',
     },
     mainActionContainer: {
         flexDirection: 'row',
-        gap: 12,
+        gap: 10,
     },
     actionBtn: {
         flex: 1,
@@ -901,87 +733,41 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 14,
-        borderRadius: 14,
+        borderRadius: 12,
         gap: 8,
     },
     actionBtnText: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: 'bold',
     },
     secondaryActionContainer: {
         flexDirection: 'row',
-        gap: 12,
+        justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 4,
     },
     secondaryActionBtn: {
-        flex: 1.2,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-        borderRadius: 14,
-        gap: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+        gap: 6,
     },
     secondaryActionText: {
         fontSize: 13,
-        fontWeight: '600',
     },
     deleteBtnContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
+        padding: 8,
     },
     deleteText: {
         color: '#ef4444',
         fontSize: 13,
         fontWeight: '500',
     },
-    recordingRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        justifyContent: 'space-between',
-    },
-    durationPickerBtn: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderRadius: 14,
-        gap: 10,
-        height: 44,
-    },
-    durationValueContainer: {
-        flex: 1,
-    },
-    durationValueText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    durationUnitText: {
-        fontSize: 14,
-        fontWeight: 'normal',
-        opacity: 0.7,
-        marginLeft: 4,
-    },
-    recordActions: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    recordActionBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    // DateTimePicker Modal styles
     datePickerOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0,0,0,0.4)',
     },
     datePickerContainer: {
         borderTopLeftRadius: 20,
@@ -997,92 +783,44 @@ const styles = StyleSheet.create({
     },
     datePickerTitle: {
         fontSize: 16,
-        fontWeight: 'bold',
-    },
-    datePickerDone: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
     },
     datePickerCancel: {
-        fontSize: 16,
+        fontSize: 15,
+    },
+    datePickerDone: {
+        fontSize: 15,
+        fontWeight: '600',
     },
     datePickerSpinner: {
         height: 200,
     },
     pickerOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     pickerContainer: {
         width: '80%',
-        maxHeight: '60%',
+        maxHeight: '50%',
         borderRadius: 16,
-        padding: 16,
+        overflow: 'hidden',
     },
     pickerTitle: {
         fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 12,
+        fontWeight: '600',
+        padding: 16,
     },
     pickerScroll: {
         maxHeight: 300,
     },
     pickerItem: {
         paddingVertical: 14,
+        paddingHorizontal: 20,
         borderBottomWidth: 1,
     },
     pickerItemText: {
         fontSize: 15,
-    },
-    // Routine Styles
-    routineToggle: {
-        padding: 12,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    routineContainer: {
-        padding: 12,
-        borderRadius: 12,
-        marginTop: 8,
-    },
-    routineHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    routineLabel: {
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
-    routineClear: {
-        fontSize: 10,
-        color: '#ef4444',
-    },
-    weekdayRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 4,
-    },
-    weekdayBtn: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    weekdayBtnActive: {
-        backgroundColor: '#3b82f6',
-    },
-    weekdayText: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    weekdayTextActive: {
-        color: '#fff',
-        fontWeight: 'bold',
     },
 });

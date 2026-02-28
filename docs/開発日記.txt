@@ -822,7 +822,7 @@ Todo詳細モーダル（TodoDetailModal）で日付・時刻選択時に画面�
 
 3. 画面常時点灯:
    - expo-keep-awakeを導入
-   - タイマー動作中は画面が消えないように制御
+   - タイマー動作中は画面が消えないように制御pomarc 残存の修正（優先度1️⃣）— AsyncStorageキーとDB名に残る旧名称6箇所の修正。ただし既存ユーザーのデータマイグレーションが必要なので慎重な実装が要ります。
    - 停止時は自動的に解除
 
 4. タイマー記録の自動保存:
@@ -1454,3 +1454,14 @@ Claude Pro サブスクリプションまたは API クレジットを使用し�
 **学び:**
 - expo-file-system v19では `documentDirectory` 等が `expo-file-system/legacy` に移動している。既存コード（IconPickerModal.tsx）が先行して対応していたため、同じパターンを踏襲。
 - DBリネーム時はWAL/SHMファイルも忘れず移行する必要がある。これを怠るとデータ不整合のリスクがある。
+
+2/28 (巨大コンポーネントの分割)
+4つの巨大コンポーネント（TodoDetailModal 1088行, TodoCreateModal 1022行, MobileTimerView 717行, SettingsModal 713行）からカスタムフックを抽出し、ロジックとUIを分離した。
+
+実施内容:
+- useTodoDetailForm.ts: state/handlers/computed（parseContent, handleUpdate, handleStartNow, handlePostpone, handleDelete, handleRecordSubmit, buildUpdatedTodo）を抽出。
+- useTodoCreateForm.ts: state/validators/builders/handlers（parseContent, isValid, ensureDateIfTimeSet, buildTodoData, handleCreate, handleStartNow, handleRecord, resetForm）を抽出。
+- useMobileTimer.ts: タイマーエンジン全体（interval管理, handleTimerComplete, formatTime, calculateProgress, handleSave, handleBack, switchToStopwatch）を抽出。handleTimerCompleteをuseCallbackで宣言し、timer effectのdepsに含めることで正しい値参照を保証。
+- useSettingsForm.ts: リマインダー設定ロジック（AsyncStorage読み書き, 通知スケジュール, permissionチェック）を抽出。
+
+結果: 合計約3540行→約1980行（44%削減）。テスト60件全pass。
