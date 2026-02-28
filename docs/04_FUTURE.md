@@ -102,9 +102,9 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 | 5 | **同期ロジックのテスト追加** | ✅ 整備済み | `@studytodo/shared` に `syncCore.test.ts`(12件), `mapper.test.ts`(13件), `date.test.ts`(21件) が既に存在。`processTableSync` は純粋関数として共通化済みで包括的にテスト済み。93件全pass。(2026-02-28確認) |
 | 6 | **Web/Mobile共通ロジック抽出** | ✅ 完了 | `useMobileSync.ts`・`useSync.ts` のインライン `processTable` を shared の `processTableSync` + `allowedFieldsMap` に統合。コア同期ロジックの重複を排除。(2026-02-28) |
 | 7 | **`useTimer.test.ts.skip` の対応** | ✅ 完了 | `timerCore.ts` に純粋関数5個を抽出（tick, reset, init, progress, format）。`timerCore.test.ts` で24テスト作成、全pass。`useTimer.ts` をtimerCoreベースに書き換え。(2026-02-28) |
-| 8 | **高速化** | ⬜ 未着手 | アプリケーション全体のパフォーマンスチューニング。現時点で深刻なボトルネックは報告されていない |
-| 9 | **カスタムアイコン画像の同期** | ⬜ 未着手 | Supabase Storageを使ったWeb/Mobile間の画像同期。実装コスト高 |
-| 10 | **コンポーネントの再利用性向上** | ⬜ 未着手 | Button, Inputなどの共通コンポーネント化。優先度低 |
+| 8 | **高速化** | ⏭️ 対応不要 | ユーザー体感で速度問題なし。深刻なボトルネック報告もないため現状維持。必要になった際に再検討。(2026-02-28確認) |
+| 9 | **カスタムアイコン画像の同期** | ⏸️ 保留 | Supabase Storageを使ったWeb/Mobile間の画像同期。実装コスト高。必要になった際に着手。(2026-02-28確認) |
+| 10 | **コンポーネントの再利用性向上** | ⏸️ 保留 | Button, Inputなどの共通コンポーネント化。現状の規模では効果限定的。必要になった際に着手。(2026-02-28確認) |
 
 ### 教育・ドキュメント (Education)
 - [x] **コード解説 (SettingsModal)**: 初学者向けの詳細コメントと解説資料作成。
