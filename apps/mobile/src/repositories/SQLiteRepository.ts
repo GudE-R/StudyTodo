@@ -1,4 +1,4 @@
-import { StorageInterface, Todo, Category, SRSProfile, Session } from "@studytodo/shared";
+import { StorageInterface, Todo, Category, SRSProfile, Session, generateId } from "@studytodo/shared";
 import * as SQLite from 'expo-sqlite';
 
 /**
@@ -122,6 +122,17 @@ export class SQLiteRepository implements StorageInterface {
         // Additional migrations...
         try { this.db.execSync(`ALTER TABLE todos ADD COLUMN estimatedDuration INTEGER;`); } catch (e) { }
         try { this.db.execSync(`ALTER TABLE todos ADD COLUMN actualDuration INTEGER;`); } catch (e) { }
+
+        // デフォルトSRSプロファイルの投入（初回のみ）
+        const existingProfiles = this.db.getFirstSync<{ count: number }>('SELECT COUNT(*) as count FROM srsProfiles');
+        if (existingProfiles?.count === 0) {
+            const now = new Date().toISOString();
+            const id = generateId();
+            this.db.runSync(
+                `INSERT INTO srsProfiles (id, name, intervals, isDefault, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)`,
+                [id, '忘却曲線 (標準)', JSON.stringify([1, 3, 7, 14, 30]), 1, now, now]
+            );
+        }
     }
 
     // Helper to serialize/deserialize

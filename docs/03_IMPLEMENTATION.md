@@ -100,6 +100,13 @@
 
 これまでの主要な変更履歴です。
 
+### [Default SRS Profile for Mobile] - 2026-03-01
+#### 追加 (Mobile)
+- **デフォルトSRSプロファイルの初期投入**:
+    - モバイル版の `SQLiteRepository.init()` に、Web版と同等のデフォルトSRSプロファイル「忘却曲線 (標準)」（intervals: `[1, 3, 7, 14, 30]`, `isDefault: true`）を初回起動時に自動投入するロジックを追加。
+    - srsProfilesテーブルが空の場合のみ投入し、既存ユーザーへの二重投入を防止。
+    - **目的**: 新規モバイルユーザーがSRSプロファイルを手動作成せずに忘却曲線を利用可能にするため。
+
 ### [Revenue Prediction & Improvement Analysis] - 2026-02-25
 #### 追加 (Docs)
 - **REVENUE_PREDICTION.md**: アプリの収益予測（広告・Proプラン）と改善提案（リワード広告、ゲーミフィケーション等）をまとめたレポートを作成。
