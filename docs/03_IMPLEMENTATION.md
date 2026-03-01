@@ -171,11 +171,13 @@
     - コード解析、自動化スクリプト生成、トラブルシューティングなどの開発支援ツールとして活用。
     - **目的**: 開発効率の向上と、AI エージェントによるワークフローの自動化。
 
-### [Claude Code CLI Setup] - 2026-02-28
+### [Claude Code CLI Setup] - 2026-03-01
 #### 追加 (Tools)
-- **Claude Code の導入**:
+- **Claude Code の導入とネイティブ版セットアップ**:
     - Anthropic 公式の CLI ツール `@anthropic-ai/claude-code` をグローバルインストール。
-    - Claude 3.5 Sonnet 等の強力なモデルをターミナルから直接利用可能。
+    - `claude install` コマンドによりネイティブバイナリを `~/.local/bin/claude` にインストール。
+    - `~/.bashrc` にパスを通し、高速な起動を実現。
+    - **注意**: 実際に使用するには `claude auth login` による認証が必要。
     - **目的**: Gemini と並行して、最新の Claude モデルによる高度な推論とコード生成を活用するため。
 
 ### [Production Build v1.0.1] - 2026-02-26
