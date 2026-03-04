@@ -125,6 +125,9 @@ export const allowedFieldsMap: Record<string, string[]> = {
     srsProfiles: [
         'id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'
     ],
+    srs_profiles: [
+        'id', 'name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'
+    ],
     sessions: [
         'id', 'todoId', 'todoTitle', 'startTime', 'endTime',
         'duration', 'mode', 'createdAt'
