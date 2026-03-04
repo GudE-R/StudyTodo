@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, BackHandler } from 'react-native';
+import { useAdBannerHeight } from '../layout/AdBannerContext';
 
 interface ModalOverlayProps {
     visible: boolean;
@@ -21,6 +22,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({
 }) => {
     const anim = useRef(new Animated.Value(0)).current;
     const [isRendered, setIsRendered] = useState(visible);
+    const { height: adBannerHeight } = useAdBannerHeight();
 
     useEffect(() => {
         if (visible) {
@@ -74,7 +76,7 @@ export const ModalOverlay: React.FC<ModalOverlayProps> = ({
                 : {};
 
     return (
-        <View style={styles.root} pointerEvents="box-none">
+        <View style={[styles.root, { top: adBannerHeight }]} pointerEvents="box-none">
             <Animated.View style={[styles.container, animStyle]}>
                 {children}
             </Animated.View>

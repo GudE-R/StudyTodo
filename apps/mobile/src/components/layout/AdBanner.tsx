@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, LayoutChangeEvent } from 'react-native';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
+import { useAdBannerHeight } from './AdBannerContext';
 
 // Expo Goかを判定
 const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
@@ -9,6 +10,11 @@ export const AdBanner = () => {
     const [BannerComponent, setBannerComponent] = useState<any>(null);
     const [adUnitId, setAdUnitId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const { setHeight } = useAdBannerHeight();
+
+    const handleLayout = (e: LayoutChangeEvent) => {
+        setHeight(e.nativeEvent.layout.height);
+    };
 
     useEffect(() => {
         if (isExpoGo) {
@@ -62,16 +68,14 @@ export const AdBanner = () => {
         loadAdMob();
     }, []);
 
-    if (isExpoGo) {
+    if (isExpoGo || error) {
         return (
-            <View style={styles.placeholderContainer}>
-                <Text style={styles.placeholderText}>Ads are disabled in Expo Go</Text>
+            <View style={styles.placeholderContainer} onLayout={handleLayout}>
+                <Text style={styles.placeholderText}>
+                    {isExpoGo ? 'Ads are disabled in Expo Go' : 'Ad placeholder'}
+                </Text>
             </View>
         );
-    }
-
-    if (error) {
-        return null; // エラー時は非表示（または開発用エラー表示）
     }
 
     if (!BannerComponent || !adUnitId) {
@@ -79,7 +83,7 @@ export const AdBanner = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container} onLayout={handleLayout}>
             <BannerComponent onError={setError} />
         </View>
     );

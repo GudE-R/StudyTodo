@@ -22,6 +22,7 @@ import { AuthProvider } from './src/providers/AuthProvider';
 import { ThemeProvider, useTheme } from './src/providers/ThemeProvider';
 import { LayoutProvider } from './src/providers/LayoutProvider';
 import { OnboardingProvider } from './src/providers/OnboardingProvider';
+import { AdBannerHeightProvider } from './src/components/layout/AdBannerContext';
 
 function AppContent() {
   const { isDark } = useTheme();
@@ -57,11 +58,13 @@ export default function App() {
             <OnboardingProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
                 <SafeAreaProvider>
-                  {/* 
-                    現在のレイアウト設定に基づいて、適切なメイン画面コンポーネント
-                    （MainLayout または MainLayoutSimple）を自動的に選択して表示します。
-                  */}
-                  <AppContent />
+                  <AdBannerHeightProvider>
+                    {/*
+                      現在のレイアウト設定に基づいて、適切なメイン画面コンポーネント
+                      （MainLayout または MainLayoutSimple）を自動的に選択して表示します。
+                    */}
+                    <AppContent />
+                  </AdBannerHeightProvider>
                 </SafeAreaProvider>
               </GestureHandlerRootView>
             </OnboardingProvider>
