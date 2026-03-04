@@ -95,7 +95,19 @@
         "weakPassword": "Passordet må ha minst 8 tegn med bokstaver og tall",
         "passwordMismatch": "Passordene samsvarer ikke",
         "mustAgreeTerms": "Godta vilkårene og personvernerklæringen",
-        "termsAgreement": "Jeg godtar <terms>Tjenestevilkårene</terms> og <privacy>Personvernerklæringen</privacy>"
+        "termsAgreement": "Jeg godtar <terms>Tjenestevilkårene</terms> og <privacy>Personvernerklæringen</privacy>",
+        "forgotPassword": "Glemt passordet?",
+        "resetPassword": "Tilbakestill passord",
+        "resetDescription": "Skriv inn e-posten din for å motta en tilbakestillingslenke",
+        "resetEmailSent": "E-post for tilbakestilling sendt. Sjekk innboksen din.",
+        "sendResetLink": "Send lenke",
+        "backToLogin": "Tilbake til innlogging",
+        "setNewPassword": "Angi nytt passord",
+        "setNewPasswordDescription": "Skriv inn ditt nye passord",
+        "newPassword": "Nytt passord",
+        "confirmNewPassword": "Bekreft nytt passord",
+        "passwordUpdated": "Passordet er oppdatert!",
+        "resetViaWeb": "Bruk lenken i e-posten for å endre passordet i en nettleser."
     },
     "settings": {
         "title": "Innstillinger",

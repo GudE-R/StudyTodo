@@ -95,7 +95,19 @@
         "weakPassword": "Lösenordet måste ha minst 8 tecken med bokstäver och siffror",
         "passwordMismatch": "Lösenorden matchar inte",
         "mustAgreeTerms": "Acceptera villkoren och integritetspolicyn",
-        "termsAgreement": "Jag godkänner <terms>Användarvillkoren</terms> och <privacy>Integritetspolicyn</privacy>"
+        "termsAgreement": "Jag godkänner <terms>Användarvillkoren</terms> och <privacy>Integritetspolicyn</privacy>",
+        "forgotPassword": "Glömt lösenordet?",
+        "resetPassword": "Återställ lösenord",
+        "resetDescription": "Ange din e-post för att få en återställningslänk",
+        "resetEmailSent": "Återställningsmail skickat. Kontrollera din inkorg.",
+        "sendResetLink": "Skicka länk",
+        "backToLogin": "Tillbaka till inloggning",
+        "setNewPassword": "Ange nytt lösenord",
+        "setNewPasswordDescription": "Ange ditt nya lösenord",
+        "newPassword": "Nytt lösenord",
+        "confirmNewPassword": "Bekräfta nytt lösenord",
+        "passwordUpdated": "Lösenordet har uppdaterats!",
+        "resetViaWeb": "Använd länken i e-postmeddelandet för att ändra ditt lösenord i en webbläsare."
     },
     "settings": {
         "title": "Inställningar",

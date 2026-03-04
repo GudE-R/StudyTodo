@@ -95,7 +95,19 @@
         "weakPassword": "Kata sandi harus minimal 8 karakter dengan huruf dan angka",
         "passwordMismatch": "Kata sandi tidak cocok",
         "mustAgreeTerms": "Harap setujui Ketentuan dan Kebijakan Privasi",
-        "termsAgreement": "Saya setuju dengan <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>"
+        "termsAgreement": "Saya setuju dengan <terms>Ketentuan Layanan</terms> dan <privacy>Kebijakan Privasi</privacy>",
+        "forgotPassword": "Lupa kata sandi?",
+        "resetPassword": "Atur ulang kata sandi",
+        "resetDescription": "Masukkan email Anda untuk menerima tautan pengaturan ulang",
+        "resetEmailSent": "Email pengaturan ulang kata sandi telah dikirim. Silakan periksa kotak masuk Anda.",
+        "sendResetLink": "Kirim tautan",
+        "backToLogin": "Kembali ke login",
+        "setNewPassword": "Atur Kata Sandi Baru",
+        "setNewPasswordDescription": "Masukkan kata sandi baru Anda",
+        "newPassword": "Kata Sandi Baru",
+        "confirmNewPassword": "Konfirmasi Kata Sandi Baru",
+        "passwordUpdated": "Kata sandi berhasil diperbarui!",
+        "resetViaWeb": "Gunakan tautan di email untuk mengubah kata sandi Anda di browser web."
     },
     "settings": {
         "title": "Pengaturan",

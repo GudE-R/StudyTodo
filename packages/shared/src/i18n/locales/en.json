@@ -153,7 +153,19 @@
         "mustAgreeTerms": "Please agree to the Terms and Privacy Policy",
         "termsAgreement": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>",
         "orContinueWith": "or continue with",
-        "backToApp": "Back"
+        "backToApp": "Back",
+        "forgotPassword": "Forgot password?",
+        "resetPassword": "Reset Password",
+        "resetDescription": "Enter your email to receive a password reset link",
+        "resetEmailSent": "Password reset email sent. Please check your inbox.",
+        "sendResetLink": "Send Reset Link",
+        "backToLogin": "Back to login",
+        "setNewPassword": "Set New Password",
+        "setNewPasswordDescription": "Enter your new password below",
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm New Password",
+        "passwordUpdated": "Password updated successfully!",
+        "resetViaWeb": "Please use the link in the email to change your password in a web browser."
     },
     "settings": {
         "title": "Settings",

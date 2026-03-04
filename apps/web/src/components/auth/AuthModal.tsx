@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslations } from "next-intl";
 import { X, Mail, Lock, LogIn, UserPlus, CheckSquare, Square } from "lucide-react";
@@ -11,8 +11,8 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-    const { signIn, signUp, signInWithProvider } = useAuth();
-    const [isLoginMode, setIsLoginMode] = useState(true);
+    const { signIn, signUp, signInWithProvider, resetPassword, updatePassword, isRecovery, clearRecovery } = useAuth();
+    const [mode, setMode] = useState<"login" | "signup" | "reset" | "updatePassword">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,7 +20,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
+    const isLoginMode = mode === "login";
+    const isResetMode = mode === "reset";
+    const isUpdatePasswordMode = mode === "updatePassword";
+
     const t = useTranslations("auth");
+
+    useEffect(() => {
+        if (isRecovery) {
+            setMode("updatePassword");
+            setMessage(null);
+        }
+    }, [isRecovery]);
 
     if (!isOpen) return null;
 
@@ -40,10 +51,48 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setLoading(true);
         setMessage(null);
 
+        if (isUpdatePasswordMode) {
+            if (!isValidPassword(password)) {
+                setMessage({ text: t("weakPassword"), type: "error" });
+                setLoading(false);
+                return;
+            }
+            if (password !== confirmPassword) {
+                setMessage({ text: t("passwordMismatch"), type: "error" });
+                setLoading(false);
+                return;
+            }
+            try {
+                const { error } = await updatePassword(password);
+                if (error) throw error;
+                setMessage({ text: t("passwordUpdated"), type: "success" });
+                clearRecovery();
+                setTimeout(() => { setMode("login"); setMessage(null); }, 2000);
+            } catch (error: any) {
+                setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
         // Validation
         if (!isValidEmail(email)) {
             setMessage({ text: t("invalidEmail"), type: "error" });
             setLoading(false);
+            return;
+        }
+
+        if (isResetMode) {
+            try {
+                const { error } = await resetPassword(email);
+                if (error) throw error;
+                setMessage({ text: t("resetEmailSent"), type: "success" });
+            } catch (error: any) {
+                setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+            } finally {
+                setLoading(false);
+            }
             return;
         }
 
@@ -110,12 +159,16 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         <X size={24} />
                     </button>
                     <h2 className="text-2xl font-bold text-white mb-2">
-                        {isLoginMode ? t("welcomeBack") : t("createAccount")}
+                        {isUpdatePasswordMode ? t("setNewPassword") : isResetMode ? t("resetPassword") : isLoginMode ? t("welcomeBack") : t("createAccount")}
                     </h2>
                     <p className="text-blue-100 text-sm">
-                        {isLoginMode
-                            ? t("signInDescription")
-                            : t("signUpDescription")}
+                        {isUpdatePasswordMode
+                            ? t("setNewPasswordDescription")
+                            : isResetMode
+                                ? t("resetDescription")
+                                : isLoginMode
+                                    ? t("signInDescription")
+                                    : t("signUpDescription")}
                     </p>
                 </div>
 
@@ -129,6 +182,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             </div>
                         )}
 
+                        {!isUpdatePasswordMode && (
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("email")}</label>
                             <div className="relative">
@@ -143,9 +197,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                 />
                             </div>
                         </div>
+                        )}
 
+                        {(!isResetMode || isUpdatePasswordMode) && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("password")}</label>
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
+                                {isUpdatePasswordMode ? t("newPassword") : t("password")}
+                            </label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
@@ -158,15 +216,27 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                     placeholder="••••••••"
                                 />
                             </div>
-                            {!isLoginMode && (
+                            {(!isLoginMode || isUpdatePasswordMode) && (
                                 <p className="text-xs text-gray-500 dark:text-gray-400 ml-1">{t("passwordHint")}</p>
                             )}
+                            {isLoginMode && !isUpdatePasswordMode && (
+                                <button
+                                    type="button"
+                                    onClick={() => { setMode("reset"); setMessage(null); }}
+                                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-1"
+                                >
+                                    {t("forgotPassword")}
+                                </button>
+                            )}
                         </div>
+                        )}
 
-                        {/* Confirm Password (Sign Up only) */}
-                        {!isLoginMode && (
+                        {/* Confirm Password */}
+                        {(isUpdatePasswordMode || (!isLoginMode && !isResetMode)) && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("confirmPassword")}</label>
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
+                                    {isUpdatePasswordMode ? t("confirmNewPassword") : t("confirmPassword")}
+                                </label>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                     <input
@@ -182,7 +252,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         )}
 
                         {/* Terms Agreement (Sign Up only) */}
-                        {!isLoginMode && (
+                        {!isLoginMode && !isResetMode && !isUpdatePasswordMode && (
                             <div className="flex items-start space-x-2">
                                 <button
                                     type="button"
@@ -209,14 +279,15 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                 <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
                             ) : (
                                 <>
-                                    {isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
-                                    <span>{isLoginMode ? t("loginButton") : t("signUpButton")}</span>
+                                    {isUpdatePasswordMode ? <Lock size={20} /> : isResetMode ? <Mail size={20} /> : isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
+                                    <span>{isUpdatePasswordMode ? t("setNewPassword") : isResetMode ? t("sendResetLink") : isLoginMode ? t("loginButton") : t("signUpButton")}</span>
                                 </>
                             )}
                         </button>
                     </form>
 
                     {/* Divider */}
+                    {!isResetMode && !isUpdatePasswordMode && (
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-200 dark:border-gray-700" />
@@ -227,8 +298,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             </span>
                         </div>
                     </div>
+                    )}
 
                     {/* Social Login Buttons */}
+                    {!isResetMode && !isUpdatePasswordMode && (
                     <div className="flex gap-3">
                         <button
                             type="button"
@@ -256,17 +329,22 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             <span className="font-medium text-white">GitHub</span>
                         </button>
                     </div>
+                    )}
 
+                    {!isUpdatePasswordMode && (
                     <div className="mt-6 text-center">
                         <button
-                            onClick={() => setIsLoginMode(!isLoginMode)}
+                            onClick={() => { setMode(isResetMode ? "login" : isLoginMode ? "signup" : "login"); setMessage(null); }}
                             className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 underline transition-colors"
                         >
-                            {isLoginMode
-                                ? t("noAccountLink")
-                                : t("haveAccountLink")}
+                            {isResetMode
+                                ? t("backToLogin")
+                                : isLoginMode
+                                    ? t("noAccountLink")
+                                    : t("haveAccountLink")}
                         </button>
                     </div>
+                    )}
                 </div>
             </div>
         </div>

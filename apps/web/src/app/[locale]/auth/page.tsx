@@ -8,9 +8,9 @@ import { Timer, Mail, Lock, LogIn, UserPlus, CheckSquare, Square, ArrowLeft } fr
 import { Link } from "@/i18n/routing";
 
 export default function AuthPage() {
-    const { user, loading: authLoading, signIn, signUp, signInWithProvider } = useAuth();
+    const { user, loading: authLoading, signIn, signUp, signInWithProvider, resetPassword, updatePassword, isRecovery, clearRecovery } = useAuth();
     const router = useRouter();
-    const [isLoginMode, setIsLoginMode] = useState(true);
+    const [mode, setMode] = useState<"login" | "signup" | "reset" | "updatePassword">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,15 +18,27 @@ export default function AuthPage() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
+    const isLoginMode = mode === "login";
+    const isResetMode = mode === "reset";
+    const isUpdatePasswordMode = mode === "updatePassword";
+
     const t = useTranslations("auth");
     const tWelcome = useTranslations("welcome");
 
+    // PASSWORD_RECOVERY イベント検出時に updatePassword モードへ切替
+    useEffect(() => {
+        if (isRecovery) {
+            setMode("updatePassword");
+            setMessage(null);
+        }
+    }, [isRecovery]);
+
     // Redirect if already logged in (only after auth state is determined)
     useEffect(() => {
-        if (!authLoading && user?.id) {
+        if (!authLoading && user?.id && !isRecovery) {
             router.push("/");
         }
-    }, [user, authLoading, router]);
+    }, [user, authLoading, router, isRecovery]);
 
     const isValidEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,9 +54,47 @@ export default function AuthPage() {
         setLoading(true);
         setMessage(null);
 
+        if (isUpdatePasswordMode) {
+            if (!isValidPassword(password)) {
+                setMessage({ text: t("weakPassword"), type: "error" });
+                setLoading(false);
+                return;
+            }
+            if (password !== confirmPassword) {
+                setMessage({ text: t("passwordMismatch"), type: "error" });
+                setLoading(false);
+                return;
+            }
+            try {
+                const { error } = await updatePassword(password);
+                if (error) throw error;
+                setMessage({ text: t("passwordUpdated"), type: "success" });
+                clearRecovery();
+                setTimeout(() => { setMode("login"); setMessage(null); }, 2000);
+            } catch (error: any) {
+                setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
         if (!isValidEmail(email)) {
             setMessage({ text: t("invalidEmail"), type: "error" });
             setLoading(false);
+            return;
+        }
+
+        if (isResetMode) {
+            try {
+                const { error } = await resetPassword(email);
+                if (error) throw error;
+                setMessage({ text: t("resetEmailSent"), type: "success" });
+            } catch (error: any) {
+                setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+            } finally {
+                setLoading(false);
+            }
             return;
         }
 
@@ -179,15 +229,15 @@ export default function AuthPage() {
                     {/* Header */}
                     <div className="mb-8">
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
-                            {isLoginMode ? t("welcomeBack") : t("createAccount")}
+                            {isUpdatePasswordMode ? t("setNewPassword") : isResetMode ? t("resetPassword") : isLoginMode ? t("welcomeBack") : t("createAccount")}
                         </h2>
                         <p className="text-gray-600 dark:text-gray-400">
-                            {isLoginMode ? t("signInDescription") : t("signUpDescription")}
+                            {isUpdatePasswordMode ? t("setNewPasswordDescription") : isResetMode ? t("resetDescription") : isLoginMode ? t("signInDescription") : t("signUpDescription")}
                         </p>
                     </div>
 
                     {/* Social Buttons */}
-                    {/* Social Buttons */}
+                    {!isUpdatePasswordMode && (
                     <div className="relative mb-6">
                         <div className="flex gap-3 opacity-40 select-none grayscale cursor-not-allowed">
                             <button
@@ -223,8 +273,10 @@ export default function AuthPage() {
                             </div>
                         </div>
                     </div>
+                    )}
 
                     {/* Divider */}
+                    {!isUpdatePasswordMode && (
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-200 dark:border-gray-700" />
@@ -235,6 +287,7 @@ export default function AuthPage() {
                             </span>
                         </div>
                     </div>
+                    )}
 
                     {/* Form */}
                     <form onSubmit={handleAuth} className="space-y-4">
@@ -244,6 +297,8 @@ export default function AuthPage() {
                             </div>
                         )}
 
+                        {/* Email - updatePassword モードでは非表示 */}
+                        {!isUpdatePasswordMode && (
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("email")}</label>
                             <div className="relative">
@@ -258,9 +313,14 @@ export default function AuthPage() {
                                 />
                             </div>
                         </div>
+                        )}
 
+                        {/* Password - updatePassword モードまたは通常ログイン/サインアップ時に表示 */}
+                        {(!isResetMode || isUpdatePasswordMode) && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("password")}</label>
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {isUpdatePasswordMode ? t("newPassword") : t("password")}
+                            </label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
@@ -273,44 +333,58 @@ export default function AuthPage() {
                                     placeholder="••••••••"
                                 />
                             </div>
-                            {!isLoginMode && (
+                            {(!isLoginMode || isUpdatePasswordMode) && (
                                 <p className="text-xs text-gray-500 dark:text-gray-400">{t("passwordHint")}</p>
                             )}
+                            {isLoginMode && !isUpdatePasswordMode && (
+                                <button
+                                    type="button"
+                                    onClick={() => { setMode("reset"); setMessage(null); }}
+                                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                                >
+                                    {t("forgotPassword")}
+                                </button>
+                            )}
                         </div>
+                        )}
 
-                        {!isLoginMode && (
-                            <>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("confirmPassword")}</label>
-                                    <div className="relative">
-                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                        <input
-                                            type="password"
-                                            required
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                            placeholder="••••••••"
-                                        />
-                                    </div>
+                        {/* Confirm Password - サインアップ or updatePassword */}
+                        {(isUpdatePasswordMode || (!isLoginMode && !isResetMode)) && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {isUpdatePasswordMode ? t("confirmNewPassword") : t("confirmPassword")}
+                                </label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                    <input
+                                        type="password"
+                                        required
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="••••••••"
+                                    />
                                 </div>
+                            </div>
+                        )}
 
-                                <div className="flex items-start space-x-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setAgreedToTerms(!agreedToTerms)}
-                                        className="mt-0.5 text-blue-600 dark:text-blue-400"
-                                    >
-                                        {agreedToTerms ? <CheckSquare size={20} /> : <Square size={20} />}
-                                    </button>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        {t.rich("termsAgreement", {
-                                            terms: (chunks) => <Link href="/terms" target="_blank" className="text-blue-600 hover:underline">{chunks}</Link>,
-                                            privacy: (chunks) => <Link href="/privacy" target="_blank" className="text-blue-600 hover:underline">{chunks}</Link>,
-                                        })}
-                                    </p>
-                                </div>
-                            </>
+                        {/* Terms Agreement - サインアップのみ */}
+                        {!isLoginMode && !isResetMode && !isUpdatePasswordMode && (
+                            <div className="flex items-start space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setAgreedToTerms(!agreedToTerms)}
+                                    className="mt-0.5 text-blue-600 dark:text-blue-400"
+                                >
+                                    {agreedToTerms ? <CheckSquare size={20} /> : <Square size={20} />}
+                                </button>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    {t.rich("termsAgreement", {
+                                        terms: (chunks) => <Link href="/terms" target="_blank" className="text-blue-600 hover:underline">{chunks}</Link>,
+                                        privacy: (chunks) => <Link href="/privacy" target="_blank" className="text-blue-600 hover:underline">{chunks}</Link>,
+                                    })}
+                                </p>
+                            </div>
                         )}
 
                         <button
@@ -322,21 +396,27 @@ export default function AuthPage() {
                                 <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
                             ) : (
                                 <>
-                                    {isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
-                                    <span>{isLoginMode ? t("loginButton") : t("signUpButton")}</span>
+                                    {isUpdatePasswordMode ? <Lock size={20} /> : isResetMode ? <Mail size={20} /> : isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
+                                    <span>{isUpdatePasswordMode ? t("setNewPassword") : isResetMode ? t("sendResetLink") : isLoginMode ? t("loginButton") : t("signUpButton")}</span>
                                 </>
                             )}
                         </button>
                     </form>
 
+                    {!isUpdatePasswordMode && (
                     <div className="mt-6 text-center">
                         <button
-                            onClick={() => setIsLoginMode(!isLoginMode)}
+                            onClick={() => { setMode(isResetMode ? "login" : isLoginMode ? "signup" : "login"); setMessage(null); }}
                             className="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 underline transition-colors"
                         >
-                            {isLoginMode ? t("noAccountLink") : t("haveAccountLink")}
+                            {isResetMode
+                                ? t("backToLogin")
+                                : isLoginMode
+                                    ? t("noAccountLink")
+                                    : t("haveAccountLink")}
                         </button>
                     </div>
+                    )}
                 </div>
             </div>
         </div>

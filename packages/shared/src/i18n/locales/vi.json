@@ -95,7 +95,19 @@
         "weakPassword": "Mật khẩu phải có ít nhất 8 ký tự gồm chữ và số",
         "passwordMismatch": "Mật khẩu không khớp",
         "mustAgreeTerms": "Vui lòng đồng ý với Điều khoản và Chính sách bảo mật",
-        "termsAgreement": "Tôi đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách bảo mật</privacy>"
+        "termsAgreement": "Tôi đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách bảo mật</privacy>",
+        "forgotPassword": "Quên mật khẩu?",
+        "resetPassword": "Đặt lại mật khẩu",
+        "resetDescription": "Nhập email để nhận liên kết đặt lại mật khẩu",
+        "resetEmailSent": "Email đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư.",
+        "sendResetLink": "Gửi liên kết",
+        "backToLogin": "Quay lại đăng nhập",
+        "setNewPassword": "Đặt mật khẩu mới",
+        "setNewPasswordDescription": "Nhập mật khẩu mới của bạn",
+        "newPassword": "Mật khẩu mới",
+        "confirmNewPassword": "Xác nhận mật khẩu mới",
+        "passwordUpdated": "Cập nhật mật khẩu thành công!",
+        "resetViaWeb": "Vui lòng sử dụng liên kết trong email để thay đổi mật khẩu trên trình duyệt web."
     },
     "settings": {
         "title": "Cài đặt",

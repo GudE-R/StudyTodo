@@ -95,7 +95,19 @@
         "weakPassword": "비밀번호는 영문과 숫자를 포함한 8자 이상이어야 합니다",
         "passwordMismatch": "비밀번호가 일치하지 않습니다",
         "mustAgreeTerms": "이용약관 및 개인정보 처리방침에 동의해주세요",
-        "termsAgreement": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>에 동의합니다"
+        "termsAgreement": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>에 동의합니다",
+        "forgotPassword": "비밀번호를 잊으셨나요?",
+        "resetPassword": "비밀번호 재설정",
+        "resetDescription": "비밀번호 재설정 링크를 받을 이메일을 입력하세요",
+        "resetEmailSent": "비밀번호 재설정 이메일을 보냈습니다. 받은 편지함을 확인해 주세요.",
+        "sendResetLink": "재설정 링크 보내기",
+        "backToLogin": "로그인으로 돌아가기",
+        "setNewPassword": "새 비밀번호 설정",
+        "setNewPasswordDescription": "새 비밀번호를 입력해 주세요",
+        "newPassword": "새 비밀번호",
+        "confirmNewPassword": "새 비밀번호 확인",
+        "passwordUpdated": "비밀번호가 업데이트되었습니다!",
+        "resetViaWeb": "이메일의 링크를 통해 웹 브라우저에서 비밀번호를 변경해 주세요."
     },
     "settings": {
         "title": "설정",

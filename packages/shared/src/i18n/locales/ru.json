@@ -95,7 +95,19 @@
         "weakPassword": "Пароль должен содержать минимум 8 символов с буквами и цифрами",
         "passwordMismatch": "Пароли не совпадают",
         "mustAgreeTerms": "Пожалуйста, примите Условия и Политику конфиденциальности",
-        "termsAgreement": "Я принимаю <terms>Условия использования</terms> и <privacy>Политику конфиденциальности</privacy>"
+        "termsAgreement": "Я принимаю <terms>Условия использования</terms> и <privacy>Политику конфиденциальности</privacy>",
+        "forgotPassword": "Забыли пароль?",
+        "resetPassword": "Сброс пароля",
+        "resetDescription": "Введите email для получения ссылки на сброс пароля",
+        "resetEmailSent": "Письмо для сброса пароля отправлено. Проверьте почту.",
+        "sendResetLink": "Отправить ссылку",
+        "backToLogin": "Вернуться к входу",
+        "setNewPassword": "Установить новый пароль",
+        "setNewPasswordDescription": "Введите новый пароль",
+        "newPassword": "Новый пароль",
+        "confirmNewPassword": "Подтвердите новый пароль",
+        "passwordUpdated": "Пароль успешно обновлён!",
+        "resetViaWeb": "Используйте ссылку из письма для смены пароля в веб-браузере."
     },
     "settings": {
         "title": "Настройки",

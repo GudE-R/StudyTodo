@@ -5,6 +5,8 @@
 - App Store Connect APIキーとApp IDの登録手順のドキュメント化
 - Web版ルート (/) にストア申請用・サポート向けのプロダクトランディングページを構築およびデザイン改善
 - AdSenseの `adsbygoogle.push()` 重複呼び出しエラーの修正 (Ref-based check)
+- パスワードリセット後の新パスワード設定画面を実装（Web版: `PASSWORD_RECOVERY` イベント検出 → updatePassword モード表示、モバイル版: WebブラウザへのリダイレクトでWeb版で完結）
+- i18n: パスワード更新関連の翻訳キー6件を全19言語に追加
 
 現在の実装状況と、これまでの変更履歴を記録するドキュメントです。
 

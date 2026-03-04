@@ -155,7 +155,19 @@
         "mustAgreeTerms": "利用規約とプライバシーポリシーに同意してください",
         "termsAgreement": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意します",
         "orContinueWith": "または",
-        "backToApp": "戻る"
+        "backToApp": "戻る",
+        "forgotPassword": "パスワードをお忘れですか？",
+        "resetPassword": "パスワードリセット",
+        "resetDescription": "パスワードリセット用のリンクをメールで送信します",
+        "resetEmailSent": "パスワードリセットメールを送信しました。メールボックスを確認してください。",
+        "sendResetLink": "リセットリンクを送信",
+        "backToLogin": "ログインに戻る",
+        "setNewPassword": "新しいパスワードを設定",
+        "setNewPasswordDescription": "新しいパスワードを入力してください",
+        "newPassword": "新しいパスワード",
+        "confirmNewPassword": "新しいパスワード（確認）",
+        "passwordUpdated": "パスワードを更新しました",
+        "resetViaWeb": "パスワードの変更はメール内のリンクからWebブラウザで行ってください"
     },
     "settings": {
         "title": "設定",

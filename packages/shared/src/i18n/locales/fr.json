@@ -95,7 +95,19 @@
         "weakPassword": "Le mot de passe doit contenir au moins 8 caractères avec lettres et chiffres",
         "passwordMismatch": "Les mots de passe ne correspondent pas",
         "mustAgreeTerms": "Veuillez accepter les conditions et la politique de confidentialité",
-        "termsAgreement": "J'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>"
+        "termsAgreement": "J'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
+        "forgotPassword": "Mot de passe oublié ?",
+        "resetPassword": "Réinitialiser le mot de passe",
+        "resetDescription": "Entrez votre e-mail pour recevoir un lien de réinitialisation",
+        "resetEmailSent": "E-mail de réinitialisation envoyé. Vérifiez votre boîte de réception.",
+        "sendResetLink": "Envoyer le lien",
+        "backToLogin": "Retour à la connexion",
+        "setNewPassword": "Définir un nouveau mot de passe",
+        "setNewPasswordDescription": "Entrez votre nouveau mot de passe",
+        "newPassword": "Nouveau mot de passe",
+        "confirmNewPassword": "Confirmer le nouveau mot de passe",
+        "passwordUpdated": "Mot de passe mis à jour avec succès !",
+        "resetViaWeb": "Veuillez utiliser le lien dans l'e-mail pour changer votre mot de passe dans un navigateur web."
     },
     "settings": {
         "title": "Paramètres",

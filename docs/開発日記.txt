@@ -1496,3 +1496,9 @@ SQLiteRepository.init()の末尾に、srsProfilesテーブルが空の場合の�
 - ~/.bashrc にパスを追加し、ターミナルから直接 claude で起動できるように設定。
 - 今後は Gemini CLI と併用することで、より高度な開発支援が期待できる。
 - 実際の利用には初回のみ claude auth login が必要であることを確認した。
+
+3/5
+**パスワードリセット後の新パスワード設定画面を実装:**
+Web版: AuthContext に PASSWORD_RECOVERY イベント検出・updatePassword メソッドを追加。auth page と AuthModal に updatePassword モードを追加し、新パスワード入力・確認・バリデーション・更新を実装。
+モバイル版: resetPassword の redirectTo を Web URL に設定。リセットメール送信成功時に「Webブラウザでパスワードを変更してください」メッセージを追加。
+i18n: 全19言語に6つの翻訳キー（setNewPassword, setNewPasswordDescription, newPassword, confirmNewPassword, passwordUpdated, resetViaWeb）を追加。

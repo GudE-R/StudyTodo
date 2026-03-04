@@ -95,7 +95,19 @@
         "weakPassword": "Salasanassa on oltava vähintään 8 merkkiä kirjaimia ja numeroita",
         "passwordMismatch": "Salasanat eivät täsmää",
         "mustAgreeTerms": "Hyväksy ehdot ja tietosuojakäytäntö",
-        "termsAgreement": "Hyväksyn <terms>Käyttöehdot</terms> ja <privacy>Tietosuojakäytännön</privacy>"
+        "termsAgreement": "Hyväksyn <terms>Käyttöehdot</terms> ja <privacy>Tietosuojakäytännön</privacy>",
+        "forgotPassword": "Unohditko salasanan?",
+        "resetPassword": "Nollaa salasana",
+        "resetDescription": "Syötä sähköpostisi saadaksesi nollauslinkin",
+        "resetEmailSent": "Nollaussähköposti lähetetty. Tarkista postilaatikkosi.",
+        "sendResetLink": "Lähetä linkki",
+        "backToLogin": "Takaisin kirjautumiseen",
+        "setNewPassword": "Aseta uusi salasana",
+        "setNewPasswordDescription": "Syötä uusi salasanasi",
+        "newPassword": "Uusi salasana",
+        "confirmNewPassword": "Vahvista uusi salasana",
+        "passwordUpdated": "Salasana päivitetty onnistuneesti!",
+        "resetViaWeb": "Käytä sähköpostissa olevaa linkkiä vaihtaaksesi salasanasi verkkoselaimessa."
     },
     "settings": {
         "title": "Asetukset",

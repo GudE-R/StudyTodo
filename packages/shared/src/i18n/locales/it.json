@@ -95,7 +95,19 @@
         "weakPassword": "La password deve avere almeno 8 caratteri con lettere e numeri",
         "passwordMismatch": "Le password non corrispondono",
         "mustAgreeTerms": "Accetta i Termini e l'Informativa sulla Privacy",
-        "termsAgreement": "Accetto i <terms>Termini di Servizio</terms> e l'<privacy>Informativa sulla Privacy</privacy>"
+        "termsAgreement": "Accetto i <terms>Termini di Servizio</terms> e l'<privacy>Informativa sulla Privacy</privacy>",
+        "forgotPassword": "Password dimenticata?",
+        "resetPassword": "Reimposta password",
+        "resetDescription": "Inserisci la tua email per ricevere un link di reimpostazione",
+        "resetEmailSent": "Email di reimpostazione inviata. Controlla la tua casella di posta.",
+        "sendResetLink": "Invia link",
+        "backToLogin": "Torna al login",
+        "setNewPassword": "Imposta nuova password",
+        "setNewPasswordDescription": "Inserisci la tua nuova password",
+        "newPassword": "Nuova password",
+        "confirmNewPassword": "Conferma nuova password",
+        "passwordUpdated": "Password aggiornata con successo!",
+        "resetViaWeb": "Utilizza il link nell'email per cambiare la password in un browser web."
     },
     "settings": {
         "title": "Impostazioni",

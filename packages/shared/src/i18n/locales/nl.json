@@ -95,7 +95,19 @@
         "weakPassword": "Wachtwoord moet minimaal 8 tekens met letters en cijfers bevatten",
         "passwordMismatch": "Wachtwoorden komen niet overeen",
         "mustAgreeTerms": "Accepteer de Voorwaarden en het Privacybeleid",
-        "termsAgreement": "Ik ga akkoord met de <terms>Servicevoorwaarden</terms> en het <privacy>Privacybeleid</privacy>"
+        "termsAgreement": "Ik ga akkoord met de <terms>Servicevoorwaarden</terms> en het <privacy>Privacybeleid</privacy>",
+        "forgotPassword": "Wachtwoord vergeten?",
+        "resetPassword": "Wachtwoord resetten",
+        "resetDescription": "Voer uw e-mail in om een resetlink te ontvangen",
+        "resetEmailSent": "Reset-e-mail verzonden. Controleer uw inbox.",
+        "sendResetLink": "Link verzenden",
+        "backToLogin": "Terug naar inloggen",
+        "setNewPassword": "Nieuw wachtwoord instellen",
+        "setNewPasswordDescription": "Voer uw nieuwe wachtwoord in",
+        "newPassword": "Nieuw wachtwoord",
+        "confirmNewPassword": "Bevestig nieuw wachtwoord",
+        "passwordUpdated": "Wachtwoord succesvol bijgewerkt!",
+        "resetViaWeb": "Gebruik de link in de e-mail om uw wachtwoord te wijzigen in een webbrowser."
     },
     "settings": {
         "title": "Instellingen",

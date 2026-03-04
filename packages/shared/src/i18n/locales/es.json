@@ -95,7 +95,19 @@
         "weakPassword": "La contraseña debe tener al menos 8 caracteres con letras y números",
         "passwordMismatch": "Las contraseñas no coinciden",
         "mustAgreeTerms": "Por favor acepte los términos y la política de privacidad",
-        "termsAgreement": "Acepto los <terms>Términos de Servicio</terms> y la <privacy>Política de Privacidad</privacy>"
+        "termsAgreement": "Acepto los <terms>Términos de Servicio</terms> y la <privacy>Política de Privacidad</privacy>",
+        "forgotPassword": "¿Olvidaste tu contraseña?",
+        "resetPassword": "Restablecer contraseña",
+        "resetDescription": "Ingresa tu correo para recibir un enlace de restablecimiento",
+        "resetEmailSent": "Se envió el correo de restablecimiento. Revisa tu bandeja de entrada.",
+        "sendResetLink": "Enviar enlace",
+        "backToLogin": "Volver al inicio de sesión",
+        "setNewPassword": "Establecer nueva contraseña",
+        "setNewPasswordDescription": "Ingrese su nueva contraseña",
+        "newPassword": "Nueva contraseña",
+        "confirmNewPassword": "Confirmar nueva contraseña",
+        "passwordUpdated": "¡Contraseña actualizada correctamente!",
+        "resetViaWeb": "Utilice el enlace del correo electrónico para cambiar su contraseña en un navegador web."
     },
     "settings": {
         "title": "Ajustes",

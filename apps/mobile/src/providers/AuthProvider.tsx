@@ -9,6 +9,8 @@ type AuthContextType = {
     signIn: (email: string, password: string) => Promise<{ error: any }>;
     signUp: (email: string, password: string) => Promise<{ error: any }>;
     signOut: () => Promise<{ error: any }>;
+    resetPassword: (email: string) => Promise<{ error: any }>;
+    updatePassword: (password: string) => Promise<{ error: any }>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,6 +20,8 @@ const AuthContext = createContext<AuthContextType>({
     signIn: async () => ({ error: null }),
     signUp: async () => ({ error: null }),
     signOut: async () => ({ error: null }),
+    resetPassword: async () => ({ error: null }),
+    updatePassword: async () => ({ error: null }),
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -28,12 +32,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check for persisted session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
+        const getInitialSession = async () => {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                setSession(session);
+                setUser(session?.user ?? null);
+            } catch (error) {
+                console.warn('[AuthProvider] Initial session fetch failed (possibly offline):', error);
+                setSession(null);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getInitialSession();
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -57,8 +70,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return await supabase.auth.signOut();
     };
 
+    const resetPassword = async (email: string) => {
+        return await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: 'https://studytodo.vercel.app/auth',
+        });
+    };
+
+    const updatePassword = async (password: string) => {
+        return await supabase.auth.updateUser({ password });
+    };
+
     return (
-        <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword }}>
             {children}
         </AuthContext.Provider>
     );

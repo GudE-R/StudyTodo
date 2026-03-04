@@ -95,7 +95,19 @@
         "weakPassword": "Adgangskoden skal have mindst 8 tegn med bogstaver og tal",
         "passwordMismatch": "Adgangskoderne stemmer ikke overens",
         "mustAgreeTerms": "Acceptér vilkårene og privatlivspolitikken",
-        "termsAgreement": "Jeg accepterer <terms>Servicevilkårene</terms> og <privacy>Privatlivspolitikken</privacy>"
+        "termsAgreement": "Jeg accepterer <terms>Servicevilkårene</terms> og <privacy>Privatlivspolitikken</privacy>",
+        "forgotPassword": "Glemt adgangskode?",
+        "resetPassword": "Nulstil adgangskode",
+        "resetDescription": "Indtast din e-mail for at modtage et nulstillingslink",
+        "resetEmailSent": "Nulstillingsmail sendt. Tjek din indbakke.",
+        "sendResetLink": "Send link",
+        "backToLogin": "Tilbage til login",
+        "setNewPassword": "Indstil nyt adgangskode",
+        "setNewPasswordDescription": "Indtast din nye adgangskode",
+        "newPassword": "Ny adgangskode",
+        "confirmNewPassword": "Bekræft ny adgangskode",
+        "passwordUpdated": "Adgangskode opdateret!",
+        "resetViaWeb": "Brug linket i e-mailen til at ændre din adgangskode i en webbrowser."
     },
     "settings": {
         "title": "Indstillinger",

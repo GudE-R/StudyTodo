@@ -4,6 +4,7 @@ import { ModalOverlay } from '../ui/ModalOverlay';
 import { X, Mail, Lock, LogIn, UserPlus } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { useThemeColors } from '../../hooks/useThemeColors';
+import { useTranslation } from 'react-i18next';
 
 interface AuthModalProps {
     visible: boolean;
@@ -12,26 +13,61 @@ interface AuthModalProps {
 
 export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     const { colors, isDark } = useThemeColors();
-    const { signIn, signUp } = useAuth();
+    const { signIn, signUp, resetPassword } = useAuth();
+    const { t } = useTranslation();
 
-    const [isLoginMode, setIsLoginMode] = useState(true);
+    const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Reset state when modal opens? Or keep it? 
-    // Let's keep it simple for now.
+    const isLoginMode = mode === "login";
+    const isResetMode = mode === "reset";
+
+    const isValidEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const isValidPassword = (password: string): boolean => {
+        return password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
+    };
 
     const handleAuth = async () => {
-        if (!email || !password) {
-            Alert.alert("Error", "Please enter both email and password");
+        if (!email || !isValidEmail(email)) {
+            Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.invalidEmail', 'Please enter a valid email address'));
             return;
         }
 
-        if (!isLoginMode && password !== confirmPassword) {
-            Alert.alert("Error", "Passwords do not match");
+        if (isResetMode) {
+            setLoading(true);
+            try {
+                const { error } = await resetPassword(email);
+                if (error) throw error;
+                Alert.alert("Success", `${t('auth.resetEmailSent', 'Password reset email sent. Please check your inbox.')}\n\n${t('auth.resetViaWeb', 'Please use the link in the email to change your password in a web browser.')}`);
+            } catch (error: any) {
+                Alert.alert(t('auth.errorOccurred', 'Error'), error.message || t('auth.errorOccurred', 'Something went wrong'));
+            } finally {
+                setLoading(false);
+            }
             return;
+        }
+
+        if (!password) {
+            Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.invalidEmail', 'Please enter a valid email address'));
+            return;
+        }
+
+        if (!isLoginMode) {
+            if (!isValidPassword(password)) {
+                Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.weakPassword', 'Password must be at least 8 characters with letters and numbers'));
+                return;
+            }
+            if (password !== confirmPassword) {
+                Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.passwordMismatch', 'Passwords do not match'));
+                return;
+            }
         }
 
         setLoading(true);
@@ -39,23 +75,28 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
             if (isLoginMode) {
                 const { error } = await signIn(email, password);
                 if (error) throw error;
-                Alert.alert("Success", "Logged in successfully!");
+                Alert.alert("Success", t('auth.loginSuccess', 'Logged in successfully!'));
                 onClose();
             } else {
                 const { error } = await signUp(email, password);
                 if (error) throw error;
-                Alert.alert("Success", "Check your email for confirmation link!");
+                Alert.alert("Success", t('auth.checkEmail', 'Check your email for confirmation link!'));
             }
         } catch (error: any) {
-            Alert.alert("Error", error.message || "Something went wrong");
+            Alert.alert(t('auth.errorOccurred', 'Error'), error.message || t('auth.errorOccurred', 'Something went wrong'));
         } finally {
             setLoading(false);
         }
     };
 
     const toggleMode = () => {
-        setIsLoginMode(!isLoginMode);
-        // Reset password fields on mode switch for security/usability
+        if (isResetMode) {
+            setMode("login");
+        } else if (isLoginMode) {
+            setMode("signup");
+        } else {
+            setMode("login");
+        }
         setPassword("");
         setConfirmPassword("");
     };
@@ -67,7 +108,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={[styles.title, { color: colors.text }]}>
-                            {isLoginMode ? "Welcome Back" : "Create Account"}
+                            {isResetMode ? t('auth.resetPassword', 'Reset Password') : isLoginMode ? t('auth.welcomeBack', 'Welcome Back') : t('auth.createAccount', 'Create Account')}
                         </Text>
                         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                             <X size={24} color={colors.text} />
@@ -77,14 +118,16 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                     {/* Content */}
                     <View style={styles.content}>
                         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                            {isLoginMode
-                                ? "Sync your data and continue learning"
-                                : "Join StudyTodo to backup your data"}
+                            {isResetMode
+                                ? t('auth.resetDescription', 'Enter your email to receive a password reset link')
+                                : isLoginMode
+                                    ? t('auth.signInDescription', 'Sync your data and continue learning')
+                                    : t('auth.signUpDescription', 'Join StudyTodo to backup your data')}
                         </Text>
 
                         {/* Email Input */}
                         <View style={styles.inputContainer}>
-                            <Text style={[styles.label, { color: colors.text }]}>Email</Text>
+                            <Text style={[styles.label, { color: colors.text }]}>{t('auth.email', 'Email')}</Text>
                             <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}>
                                 <Mail size={20} color={colors.textSecondary} style={styles.inputIcon} />
                                 <TextInput
@@ -100,8 +143,9 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                         </View>
 
                         {/* Password Input */}
+                        {!isResetMode && (
                         <View style={styles.inputContainer}>
-                            <Text style={[styles.label, { color: colors.text }]}>Password</Text>
+                            <Text style={[styles.label, { color: colors.text }]}>{t('auth.password', 'Password')}</Text>
                             <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}>
                                 <Lock size={20} color={colors.textSecondary} style={styles.inputIcon} />
                                 <TextInput
@@ -113,12 +157,21 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                                     secureTextEntry
                                 />
                             </View>
+                            {!isLoginMode && (
+                                <Text style={[styles.hint, { color: colors.textSecondary }]}>{t('auth.passwordHint', 'At least 8 characters with letters and numbers')}</Text>
+                            )}
+                            {isLoginMode && (
+                                <TouchableOpacity onPress={() => setMode("reset")} style={styles.forgotBtn}>
+                                    <Text style={styles.forgotText}>{t('auth.forgotPassword', 'Forgot password?')}</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
+                        )}
 
                         {/* Confirm Password Input - Only for Sign Up */}
-                        {!isLoginMode && (
+                        {!isLoginMode && !isResetMode && (
                             <View style={styles.inputContainer}>
-                                <Text style={[styles.label, { color: colors.text }]}>Confirm Password</Text>
+                                <Text style={[styles.label, { color: colors.text }]}>{t('auth.confirmPassword', 'Confirm Password')}</Text>
                                 <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}>
                                     <Lock size={20} color={colors.textSecondary} style={styles.inputIcon} />
                                     <TextInput
@@ -143,13 +196,15 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                                 <ActivityIndicator color="#fff" />
                             ) : (
                                 <View style={styles.btnContent}>
-                                    {isLoginMode ? (
+                                    {isResetMode ? (
+                                        <Mail size={20} color="#fff" />
+                                    ) : isLoginMode ? (
                                         <LogIn size={20} color="#fff" />
                                     ) : (
                                         <UserPlus size={20} color="#fff" />
                                     )}
                                     <Text style={styles.submitBtnText}>
-                                        {isLoginMode ? "Log In" : "Sign Up"}
+                                        {isResetMode ? t('auth.sendResetLink', 'Send Reset Link') : isLoginMode ? t('auth.loginButton', 'Log In') : t('auth.signUpButton', 'Sign Up')}
                                     </Text>
                                 </View>
                             )}
@@ -161,9 +216,11 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                             onPress={toggleMode}
                         >
                             <Text style={styles.toggleText}>
-                                {isLoginMode
-                                    ? "Don't have an account? Sign up"
-                                    : "Already have an account? Log in"}
+                                {isResetMode
+                                    ? t('auth.backToLogin', 'Back to login')
+                                    : isLoginMode
+                                        ? t('auth.noAccountLink', "Don't have an account? Sign up")
+                                        : t('auth.haveAccountLink', 'Already have an account? Log in')}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -221,6 +278,11 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         marginLeft: 4,
     },
+    hint: {
+        fontSize: 12,
+        marginTop: 4,
+        marginLeft: 4,
+    },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -257,6 +319,14 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    forgotBtn: {
+        marginTop: 4,
+        marginLeft: 4,
+    },
+    forgotText: {
+        color: '#2563eb',
+        fontSize: 12,
     },
     toggleBtn: {
         marginTop: 20,

@@ -95,7 +95,19 @@
         "weakPassword": "Şifre en az 8 karakter olmalı ve harf ile rakam içermelidir",
         "passwordMismatch": "Şifreler eşleşmiyor",
         "mustAgreeTerms": "Lütfen Şartları ve Gizlilik Politikasını kabul edin",
-        "termsAgreement": "<terms>Hizmet Şartları</terms> ve <privacy>Gizlilik Politikası</privacy>'nı kabul ediyorum"
+        "termsAgreement": "<terms>Hizmet Şartları</terms> ve <privacy>Gizlilik Politikası</privacy>'nı kabul ediyorum",
+        "forgotPassword": "Şifrenizi mi unuttunuz?",
+        "resetPassword": "Şifre sıfırlama",
+        "resetDescription": "Şifre sıfırlama bağlantısı almak için e-postanızı girin",
+        "resetEmailSent": "Şifre sıfırlama e-postası gönderildi. Gelen kutunuzu kontrol edin.",
+        "sendResetLink": "Bağlantı gönder",
+        "backToLogin": "Girişe dön",
+        "setNewPassword": "Yeni Şifre Belirle",
+        "setNewPasswordDescription": "Yeni şifrenizi girin",
+        "newPassword": "Yeni Şifre",
+        "confirmNewPassword": "Yeni Şifre (Tekrar)",
+        "passwordUpdated": "Şifre başarıyla güncellendi!",
+        "resetViaWeb": "Şifrenizi değiştirmek için e-postadaki bağlantıyı web tarayıcısında kullanın."
     },
     "settings": {
         "title": "Ayarlar",
