@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 import { X, Settings, MessageSquare, BookOpen, LogOut, RefreshCw } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../providers/ThemeProvider';
@@ -17,7 +18,7 @@ export const MenuModal = ({ visible, onClose, onOpenSettings, onOpenFeedback, on
     const { t } = useTranslation();
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <TouchableOpacity style={styles.overlay} onPress={onClose} activeOpacity={1}>
                 {/* Close on background tap handled by overlay */}
                 <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border }]} onStartShouldSetResponder={() => true}>
@@ -49,7 +50,7 @@ export const MenuModal = ({ visible, onClose, onOpenSettings, onOpenFeedback, on
                     </View>
                 </View>
             </TouchableOpacity>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

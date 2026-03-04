@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Share2, Cloud, Sparkles, Pin, PaintBucket } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../providers/ThemeProvider';
@@ -55,7 +56,7 @@ export const UsageGuideModal = ({ visible, onClose }: UsageGuideModalProps) => {
     ];
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
@@ -111,7 +112,7 @@ export const UsageGuideModal = ({ visible, onClose }: UsageGuideModalProps) => {
                     </View>
                 </View>
             </View>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

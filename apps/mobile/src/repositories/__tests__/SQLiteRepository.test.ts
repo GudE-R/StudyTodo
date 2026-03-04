@@ -8,6 +8,7 @@ interface MockDb {
     getAllAsync: Mock<(...args: any[]) => Promise<Record<string, any>[]>>;
     getAllSync: Mock<(...args: any[]) => Record<string, any>[]>;
     getFirstAsync: Mock<(...args: any[]) => Promise<Record<string, any> | null>>;
+    getFirstSync: Mock<(...args: any[]) => Record<string, any> | null>;
     runAsync: Mock<(...args: any[]) => Promise<{ lastInsertRowId: number; changes: number }>>;
     runSync: Mock<(...args: any[]) => { lastInsertRowId: number; changes: number }>;
 }
@@ -17,6 +18,7 @@ const sharedMockDb: MockDb = {
     getAllAsync: vi.fn((): Promise<Record<string, any>[]> => Promise.resolve([])),
     getAllSync: vi.fn((): Record<string, any>[] => []),
     getFirstAsync: vi.fn((): Promise<Record<string, any> | null> => Promise.resolve(null)),
+    getFirstSync: vi.fn((): Record<string, any> | null => ({ count: 0 })),
     runAsync: vi.fn((): Promise<{ lastInsertRowId: number; changes: number }> => Promise.resolve({ lastInsertRowId: 1, changes: 0 })),
     runSync: vi.fn((): { lastInsertRowId: number; changes: number } => ({ lastInsertRowId: 1, changes: 0 })),
 };

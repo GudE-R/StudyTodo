@@ -19,6 +19,7 @@ import { Todo, Category } from '@studytodo/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { CategoryTreePicker } from '../ui/CategoryTreePicker';
 import { useTodoCreateForm } from '../../hooks/useTodoCreateForm';
+import { ModalOverlay } from '../ui/ModalOverlay';
 
 interface TodoCreateModalProps {
     visible: boolean;
@@ -48,7 +49,7 @@ export const TodoCreateModal = ({
     if (!visible) return null;
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
@@ -431,7 +432,7 @@ export const TodoCreateModal = ({
                     </View>
                 </TouchableOpacity>
             </Modal>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

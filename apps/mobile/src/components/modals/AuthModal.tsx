@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 import { X, Mail, Lock, LogIn, UserPlus } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { useThemeColors } from '../../hooks/useThemeColors';
@@ -60,7 +61,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     };
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
@@ -168,7 +169,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                     </View>
                 </View>
             </View>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

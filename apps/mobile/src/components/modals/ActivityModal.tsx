@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Alert, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, useWindowDimensions } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 import { X, BarChart2, History, Share2 } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
@@ -71,7 +72,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     };
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     {/* Header */}
@@ -201,7 +202,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                     </View>
                 </View>
             </View>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

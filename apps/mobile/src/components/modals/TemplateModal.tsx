@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 import { X, FolderTree, Repeat } from 'lucide-react-native';
 import { CategoryEditor } from './CategoryEditor';
 import { SRSEditor } from './SRSEditor';
@@ -18,7 +19,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
     const [activeTab, setActiveTab] = useState<"category" | "srs">("category");
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.surface }]}>
                     {/* Header */}
@@ -62,7 +63,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
                     </View>
                 </View>
             </View>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

@@ -33,6 +33,7 @@ export const MainLayout = () => {
     if (h.viewMode === "timer" && h.activeTodo) {
         return (
             <SafeAreaView style={styles.safeArea}>
+                <AdBanner />
                 <MobileTimerView
                     todo={h.activeTodo}
                     onBack={h.handleTimerBack}

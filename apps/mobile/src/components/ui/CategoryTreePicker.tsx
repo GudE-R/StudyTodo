@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, Modal, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { ModalOverlay } from './ModalOverlay';
 import { ChevronRight, ChevronDown, Folder, File } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { Category } from '@studytodo/shared';
@@ -120,7 +121,7 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
     };
 
     return (
-        <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+        <ModalOverlay visible={visible} animationType="fade" onRequestClose={onClose}>
             <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={onClose}>
                 <TouchableOpacity activeOpacity={1} style={[styles.container, { backgroundColor: colors.background }]}>
                     <Text style={[styles.title, { color: colors.text }]}>
@@ -152,7 +153,7 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
                     </ScrollView>
                 </TouchableOpacity>
             </TouchableOpacity>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

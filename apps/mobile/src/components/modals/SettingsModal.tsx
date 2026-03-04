@@ -5,7 +5,8 @@ import React from 'react';
 // TouchableOpacity: タップ可能なボタン（押すと少し透明になる）
 // Modal: 画面最前面に表示されるウィンドウ
 // StyleSheet: スタイル定義用
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, ActivityIndicator, ScrollView, FlatList, Image, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Switch, ActivityIndicator, ScrollView, FlatList, Image, Platform } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 
 // アイコンライブラリからのインポート
 import { X, Moon, Sun, Monitor, RefreshCw, Languages, ChevronRight, ArrowLeft, Layout, Bell } from 'lucide-react-native';
@@ -381,7 +382,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
 
     // --- Main Render (最終的なモーダル全体の描画) ---
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <View style={styles.overlay}>
                 {/* 背景部分 */}
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -421,7 +422,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
 
             {/* ログイン/サインアップモーダル（入れ子で表示） */}
             <AuthModal visible={showAuthModal} onClose={() => setShowAuthModal(false)} />
-        </Modal >
+        </ModalOverlay>
     );
 };
 

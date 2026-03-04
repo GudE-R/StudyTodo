@@ -10,6 +10,7 @@ vi.mock('expo-sqlite', () => ({
         getAllAsync: vi.fn(() => Promise.resolve([])),
         getAllSync: vi.fn(() => []),
         getFirstAsync: vi.fn(() => Promise.resolve(null)),
+        getFirstSync: vi.fn(() => null),
         runAsync: vi.fn(() => Promise.resolve({ lastInsertRowId: 1, changes: 0 })),
         runSync: vi.fn(() => ({ lastInsertRowId: 1, changes: 0 })),
     })),

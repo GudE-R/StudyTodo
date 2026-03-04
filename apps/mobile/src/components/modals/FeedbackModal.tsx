@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, ActivityIndicator, Alert, ScrollView, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert, ScrollView, Platform, KeyboardAvoidingView } from 'react-native';
+import { ModalOverlay } from '../ui/ModalOverlay';
 import { useTranslation } from 'react-i18next';
 import { X, Send, Lightbulb, AlertCircle, HelpCircle, MessageSquare } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
@@ -95,7 +96,7 @@ export const FeedbackModal = ({ visible, onClose }: FeedbackModalProps) => {
     // if (!visible) return null; // Removed to keep Modal mounted
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.overlay}
@@ -205,7 +206,7 @@ export const FeedbackModal = ({ visible, onClose }: FeedbackModalProps) => {
                     )}
                 </View>
             </KeyboardAvoidingView>
-        </Modal>
+        </ModalOverlay>
     );
 };
 

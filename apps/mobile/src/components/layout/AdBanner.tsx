@@ -90,6 +90,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
+        zIndex: 2000,
+        elevation: 2000,
     },
     placeholderContainer: {
         height: 50,
@@ -98,7 +100,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         borderBottomWidth: 1,
-        borderColor: '#ccc'
+        borderColor: '#ccc',
+        zIndex: 2000,
+        elevation: 2000,
     },
     placeholderText: {
         color: '#666',

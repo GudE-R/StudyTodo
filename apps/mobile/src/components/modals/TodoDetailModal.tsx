@@ -17,6 +17,7 @@ import { Todo } from '@studytodo/shared';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { CategoryTreePicker } from '../ui/CategoryTreePicker';
 import { useTodoDetailForm } from '../../hooks/useTodoDetailForm';
+import { ModalOverlay } from '../ui/ModalOverlay';
 
 interface TodoDetailModalProps {
     visible: boolean;
@@ -47,7 +48,7 @@ export const TodoDetailModal = ({
     if (!visible || !todo) return null;
 
     return (
-        <Modal visible={visible} animationType="slide" transparent>
+        <ModalOverlay visible={visible} animationType="slide">
             <View style={styles.overlay}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
 
@@ -516,7 +517,7 @@ export const TodoDetailModal = ({
                     </View>
                 </TouchableOpacity>
             </Modal>
-        </Modal>
+        </ModalOverlay>
     );
 };
 
