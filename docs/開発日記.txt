@@ -1502,3 +1502,8 @@ SQLiteRepository.init()の末尾に、srsProfilesテーブルが空の場合の�
 Web版: AuthContext に PASSWORD_RECOVERY イベント検出・updatePassword メソッドを追加。auth page と AuthModal に updatePassword モードを追加し、新パスワード入力・確認・バリデーション・更新を実装。
 モバイル版: resetPassword の redirectTo を Web URL に設定。リセットメール送信成功時に「Webブラウザでパスワードを変更してください」メッセージを追加。
 i18n: 全19言語に6つの翻訳キー（setNewPassword, setNewPasswordDescription, newPassword, confirmNewPassword, passwordUpdated, resetViaWeb）を追加。
+
+3/5 (深夜)
+**本番・開発用ビルドの実施**:
+- 最近の変更（パスワードリセット、広告表示修正）を反映し、本番環境と開発環境の両方でモバイルアプリのビルド（EAS Build）を実施。
+- ドキュメント類（03_IMPLEMENTATION.md, 04_FUTURE.md, 開発日記.txt）を最新の状態に更新。

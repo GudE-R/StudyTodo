@@ -102,6 +102,17 @@
 
 これまでの主要な変更履歴です。
 
+### [Password Reset & Mobile UI Fixes] - 2026-03-05
+#### 追加/修正 (Web & Mobile)
+- **パスワードリセット後の新パスワード設定画面**:
+    - Web版: `AuthContext` に `PASSWORD_RECOVERY` イベント検出と `updatePassword` メソッドを実装。
+    - Web版: `AuthModal` と `auth/page.tsx` に新パスワード設定用のUI（確認・バリデーション・保存）を追加。
+    - Mobile版: パスワードリセットの `redirectTo` をWeb版のURLに設定し、リセット処理をWeb版に集約（「Webブラウザで変更してください」の誘導メッセージを追加）。
+- **モバイル版UI・広告表示の改善**:
+    - `AdBanner.tsx`: モーダル表示中もバナー広告を常に表示し、広告がコンテンツに被らないようオフセットを追加。
+- **多言語対応 (i18n)**:
+    - パスワード更新に関連する6つの翻訳キー（`setNewPassword`, `passwordUpdated` 等）を全19言語に追加。
+
 ### [Default SRS Profile for Mobile] - 2026-03-01
 #### 追加 (Mobile)
 - **デフォルトSRSプロファイルの初期投入**:
