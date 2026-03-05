@@ -155,6 +155,7 @@ export async function generateMetadata(
         "max-snippet": -1,
       },
     },
+    manifest: "/manifest.json",
     icons: {
       icon: "/favicon.ico",
     },
@@ -203,6 +204,7 @@ export default async function RootLayout(props: {
   // サーバー側でメッセージを取得
   const messages = await getMessages();
   const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -221,6 +223,17 @@ export default async function RootLayout(props: {
             crossOrigin="anonymous"
             strategy="afterInteractive"
           />
+        )}
+        {gaMeasurementId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaMeasurementId}');`}
+            </Script>
+          </>
         )}
       </head>
       <body

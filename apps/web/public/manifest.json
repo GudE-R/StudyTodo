@@ -1,0 +1,16 @@
+{
+    "name": "StudyTodo - Pomodoro Timer & Study Tracker",
+    "short_name": "StudyTodo",
+    "description": "Boost your productivity with Pomodoro timer and Spaced Repetition. Manage tasks, schedules, and track your learning progress.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2563eb",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ]
+}

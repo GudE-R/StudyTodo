@@ -7,6 +7,10 @@
 - AdSenseの `adsbygoogle.push()` 重複呼び出しエラーの修正 (Ref-based check)
 - パスワードリセット後の新パスワード設定画面を実装（Web版: `PASSWORD_RECOVERY` イベント検出 → updatePassword モード表示、モバイル版: WebブラウザへのリダイレクトでWeb版で完結）
 - i18n: パスワード更新関連の翻訳キー6件を全19言語に追加
+- Google Analytics 4 導入（環境変数 `NEXT_PUBLIC_GA_MEASUREMENT_ID` でGA4測定IDを参照、未設定時はスクリプト出力なし）
+- PWA manifest.json 作成（display: standalone、テーマカラー設定）
+- ランディングページ強化: Stats/How It Works/Bottom CTA セクション追加、ハードコーディング英語文字列のi18n化、未使用import削除
+- i18n: ランディングページ新セクション用の翻訳キー20件を全19言語に追加（ja/enは手動翻訳、他は英語フォールバック）
 
 現在の実装状況と、これまでの変更履歴を記録するドキュメントです。
 

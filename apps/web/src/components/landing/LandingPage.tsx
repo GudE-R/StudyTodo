@@ -3,17 +3,17 @@
 import React from "react";
 import { useTranslations, useLocale } from "next-intl";
 import {
-    CheckCircle2,
     Clock,
-    CalendarDays,
     LineChart,
-    Brain,
     Mail,
     ArrowRight,
     ShieldCheck,
     Globe,
     Zap,
-    Repeat
+    Repeat,
+    ListChecks,
+    Timer,
+    TrendingUp
 } from "lucide-react";
 import Link from "next/link";
 
@@ -145,7 +145,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                         <div className="text-center mb-16">
                             <h2 className="text-3xl sm:text-4xl font-bold mb-4">{t("slides.welcome.title")}</h2>
                             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                                Everything you need to maximize your productivity and learning efficiency.
+                                {welcomeT("featuresSubtitle")}
                             </p>
                         </div>
 
@@ -159,6 +159,47 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                                     <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                                         {feature.description}
                                     </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Stats Section */}
+                <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16">{welcomeT("statsTitle")}</h2>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { value: welcomeT("stat1Value"), label: welcomeT("stat1Label") },
+                            { value: welcomeT("stat2Value"), label: welcomeT("stat2Label") },
+                            { value: welcomeT("stat3Value"), label: welcomeT("stat3Label") },
+                            { value: welcomeT("stat4Value"), label: welcomeT("stat4Label") },
+                        ].map((stat, idx) => (
+                            <div key={idx} className="text-center p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                <div className="text-3xl sm:text-4xl font-extrabold text-blue-600 dark:text-blue-400 mb-2">{stat.value}</div>
+                                <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* How It Works Section */}
+                <section className="py-24 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-16">{welcomeT("howItWorksTitle")}</h2>
+                        <div className="grid md:grid-cols-3 gap-10">
+                            {[
+                                { icon: <ListChecks className="w-7 h-7" />, step: "1", title: welcomeT("step1Title"), desc: welcomeT("step1Desc") },
+                                { icon: <Timer className="w-7 h-7" />, step: "2", title: welcomeT("step2Title"), desc: welcomeT("step2Desc") },
+                                { icon: <TrendingUp className="w-7 h-7" />, step: "3", title: welcomeT("step3Title"), desc: welcomeT("step3Desc") },
+                            ].map((item, idx) => (
+                                <div key={idx} className="text-center">
+                                    <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-5">
+                                        {item.icon}
+                                    </div>
+                                    <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-2">STEP {item.step}</div>
+                                    <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -189,6 +230,21 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                     </div>
                 </section>
             </main>
+
+            {/* Bottom CTA */}
+            <section className="py-24 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-3xl mx-auto text-center bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl p-12 shadow-xl">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">{welcomeT("ctaTitle")}</h2>
+                    <p className="text-blue-100 text-lg mb-8">{welcomeT("ctaSubtitle")}</p>
+                    <button
+                        onClick={onGetStarted}
+                        className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-white text-blue-600 hover:bg-blue-50 rounded-xl shadow-lg transition-colors duration-200 group"
+                    >
+                        {welcomeT("ctaButton")}
+                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+            </section>
 
             {/* Footer */}
             <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-12 px-4 sm:px-6 lg:px-8">

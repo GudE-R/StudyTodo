@@ -1513,3 +1513,11 @@ i18n: 全19言語に6つの翻訳キー（setNewPassword, setNewPasswordDescript
 EAS CLI (`eas submit --platform ios`) を使用し、最新のiOS版ビルド (v1.0.1) をApp Store Connectへとアップロードした。
 これでApple側のサーバー処理が終わり次第、TestFlightでの配信や本審査への提出が可能になる。
 無事にコマンドでのSubmitフローを確立できたので、今後のアップデート時のリリースプロセスもスムーズに行える。
+
+3/5 (続き)
+**ユーザー獲得のための技術改善**:
+- Google Analytics 4 導入（環境変数 `NEXT_PUBLIC_GA_MEASUREMENT_ID` で制御、開発環境ではスクリプト出力なし）
+- PWA manifest.json を作成し layout.tsx にリンク追加（display: standalone、テーマカラー #2563eb）
+- ランディングページに3セクション追加: Stats（19言語/永久無料/オフライン/クラウド）、How It Works（3ステップ）、Bottom CTA
+- Feature Gridのハードコーディング英語文字列をi18nキーに置換、未使用import（CheckCircle2, CalendarDays, Brain）削除
+- 翻訳キー20件を全19ロケールに追加（ja/enは手動翻訳、他17ロケールは英語フォールバック）
