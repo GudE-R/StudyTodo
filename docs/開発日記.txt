@@ -1507,3 +1507,9 @@ i18n: 全19言語に6つの翻訳キー（setNewPassword, setNewPasswordDescript
 **本番・開発用ビルドの実施**:
 - 最近の変更（パスワードリセット、広告表示修正）を反映し、本番環境と開発環境の両方でモバイルアプリのビルド（EAS Build）を実施。
 - ドキュメント類（03_IMPLEMENTATION.md, 04_FUTURE.md, 開発日記.txt）を最新の状態に更新。
+
+3/5 (続き)
+**iOSアプリのApp Store ConnectへのSubmit完了**:
+EAS CLI (`eas submit --platform ios`) を使用し、最新のiOS版ビルド (v1.0.1) をApp Store Connectへとアップロードした。
+これでApple側のサーバー処理が終わり次第、TestFlightでの配信や本審査への提出が可能になる。
+無事にコマンドでのSubmitフローを確立できたので、今後のアップデート時のリリースプロセスもスムーズに行える。

@@ -113,6 +113,13 @@
 - **多言語対応 (i18n)**:
     - パスワード更新に関連する6つの翻訳キー（`setNewPassword`, `passwordUpdated` 等）を全19言語に追加。
 
+### [iOS App Store Connect Submission] - 2026-03-05
+#### 追加/変更 (Release)
+- **iOSアプリのApp Store Connectへの提出**:
+    - EAS CLI (`eas submit --platform ios`) を使用して、最新ビルド（v1.0.1, build number 1.0.8）をApp Store Connectへアップロード完了。
+    - TestFlightを通じた外部テスター検証および本番審査（Submit for Review）への提出準備が完了。
+
+
 ### [Default SRS Profile for Mobile] - 2026-03-01
 #### 追加 (Mobile)
 - **デフォルトSRSプロファイルの初期投入**:
