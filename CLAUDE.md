@@ -42,3 +42,9 @@ Web版 (React + Vite) とモバイル版 (React Native + Expo) のモノレポ�
 - **Web**: `vercel` (自動デプロイ)
 - **Mobile**: `cd apps/mobile && eas build --profile production --platform all`
 - **開発サーバー**: `cd apps/mobile && npx expo start`
+
+## AIエージェント向けルール
+- チャットやアーティファクトの生成には必ず日本語を使用すること
+- コマンド実行時は `cd` を使わず、`run_command` の `Cwd` パラメータで作業ディレクトリを指定すること
+  - （悪い例: `cd /home/gude/Dev/StudyTodo && git status`）
+  - （良い例: `Cwd="/home/gude/Dev/StudyTodo"` `CommandLine="git status"`）

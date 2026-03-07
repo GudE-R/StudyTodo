@@ -108,6 +108,13 @@
 
 これまでの主要な変更履歴です。
 
+### [AI Agent Rules Integration] - 2026-03-07
+#### 追加/ルール整備 (Docs & Config)
+- **AIエージェント向けルールの統合と最適化**:
+    - `~/Dev/CLAUDE.md`（全体ルール）とプロジェクト固有ルールを結合した設定ファイル `StudyTodo-rules.md`（のちにIDE設定へ直接移行）を構築し、ルールの堅牢性を向上。
+    - 各種エージェント（Claude Code、Gemini CLI/IDE等）が同じルール（日本語使用、`cd`コマンド非推奨など）を共有できるよう環境を整備。
+    - プロジェクト直下の `CLAUDE.md` 内に、AIエージェント用の特別ルールセクションを追記。
+
 ### [Password Reset & Mobile UI Fixes] - 2026-03-05
 #### 追加/修正 (Web & Mobile)
 - **パスワードリセット後の新パスワード設定画面**:

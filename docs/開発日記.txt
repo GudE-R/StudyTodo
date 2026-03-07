@@ -1528,3 +1528,8 @@ TestFlightで「Network request failed」エラーが発生。調査の結果、
 `eas env:create`コマンドで全6件の環境変数（EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY, AdMob関連4件）をproduction環境に登録。
 再ビルド・TestFlightサブミットまで完了（v1.0.1, build 1.0.12）。
 同様のバグを防止するため、Supabase環境変数の検証テスト（supabaseConfig.test.ts, 4件）を追加。
+
+03/07 (続き)
+**AIエージェント向けルールの統合**:
+プロジェクト全般で利用している `CLAUDE.md` に、Gemini CLIやClaude Codeなどの自律型エージェント向けの特別ルール（日本語使用の強制、cdコマンドの制限など）を追記した。
+さらに、全体の共通ルールとStudyTodo固有のルールを結合し、IDEエージェント（Gemini）向けに一元化されたルール設定パラメータを構築。これにより、開発中のAIとのやり取りがよりスムーズで精度の高い設定になった。
