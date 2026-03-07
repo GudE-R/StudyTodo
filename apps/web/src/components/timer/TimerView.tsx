@@ -11,6 +11,7 @@ interface TimerViewProps {
     todo: Todo;
     onBack: () => void;
     onSaveSession?: (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => void;
+    onCompleteTask?: () => void;
 }
 
 type TimerMode = "pomodoro" | "countdown" | "stopwatch";
@@ -25,7 +26,7 @@ type TimerStatus = "focus" | "break";
  * 3. ストップウォッチモード
  * 4. 記録機能 (モック)
  */
-export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
+export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: TimerViewProps) {
     // 状態管理
     const [mode, setMode] = useState<TimerMode>("pomodoro");
     const [status, setStatus] = useState<TimerStatus>("focus");
@@ -42,6 +43,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
     const [isRunning, setIsRunning] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     // Interstitial Ad State
     const [showBreakAd, setShowBreakAd] = useState(false);
@@ -56,6 +58,15 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
         requestPermission();
     }, [requestPermission]);
 
+    // 経過時間の計算
+    const getElapsedTime = useCallback(() => {
+        if (mode === "stopwatch") return stopwatchTime;
+        const total = mode === "pomodoro"
+            ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
+            : countdownDuration * 60;
+        return total - timeLeft;
+    }, [mode, status, focusDuration, breakDuration, countdownDuration, stopwatchTime, timeLeft]);
+
     // タイマー終了時の処理
     const handleTimerComplete = useCallback(() => {
         setIsRunning(false);
@@ -63,9 +74,16 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
 
         // ポモドーロモードで集中時間が終わったら休憩モードへ誘導
         if (mode === "pomodoro" && status === "focus") {
-            // 音声通知などもここで行う
+            if (onSaveSession) {
+                onSaveSession({
+                    todoId: todo.id,
+                    todoTitle: todo.title,
+                    duration: focusDuration * 60,
+                    mode: mode
+                });
+                setIsSaved(true);
+            }
             sendNotification("集中終了！", { body: "お疲れ様でした。休憩しましょう。" });
-            // Show interstitial ad during break
             setShowBreakAd(true);
             setStatus("break");
         } else if (mode === "pomodoro" && status === "break") {
@@ -73,10 +91,19 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
             alert("休憩終了です！作業に戻りましょう。");
             setStatus("focus");
         } else if (mode === "countdown") {
+            if (onSaveSession) {
+                onSaveSession({
+                    todoId: todo.id,
+                    todoTitle: todo.title,
+                    duration: countdownDuration * 60,
+                    mode: mode
+                });
+                setIsSaved(true);
+            }
             sendNotification("タイマー終了", { body: "設定した時間が経過しました。" });
             alert("タイマー終了です！");
         }
-    }, [mode, status, sendNotification]);
+    }, [mode, status, sendNotification, focusDuration, countdownDuration, todo, onSaveSession]);
 
     const resetTimer = useCallback(() => {
         setIsRunning(false);
@@ -194,11 +221,25 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                 duration: actualDuration,
                 mode: mode
             });
+            setIsSaved(true);
             alert("セッションを記録しました！");
-            // 保存後はリセットするか、そのまま続けるかは要件次第だが、ここではリセットしない
         } else {
             alert("記録する時間がありません。");
         }
+    };
+
+    // タスク完了処理
+    const handleCompleteTask = () => {
+        const elapsed = getElapsedTime();
+        if (elapsed > 0 && !isSaved && onSaveSession) {
+            onSaveSession({
+                todoId: todo.id,
+                todoTitle: todo.title,
+                duration: elapsed,
+                mode: mode
+            });
+        }
+        if (onCompleteTask) onCompleteTask();
     };
 
     // Keyboard Shortcuts
@@ -290,7 +331,7 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     </h1>
                 </div>
 
-                {/* Timer Display */}
+                {/* Timer Display with embedded controls */}
                 <div className="relative flex items-center justify-center">
                     <svg className="transform -rotate-90 w-72 h-72">
                         <circle
@@ -316,8 +357,41 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                         />
                     </svg>
 
-                    <div className="absolute text-6xl font-mono font-bold text-gray-800 tracking-tighter">
-                        {mode === "stopwatch" ? formatTime(stopwatchTime) : formatTime(timeLeft)}
+                    <div className="absolute flex flex-col items-center gap-3">
+                        <div className="text-6xl font-mono font-bold text-gray-800 tracking-tighter">
+                            {mode === "stopwatch" ? formatTime(stopwatchTime) : formatTime(timeLeft)}
+                        </div>
+
+                        {/* Play/Pause button inside circle */}
+                        <div className="flex items-center gap-3">
+                            {!isRunning ? (
+                                <button
+                                    onClick={() => { setIsRunning(true); setIsPaused(false); }}
+                                    className={`flex items-center justify-center w-14 h-14 rounded-full transition-all hover:scale-105 ${status === "break"
+                                            ? "bg-green-500/15 text-green-600 hover:bg-green-500/25"
+                                            : "bg-blue-600/15 text-blue-600 hover:bg-blue-600/25"
+                                        }`}
+                                >
+                                    <Play size={24} fill="currentColor" className="ml-0.5" />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => { setIsRunning(false); setIsPaused(true); }}
+                                    className="flex items-center justify-center w-14 h-14 bg-yellow-500/15 text-yellow-600 rounded-full transition-all hover:bg-yellow-500/25 hover:scale-105"
+                                >
+                                    <Pause size={24} fill="currentColor" />
+                                </button>
+                            )}
+
+                            {(isRunning || isPaused) && (
+                                <button
+                                    onClick={resetTimer}
+                                    className="flex items-center justify-center w-11 h-11 bg-black/5 text-gray-500 rounded-full transition-all hover:bg-black/10 hover:scale-105"
+                                >
+                                    <Square size={18} fill="currentColor" />
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -373,42 +447,26 @@ export function TimerView({ todo, onBack, onSaveSession }: TimerViewProps) {
                     </div>
                 )}
 
-                {/* Controls */}
-                <div className="flex items-center space-x-6">
-                    {!isRunning ? (
-                        <button
-                            onClick={() => { setIsRunning(true); setIsPaused(false); }}
-                            className={`flex items-center justify-center w-20 h-20 text-white rounded-full shadow-xl hover:scale-105 transition-all ${status === "break" ? "bg-green-500 hover:bg-green-600" : "bg-blue-600 hover:bg-blue-700"}`}
-                        >
-                            <Play size={32} fill="currentColor" className="ml-1" />
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => { setIsRunning(false); setIsPaused(true); }}
-                            className="flex items-center justify-center w-20 h-20 bg-yellow-500 text-white rounded-full shadow-xl hover:bg-yellow-600 hover:scale-105 transition-all"
-                        >
-                            <Pause size={32} fill="currentColor" />
-                        </button>
-                    )}
+                {/* Bottom Actions */}
+                <div className="flex items-center justify-between w-full px-6">
+                    <button
+                        onClick={handleSaveSession}
+                        className="flex items-center space-x-2 text-gray-400 hover:text-gray-600 transition-colors py-2"
+                    >
+                        <CheckCircle size={18} />
+                        <span className="text-sm font-medium">記録のみ保存</span>
+                    </button>
 
-                    {(isRunning || isPaused) && (
+                    {onCompleteTask && (
                         <button
-                            onClick={resetTimer}
-                            className="flex items-center justify-center w-16 h-16 bg-white text-gray-600 rounded-full shadow-md hover:bg-gray-50 transition-all"
+                            onClick={handleCompleteTask}
+                            className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-colors font-bold text-sm"
                         >
-                            <Square size={24} fill="currentColor" />
+                            <CheckCircle size={18} />
+                            <span>タスク完了</span>
                         </button>
                     )}
                 </div>
-
-                {/* Record Button */}
-                <button
-                    onClick={handleSaveSession}
-                    className="flex items-center space-x-2 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                    <CheckCircle size={18} />
-                    <span className="text-sm font-medium">記録のみ保存</span>
-                </button>
             </div>
 
             {/* Interstitial Ad for Break Time */}

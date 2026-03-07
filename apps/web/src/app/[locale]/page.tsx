@@ -315,6 +315,10 @@ export default function Home() {
         todo={activeTodo}
         onBack={handleBackToHome}
         onSaveSession={handleSaveSession}
+        onCompleteTask={async () => {
+          await dataService.updateTodo(activeTodo.id, { completed: true, updatedAt: new Date() });
+          handleBackToHome();
+        }}
       />
     );
   }
