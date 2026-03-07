@@ -5,8 +5,8 @@ StudyTodo プロジェクトのドキュメント構成です。
 ## アクティブ (Active)
 | ファイル | 概要 |
 |---------|------|
-| [03_IMPLEMENTATION.md](03_IMPLEMENTATION.md) | 実装の記録。完了済みロードマップ、Specs、変更履歴。 |
-| [04_FUTURE.md](04_FUTURE.md) | 開発計画。ロードマップ、バックログ、アイデア。 |
+| [0B_DONE.md](0B_DONE.md) | 実装の記録。完了済みロードマップ、Specs、変更履歴。 |
+| [0A_TODO.md](0A_TODO.md) | 開発計画。ロードマップ、バックログ、アイデア。 |
 | [PRO_PLAN.md](PRO_PLAN.md) | Proプラン（有料機能）の設計書。 |
 | [GAMIFICATION_PLAN.md](GAMIFICATION_PLAN.md) | ゲーミフィケーション機能の計画書。 |
 | [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) | 開発ガイドライン。共有コードルール、テスト方針。 |
