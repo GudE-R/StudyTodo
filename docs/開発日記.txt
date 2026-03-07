@@ -1544,3 +1544,23 @@ Proプランの方針を整理し、以下の変更を行った。
 4. **クロスプラットフォーム課金の重複防止セクション（5.4）を新設**: iOSで課金済みのユーザーがWeb版で重複課金できない仕組みを設計。Subscriptionテーブルを唯一の真実の情報源とし、課金前に既存のアクティブなサブスクリプションを確認するフローを策定。
 5. **GAMIFICATION_PLAN.md を新規作成**: ゲーミフィケーション機能（ストリーク、バッジ、レベル/XP、学習カレンダー）の計画書を別ドキュメントとして独立化。無料/Proの線引き案も記載。
 
+3/8
+**ドキュメントの大整理:**
+ドキュメントの見通しを良くするため、大規模な整理を実施した。
+
+1. **04_FUTURE.md → 03_IMPLEMENTATION.md への完了項目移動**:
+   - 完了済みフェーズ (1〜4) のロードマップ全体を03に移動。
+   - フェーズ5・6の完了済み個別項目も03に移動。
+   - バックログの完了済みリファクタリング項目（#1〜#8のテーブル）を03に移動。
+   - 開発方針ポリシーの完了項目も03に移動。
+   - 結果: 04_FUTURE.mdを149行→約60行に大幅削減。未完了の将来計画のみが残るスッキリした構成に。
+
+2. **docsディレクトリの構造整理**:
+   - `docs/sql/` ディレクトリを新設し、SQLファイル2件（supabase_schema.sql, migration_v2.sql）を移動。
+   - 実装完了・リリース済みの15ファイルを `docs/archive/` に移動:
+     01_REQUIREMENTS.md, 02_SYSTEM_DESIGN.md, 05_NATIVE_PLAN.md, 06_MOBILE_REQUIREMENTS.md,
+     07_MARKETING.md, ANDROID_TEST_SETUP.md, APPLE_RELEASE_GUIDE.md, MAU_POTENTIAL.md,
+     ONBOARDING_PLAN.md, RELEASE_NOTES_v1.0.0.md, SCREENSHOT_PLAN.md, STORE_METADATA.md,
+     TESTING_PROCEDURES.md, VERCEL_DEPLOYMENT.md, WEB_FEATURES_REFERENCE.md
+   - `00_INDEX.md` を新構成（Active/SQL/Archive/その他）に更新。
+   - docsルートには7つのアクティブファイルのみ残り、開発中に必要なドキュメントにすぐアクセスできるようになった。
