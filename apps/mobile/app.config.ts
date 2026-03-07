@@ -19,6 +19,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
     bundleIdentifier: "com.studytodo.app",
     buildNumber: "1.0.1",
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
     config: {
       googleMobileAdsAppId: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID,
     }
