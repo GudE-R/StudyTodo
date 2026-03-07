@@ -1521,3 +1521,10 @@ EAS CLI (`eas submit --platform ios`) を使用し、最新のiOS版ビルド (v
 - ランディングページに3セクション追加: Stats（19言語/永久無料/オフライン/クラウド）、How It Works（3ステップ）、Bottom CTA
 - Feature Gridのハードコーディング英語文字列をi18nキーに置換、未使用import（CheckCircle2, CalendarDays, Brain）削除
 - 翻訳キー20件を全19ロケールに追加（ja/enは手動翻訳、他17ロケールは英語フォールバック）
+
+03/07
+**EAS Build環境変数の設定漏れ修正**:
+TestFlightで「Network request failed」エラーが発生。調査の結果、`.env`が`.gitignore`に含まれておりEASクラウドビルドでSupabase環境変数（URL, Anon Key）が未設定だったことが原因と判明。
+`eas env:create`コマンドで全6件の環境変数（EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY, AdMob関連4件）をproduction環境に登録。
+再ビルド・TestFlightサブミットまで完了（v1.0.1, build 1.0.12）。
+同様のバグを防止するため、Supabase環境変数の検証テスト（supabaseConfig.test.ts, 4件）を追加。

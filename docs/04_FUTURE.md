@@ -59,6 +59,7 @@ Web版の正式リリースと、モバイル版の主要機能実装を完了�
 - [x] **iOS App Store Connect提出**: EAS SubmitによりTestFlightおよび審査提出用のバイナリをアップロード完了 (2026-03-05)。
 - [x] **Sharedパッケージ復旧確認**: 破損疑いの検証とテスト通過確認。
 - [x] **AdMob初期化不具合の修正**: EAS Secrets (env) を設定し、TestFlightで広告が表示されるよう修正済。
+- [x] **EAS Build環境変数の設定漏れ修正**: `.env`がgitignoreされておりSupabase認証が「Network request failed」で失敗していた問題を解消。`eas env:create`で全環境変数を登録し、検証テストも追加。(2026-03-07)
 - [x] **パスワードリセット完結画面の実装**: Web版に `PASSWORD_RECOVERY` イベント検出 → 新パスワード設定UIを追加。モバイル版はWebへリダイレクトする方式で対応。
 - [x] **Android クローズドテスト (進行中)**: 20人のテスターによる14日間のテスト。
     - [x] プロダクションビルドの作成 (v1.0.1, code 15)

@@ -11,6 +11,8 @@
 - PWA manifest.json 作成（display: standalone、テーマカラー設定）
 - ランディングページ強化: Stats/How It Works/Bottom CTA セクション追加、ハードコーディング英語文字列のi18n化、未使用import削除
 - i18n: ランディングページ新セクション用の翻訳キー20件を全19言語に追加（ja/enは手動翻訳、他は英語フォールバック）
+- EAS Build環境変数の設定漏れ修正: `.env`が`.gitignore`に含まれておりEASクラウドビルドでSupabase環境変数が未設定だった問題を修正。`eas env:create`で全6件（Supabase URL/Key、AdMob 4件）をproduction環境に登録
+- Supabase環境変数の検証テスト追加: `supabaseConfig.test.ts`で環境変数未設定時のエラー検知を担保（4テスト）
 
 現在の実装状況と、これまでの変更履歴を記録するドキュメントです。
 
