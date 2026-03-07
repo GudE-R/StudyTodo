@@ -95,6 +95,9 @@ export function useMobileSync() {
                 await sync(session.user.id);
             } else if (event === 'SIGNED_OUT') {
                 setUserId(undefined);
+                if (repo.clearAll) {
+                    await repo.clearAll();
+                }
             }
         });
 

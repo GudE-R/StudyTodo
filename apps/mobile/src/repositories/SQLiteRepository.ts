@@ -388,6 +388,14 @@ export class SQLiteRepository implements StorageInterface {
     }
 
     // Feedback
+    async clearAll(): Promise<void> {
+        await this.db.runAsync('DELETE FROM todos');
+        await this.db.runAsync('DELETE FROM categories');
+        await this.db.runAsync('DELETE FROM srsProfiles');
+        await this.db.runAsync('DELETE FROM sessions');
+        await this.db.runAsync('DELETE FROM feedbacks');
+    }
+
     async addFeedback(feedback: any): Promise<void> {
         const row = this.toDB(feedback);
         await this.db.runAsync(

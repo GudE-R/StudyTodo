@@ -44,4 +44,8 @@ export interface StorageInterface {
     // Feedback
     /** フィードバックを保存します */
     addFeedback(feedback: any): Promise<void>;
+
+    // Maintenance
+    /** 全データを削除します（ログアウト時用） */
+    clearAll?(): Promise<void>;
 }
