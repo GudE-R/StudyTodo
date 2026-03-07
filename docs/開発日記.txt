@@ -1564,3 +1564,17 @@ Proプランの方針を整理し、以下の変更を行った。
      TESTING_PROCEDURES.md, VERCEL_DEPLOYMENT.md, WEB_FEATURES_REFERENCE.md
    - `00_INDEX.md` を新構成（Active/SQL/Archive/その他）に更新。
    - docsルートには7つのアクティブファイルのみ残り、開発中に必要なドキュメントにすぐアクセスできるようになった。
+
+3/8 (続き)
+**パスワード再設定メールのリダイレクトURL修正:**
+パスワード再設定メールに含まれるリンクが `http://localhost:3000` を指してしまい、本番環境でパスワードの再設定ができない問題を修正した。
+
+**原因:**
+- Web版の `AuthContext.tsx` で `resetPassword` と `signInWithProvider` のリダイレクトURLに `window.location.origin` を使用していた。
+- ローカル環境で関数を呼ぶと `http://localhost:3000` がリダイレクトURLとして設定されてしまう。
+- また、Supabaseダッシュボードの `Site URL` 設定がlocalhostだった場合も同様の問題が発生する。
+
+**修正内容:**
+- `getBaseUrl()` ヘルパー関数を追加し、環境変数 `NEXT_PUBLIC_BASE_URL` を最優先で使用するよう変更。
+- フォールバックとして `window.location.origin` を残しつつ、本番URLが自動的に使用されるようにした。
+- Supabaseダッシュボードの `Site URL` と `Redirect URLs` の確認・設定変更も必要であることを確認。

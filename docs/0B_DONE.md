@@ -204,6 +204,13 @@
 
 これまでの主要な変更履歴です。
 
+### [Password Reset Redirect Fix] - 2026-03-08
+#### 修正 (Web)
+- **パスワード再設定メールのリダイレクトURL修正**:
+    - `AuthContext.tsx` の `resetPassword` と `signInWithProvider` で `window.location.origin` を使用していたため、ローカル環境からのリクエスト時にリダイレクトURLが `http://localhost:3000` になる問題を修正。
+    - `getBaseUrl()` ヘルパー関数を追加し、環境変数 `NEXT_PUBLIC_BASE_URL` を優先使用するよう変更。本番環境では `https://studytodo.vercel.app` が使用される。
+    - **注意**: Supabaseダッシュボードの `Site URL` と `Redirect URLs` 設定も本番URLに設定する必要あり。
+
 ### [Pro Plan Revision] - 2026-03-08
 #### ドキュメント改訂 (Docs)
 - **PRO_PLAN.md の大幅改訂**:

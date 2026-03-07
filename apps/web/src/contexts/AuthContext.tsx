@@ -29,10 +29,15 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => ({ error: null }),
     resetPassword: async () => ({ error: null }),
     updatePassword: async () => ({ error: null }),
-    clearRecovery: () => {},
+    clearRecovery: () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
+
+// 環境変数から本番URLを取得（ローカル環境でもパスワードリセット等で本番URLを使用するため）
+const getBaseUrl = () => {
+    return process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "");
+};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -83,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return await supabase.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
+                redirectTo: getBaseUrl() || undefined,
             },
         });
     };
@@ -94,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const resetPassword = async (email: string) => {
         return await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
+            redirectTo: `${getBaseUrl()}/auth` || undefined,
         });
     };
 
