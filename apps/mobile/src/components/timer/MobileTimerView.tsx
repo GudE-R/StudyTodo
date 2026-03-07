@@ -14,7 +14,7 @@ interface MobileTimerViewProps {
 
 export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }: MobileTimerViewProps) => {
     const { width } = useWindowDimensions();
-    const CIRCLE_SIZE = width * 0.88;
+    const CIRCLE_SIZE = width * 0.75;
     const RADIUS = CIRCLE_SIZE / 2 - 10;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -61,16 +61,42 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                     <Text style={styles.taskTitle} numberOfLines={2}>{todo.title}</Text>
                 </View>
 
-                {/* Timer Circle */}
+                {/* Timer Circle with embedded controls */}
                 <View style={[styles.timerCircle, { width: CIRCLE_SIZE, height: CIRCLE_SIZE }]}>
                     <Svg width={CIRCLE_SIZE} height={CIRCLE_SIZE} style={{ transform: [{ rotate: '-90deg' }] }}>
                         <Circle cx={CIRCLE_SIZE / 2} cy={CIRCLE_SIZE / 2} r={RADIUS} stroke="rgba(0,0,0,0.1)" strokeWidth="12" fill="transparent" />
                         <Circle cx={CIRCLE_SIZE / 2} cy={CIRCLE_SIZE / 2} r={RADIUS} stroke={timer.themeColor} strokeWidth="12" fill="transparent" strokeDasharray={CIRCUMFERENCE} strokeDashoffset={strokeDashoffset} strokeLinecap="round" />
                     </Svg>
-                    <View style={styles.timeDisplay}>
+                    <View style={styles.timerInner}>
+                        {/* Time display */}
                         <Text style={styles.timeText}>
                             {timer.mode === "stopwatch" ? timer.formatTime(timer.stopwatchTime) : timer.formatTime(timer.timeLeft)}
                         </Text>
+
+                        {/* Play/Pause button inside circle */}
+                        <View style={styles.inCircleControls}>
+                            {!timer.isRunning ? (
+                                <TouchableOpacity
+                                    style={[styles.inCircleBtn, timer.status === "break" ? styles.inCircleBtnBreak : styles.inCircleBtnFocus]}
+                                    onPress={() => { timer.setIsRunning(true); timer.setIsPaused(false); }}
+                                >
+                                    <Play size={24} color={timer.status === "break" ? "#16a34a" : "#2563eb"} fill={timer.status === "break" ? "#16a34a" : "#2563eb"} />
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity
+                                    style={styles.inCircleBtnPause}
+                                    onPress={() => { timer.setIsRunning(false); timer.setIsPaused(true); }}
+                                >
+                                    <Pause size={24} color="#ca8a04" fill="#ca8a04" />
+                                </TouchableOpacity>
+                            )}
+
+                            {(timer.isRunning || timer.isPaused) && (
+                                <TouchableOpacity style={styles.inCircleResetBtn} onPress={timer.resetTimer}>
+                                    <Square size={18} color="#999" fill="#999" />
+                                </TouchableOpacity>
+                            )}
+                        </View>
                     </View>
                 </View>
 
@@ -107,31 +133,6 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                         <TouchableOpacity onPress={() => timer.setCountdownDuration(d => d + 5)} style={styles.adjustBtn}><Text>+</Text></TouchableOpacity>
                     </View>
                 )}
-
-                {/* Controls */}
-                <View style={styles.controls}>
-                    {!timer.isRunning ? (
-                        <TouchableOpacity
-                            style={[styles.playBtn, timer.status === "break" ? styles.btnBreak : styles.btnFocus]}
-                            onPress={() => { timer.setIsRunning(true); timer.setIsPaused(false); }}
-                        >
-                            <Play size={32} color="#fff" fill="#fff" />
-                        </TouchableOpacity>
-                    ) : (
-                        <TouchableOpacity
-                            style={styles.pauseBtn}
-                            onPress={() => { timer.setIsRunning(false); timer.setIsPaused(true); }}
-                        >
-                            <Pause size={32} color="#fff" fill="#fff" />
-                        </TouchableOpacity>
-                    )}
-
-                    {(timer.isRunning || timer.isPaused) && (
-                        <TouchableOpacity style={styles.resetBtn} onPress={timer.resetTimer}>
-                            <Square size={24} color="#666" fill="#666" />
-                        </TouchableOpacity>
-                    )}
-                </View>
 
                 {/* Switch to Stopwatch */}
                 {timer.mode !== "stopwatch" && (timer.isRunning || timer.isPaused) && (
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     modeTabs: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 28, padding: 6, gap: 10 },
     tab: { padding: 14, borderRadius: 22 },
     activeTab: { backgroundColor: '#fff', shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
-    content: { flex: 1, alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingTop: 10 },
+    content: { flex: 1, alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingTop: 4 },
     taskInfo: { alignItems: 'center', gap: 5 },
     statusBadge: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
     badgeFocus: { backgroundColor: '#dbeafe' },
@@ -218,23 +219,23 @@ const styles = StyleSheet.create({
     statusText: { fontSize: 12, fontWeight: 'bold', letterSpacing: 1 },
     textFocus: { color: '#2563eb' },
     textBreak: { color: '#166534' },
-    taskTitle: { fontSize: 24, fontWeight: 'bold', color: '#1f2937', textAlign: 'center' },
+    taskTitle: { fontSize: 22, fontWeight: 'bold', color: '#1f2937', textAlign: 'center' },
     timerCircle: { justifyContent: 'center', alignItems: 'center' },
-    timeDisplay: { position: 'absolute' },
-    timeText: { fontSize: 80, fontWeight: 'bold', color: '#1f2937', fontVariant: ['tabular-nums'] },
+    timerInner: { position: 'absolute', alignItems: 'center', justifyContent: 'center', gap: 12 },
+    timeText: { fontSize: 64, fontWeight: 'bold', color: '#1f2937', fontVariant: ['tabular-nums'] },
+    inCircleControls: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+    inCircleBtn: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center' },
+    inCircleBtnFocus: { backgroundColor: 'rgba(37, 99, 235, 0.12)' },
+    inCircleBtnBreak: { backgroundColor: 'rgba(22, 163, 74, 0.12)' },
+    inCircleBtnPause: { width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(234, 179, 8, 0.15)', justifyContent: 'center', alignItems: 'center' },
+    inCircleResetBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.06)', justifyContent: 'center', alignItems: 'center' },
     settingsRow: { flexDirection: 'row', gap: 15 },
     durationBtn: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#fff' },
     activeDurationBtn: { backgroundColor: '#2563eb' },
     activeDurationBtnBreak: { backgroundColor: '#16a34a' },
     durationText: { fontSize: 14, fontWeight: 'bold', color: '#6b7280' },
     activeDurationText: { color: '#fff' },
-    controls: { flexDirection: 'row', alignItems: 'center', gap: 20 },
-    playBtn: { width: 64, height: 64, borderRadius: 32, justifyContent: 'center', alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 5, elevation: 8 },
-    btnFocus: { backgroundColor: '#2563eb' },
-    btnBreak: { backgroundColor: '#22c55e' },
-    pauseBtn: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#eab308', justifyContent: 'center', alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 5, elevation: 8 },
-    resetBtn: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3, elevation: 4 },
-    bottomActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingBottom: 20 },
+    bottomActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingBottom: 24, paddingTop: 8 },
     recordBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, padding: 10 },
     recordText: { fontSize: 14, color: '#6b7280', fontWeight: '500' },
     completeBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#22c55e', borderRadius: 12 },
@@ -257,3 +258,4 @@ const styles = StyleSheet.create({
     logFooter: { paddingTop: 12, borderTopWidth: 1, borderTopColor: '#e5e5e5', alignItems: 'center' },
     logTotal: { fontSize: 16, fontWeight: '700', color: '#2563eb' },
 });
+
