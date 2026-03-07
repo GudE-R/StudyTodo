@@ -49,6 +49,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     const [showBreakAd, setShowBreakAd] = useState(false);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const autoStartRef = useRef(false);
 
     // 通知フック
     const { requestPermission, sendNotification } = useNotification();
@@ -83,12 +84,13 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                 });
                 setIsSaved(true);
             }
-            sendNotification("集中終了！", { body: "お疲れ様でした。休憩しましょう。" });
+            sendNotification("集中終了！", { body: "お疲れ様でした。休憩に入ります。" });
             setShowBreakAd(true);
+            autoStartRef.current = true;
             setStatus("break");
         } else if (mode === "pomodoro" && status === "break") {
-            sendNotification("休憩終了！", { body: "次のセッションを始めましょう。" });
-            alert("休憩終了です！作業に戻りましょう。");
+            sendNotification("休憩終了！", { body: "次のセッションを始めます。" });
+            autoStartRef.current = true;
             setStatus("focus");
         } else if (mode === "countdown") {
             if (onSaveSession) {
@@ -101,7 +103,6 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                 setIsSaved(true);
             }
             sendNotification("タイマー終了", { body: "設定した時間が経過しました。" });
-            alert("タイマー終了です！");
         }
     }, [mode, status, sendNotification, focusDuration, countdownDuration, todo, onSaveSession]);
 
@@ -137,6 +138,20 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
             resetTimer();
         }
     }, [mode, focusDuration, breakDuration, countdownDuration, resetTimer]);
+
+    // オート進行: statusが変わりresetTimerが実行された後に自動開始
+    useEffect(() => {
+        if (autoStartRef.current && mode === "pomodoro" && !isRunning) {
+            autoStartRef.current = false;
+            // 次のティックで開始（resetTimerのstate更新が反映された後）
+            const t = setTimeout(() => {
+                setIsRunning(true);
+                setIsPaused(false);
+                setIsSaved(false);
+            }, 100);
+            return () => clearTimeout(t);
+        }
+    }, [status, mode, isRunning]);
 
     // タイマーロジック
     useEffect(() => {
@@ -368,8 +383,8 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                 <button
                                     onClick={() => { setIsRunning(true); setIsPaused(false); }}
                                     className={`flex items-center justify-center w-14 h-14 rounded-full transition-all hover:scale-105 ${status === "break"
-                                            ? "bg-green-500/15 text-green-600 hover:bg-green-500/25"
-                                            : "bg-blue-600/15 text-blue-600 hover:bg-blue-600/25"
+                                        ? "bg-green-500/15 text-green-600 hover:bg-green-500/25"
+                                        : "bg-blue-600/15 text-blue-600 hover:bg-blue-600/25"
                                         }`}
                                 >
                                     <Play size={24} fill="currentColor" className="ml-0.5" />

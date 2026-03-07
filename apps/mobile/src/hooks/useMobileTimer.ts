@@ -36,6 +36,7 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
     const [sessionLog, setSessionLog] = useState<Session[]>([]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const autoStartRef = useRef(false);
 
     // Keep screen awake
     useEffect(() => {
@@ -87,6 +88,19 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
         }
     }, [resetTimer, mode]);
 
+    // オート進行: statusが変わりresetTimerが実行された後に自動開始
+    useEffect(() => {
+        if (autoStartRef.current && mode === "pomodoro" && !isRunning) {
+            autoStartRef.current = false;
+            const t = setTimeout(() => {
+                setIsRunning(true);
+                setIsPaused(false);
+                setIsSaved(false);
+            }, 100);
+            return () => clearTimeout(t);
+        }
+    }, [status, mode, isRunning]);
+
     // Timer complete handler (declared before timer logic so it can be referenced)
     const handleTimerComplete = useCallback(() => {
         setIsRunning(false);
@@ -104,13 +118,13 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
                     setIsSaved(true);
                     fetchSessionLog();
                 }
-                Alert.alert("集中終了！", `${focusDuration}分の記録を保存しました。休憩しましょう。`, [
-                    { text: "OK", onPress: () => { setStatus("break"); setIsSaved(false); } }
-                ]);
+                // オート進行: 即座に休憩に切り替え、自動開始
+                autoStartRef.current = true;
+                setStatus("break");
             } else {
-                Alert.alert("休憩終了！", "作業に戻りましょう。", [
-                    { text: "OK", onPress: () => setStatus("focus") }
-                ]);
+                // オート進行: 即座に集中に切り替え、自動開始
+                autoStartRef.current = true;
+                setStatus("focus");
             }
         } else if (mode === "countdown") {
             if (onSaveSession) {
