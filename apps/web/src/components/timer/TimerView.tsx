@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle } from "lucide-react";
-import { Todo } from "@studytodo/shared";
+import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle, X, RotateCcw } from "lucide-react";
+import { Todo, Session } from "@studytodo/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useNotification } from "@/hooks/useNotification";
 import { InterstitialAd } from "@/components/ads/InterstitialAd";
+import { db } from "@/lib/db";
 
 interface TimerViewProps {
     todo: Todo;
@@ -17,15 +18,6 @@ interface TimerViewProps {
 type TimerMode = "pomodoro" | "countdown" | "stopwatch";
 type TimerStatus = "focus" | "break";
 
-/**
- * ポモドーロタイマー画面コンポーネント (拡張版)
- * 
- * 以下の機能を提供します：
- * 1. ポモドーロモード (25分/50分) + 休憩 (5分/10分)
- * 2. カウントダウンモード (任意時間 - 今回はモックとして15分固定)
- * 3. ストップウォッチモード
- * 4. 記録機能 (モック)
- */
 export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: TimerViewProps) {
     // 状態管理
     const [mode, setMode] = useState<TimerMode>("pomodoro");
@@ -45,19 +37,48 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     const [isPaused, setIsPaused] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
+    // 設定・ログ UI
+    const [autoProgress, setAutoProgress] = useState(true);
+    const [showMenu, setShowMenu] = useState(false);
+    const [showSessionLog, setShowSessionLog] = useState(false);
+    const [sessionLog, setSessionLog] = useState<Session[]>([]);
+
     // Interstitial Ad State
     const [showBreakAd, setShowBreakAd] = useState(false);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const autoStartRef = useRef(false);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     // 通知フック
     const { requestPermission, sendNotification } = useNotification();
 
-    // 初回マウント時に通知許可をリクエスト
     useEffect(() => {
         requestPermission();
     }, [requestPermission]);
+
+    // メニュー外クリックで閉じる
+    useEffect(() => {
+        const handleClick = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setShowMenu(false);
+            }
+        };
+        if (showMenu) document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
+    }, [showMenu]);
+
+    // セッションログ取得
+    const fetchSessionLog = useCallback(async () => {
+        try {
+            const all = await db.sessions.orderBy("createdAt").reverse().toArray();
+            setSessionLog(all.filter(s => s.todoId === todo.id));
+        } catch (e) {
+            console.error("Failed to fetch sessions:", e);
+        }
+    }, [todo.id]);
+
+    useEffect(() => { fetchSessionLog(); }, [fetchSessionLog]);
 
     // 経過時間の計算
     const getElapsedTime = useCallback(() => {
@@ -73,7 +94,6 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         setIsRunning(false);
         if (timerRef.current) clearInterval(timerRef.current);
 
-        // ポモドーロモードで集中時間が終わったら休憩モードへ誘導
         if (mode === "pomodoro" && status === "focus") {
             if (onSaveSession) {
                 onSaveSession({
@@ -83,14 +103,15 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                     mode: mode
                 });
                 setIsSaved(true);
+                fetchSessionLog();
             }
             sendNotification("集中終了！", { body: "お疲れ様でした。休憩に入ります。" });
             setShowBreakAd(true);
-            autoStartRef.current = true;
+            if (autoProgress) autoStartRef.current = true;
             setStatus("break");
         } else if (mode === "pomodoro" && status === "break") {
             sendNotification("休憩終了！", { body: "次のセッションを始めます。" });
-            autoStartRef.current = true;
+            if (autoProgress) autoStartRef.current = true;
             setStatus("focus");
         } else if (mode === "countdown") {
             if (onSaveSession) {
@@ -101,10 +122,11 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                     mode: mode
                 });
                 setIsSaved(true);
+                fetchSessionLog();
             }
             sendNotification("タイマー終了", { body: "設定した時間が経過しました。" });
         }
-    }, [mode, status, sendNotification, focusDuration, countdownDuration, todo, onSaveSession]);
+    }, [mode, status, sendNotification, focusDuration, countdownDuration, todo, onSaveSession, autoProgress, fetchSessionLog]);
 
     const resetTimer = useCallback(() => {
         setIsRunning(false);
@@ -122,28 +144,14 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         }
     }, [mode, status, focusDuration, breakDuration, countdownDuration]);
 
-    // モードや設定変更時にタイマーをリセット
     useEffect(() => {
-        // Stop reset if we just switched to stopwatch (manually handled in button click)
-        // However, standard useEffect logic resets whenever mode changes. 
-        // We need to bypass this for the specific transition or update resetTimer to handle data preservation?
-        // Actually, the button click handler runs STATE UPDATES (batching might apply).
-        // If we set state in button click, then THIS effect runs.
-        // resetTimer sets stopwatchTime to 0. This will OVERWRITE our carried over time.
-
-        // Solution: Only call resetTimer if NOT switching to stopwatch (or handle stopwatch reset differently).
-        // But we want resetTimer to run when switching BACK to pomodoro.
-
-        if (mode !== "stopwatch") {
-            resetTimer();
-        }
+        if (mode !== "stopwatch") resetTimer();
     }, [mode, focusDuration, breakDuration, countdownDuration, resetTimer]);
 
-    // オート進行: statusが変わりresetTimerが実行された後に自動開始
+    // オート進行
     useEffect(() => {
         if (autoStartRef.current && mode === "pomodoro" && !isRunning) {
             autoStartRef.current = false;
-            // 次のティックで開始（resetTimerのstate更新が反映された後）
             const t = setTimeout(() => {
                 setIsRunning(true);
                 setIsPaused(false);
@@ -172,24 +180,18 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         } else {
             if (timerRef.current) clearInterval(timerRef.current);
         }
-
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
+        return () => { if (timerRef.current) clearInterval(timerRef.current); };
     }, [isRunning, mode, handleTimerComplete]);
 
-
-
-    // 時間フォーマット (MM:SS)
+    // ヘルパー
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60).toString().padStart(2, "0");
         const s = (seconds % 60).toString().padStart(2, "0");
         return `${m}:${s}`;
     };
 
-    // 円形プログレスバーの計算
     const calculateProgress = () => {
-        if (mode === "stopwatch") return 100; // ストップウォッチは常に満タン
+        if (mode === "stopwatch") return 100;
         const total = mode === "pomodoro"
             ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
             : countdownDuration * 60;
@@ -200,29 +202,14 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     const circumference = 2 * Math.PI * 120;
     const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-    // テーマカラーの決定
-    const getThemeColor = () => {
-        if (status === "break") return "text-green-500";
-        return "text-blue-600";
-    };
+    const getThemeColor = () => status === "break" ? "text-green-500" : "text-blue-600";
+    const getBgColor = () => status === "break" ? "bg-green-50 dark:bg-green-950/30" : "bg-blue-50 dark:bg-blue-950/30";
 
-    const getBgColor = () => {
-        if (status === "break") return "bg-green-50";
-        return "bg-blue-50";
-    };
-
-    // セッション保存処理
     const handleSaveSession = () => {
-
-        // 簡易的に、ストップウォッチなら経過時間、ポモドーロなら設定時間を保存（完了時）
-        // 途中保存の場合は経過時間を計算する必要がある
-        // ここでは「記録のみ保存」ボタン用として、現在の経過時間を保存するロジックにする
-
         let actualDuration = 0;
         if (mode === "stopwatch") {
             actualDuration = stopwatchTime;
         } else {
-            // カウントダウン系は「元々の時間 - 残り時間」が経過時間
             const total = mode === "pomodoro"
                 ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
                 : countdownDuration * 60;
@@ -230,29 +217,16 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         }
 
         if (actualDuration > 0 && onSaveSession) {
-            onSaveSession({
-                todoId: todo.id,
-                todoTitle: todo.title,
-                duration: actualDuration,
-                mode: mode
-            });
+            onSaveSession({ todoId: todo.id, todoTitle: todo.title, duration: actualDuration, mode });
             setIsSaved(true);
-            alert("セッションを記録しました！");
-        } else {
-            alert("記録する時間がありません。");
+            fetchSessionLog();
         }
     };
 
-    // タスク完了処理
     const handleCompleteTask = () => {
         const elapsed = getElapsedTime();
         if (elapsed > 0 && !isSaved && onSaveSession) {
-            onSaveSession({
-                todoId: todo.id,
-                todoTitle: todo.title,
-                duration: elapsed,
-                mode: mode
-            });
+            onSaveSession({ todoId: todo.id, todoTitle: todo.title, duration: elapsed, mode });
         }
         if (onCompleteTask) onCompleteTask();
     };
@@ -260,77 +234,82 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     // Keyboard Shortcuts
     useKeyboardShortcuts({
         onToggleTimer: () => {
-            if (isRunning) {
-                setIsRunning(false);
-                setIsPaused(true);
-            } else {
-                setIsRunning(true);
-                setIsPaused(false);
-            }
+            if (isRunning) { setIsRunning(false); setIsPaused(true); }
+            else { setIsRunning(true); setIsPaused(false); }
         },
-        onCloseModal: onBack // Escで戻る
+        onCloseModal: onBack
     });
 
     return (
         <div className={`flex flex-col h-screen transition-colors duration-500 ${getBgColor()}`}>
             {/* Header */}
             <div className="flex items-center justify-between p-4">
-                <button onClick={onBack} className="p-2 text-gray-500 hover:bg-white/50 rounded-full">
+                <button onClick={onBack} className="p-2 text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/10 rounded-full">
                     <ArrowLeft size={24} />
                 </button>
 
                 {/* モード切替タブ */}
-                {/* モード切替タブ */}
-                <div className="flex bg-white/50 rounded-full p-1">
+                <div className="flex bg-white/50 dark:bg-white/10 rounded-full p-1">
                     <button
-                        onClick={() => {
-                            setMode("pomodoro");
-                            setStatus("focus");
-                            setIsRunning(false);
-                            resetTimer();
-                        }}
-                        className={`p-2 rounded-full transition-colors ${mode === "pomodoro" ? "bg-white shadow-sm text-blue-600" : "text-gray-400"}`}
+                        onClick={() => { setMode("pomodoro"); setStatus("focus"); setIsRunning(false); resetTimer(); }}
+                        className={`p-2 rounded-full transition-colors ${mode === "pomodoro" ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600" : "text-gray-400"}`}
                     >
                         <Timer size={20} />
                     </button>
                     <button
-                        onClick={() => {
-                            setMode("countdown");
-                            setIsRunning(false);
-                            resetTimer();
-                        }}
-                        className={`p-2 rounded-full transition-colors ${mode === "countdown" ? "bg-white shadow-sm text-blue-600" : "text-gray-400"}`}
+                        onClick={() => { setMode("countdown"); setIsRunning(false); resetTimer(); }}
+                        className={`p-2 rounded-full transition-colors ${mode === "countdown" ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600" : "text-gray-400"}`}
                     >
                         <Watch size={20} />
                     </button>
                     <button
                         onClick={() => {
                             if (mode !== "stopwatch") {
-                                // Calculate elapsed time to carry over
                                 let elapsed = 0;
-                                if (mode === "pomodoro" && status === "focus") {
-                                    elapsed = focusDuration * 60 - timeLeft;
-                                } else if (mode === "countdown") {
-                                    elapsed = countdownDuration * 60 - timeLeft;
-                                } else {
-                                    // if break mode, start from 0
-                                    elapsed = 0;
-                                }
-
+                                if (mode === "pomodoro" && status === "focus") elapsed = focusDuration * 60 - timeLeft;
+                                else if (mode === "countdown") elapsed = countdownDuration * 60 - timeLeft;
                                 setStopwatchTime(Math.max(0, elapsed));
                                 setMode("stopwatch");
-                                // Do NOT stop timer, let it continue running if it was
                             }
                         }}
-                        className={`p-2 rounded-full transition-colors ${mode === "stopwatch" ? "bg-white shadow-sm text-blue-600" : "text-gray-400"}`}
+                        className={`p-2 rounded-full transition-colors ${mode === "stopwatch" ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600" : "text-gray-400"}`}
                     >
                         <Play size={20} className="rotate-90" />
                     </button>
                 </div>
 
-                <button className="p-2 text-gray-500 hover:bg-white/50 rounded-full">
-                    <MoreVertical size={24} />
-                </button>
+                {/* メニューボタン */}
+                <div className="relative" ref={menuRef}>
+                    <button
+                        onClick={() => setShowMenu(!showMenu)}
+                        className="p-2 text-gray-500 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/10 rounded-full"
+                    >
+                        <MoreVertical size={24} />
+                    </button>
+
+                    {/* ドロップダウンメニュー */}
+                    {showMenu && (
+                        <div className="absolute right-0 top-12 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
+                            <button
+                                onClick={() => { setAutoProgress(!autoProgress); }}
+                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">オート進行</span>
+                                <div className={`w-10 h-6 rounded-full transition-colors relative ${autoProgress ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
+                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${autoProgress ? "translate-x-5" : "translate-x-1"}`} />
+                                </div>
+                            </button>
+                            <div className="h-px bg-gray-100 dark:bg-gray-700 mx-2" />
+                            <button
+                                onClick={() => { fetchSessionLog(); setShowSessionLog(true); setShowMenu(false); }}
+                                className="w-full flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            >
+                                <RotateCcw size={16} className="mr-3 text-gray-400" />
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-200">記録ログ</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Main Content */}
@@ -338,10 +317,10 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
 
                 {/* Task Info */}
                 <div className="text-center space-y-2">
-                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-colors ${status === "break" ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}>
+                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-colors ${status === "break" ? "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400" : "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"}`}>
                         {status === "break" ? "BREAK TIME" : "CURRENT TASK"}
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-800 line-clamp-2">
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 line-clamp-2">
                         {todo.title}
                     </h1>
                 </div>
@@ -349,31 +328,15 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                 {/* Timer Display with embedded controls */}
                 <div className="relative flex items-center justify-center">
                     <svg className="transform -rotate-90 w-72 h-72">
-                        <circle
-                            cx="144"
-                            cy="144"
-                            r="120"
-                            stroke="currentColor"
-                            strokeWidth="12"
-                            fill="transparent"
-                            className="text-white/50"
-                        />
-                        <circle
-                            cx="144"
-                            cy="144"
-                            r="120"
-                            stroke="currentColor"
-                            strokeWidth="12"
-                            fill="transparent"
-                            strokeDasharray={circumference}
-                            strokeDashoffset={strokeDashoffset}
-                            strokeLinecap="round"
+                        <circle cx="144" cy="144" r="120" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-white/50 dark:text-white/10" />
+                        <circle cx="144" cy="144" r="120" stroke="currentColor" strokeWidth="12" fill="transparent"
+                            strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
                             className={`${getThemeColor()} transition-all duration-1000 ease-linear`}
                         />
                     </svg>
 
                     <div className="absolute flex flex-col items-center gap-3">
-                        <div className="text-6xl font-mono font-bold text-gray-800 tracking-tighter">
+                        <div className="text-6xl font-mono font-bold text-gray-800 dark:text-gray-100 tracking-tighter">
                             {mode === "stopwatch" ? formatTime(stopwatchTime) : formatTime(timeLeft)}
                         </div>
 
@@ -383,8 +346,8 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                 <button
                                     onClick={() => { setIsRunning(true); setIsPaused(false); }}
                                     className={`flex items-center justify-center w-14 h-14 rounded-full transition-all hover:scale-105 ${status === "break"
-                                        ? "bg-green-500/15 text-green-600 hover:bg-green-500/25"
-                                        : "bg-blue-600/15 text-blue-600 hover:bg-blue-600/25"
+                                            ? "bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25"
+                                            : "bg-blue-600/15 text-blue-600 dark:text-blue-400 hover:bg-blue-600/25"
                                         }`}
                                 >
                                     <Play size={24} fill="currentColor" className="ml-0.5" />
@@ -392,7 +355,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                             ) : (
                                 <button
                                     onClick={() => { setIsRunning(false); setIsPaused(true); }}
-                                    className="flex items-center justify-center w-14 h-14 bg-yellow-500/15 text-yellow-600 rounded-full transition-all hover:bg-yellow-500/25 hover:scale-105"
+                                    className="flex items-center justify-center w-14 h-14 bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 rounded-full transition-all hover:bg-yellow-500/25 hover:scale-105"
                                 >
                                     <Pause size={24} fill="currentColor" />
                                 </button>
@@ -401,7 +364,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                             {(isRunning || isPaused) && (
                                 <button
                                     onClick={resetTimer}
-                                    className="flex items-center justify-center w-11 h-11 bg-black/5 text-gray-500 rounded-full transition-all hover:bg-black/10 hover:scale-105"
+                                    className="flex items-center justify-center w-11 h-11 bg-black/5 dark:bg-white/10 text-gray-500 dark:text-gray-400 rounded-full transition-all hover:bg-black/10 dark:hover:bg-white/20 hover:scale-105"
                                 >
                                     <Square size={18} fill="currentColor" />
                                 </button>
@@ -415,31 +378,23 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                     <div className="flex space-x-4">
                         {status === "focus" ? (
                             <>
-                                <button
-                                    onClick={() => setFocusDuration(25)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 25 ? "bg-blue-600 text-white" : "bg-white text-gray-500"}`}
-                                >
+                                <button onClick={() => setFocusDuration(25)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 25 ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
                                     25分
                                 </button>
-                                <button
-                                    onClick={() => setFocusDuration(50)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 50 ? "bg-blue-600 text-white" : "bg-white text-gray-500"}`}
-                                >
+                                <button onClick={() => setFocusDuration(50)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 50 ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
                                     50分
                                 </button>
                             </>
                         ) : (
                             <>
-                                <button
-                                    onClick={() => setBreakDuration(5)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${breakDuration === 5 ? "bg-green-600 text-white" : "bg-white text-gray-500"}`}
-                                >
+                                <button onClick={() => setBreakDuration(5)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${breakDuration === 5 ? "bg-green-600 text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
                                     5分
                                 </button>
-                                <button
-                                    onClick={() => setBreakDuration(10)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${breakDuration === 10 ? "bg-green-600 text-white" : "bg-white text-gray-500"}`}
-                                >
+                                <button onClick={() => setBreakDuration(10)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${breakDuration === 10 ? "bg-green-600 text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
                                     10分
                                 </button>
                             </>
@@ -449,40 +404,75 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
 
                 {/* Settings (Countdown Only) */}
                 {mode === "countdown" && !isRunning && !isPaused && (
-                    <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-                        <span className="text-sm font-bold text-gray-500">タイマー時間:</span>
-                        <input
-                            type="number"
-                            min="1"
-                            value={countdownDuration}
+                    <div className="flex items-center space-x-2 bg-white dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm">
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-300">タイマー時間:</span>
+                        <input type="number" min="1" value={countdownDuration}
                             onChange={(e) => setCountdownDuration(Math.max(1, parseInt(e.target.value) || 0))}
-                            className="w-16 text-center border-b-2 border-blue-100 focus:border-blue-500 outline-none font-bold text-gray-800"
-                        />
-                        <span className="text-sm font-bold text-gray-500">分</span>
+                            className="w-16 text-center border-b-2 border-blue-100 dark:border-blue-800 focus:border-blue-500 outline-none font-bold text-gray-800 dark:text-gray-100 bg-transparent" />
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-300">分</span>
                     </div>
                 )}
 
                 {/* Bottom Actions */}
                 <div className="flex items-center justify-between w-full px-6">
-                    <button
-                        onClick={handleSaveSession}
-                        className="flex items-center space-x-2 text-gray-400 hover:text-gray-600 transition-colors py-2"
-                    >
+                    <button onClick={handleSaveSession}
+                        className="flex items-center space-x-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors py-2">
                         <CheckCircle size={18} />
                         <span className="text-sm font-medium">記録のみ保存</span>
                     </button>
 
                     {onCompleteTask && (
-                        <button
-                            onClick={handleCompleteTask}
-                            className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-colors font-bold text-sm"
-                        >
+                        <button onClick={handleCompleteTask}
+                            className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-colors font-bold text-sm">
                             <CheckCircle size={18} />
                             <span>タスク完了</span>
                         </button>
                     )}
                 </div>
             </div>
+
+            {/* Session Log Modal */}
+            {showSessionLog && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onClick={() => setShowSessionLog(false)}>
+                    <div className="bg-white dark:bg-gray-800 rounded-t-2xl w-full max-w-lg max-h-[60vh] p-5 animate-slide-up" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">記録ログ</h3>
+                            <button onClick={() => setShowSessionLog(false)} className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="overflow-y-auto max-h-[300px]">
+                            {sessionLog.length === 0 ? (
+                                <p className="text-center text-gray-400 dark:text-gray-500 py-8 text-sm">まだ記録がありません</p>
+                            ) : (
+                                sessionLog.map((s) => {
+                                    const d = new Date(s.createdAt);
+                                    const dateStr = `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+                                    const min = Math.floor(s.duration / 60);
+                                    const sec = s.duration % 60;
+                                    const modeLabel = s.mode === 'pomodoro' ? '🍅' : s.mode === 'countdown' ? '⏱' : '⏱️';
+                                    return (
+                                        <div key={s.id} className="flex items-center py-3 border-b border-gray-100 dark:border-gray-700 gap-3">
+                                            <span className="text-xl">{modeLabel}</span>
+                                            <div className="flex-1">
+                                                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{min}分{sec > 0 ? `${sec}秒` : ''}</p>
+                                                <p className="text-xs text-gray-400 dark:text-gray-500">{dateStr}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                        {sessionLog.length > 0 && (
+                            <div className="pt-3 border-t border-gray-200 dark:border-gray-700 text-center">
+                                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                                    合計: {Math.floor(sessionLog.reduce((sum, s) => sum + s.duration, 0) / 60)}分
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Interstitial Ad for Break Time */}
             <InterstitialAd
@@ -494,4 +484,3 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         </div>
     );
 }
-

@@ -33,6 +33,8 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
     const [isPaused, setIsPaused] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [showSessionLog, setShowSessionLog] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
+    const [autoProgress, setAutoProgress] = useState(true);
     const [sessionLog, setSessionLog] = useState<Session[]>([]);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -118,12 +120,12 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
                     setIsSaved(true);
                     fetchSessionLog();
                 }
-                // オート進行: 即座に休憩に切り替え、自動開始
-                autoStartRef.current = true;
+                // オート進行: 設定が有効な場合のみ自動開始
+                if (autoProgress) autoStartRef.current = true;
                 setStatus("break");
             } else {
-                // オート進行: 即座に集中に切り替え、自動開始
-                autoStartRef.current = true;
+                // オート進行: 設定が有効な場合のみ自動開始
+                if (autoProgress) autoStartRef.current = true;
                 setStatus("focus");
             }
         } else if (mode === "countdown") {
@@ -139,7 +141,7 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
             }
             Alert.alert("タイマー終了", `${countdownDuration}分の記録を保存しました。`);
         }
-    }, [mode, status, focusDuration, countdownDuration, todo, onSaveSession, fetchSessionLog]);
+    }, [mode, status, focusDuration, countdownDuration, todo, onSaveSession, fetchSessionLog, autoProgress]);
 
     // Timer logic
     useEffect(() => {
@@ -271,6 +273,8 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
         isPaused, setIsPaused,
         isSaved,
         showSessionLog, setShowSessionLog,
+        showMenu, setShowMenu,
+        autoProgress, setAutoProgress,
         sessionLog,
 
         // Settings
