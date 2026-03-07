@@ -10,7 +10,8 @@ describe('cn (className merge)', () => {
     });
 
     it('条件付きクラスを処理すること', () => {
-        const result = cn('base', false && 'hidden', 'visible');
+        const isHidden = false;
+        const result = cn('base', isHidden && 'hidden', 'visible');
         expect(result).toContain('base');
         expect(result).toContain('visible');
         expect(result).not.toContain('hidden');
