@@ -2,10 +2,30 @@
 
 StudyTodo プロジェクトのドキュメント構成です。
 
-## 基本ドキュメント
-*   **[01_REQUIREMENTS.md](01_REQUIREMENTS.md)**: 要件定義書。何を作るか、機能要件、詳細仕様。
-*   **[02_SYSTEM_DESIGN.md](02_SYSTEM_DESIGN.md)**: システム設計書。アーキテクチャ、データ構造、UI設計。
+## アクティブ (Active)
+| ファイル | 概要 |
+|---------|------|
+| [03_IMPLEMENTATION.md](03_IMPLEMENTATION.md) | 実装の記録。完了済みロードマップ、Specs、変更履歴。 |
+| [04_FUTURE.md](04_FUTURE.md) | 開発計画。ロードマップ、バックログ、アイデア。 |
+| [PRO_PLAN.md](PRO_PLAN.md) | Proプラン（有料機能）の設計書。 |
+| [GAMIFICATION_PLAN.md](GAMIFICATION_PLAN.md) | ゲーミフィケーション機能の計画書。 |
+| [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) | 開発ガイドライン。共有コードルール、テスト方針。 |
+| [PRIVACY_POLICY.md](PRIVACY_POLICY.md) | プライバシーポリシー。 |
+| [開発日記.txt](開発日記.txt) | 開発の振り返り・日記。 |
 
-## 実装・計画
-*   **[03_IMPLEMENTATION.md](03_IMPLEMENTATION.md)**: 実装の記録。現在の状態(Specs)と、過去の変更履歴(History)を統合。
-*   **[04_FUTURE.md](04_FUTURE.md)**: 開発計画。これからのロードマップ、バックログ、アイデアを統合。
+## SQL
+| ファイル | 概要 |
+|---------|------|
+| [supabase_schema.sql](sql/supabase_schema.sql) | Supabaseのスキーマ定義。 |
+| [migration_v2.sql](sql/migration_v2.sql) | v2マイグレーションSQL。 |
+
+## アーカイブ (Archive)
+実装完了済み・リリース済みなど、当面参照しないドキュメントです。
+→ [archive/](archive/) ディレクトリに格納。
+
+## その他
+| ディレクトリ | 概要 |
+|-------------|------|
+| [diagrams/](diagrams/) | 設計図・ダイアグラム。 |
+| [images/](images/) | ドキュメント用画像。 |
+| [screenshots/](screenshots/) | ストア用スクリーンショット。 |

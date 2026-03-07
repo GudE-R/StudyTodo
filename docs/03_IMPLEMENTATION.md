@@ -192,7 +192,7 @@
 *   **Database**: Dexie.js (Web), expo-sqlite (Mobile) - Abstracted via Repository Pattern
 *   **Architecture**: Monorepo (pnpm workspaces)
 *   **Testing**: Vitest (全ワークスペース)
-    *   **Note**: 全ワークスペースで Vitest を使用。Mobile版のReact Nativeコンポーネントテストは環境制約から除外し、純粋なロジックテストのみ実行。実機がない場合のテスト手順は [ANDROID_TEST_SETUP.md](./ANDROID_TEST_SETUP.md) を参照。
+    *   **Note**: 全ワークスペースで Vitest を使用。Mobile版のReact Nativeコンポーネントテストは環境制約から除外し、純粋なロジックテストのみ実行。実機がない場合のテスト手順は [ANDROID_TEST_SETUP.md](./archive/ANDROID_TEST_SETUP.md) を参照。
 *   **UI Library**: `lucide-react`, `recharts`, `@hello-pangea/dnd`, `date-fns`
 *   **Developer Tools**:
     *   **Gemini CLI**: CLI based AI agent for codebase understanding and automation.
