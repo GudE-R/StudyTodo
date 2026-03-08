@@ -52,7 +52,7 @@
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.2",
-    "vitest": "^3.0.0"
+    "vitest": "^4.0.18"
   },
   "private": true
 }
