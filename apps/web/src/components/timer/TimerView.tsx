@@ -50,6 +50,10 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     const autoStartRef = useRef(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
+    // 壁時計ベースのタイマー用ref
+    const startTimeRef = useRef<number>(0);       // タイマー開始時のDate.now()
+    const pausedElapsedRef = useRef<number>(0);    // 一時停止時までの累計経過秒数
+
     // 通知フック
     const { requestPermission, sendNotification } = useNotification();
 
@@ -92,6 +96,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     // タイマー終了時の処理
     const handleTimerComplete = useCallback(() => {
         setIsRunning(false);
+        pausedElapsedRef.current = 0;
         if (timerRef.current) clearInterval(timerRef.current);
 
         if (mode === "pomodoro" && status === "focus") {
@@ -132,6 +137,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         setIsRunning(false);
         setIsPaused(false);
         setStopwatchTime(0);
+        pausedElapsedRef.current = 0;
 
         if (mode === "pomodoro") {
             if (status === "focus") {
@@ -153,6 +159,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         if (autoStartRef.current && mode === "pomodoro" && !isRunning) {
             autoStartRef.current = false;
             const t = setTimeout(() => {
+                pausedElapsedRef.current = 0;
                 setIsRunning(true);
                 setIsPaused(false);
                 setIsSaved(false);
@@ -161,27 +168,49 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
         }
     }, [status, mode, isRunning]);
 
-    // タイマーロジック
+    // タイマーロジック（壁時計ベース: ブラウザ最小化・スリープに対応）
     useEffect(() => {
         if (isRunning) {
-            timerRef.current = setInterval(() => {
+            // 開始時刻を記録（一時停止から再開の場合はpausedElapsedRefが累計を保持）
+            startTimeRef.current = Date.now();
+
+            const tick = () => {
+                const nowElapsed = pausedElapsedRef.current + Math.floor((Date.now() - startTimeRef.current) / 1000);
+
                 if (mode === "stopwatch") {
-                    setStopwatchTime((prev) => prev + 1);
+                    setStopwatchTime(nowElapsed);
                 } else {
-                    setTimeLeft((prev) => {
-                        if (prev <= 1) {
-                            handleTimerComplete();
-                            return 0;
-                        }
-                        return prev - 1;
-                    });
+                    const total = mode === "pomodoro"
+                        ? (status === "focus" ? focusDuration * 60 : breakDuration * 60)
+                        : countdownDuration * 60;
+                    const remaining = total - nowElapsed;
+                    if (remaining <= 0) {
+                        setTimeLeft(0);
+                        handleTimerComplete();
+                        return;
+                    }
+                    setTimeLeft(remaining);
                 }
-            }, 1000);
+            };
+
+            tick(); // 即座に1回実行
+            timerRef.current = setInterval(tick, 1000);
+
+            // タブが非アクティブ→再アクティブになった時に即座に再計算
+            const handleVisibility = () => {
+                if (document.visibilityState === "visible") tick();
+            };
+            document.addEventListener("visibilitychange", handleVisibility);
+
+            return () => {
+                if (timerRef.current) clearInterval(timerRef.current);
+                document.removeEventListener("visibilitychange", handleVisibility);
+            };
         } else {
             if (timerRef.current) clearInterval(timerRef.current);
         }
         return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    }, [isRunning, mode, handleTimerComplete]);
+    }, [isRunning, mode, status, handleTimerComplete, focusDuration, breakDuration, countdownDuration]);
 
     // ヘルパー
     const formatTime = (seconds: number) => {
@@ -234,8 +263,15 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     // Keyboard Shortcuts
     useKeyboardShortcuts({
         onToggleTimer: () => {
-            if (isRunning) { setIsRunning(false); setIsPaused(true); }
-            else { setIsRunning(true); setIsPaused(false); }
+            if (isRunning) {
+                // 一時停止: 経過時間を累計保存
+                pausedElapsedRef.current += Math.floor((Date.now() - startTimeRef.current) / 1000);
+                setIsRunning(false); setIsPaused(true);
+            }
+            else {
+                // 再開: pausedElapsedRefは保持、startTimeRefはuseEffect内で更新される
+                setIsRunning(true); setIsPaused(false);
+            }
         },
         onCloseModal: onBack
     });
@@ -344,17 +380,20 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                         <div className="flex items-center gap-3">
                             {!isRunning ? (
                                 <button
-                                    onClick={() => { setIsRunning(true); setIsPaused(false); }}
+                                    onClick={() => { if (!isPaused) pausedElapsedRef.current = 0; setIsRunning(true); setIsPaused(false); }}
                                     className={`flex items-center justify-center w-14 h-14 rounded-full transition-all hover:scale-105 ${status === "break"
-                                            ? "bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25"
-                                            : "bg-blue-600/15 text-blue-600 dark:text-blue-400 hover:bg-blue-600/25"
+                                        ? "bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25"
+                                        : "bg-blue-600/15 text-blue-600 dark:text-blue-400 hover:bg-blue-600/25"
                                         }`}
                                 >
                                     <Play size={24} fill="currentColor" className="ml-0.5" />
                                 </button>
                             ) : (
                                 <button
-                                    onClick={() => { setIsRunning(false); setIsPaused(true); }}
+                                    onClick={() => {
+                                        pausedElapsedRef.current += Math.floor((Date.now() - startTimeRef.current) / 1000);
+                                        setIsRunning(false); setIsPaused(true);
+                                    }}
                                     className="flex items-center justify-center w-14 h-14 bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 rounded-full transition-all hover:bg-yellow-500/25 hover:scale-105"
                                 >
                                     <Pause size={24} fill="currentColor" />

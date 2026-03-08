@@ -1637,3 +1637,13 @@ GitHub Securityの活用として、Dependabotを設定し、検出された脆�
 - `.github/dependabot.yml`を作成（monorepo全体＋GitHub Actionsの週次スキャン）
 - `npm audit fix`で脆弱性16件→0件に修正
 - next→16.1.5、rollup→4.59.0、tar→7.5.10等を更新
+
+## 2026-03-08 タイマー機能のブラウザ最小化・スリープ対応
+
+Web版タイマーでタブを非アクティブにした際、ブラウザのthrottle機能によりタイマーが遅れる不具合を修正した。
+
+**修正内容:**
+- `setInterval`による-1カウントベースから、`Date.now()`を使った壁時計ベースに変更
+- `startTimeRef`（開始時刻）と`pausedElapsedRef`（一時停止時の累計時間）を導入し、正確な経過時間を計算
+- `visibilitychange`イベントリスナーを追加し、タブに復帰した瞬間にUIを即座に再計算
+- Play/Pauseボタンやショートカットキーなど、全操作系での`pausedElapsedRef`の適切なリセット・追加処理を実装

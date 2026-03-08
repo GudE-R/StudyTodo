@@ -231,6 +231,14 @@
     - Web版: 全要素にTailwind CSSの`dark:`クラスを追加。背景・テキスト・ボタン・モーダル等に対応。
     - Mobile版: `useColorScheme`でシステムのカラースキームを検出。動的カラーオブジェクトで全要素の色を切替。
 
+### [Timer Background Tab Fix] - 2026-03-08
+#### バグ修正 (Web)
+- **タイマーのブラウザ最小化・スリープ対応**:
+    - `setInterval`カウントベースから壁時計（`Date.now()`）ベースに変更。
+    - `startTimeRef`と`pausedElapsedRef`を追加し、開始時刻からの実経過時間を計算する方式に。
+    - `visibilitychange`イベントでタブ復帰時に即座に再計算する仕組みを追加。
+    - 一時停止→再開時も経過時間を正確に保持。
+
 ### [Dependabot Setup & Vulnerability Fix] - 2026-03-08
 #### セキュリティ改善 (CI/Infra)
 - **Dependabot設定ファイルを追加** (`.github/dependabot.yml`):
