@@ -95,7 +95,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                                 else if (config.sqlite === 'categories') {
                                     const cats = await repo.getCategories();
                                     localItem = cats.find(c => c.id === cloudItemId);
-                                } else if (config.sqlite === 'srs_profiles') {
+                                } else if (config.sqlite === 'srsProfiles') {
                                     const profiles = await repo.getSRSProfiles();
                                     localItem = profiles.find(p => p.id === cloudItemId);
                                 } else if (config.sqlite === 'sessions') {
@@ -118,7 +118,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
                                         const cloudItem = rawCloudItem as unknown as Category;
                                         if (!localItem) await repo.addCategory(cloudItem);
                                         else await repo.updateCategory(cloudItemId, cloudItem);
-                                    } else if (config.sqlite === 'srs_profiles') {
+                                    } else if (config.sqlite === 'srsProfiles') {
                                         const cloudItem = rawCloudItem as unknown as SRSProfile;
                                         if (!localItem) await repo.addSRSProfile(cloudItem);
                                         else await repo.updateSRSProfile(cloudItemId, cloudItem);

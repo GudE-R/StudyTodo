@@ -239,6 +239,8 @@
     - `shared/interface.ts` の `onDataChange` 引数を拡張し、配列 (`any[]`) を受け取れるように変更。
     - `SQLiteRepository.ts` の `notifyChange` で配列まま通知を行うように修正。
     - `useMobileRealtimeSync.ts` で配列データを受け取り、全件をループしてキュー追加またはSupabaseに一括アップロード(Bulk Upsert)するように修正。
+    - （追加修正）`useMobileRealtimeSync.ts` 内の `config.sqlite` 判定での `srs_profiles` → `srsProfiles` のtypoを修正し、クラウドからの更新が正しく適用されるように改善。
+    - （追加修正）`useMobileSync.ts` で、ログイン時にクラウドにデータが存在する場合、ローカルで生成された初期データ(`srsProfiles`, `categories`)を削除してから同期するロジックを追加。（初期データが重複してSupabaseにPushされることで発生していたRLS違反 `42501 USING expression` エラーを解消）
 
 #### バグ修正 (Web)
 - **タイマーのブラウザ最小化・スリープ対応**:

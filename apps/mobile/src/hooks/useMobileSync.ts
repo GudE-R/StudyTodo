@@ -29,8 +29,32 @@ export function useMobileSync() {
 
             const localTodos = await repo.getTodos();
             const localSessions = await repo.getSessions();
-            const localCategories = await repo.getCategories();
-            const localSrs = await repo.getSRSProfiles();
+            let localCategories = await repo.getCategories();
+            let localSrs = await repo.getSRSProfiles();
+
+            // クラウドにデータがある場合、ローカルのサンプルデータ（名前でマッチ）を削除して重複を防ぐ
+            if (cloudCategories && cloudCategories.length > 0) {
+                const sampleCategoryNames = ['大カテゴリサンプル', '中カテゴリサンプル', '小カテゴリサンプル'];
+                const sampleCategoryIds = localCategories
+                    .filter(c => sampleCategoryNames.includes(c.name))
+                    .map(c => c.id);
+                for (const id of sampleCategoryIds) {
+                    await repo.deleteCategory(id);
+                }
+            }
+
+            if (cloudSrs && cloudSrs.length > 0) {
+                const defaultSrsIds = localSrs
+                    .filter(s => s.name === '忘却曲線 (標準)' && !cloudSrs.some(cs => cs.id === s.id))
+                    .map(s => s.id);
+                for (const id of defaultSrsIds) {
+                    await repo.deleteSRSProfile(id);
+                }
+            }
+
+            // 削除後の最新データを取得
+            localCategories = await repo.getCategories();
+            localSrs = await repo.getSRSProfiles();
 
             // 共通 processTableSync を使用したヘルパー
             const syncTable = async (

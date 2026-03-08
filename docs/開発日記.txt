@@ -1659,3 +1659,4 @@ Mobile側でルーティンTodo(複数日分)を作成した際、ローカル�
 1. `shared/storage/interface.ts` の `onDataChange` で配列データを受け取れるように型を拡張
 2. `SQLiteRepository.addSRSTodos` の変更通知で配列全体を渡すように修正
 3. `useMobileRealtimeSync` 側で、配列で受け取ったデータを1回のネットワークリクエストでSupabaseへ一括Upsertするように修正（オフライン時のキュー登録も配列全件に対して行うように対応）
+4. （追加確認で発見した不具合対応）`useMobileSync.ts` にて、ログイン時にクラウドにデータが存在する場合にSQLiteのデフォルトデータをPushしようとしてSupabaseのRLS違反(USING expression)が発生する問題に対応。Web版と同様に事前にローカル初期データを削除するように修正。あわせて `useMobileRealtimeSync.ts` 内の `srs_profiles` テーブル名の監視typoを修正。
