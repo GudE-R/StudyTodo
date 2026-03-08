@@ -1628,3 +1628,12 @@ ESLint警告35件を0件にクリーンアップした。
 - exhaustive-deps警告3件修正（eslint-disable追加 or 依存配列調整）
 - テストファイル未使用変数2件修正
 - ESLint設定に`varsIgnorePattern: "^_"`追加（_プレフィックス変数の許可）
+
+## 2026-03-08 Dependabotセットアップ＆脆弱性修正
+
+GitHub Securityの活用として、Dependabotを設定し、検出された脆弱性16件を全て修正した。
+
+**対応内容:**
+- `.github/dependabot.yml`を作成（monorepo全体＋GitHub Actionsの週次スキャン）
+- `npm audit fix`で脆弱性16件→0件に修正
+- next→16.1.5、rollup→4.59.0、tar→7.5.10等を更新

@@ -231,6 +231,16 @@
     - Web版: 全要素にTailwind CSSの`dark:`クラスを追加。背景・テキスト・ボタン・モーダル等に対応。
     - Mobile版: `useColorScheme`でシステムのカラースキームを検出。動的カラーオブジェクトで全要素の色を切替。
 
+### [Dependabot Setup & Vulnerability Fix] - 2026-03-08
+#### セキュリティ改善 (CI/Infra)
+- **Dependabot設定ファイルを追加** (`.github/dependabot.yml`):
+    - monorepoの各ディレクトリ（ルート、web、mobile、shared）とGitHub Actionsの依存関係を毎週月曜にスキャン。
+- **脆弱性16件を0件に修正** (`npm audit fix`):
+    - `next` 16.1.5へ更新（DoS攻撃3件: HTTP deserialization、PPR Resume、Image Optimizer）。
+    - `rollup` 4.59.0へ更新（パストラバーサルによる任意ファイル書き込み）。
+    - `tar` 7.5.10へ更新（ハードリンクパストラバーサル）。
+    - `minimatch`（ReDoS 6件）、`ajv`（ReDoS）、`@isaacs/brace-expansion`（リソース枯渇）も修正。
+
 ### [ESLint Warnings Cleanup] - 2026-03-08
 #### コード品質改善 (Web)
 - **ESLint警告35件を0件に修正**:
