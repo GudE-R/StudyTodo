@@ -1647,3 +1647,15 @@ Web版タイマーでタブを非アクティブにした際、ブラウザのth
 - `startTimeRef`（開始時刻）と`pausedElapsedRef`（一時停止時の累計時間）を導入し、正確な経過時間を計算
 - `visibilitychange`イベントリスナーを追加し、タブに復帰した瞬間にUIを即座に再計算
 - Play/Pauseボタンやショートカットキーなど、全操作系での`pausedElapsedRef`の適切なリセット・追加処理を実装
+
+## 2026-03-08 ルーティンTodoの同期不具合修正 (Mobile)
+
+「曜日指定でTodoを作成した際、他端末に1つしか同期されない」という不具合を修正。
+
+**原因:**
+Mobile側でルーティンTodo(複数日分)を作成した際、ローカルのSQLiteには全件保存されていたが、同期をトリガーする `notifyChange` イベントには実装ミスで「最初の1件 (`todos[0]`)」しか渡されておらず、通信を担当するHooksが1件分しかSupabaseにアップロードしていなかった。
+
+**対応:**
+1. `shared/storage/interface.ts` の `onDataChange` で配列データを受け取れるように型を拡張
+2. `SQLiteRepository.addSRSTodos` の変更通知で配列全体を渡すように修正
+3. `useMobileRealtimeSync` 側で、配列で受け取ったデータを1回のネットワークリクエストでSupabaseへ一括Upsertするように修正（オフライン時のキュー登録も配列全件に対して行うように対応）

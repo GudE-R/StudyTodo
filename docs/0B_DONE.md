@@ -232,6 +232,14 @@
     - Mobile版: `useColorScheme`でシステムのカラースキームを検出。動的カラーオブジェクトで全要素の色を切替。
 
 ### [Timer Background Tab Fix] - 2026-03-08
+### [Routine Todo Sync Fix (Mobile)] - 2026-03-08
+#### バグ修正 (Mobile)
+- **Mobile版ルーティンTodo等の一括生成時の同期不具合を修正**:
+    - `SQLiteRepository.addSRSTodos` 等で複数件がDBに追加された際、最初の1件しか変更リスナー(`notifyChange`)に通知されておらず、クラウドに1件しか同期されないバグを修正。
+    - `shared/interface.ts` の `onDataChange` 引数を拡張し、配列 (`any[]`) を受け取れるように変更。
+    - `SQLiteRepository.ts` の `notifyChange` で配列まま通知を行うように修正。
+    - `useMobileRealtimeSync.ts` で配列データを受け取り、全件をループしてキュー追加またはSupabaseに一括アップロード(Bulk Upsert)するように修正。
+
 #### バグ修正 (Web)
 - **タイマーのブラウザ最小化・スリープ対応**:
     - `setInterval`カウントベースから壁時計（`Date.now()`）ベースに変更。

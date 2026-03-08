@@ -147,7 +147,7 @@ export function useMobileRealtimeSync(userId: string | undefined) {
         });
 
         // 2. Subscribe to Local Repository Changes (Sender/Push with Offline Queue)
-        const unsubscribeDataChange = repo.onDataChange(async (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => {
+        const unsubscribeDataChange = repo.onDataChange(async (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) => {
             // Skip if this change was triggered by the cloud sync above or by a full sync
             if (isProcessingCloudChange.current) return;
 
@@ -159,30 +159,40 @@ export function useMobileRealtimeSync(userId: string | undefined) {
             try {
                 // Check network status
                 const online = await isOnline();
+                const dataArray = Array.isArray(data) ? data : [data];
 
                 if (!online) {
-                    if (__DEV__) console.log('[Mobile] Offline, queuing change:', table, type);
-                    await offlineQueue.add({ table, operation: type, data });
+                    if (__DEV__) console.log('[Mobile] Offline, queuing change:', table, type, 'count:', dataArray.length);
+                    for (const item of dataArray) {
+                        await offlineQueue.add({ table, operation: type, data: item });
+                    }
                     return;
                 }
 
                 if (type === 'INSERT' || type === 'UPDATE') {
-                    const mapped = mapper.toSupabase(data, userId, allowedFields);
-                    const { error } = await supabase.from(table).upsert(mapped);
+                    const mappedArray = dataArray.map(item => mapper.toSupabase(item, userId, allowedFields));
+                    const { error } = await supabase.from(table).upsert(mappedArray);
                     if (error) {
                         console.warn(`[Mobile] Push failed, queuing:`, error.message);
-                        await offlineQueue.add({ table, operation: type, data });
+                        for (const item of dataArray) {
+                            await offlineQueue.add({ table, operation: type, data: item });
+                        }
                     }
                 } else if (type === 'DELETE') {
-                    const { error } = await supabase.from(table).delete().eq('id', data.id);
-                    if (error) {
-                        console.warn(`[Mobile] Delete failed, queuing:`, error.message);
-                        await offlineQueue.add({ table, operation: type, data });
+                    for (const item of dataArray) {
+                        const { error } = await supabase.from(table).delete().eq('id', item.id);
+                        if (error) {
+                            console.warn(`[Mobile] Delete failed, queuing:`, error.message);
+                            await offlineQueue.add({ table, operation: type, data: item });
+                        }
                     }
                 }
             } catch (err) {
                 console.error('Error in onDataChange push, queuing:', err);
-                await offlineQueue.add({ table, operation: type, data });
+                const dataArray = Array.isArray(data) ? data : [data];
+                for (const item of dataArray) {
+                    await offlineQueue.add({ table, operation: type, data: item });
+                }
             }
         });
 

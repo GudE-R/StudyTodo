@@ -7,14 +7,14 @@ import * as SQLite from 'expo-sqlite';
  */
 export class SQLiteRepository implements StorageInterface {
     private db: SQLite.SQLiteDatabase;
-    private onChangeListeners: ((table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void)[] = [];
+    private onChangeListeners: ((table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) => void)[] = [];
 
     constructor() {
         this.db = SQLite.openDatabaseSync('studytodo.db');
         this.init();
     }
 
-    onDataChange(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) => void): () => void {
+    onDataChange(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) => void): () => void {
         this.onChangeListeners.push(callback);
         // Return unsubscribe function
         return () => {
@@ -25,7 +25,7 @@ export class SQLiteRepository implements StorageInterface {
         };
     }
 
-    private notifyChange(table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any) {
+    private notifyChange(table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) {
         this.onChangeListeners.forEach(listener => listener(table, type, data));
     }
 
@@ -293,9 +293,9 @@ export class SQLiteRepository implements StorageInterface {
                 [row.id, row.title, row.completed, row.createdAt, row.updatedAt, row.dueDate, row.dueTime, row.endTime, row.categoryId, row.estimatedDuration, row.actualDuration, row.priority, row.notes, row.memo, row.range, row.srsInterval, row.tags, row.srsLevel, row.nextReviewDate, row.srsProfileId, row.srsGroupId, row.reviewHistory]
             );
         }
-        // Notify once to trigger refresh
+        // Notify once with all items to trigger batch sync
         if (todos.length > 0) {
-            this.notifyChange('todos', 'INSERT', todos[0]);
+            this.notifyChange('todos', 'INSERT', todos);
         }
     }
 
