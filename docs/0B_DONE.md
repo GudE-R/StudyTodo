@@ -231,6 +231,15 @@
     - Web版: 全要素にTailwind CSSの`dark:`クラスを追加。背景・テキスト・ボタン・モーダル等に対応。
     - Mobile版: `useColorScheme`でシステムのカラースキームを検出。動的カラーオブジェクトで全要素の色を切替。
 
+### [ESLint Warnings Cleanup] - 2026-03-08
+#### コード品質改善 (Web)
+- **ESLint警告35件を0件に修正**:
+    - 未使用import/変数22件を削除（ErrorBoundary, Server, useRouter, Shield, Copy, Sparkles, subDays, BookOpen, FileText, Flag, Palette, useEffect, StreakStats, SyncOperationType, Category, SRSProfile等）。
+    - 不要なeslint-disableディレクティブ7件を削除（react-hooks/set-state-in-effectの抑制が不要になったため）。
+    - React Hook exhaustive-deps警告3件を修正（CalendarPane/TimePicker/useSyncのuseEffect依存配列）。
+    - テストファイルの未使用変数2件を修正（authSpy, mockInsert）。
+    - ESLint設定に`varsIgnorePattern: "^_"`を追加し、意図的に未使用の変数を`_`プレフィックスでマーク可能に。
+
 ### [Password Reset Redirect Fix] - 2026-03-08
 #### 修正 (Web)
 - **パスワード再設定メールのリダイレクトURL修正**:

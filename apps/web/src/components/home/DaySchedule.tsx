@@ -76,7 +76,6 @@ export function DaySchedule({
 
         if (needsRegeneration) {
             const newDays = generateDays(selectedDate);
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setDays(newDays);
             // 初回やジャンプ時は即座にスクロール位置を合わせるフラグを立てる
             isAutoScrollingRef.current = true;
@@ -98,7 +97,6 @@ export function DaySchedule({
             // ここではシンプルに「再生成して、selectedDateにスクロールを合わせる」アプローチをとる。
 
             const newDays = generateDays(selectedDate);
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setDays(newDays);
 
             // DOM更新後にスクロール位置を修正するためにフラグを立てる

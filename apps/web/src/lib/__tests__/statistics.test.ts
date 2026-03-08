@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { calculateStreak, StreakStats } from '../statistics';
+import { calculateStreak } from '../statistics';
 import { Session } from '@studytodo/shared';
 
 /**

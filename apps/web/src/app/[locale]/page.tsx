@@ -24,7 +24,6 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { Todo, Feedback } from "@studytodo/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { dataService } from "@/services/dataService";
@@ -63,7 +62,6 @@ export default function Home() {
 
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
   }, []);
 
@@ -71,7 +69,7 @@ export default function Home() {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(true);
+  const [showWelcome, _setShowWelcome] = useState(true);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [isTodoDetailOpen, setIsTodoDetailOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);

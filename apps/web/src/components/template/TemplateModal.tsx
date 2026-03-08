@@ -16,7 +16,6 @@ export function TemplateModal({
     onClose,
 }: TemplateModalProps) {
     const t = useTranslations("template");
-    const tc = useTranslations("common");
 
     const [activeTab, setActiveTab] = useState<"category" | "srs" | "theme">("category");
 

@@ -25,7 +25,6 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
     const t = useTranslations("settings");
-    const tc = useTranslations("common");
 
     useEffect(() => {
         setUserEmail(user?.email ?? null);

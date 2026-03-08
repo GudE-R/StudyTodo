@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Shield, Scale, FileText } from "lucide-react";
+import { ArrowLeft, Scale, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 

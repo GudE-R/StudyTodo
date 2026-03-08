@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Tag, Repeat, BookOpen, FileText, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass, Calendar } from "lucide-react";
+import { X, Tag, Repeat, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { Todo, Category, SRSProfile } from "@studytodo/shared";
@@ -51,7 +51,6 @@ export function TodoCreateModal({
     useEffect(() => {
         if (isOpen) {
             if (initialDate) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setDueDate(initialDate);
             } else {
                 setDueDate(null);

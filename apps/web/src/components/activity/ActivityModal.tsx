@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { format, isSameDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, isWithinInterval, eachDayOfInterval, eachMonthOfInterval, getMonth, getYear } from "date-fns";
 import { ja } from "date-fns/locale";
-import { X, BarChart2, History, Trash2, Filter, Share2, Download, Copy, Twitter, Facebook, Instagram, Hash, ChevronDown, ChevronRight, Layers } from "lucide-react";
+import { X, BarChart2, History, Trash2, Filter, Share2, Download, Twitter, Facebook, Instagram, Hash, ChevronDown, ChevronRight, Layers } from "lucide-react";
 import { Session, Todo, Category } from "@studytodo/shared";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { TodoTitle } from "@/components/ui/TodoTitle";

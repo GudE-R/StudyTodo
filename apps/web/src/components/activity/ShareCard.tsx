@@ -30,7 +30,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
 
     const today = new Date();
 
-    const targetCategoryName = targetCategory === "all"
+    const _targetCategoryName = targetCategory === "all"
         ? "All Categories"
         : categories.find(c => c.id === targetCategory)?.name || "Category";
 

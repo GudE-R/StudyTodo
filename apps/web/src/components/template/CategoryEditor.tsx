@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File, Palette } from "lucide-react";
+import { ChevronRight, ChevronDown, Plus, Trash2, Folder, FolderOpen, File } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Category } from "@studytodo/shared";
 import { useLiveQuery } from "dexie-react-hooks";

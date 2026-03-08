@@ -48,7 +48,7 @@ export default [
 
       // TypeScript rules (relaxed for development)
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
 
       // General rules
       "no-unused-vars": "off", // Use @typescript-eslint/no-unused-vars instead

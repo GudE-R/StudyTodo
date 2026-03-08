@@ -109,7 +109,7 @@ describe('offlineQueue', () => {
             // So this test case "should not process if offline" is technically testing the caller, likely.
             // But let's verify if `processOfflineQueue` handles auth failure.
 
-            const authSpy = vi.spyOn(supabase.auth, 'getSession').mockResolvedValueOnce({ data: { session: null }, error: null } as any);
+            const _authSpy = vi.spyOn(supabase.auth, 'getSession').mockResolvedValueOnce({ data: { session: null }, error: null } as any);
 
             await processOfflineQueue('user1', supabase, mockMapper);
 
@@ -143,7 +143,7 @@ describe('offlineQueue', () => {
             const spyRemove = vi.spyOn(offlineQueue, 'remove').mockResolvedValue(undefined);
 
             // Mock Supabase Failure
-            const mockInsert = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ single: vi.fn().mockRejectedValue(new Error("Network fail")) }) });
+            const _mockInsert = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ single: vi.fn().mockRejectedValue(new Error("Network fail")) }) });
             // Note: Implementation calls `upsert`.
             const mockUpsert = vi.fn().mockResolvedValue({ error: { message: "Fail" } });
 

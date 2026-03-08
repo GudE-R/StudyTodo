@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { supabase } from "@/lib/supabase";
-import { Todo, Session, Category, SRSProfile, Feedback, mapper, generateSRSTodos, generateSRSTodosForExisting } from "@studytodo/shared";
+import { Todo, Session, Feedback, mapper, generateSRSTodos, generateSRSTodosForExisting } from "@studytodo/shared";
 import { addDays } from "date-fns";
 import { generateId } from "@/lib/utils";
 

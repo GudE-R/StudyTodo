@@ -4,7 +4,7 @@
  */
 
 import Dexie, { Table } from 'dexie';
-import { SyncQueueItem, SyncQueueInterface, SyncOperationType, allowedFieldsMap, supabaseTableMap } from '@studytodo/shared';
+import { SyncQueueItem, SyncQueueInterface, allowedFieldsMap, supabaseTableMap } from '@studytodo/shared';
 import { generateId } from '@/lib/utils';
 
 class OfflineQueueDB extends Dexie {

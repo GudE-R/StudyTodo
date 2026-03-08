@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Share2, Cloud, Sparkles, Pin, PaintBucket } from "lucide-react";
+import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Share2, Cloud, Pin, PaintBucket } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface UsageGuideModalProps {

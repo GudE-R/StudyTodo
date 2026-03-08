@@ -61,6 +61,7 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
                 }
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, selectedHour, selectedMinute]);
 
     const handleHourChange = (h: string) => {

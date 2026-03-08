@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Play, Calendar, Clock, Tag, Repeat, FileText, Flag, CheckCircle, Save, CalendarRange } from "lucide-react";
+import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, CalendarRange } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -99,7 +99,7 @@ export function TodoDetailModal({
     };
 
     // 優先度の表示名とカラー
-    const getPriorityDisplay = (priority?: string) => {
+    const _getPriorityDisplay = (priority?: string) => {
         switch (priority) {
             case "high": return { label: t("priorityHigh"), color: "text-red-500 bg-red-50 dark:bg-red-900/30" };
             case "medium": return { label: t("priorityMedium"), color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30" };

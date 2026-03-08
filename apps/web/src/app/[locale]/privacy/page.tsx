@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, Shield, Lock, Eye, Server, Database } from "lucide-react";
+import { ArrowLeft, Shield, Lock, Eye, Database } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/routing";
 

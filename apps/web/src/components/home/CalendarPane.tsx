@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { format, addDays, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
+import { format, addDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
 import { useLocale, useTranslations, useFormatter } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -47,6 +47,7 @@ export function CalendarPane({
         if (!isSameMonth(currentMonth, selectedDate)) {
             setCurrentMonth(selectedDate);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedDate]);
 
     // 長押し判定用のタイマー参照

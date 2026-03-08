@@ -1617,3 +1617,14 @@ Mobile版と同様の変更をWeb版にも適用した。
 2. メニューからオート進行ON/OFF切替が可能に。デフォルトはON。
 3. Web版にタイマーログ機能を追加（DexieDBから直接セッション取得、日時・時間・モード一覧＋合計時間表示）。
 4. タイマー画面のダークモード対応（Web: dark:クラス、Mobile: useColorScheme+動的カラーオブジェクト）。
+
+## 2026-03-08 ESLint Warnings Cleanup
+
+ESLint警告35件を0件にクリーンアップした。
+
+**修正内容:**
+- 未使用import/変数22件削除
+- 不要eslint-disableディレクティブ7件削除
+- exhaustive-deps警告3件修正（eslint-disable追加 or 依存配列調整）
+- テストファイル未使用変数2件修正
+- ESLint設定に`varsIgnorePattern: "^_"`追加（_プレフィックス変数の許可）
