@@ -271,28 +271,7 @@ export function TodoCreateModal({
                             icon={<PlayCircle size={18} className="text-blue-500" />}
                         />
 
-                        {/* Duration (Record Only) */}
-                        {isRecordMode ? (
-                            <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-900/30 p-2 rounded-lg border border-green-200 dark:border-green-700">
-                                <Hourglass size={18} className="text-green-600" />
-                                <input
-                                    type="number"
-                                    min="0"
-                                    placeholder={t("durationPlaceholder")}
-                                    value={duration}
-                                    onChange={(e) => setDuration(e.target.value)}
-                                    className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-                                    autoFocus
-                                />
-                            </div>
-                        ) : (
-                            <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 p-2 rounded-lg opacity-50">
-                                <Hourglass size={18} className="text-gray-400" />
-                                <span className="text-sm text-gray-400 dark:text-gray-500">{t("durationRecordOnly")}</span>
-                            </div>
-                        )}
-
-                        {/* End Time (Disabled if no start time) - Swapped with Duration */}
+                        {/* End Time */}
                         <TimePicker
                             value={endTime}
                             onChange={setEndTime}
@@ -364,40 +343,66 @@ export function TodoCreateModal({
 
 
 
-                    {/* Action Buttons (Reordered: Record -> Start -> Create) */}
-                    <div className="grid grid-cols-3 gap-2 pt-2">
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (isRecordMode) {
-                                    handleRecord();
-                                } else {
-                                    setIsRecordMode(true);
-                                }
-                            }}
-                            className={`flex items-center justify-center space-x-1 py-3 rounded-xl font-bold transition-colors ${isRecordMode
-                                ? "bg-green-600 text-white hover:bg-green-700"
-                                : "bg-green-100 text-green-600 hover:bg-green-200"
-                                }`}
-                        >
-                            <CheckCircle size={18} />
-                            <span className="text-sm">{isRecordMode ? t("recordConfirm") : t("record")}</span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleStartNow}
-                            className="flex items-center justify-center space-x-1 bg-orange-100 text-orange-600 py-3 rounded-xl font-bold hover:bg-orange-200 transition-colors"
-                        >
-                            <Play size={18} fill="currentColor" />
-                            <span className="text-sm">{t("start")}</span>
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex items-center justify-center space-x-1 bg-blue-100 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-200 transition-colors"
-                        >
-                            <Plus size={18} />
-                            <span className="text-sm">{t("create")}</span>
-                        </button>
+                    {/* Action Buttons */}
+                    <div className="pt-2">
+                        {isRecordMode ? (
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleRecord}
+                                    className="flex items-center justify-center p-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors"
+                                    title={t("recordConfirm")}
+                                >
+                                    <CheckCircle size={20} />
+                                </button>
+                                <div className="flex-1 flex items-center space-x-2 bg-green-50 dark:bg-green-900/30 p-2.5 rounded-xl border border-green-200 dark:border-green-700">
+                                    <Hourglass size={18} className="text-green-600" />
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        placeholder={t("durationPlaceholder")}
+                                        value={duration}
+                                        onChange={(e) => setDuration(e.target.value)}
+                                        className="bg-transparent text-sm w-full outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
+                                        autoFocus
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => { setIsRecordMode(false); setDuration(""); }}
+                                    className="flex items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 text-gray-500 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                    title={tc("cancel")}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsRecordMode(true)}
+                                    className="flex items-center justify-center space-x-1 bg-green-100 text-green-600 py-3 rounded-xl font-bold hover:bg-green-200 transition-colors"
+                                >
+                                    <CheckCircle size={18} />
+                                    <span className="text-sm">{t("record")}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleStartNow}
+                                    className="flex items-center justify-center space-x-1 bg-orange-100 text-orange-600 py-3 rounded-xl font-bold hover:bg-orange-200 transition-colors"
+                                >
+                                    <Play size={18} fill="currentColor" />
+                                    <span className="text-sm">{t("start")}</span>
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex items-center justify-center space-x-1 bg-blue-100 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-200 transition-colors"
+                                >
+                                    <Plus size={18} />
+                                    <span className="text-sm">{t("create")}</span>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </form>
             </div>
