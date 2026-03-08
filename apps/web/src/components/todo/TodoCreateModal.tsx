@@ -253,33 +253,35 @@ export function TodoCreateModal({
 
                     {/* Options Grid */}
                     <div className="grid grid-cols-2 gap-3">
-                        {/* Date */}
+                        {/* Date (left) + Start/End Time stacked (right) */}
                         <DatePicker
                             value={dueDate}
                             onChange={setDueDate}
                             placeholder={t("datePlaceholder")}
                         />
 
-                        {/* Start Time */}
-                        <TimePicker
-                            value={dueTime}
-                            onChange={(val) => {
-                                setDueTime(val);
-                                if (!val) setEndTime(""); // Reset end time if start time cleared
-                            }}
-                            placeholder={t("startTime")}
-                            icon={<PlayCircle size={18} className="text-blue-500" />}
-                        />
+                        <div className="flex flex-col gap-2">
+                            {/* Start Time */}
+                            <TimePicker
+                                value={dueTime}
+                                onChange={(val) => {
+                                    setDueTime(val);
+                                    if (!val) setEndTime(""); // Reset end time if start time cleared
+                                }}
+                                placeholder={t("startTime")}
+                                icon={<PlayCircle size={18} className="text-blue-500" />}
+                            />
 
-                        {/* End Time */}
-                        <TimePicker
-                            value={endTime}
-                            onChange={setEndTime}
-                            placeholder={t("endTime")}
-                            disabled={!dueTime}
-                            defaultTime={dueTime}
-                            icon={<StopCircle size={18} className="text-red-500" />}
-                        />
+                            {/* End Time */}
+                            <TimePicker
+                                value={endTime}
+                                onChange={setEndTime}
+                                placeholder={t("endTime")}
+                                disabled={!dueTime}
+                                defaultTime={dueTime}
+                                icon={<StopCircle size={18} className="text-red-500" />}
+                            />
+                        </div>
 
                         {/* SRS & Routine Toggle */}
                         <div className="flex flex-col col-span-2 space-y-2">

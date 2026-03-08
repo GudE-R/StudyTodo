@@ -66,12 +66,12 @@ export function DatePicker({ value, onChange, placeholder = "日付を選択" }:
     };
 
     return (
-        <div className="relative w-full" ref={containerRef}>
+        <div className="relative w-full h-full" ref={containerRef}>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
-          w-full flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg text-sm outline-none transition-colors
+          w-full h-full flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg text-sm outline-none transition-colors
           ${isOpen ? "ring-2 ring-blue-100 bg-white dark:bg-gray-600" : "hover:bg-gray-100 dark:hover:bg-gray-600"}
         `}
             >
