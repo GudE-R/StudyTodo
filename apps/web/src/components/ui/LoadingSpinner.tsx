@@ -45,8 +45,8 @@ export function LoadingOverlay({ isLoading, message, fullScreen = true }: Loadin
     if (!isLoading) return null;
 
     const containerClass = fullScreen
-        ? "fixed inset-0 z-[200] bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
-        : "absolute inset-0 bg-white/80 dark:bg-gray-900/80";
+        ? "fixed inset-0 z-[200] bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm"
+        : "absolute inset-0 bg-white/80 dark:bg-gray-800/80";
 
     return (
         <div className={`${containerClass} flex flex-col items-center justify-center`}>

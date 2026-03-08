@@ -9,7 +9,7 @@ export default function TermsPage() {
     const t = useTranslations("common");
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 <Link
                     href="/"
@@ -19,7 +19,7 @@ export default function TermsPage() {
                     <span>{t("back") || "Back"}</span>
                 </Link>
 
-                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
+                <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-800">
                     <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-8 sm:p-12 text-white">
                         <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
                             <Scale size={32} />

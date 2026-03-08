@@ -154,7 +154,7 @@ export default function AuthPage() {
     ];
 
     return (
-        <div className="min-h-screen flex bg-gray-50 dark:bg-gray-950 overflow-hidden">
+        <div className="min-h-screen flex bg-gray-50 dark:bg-gray-800 overflow-hidden">
             {/* Left Panel - Features */}
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-600 to-blue-700 p-12 flex-col justify-between relative overflow-hidden">
                 {/* Decorative background elements */}
@@ -282,7 +282,7 @@ export default function AuthPage() {
                                 <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-4 bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-400">
+                                <span className="px-4 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                                     {t("orContinueWith")}
                                 </span>
                             </div>

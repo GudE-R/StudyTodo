@@ -149,7 +149,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="relative bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-center">
                     <button
@@ -293,7 +293,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+                            <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                                 {t("orContinueWith")}
                             </span>
                         </div>

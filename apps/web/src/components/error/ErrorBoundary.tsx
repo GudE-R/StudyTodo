@@ -56,7 +56,7 @@ export class ErrorBoundary extends Component<Props, State> {
             }
 
             return (
-                <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+                <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 p-4">
                     <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
                         <div className="text-6xl mb-4">⚠️</div>
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">

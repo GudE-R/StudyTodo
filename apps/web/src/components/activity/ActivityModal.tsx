@@ -136,7 +136,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             filteredSessions.forEach(session => {
                 const date = new Date(session.createdAt);
                 const index = data.findIndex(d => d.date && isSameDay(d.date, date));
-                if (index !== -1) data[index].time += session.duration / 60;
+                if (index !== -1) data[index].time += Math.round(session.duration / 60);
             });
             // Count completed todos
             todos.filter(t => {
@@ -165,7 +165,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             filteredSessions.forEach(session => {
                 const date = new Date(session.createdAt);
                 const index = data.findIndex(d => d.date && isSameDay(d.date, date));
-                if (index !== -1) data[index].time += session.duration / 60;
+                if (index !== -1) data[index].time += Math.round(session.duration / 60);
             });
             todos.filter(t => {
                 if (!t.completed) return false;
@@ -194,7 +194,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                 const date = new Date(session.createdAt);
                 const month = getMonth(date);
                 const index = data.findIndex(d => d.month === month);
-                if (index !== -1) data[index].time += session.duration / 60;
+                if (index !== -1) data[index].time += Math.round(session.duration / 60);
             });
             todos.filter(t => {
                 if (!t.completed) return false;
@@ -216,7 +216,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             filteredSessions.forEach(session => {
                 const year = getYear(new Date(session.createdAt));
                 const index = data.findIndex(d => d.year === year);
-                if (index !== -1) data[index].time += session.duration / 60;
+                if (index !== -1) data[index].time += Math.round(session.duration / 60);
             });
             todos.filter(t => {
                 if (!t.completed) return false;
@@ -248,7 +248,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
             if (!distribution[catId]) {
                 distribution[catId] = { name, value: 0, color };
             }
-            distribution[catId].value += session.duration / 60;
+            distribution[catId].value += Math.round(session.duration / 60);
         });
 
         // Filter out zero values and sort
@@ -463,7 +463,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-900/50 p-6 min-h-0">
+                <div className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-800/50 p-6 min-h-0">
                     {activeTab === "analytics" ? (
                         <div className="space-y-6">
                             {/* Controls: Range Picker & Category Filter */}
@@ -779,7 +779,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                         // --- Share Tab ---
                         <div className="flex flex-col lg:flex-row gap-8 h-full">
                             {/* Left: Preview */}
-                            <div className="flex-1 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 rounded-xl p-4 overflow-hidden min-h-[400px]">
+                            <div className="flex-1 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl p-4 overflow-hidden min-h-[400px]">
                                 <div className="scale-50 sm:scale-75 md:scale-90 transform-origin-center transition-transform">
                                     <ShareCard
                                         ref={shareCardRef}

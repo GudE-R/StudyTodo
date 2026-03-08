@@ -23,7 +23,7 @@ export function TemplateModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
-            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
@@ -60,7 +60,7 @@ export function TemplateModal({
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-hidden p-4 bg-gray-50/50 dark:bg-gray-900">
+                <div className="flex-1 overflow-hidden p-4 bg-gray-50/50 dark:bg-gray-800">
                     {activeTab === "category" && <CategoryEditor />}
                     {activeTab === "srs" && <SRSEditor />}
                 </div>

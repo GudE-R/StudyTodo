@@ -65,11 +65,11 @@ export const useActivityAnalytics = ({ sessions, todos, categories, range, filte
 
             if (range === "year") {
                 const idx = getMonth(date);
-                if (data[idx]) data[idx].value += session.duration / 60;
+                if (data[idx]) data[idx].value += Math.round(session.duration / 60);
             } else {
                 const dayLabel = range === "week" ? format(date, 'EEE', { locale }) : format(date, 'd');
                 const idx = data.findIndex(d => d.label === dayLabel);
-                if (idx !== -1) data[idx].value += session.duration / 60;
+                if (idx !== -1) data[idx].value += Math.round(session.duration / 60);
             }
         });
 
@@ -103,7 +103,7 @@ export const useActivityAnalytics = ({ sessions, todos, categories, range, filte
             if (!distribution[catId]) {
                 distribution[catId] = { name, value: 0, color };
             }
-            distribution[catId].value += session.duration / 60;
+            distribution[catId].value += Math.round(session.duration / 60);
         });
 
         return Object.values(distribution)

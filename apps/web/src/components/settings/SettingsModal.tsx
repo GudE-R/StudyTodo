@@ -40,7 +40,7 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center bg-black/50 backdrop-blur-sm transition-opacity">
-            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl h-auto max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl h-auto max-h-[80vh] flex flex-col shadow-2xl animate-in slide-in-from-bottom duration-300">
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
@@ -124,7 +124,7 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
                                             有効 (リアルタイム)
                                         </span>
                                     </div>
-                                    <div className="text-[10px] text-gray-400 bg-white dark:bg-gray-900 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-800">
+                                    <div className="text-[10px] text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-800">
                                         {lastSyncTime
                                             ? `${t("lastSynced")}: ${lastSyncTime.toLocaleTimeString()}`
                                             : t("justSynced")}

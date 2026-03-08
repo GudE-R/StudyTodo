@@ -205,7 +205,8 @@ export function DaySchedule({
             {/* タイムライン領域（スクロール可能） */}
             <div
                 ref={containerRef}
-                className="flex-1 overflow-y-auto relative scroll-smooth"
+                className="flex-1 overflow-y-auto relative scroll-smooth scrollbar-hide"
+                style={{ scrollbarWidth: "none" }}
             >
                 {days.map((day) => {
                     // その日のTodoをフィルタリングし、スケジュール情報を計算

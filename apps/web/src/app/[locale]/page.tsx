@@ -283,7 +283,7 @@ export default function Home() {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800">
         <LoadingSpinner size={40} />
         <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Loading StudyTodo...</p>
       </div>
@@ -380,7 +380,7 @@ export default function Home() {
           </div>
 
           {/* Right: Calendar & Analysis (40%) */}
-          <div className="w-[40%] h-full bg-white dark:bg-gray-900 flex flex-col">
+          <div className="w-[40%] h-full bg-white dark:bg-gray-800 flex flex-col">
             <div className="flex-1 overflow-hidden relative">
               <CalendarPane
                 selectedDate={selectedDate}

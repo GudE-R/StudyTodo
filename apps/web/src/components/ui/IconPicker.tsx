@@ -54,7 +54,7 @@ export function IconPicker({ value, onChange, isOpen, onClose }: IconPickerProps
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="w-full max-w-sm mx-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="w-full max-w-sm mx-4 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">アイコンを選択</h3>
