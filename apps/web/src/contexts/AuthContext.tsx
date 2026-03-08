@@ -99,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const resetPassword = async (email: string) => {
         return await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${getBaseUrl()}/auth` || undefined,
+            redirectTo: `${getBaseUrl()}/auth`,
         });
     };
 
