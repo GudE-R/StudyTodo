@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Alert } from 'react-native';
-import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Todo, Category, generateId } from '@studytodo/shared';
 import { useMobileTodos } from './useMobileTodos';
@@ -166,11 +165,10 @@ export function useTodoCreateForm({
             return;
         }
         const { title, notes } = parseContent();
-        const now = new Date();
         const todoData: Omit<Todo, 'id' | 'createdAt' | 'completed'> = {
             title: title || t('todo.noTitle', 'Untitled'),
-            dueDate: now,
-            dueTime: format(now, 'HH:mm'),
+            dueDate: dueDate ?? undefined,
+            dueTime: dueTime || undefined,
             categoryId: categoryId || undefined,
             srsProfileId: srsProfileId || undefined,
             memo: notes,

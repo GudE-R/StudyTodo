@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { X, Tag, Repeat, Play, CheckCircle, Plus, PlayCircle, StopCircle, Hourglass, Calendar } from "lucide-react";
-import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { Todo, Category, SRSProfile } from "@studytodo/shared";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -155,11 +154,10 @@ export function TodoCreateModal({
             return;
         }
         const { title: parsedTitle, notes } = parseContent();
-        const now = new Date();
         onStartNow({
             title: parsedTitle || t("noTitle"),
-            dueDate: now,
-            dueTime: format(now, "HH:mm"),
+            dueDate: dueDate ?? undefined,
+            dueTime: dueTime || undefined,
             categoryId: categoryId || undefined,
             srsInterval,
             memo: notes,
