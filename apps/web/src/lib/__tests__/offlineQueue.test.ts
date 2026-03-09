@@ -68,6 +68,7 @@ describe('offlineQueue', () => {
     // Mock Mapper
     const mockMapper = {
         toSupabase: vi.fn((data) => data),
+        fromSupabase: vi.fn((data) => data),
     };
 
     beforeEach(() => {

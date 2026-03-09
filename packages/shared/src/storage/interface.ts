@@ -1,4 +1,4 @@
-import { Todo, Category, SRSProfile, Session } from "../types";
+import { Todo, Category, SRSProfile, Session, Feedback } from "../types";
 
 export interface StorageInterface {
     // Todos
@@ -39,11 +39,11 @@ export interface StorageInterface {
     /** 学習セッションの履歴を取得します */
     getSessions(): Promise<Session[]>;
     /** データ変更時のコールバックを登録します (リアルタイム同期用) - 解除関数を返す */
-    onDataChange?(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) => void): () => void;
+    onDataChange?(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: Todo | Category | SRSProfile | Session | Feedback | { id: string } | Todo[]) => void): () => void;
 
     // Feedback
     /** フィードバックを保存します */
-    addFeedback(feedback: any): Promise<void>;
+    addFeedback(feedback: Feedback): Promise<void>;
 
     // Maintenance
     /** 全データを削除します（ログアウト時用） */

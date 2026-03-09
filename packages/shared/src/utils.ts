@@ -39,3 +39,28 @@ export const buildCategoryTree = (categories: Category[]) => {
 
     return roots;
 };
+
+export const getDescendantIds = (categoryId: string, categories: Category[]): Set<string> => {
+    const descendants = new Set<string>();
+    descendants.add(categoryId);
+
+    const findChildren = (parentId: string) => {
+        const children = categories.filter(c => c.parentId === parentId);
+        children.forEach(child => {
+            descendants.add(child.id);
+            findChildren(child.id);
+        });
+    };
+
+    findChildren(categoryId);
+    return descendants;
+};
+
+export const isCategoryMatch = (targetCategoryId: string | undefined, filterCategoryId: string, categories: Category[]): boolean => {
+    if (filterCategoryId === 'all') return true;
+    if (!targetCategoryId) return false;
+    if (targetCategoryId === filterCategoryId) return true;
+
+    const descendantIds = getDescendantIds(filterCategoryId, categories);
+    return descendantIds.has(targetCategoryId);
+};

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User, Session, Provider } from "@supabase/supabase-js";
+import { User, Session, Provider, AuthError } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
 interface AuthContextType {
@@ -9,12 +9,12 @@ interface AuthContextType {
     session: Session | null;
     loading: boolean;
     isRecovery: boolean;
-    signIn: (email: string, password: string) => Promise<{ error: any }>;
-    signUp: (email: string, password: string) => Promise<{ error: any }>;
-    signInWithProvider: (provider: Provider) => Promise<{ error: any }>;
-    signOut: () => Promise<{ error: any }>;
-    resetPassword: (email: string) => Promise<{ error: any }>;
-    updatePassword: (password: string) => Promise<{ error: any }>;
+    signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+    signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+    signInWithProvider: (provider: Provider) => Promise<{ error: AuthError | null }>;
+    signOut: () => Promise<{ error: AuthError | null }>;
+    resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+    updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
     clearRecovery: () => void;
 }
 

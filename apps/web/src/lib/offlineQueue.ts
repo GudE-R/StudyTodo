@@ -4,7 +4,8 @@
  */
 
 import Dexie, { Table } from 'dexie';
-import { SyncQueueItem, SyncQueueInterface, allowedFieldsMap, supabaseTableMap } from '@studytodo/shared';
+import { SyncQueueItem, SyncQueueInterface, allowedFieldsMap, supabaseTableMap, Mapper } from '@studytodo/shared';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { generateId } from '@/lib/utils';
 
 class OfflineQueueDB extends Dexie {
@@ -72,8 +73,8 @@ export function initNetworkListener(processQueue: () => Promise<void>) {
  */
 export async function processOfflineQueue(
     userId: string,
-    supabase: any,
-    mapper: any
+    supabase: SupabaseClient,
+    mapper: Mapper
 ): Promise<void> {
     // 認証状態を確認
     const { data: { session }, error: authError } = await supabase.auth.getSession();

@@ -1,22 +1,24 @@
-import { StorageInterface, Todo, Category, SRSProfile, Session, generateId } from "@studytodo/shared";
+import { StorageInterface, Todo, Category, SRSProfile, Session, Feedback, generateId } from "@studytodo/shared";
 import * as SQLite from 'expo-sqlite';
 
 /**
  * モバイル(Expo)用のSQLiteリポジトリ実装。
  * StorageInterfaceを実装し、Web版(Dexie)と同様の操作を提供します。
  */
+type ChangeData = Todo | Category | SRSProfile | Session | Feedback | { id: string } | Todo[];
+type ChangeListener = (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: ChangeData) => void;
+
 export class SQLiteRepository implements StorageInterface {
     private db: SQLite.SQLiteDatabase;
-    private onChangeListeners: ((table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) => void)[] = [];
+    private onChangeListeners: ChangeListener[] = [];
 
     constructor() {
         this.db = SQLite.openDatabaseSync('studytodo.db');
         this.init();
     }
 
-    onDataChange(callback: (table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) => void): () => void {
+    onDataChange(callback: ChangeListener): () => void {
         this.onChangeListeners.push(callback);
-        // Return unsubscribe function
         return () => {
             const index = this.onChangeListeners.indexOf(callback);
             if (index > -1) {
@@ -25,7 +27,7 @@ export class SQLiteRepository implements StorageInterface {
         };
     }
 
-    private notifyChange(table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: any | any[]) {
+    private notifyChange(table: string, type: 'INSERT' | 'UPDATE' | 'DELETE', data: ChangeData) {
         this.onChangeListeners.forEach(listener => listener(table, type, data));
     }
 
@@ -136,7 +138,8 @@ export class SQLiteRepository implements StorageInterface {
     }
 
     // Helper to serialize/deserialize
-    private toDB(obj: any): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private toDB(obj: Record<string, any>): Record<string, any> {
         const row = { ...obj };
         if (typeof row.completed === 'boolean') row.completed = row.completed ? 1 : 0;
         if (typeof row.isDefault === 'boolean') row.isDefault = row.isDefault ? 1 : 0;
@@ -160,7 +163,8 @@ export class SQLiteRepository implements StorageInterface {
         return row;
     }
 
-    private fromDB(row: any): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private fromDB(row: Record<string, any> | null): any {
         if (!row) return undefined;
         const obj = { ...row };
         obj.completed = !!obj.completed;
@@ -248,7 +252,7 @@ export class SQLiteRepository implements StorageInterface {
         if (todo && todo.srsGroupId && todo.srsGroupId === id) {
             // This is the Root SRS Todo -> Cascade Delete Children
             const children = await this.db.getAllAsync('SELECT id FROM todos WHERE srsGroupId = ?', [id]);
-            children.forEach((c: any) => {
+            children.forEach((c: { id: string }) => {
                 if (c.id !== id) idsToDelete.push(c.id);
             });
         }
@@ -276,7 +280,7 @@ export class SQLiteRepository implements StorageInterface {
         await this.db.runAsync('DELETE FROM todos WHERE srsGroupId = ?', [groupId]);
 
         // Notify deletions
-        todosToDelete.forEach((t: any) => {
+        todosToDelete.forEach((t: { id: string }) => {
             this.notifyChange('todos', 'DELETE', { id: t.id });
         });
     }
@@ -396,7 +400,7 @@ export class SQLiteRepository implements StorageInterface {
         await this.db.runAsync('DELETE FROM feedbacks');
     }
 
-    async addFeedback(feedback: any): Promise<void> {
+    async addFeedback(feedback: Feedback): Promise<void> {
         const row = this.toDB(feedback);
         await this.db.runAsync(
             `INSERT INTO feedbacks (id, userId, content, type, deviceInfo, version, createdAt)

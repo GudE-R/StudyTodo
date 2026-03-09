@@ -68,8 +68,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 setMessage({ text: t("passwordUpdated"), type: "success" });
                 clearRecovery();
                 setTimeout(() => { setMode("login"); setMessage(null); }, 2000);
-            } catch (error: any) {
-                setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+            } catch (error: unknown) {
+                setMessage({ text: error instanceof Error ? error.message : t("errorOccurred"), type: "error" });
             } finally {
                 setLoading(false);
             }
@@ -88,8 +88,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 const { error } = await resetPassword(email);
                 if (error) throw error;
                 setMessage({ text: t("resetEmailSent"), type: "success" });
-            } catch (error: any) {
-                setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+            } catch (error: unknown) {
+                setMessage({ text: error instanceof Error ? error.message : t("errorOccurred"), type: "error" });
             } finally {
                 setLoading(false);
             }
@@ -128,8 +128,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 if (error) throw error;
                 setMessage({ text: t("checkEmail"), type: "success" });
             }
-        } catch (error: any) {
-            setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+        } catch (error: unknown) {
+            setMessage({ text: error instanceof Error ? error.message : t("errorOccurred"), type: "error" });
         } finally {
             setLoading(false);
         }
@@ -141,8 +141,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         try {
             const { error } = await signInWithProvider(provider);
             if (error) throw error;
-        } catch (error: any) {
-            setMessage({ text: error.message || t("errorOccurred"), type: "error" });
+        } catch (error: unknown) {
+            setMessage({ text: error instanceof Error ? error.message : t("errorOccurred"), type: "error" });
             setLoading(false);
         }
     };

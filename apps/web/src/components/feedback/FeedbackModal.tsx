@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Send, MessageSquare, AlertCircle, Lightbulb, HelpCircle } from "lucide-react";
+import { X, Send, MessageSquare, AlertCircle, Lightbulb, HelpCircle, LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Feedback } from "@studytodo/shared";
 import { generateId } from "@/lib/utils";
@@ -52,7 +52,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
         }
     };
 
-    const types: { id: Feedback["type"]; label: string; icon: any; color: string }[] = [
+    const types: { id: Feedback["type"]; label: string; icon: LucideIcon; color: string }[] = [
         { id: "request", label: t("typeRequest"), icon: Lightbulb, color: "text-yellow-500" },
         { id: "bug", label: t("typeBug"), icon: AlertCircle, color: "text-red-500" },
         { id: "other", label: t("typeOther"), icon: HelpCircle, color: "text-blue-500" },

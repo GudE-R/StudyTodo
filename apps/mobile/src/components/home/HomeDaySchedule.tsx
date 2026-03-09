@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useMemo, useCallback, memo } from 'react';
 import { View, Text, StyleSheet, FlatList, ViewToken, TouchableOpacity } from 'react-native';
-import { addDays, format, startOfDay, isSameDay } from 'date-fns';
-import { useThemeColors } from '../../providers/ThemeProvider';
+import { addDays, format, startOfDay, isSameDay, Locale } from 'date-fns';
+import { useThemeColors, Colors } from '../../providers/ThemeProvider';
 import { getDateFnsLocale } from '../../lib/date-fns-locales';
 import { useTranslation } from 'react-i18next';
 import { Todo, Category } from '@studytodo/shared';
@@ -31,10 +31,12 @@ interface HomeDayScheduleProps {
     onTimeLongPress?: (date: Date, time: string) => void;
 }
 
+type ThemeColors = typeof Colors.light;
+
 interface DayItemProps {
     date: Date;
-    colors: any;
-    locale: any;
+    colors: ThemeColors;
+    locale: Locale;
     dateFormat: string;
     keptDate: Date | null;
     keptTime: string | null;
@@ -54,7 +56,7 @@ const TimeSlot = memo(({
 }: {
     slotIndex: number;
     isKept: boolean;
-    colors: any;
+    colors: ThemeColors;
     onLongPress?: () => void;
 }) => {
     const timeStr = slotIndexToTimeStr(slotIndex);
@@ -281,7 +283,7 @@ export const HomeDaySchedule = ({
     }).current;
 
     // getItemLayout for optimized scrolling
-    const getItemLayout = useCallback((_: any, index: number) => ({
+    const getItemLayout = useCallback((_: unknown, index: number) => ({
         length: ITEM_HEIGHT,
         offset: ITEM_HEIGHT * index,
         index,
