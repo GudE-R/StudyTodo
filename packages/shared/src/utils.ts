@@ -31,6 +31,9 @@ export const buildCategoryTree = (categories: Category[]) => {
             const parent = map.get(cat.parentId);
             if (parent) {
                 parent.children?.push(cat);
+            } else {
+                // Orphan: parent not found, treat as root
+                roots.push(cat);
             }
         } else {
             roots.push(cat);
