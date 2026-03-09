@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { offlineQueue, processOfflineQueue } from '../offlineQueue';
+import { offlineQueue, processOfflineQueue, isOnline } from '../offlineQueue';
 import { supabase } from '../supabase';
 
 // Mock DB
@@ -155,6 +155,54 @@ describe('offlineQueue', () => {
             expect(spyRemove).not.toHaveBeenCalled();
             // Should update retry count
             expect(spyIncrement).toHaveBeenCalledWith(2);
+        });
+
+        it('should process DELETE operations correctly', async () => {
+            const pendingItems = [
+                { id: 3, table: 'todos', operation: 'DELETE', data: { id: 't-del-1' }, status: 'pending', retryCount: 0 }
+            ];
+            vi.spyOn(offlineQueue, 'getAll').mockResolvedValueOnce(pendingItems as any);
+            const spyRemove = vi.spyOn(offlineQueue, 'remove').mockResolvedValue(undefined);
+
+            const mockEq = vi.fn(() => Promise.resolve({ error: null }));
+            const mockDelete = vi.fn(() => ({ eq: mockEq }));
+            (supabase.from as any).mockReturnValue({ delete: mockDelete });
+
+            await processOfflineQueue('user1', supabase, mockMapper);
+
+            expect(supabase.from).toHaveBeenCalledWith('todos');
+            expect(mockDelete).toHaveBeenCalled();
+            expect(mockEq).toHaveBeenCalledWith('id', 't-del-1');
+            expect(spyRemove).toHaveBeenCalledWith(3);
+        });
+
+        it('should remove item after max retries (3) exceeded', async () => {
+            const pendingItems = [
+                { id: 4, table: 'todos', operation: 'INSERT', data: { id: 't-retry' }, status: 'pending', retryCount: 3 }
+            ];
+            vi.spyOn(offlineQueue, 'getAll').mockResolvedValueOnce(pendingItems as any);
+            const spyIncrement = vi.spyOn(offlineQueue, 'incrementRetry').mockResolvedValue(undefined);
+            const spyRemove = vi.spyOn(offlineQueue, 'remove').mockResolvedValue(undefined);
+
+            const mockUpsert = vi.fn().mockResolvedValue({ error: { message: "Persistent failure" } });
+            (supabase.from as any).mockReturnValue({ upsert: mockUpsert });
+
+            await processOfflineQueue('user1', supabase, mockMapper);
+
+            expect(spyIncrement).toHaveBeenCalledWith(4);
+            expect(spyRemove).toHaveBeenCalledWith(4);
+        });
+    });
+
+    describe('isOnline', () => {
+        it('navigator.onLine が true のとき true を返すこと', () => {
+            Object.defineProperty(navigator, 'onLine', { writable: true, value: true });
+            expect(isOnline()).toBe(true);
+        });
+
+        it('navigator.onLine が false のとき false を返すこと', () => {
+            Object.defineProperty(navigator, 'onLine', { writable: true, value: false });
+            expect(isOnline()).toBe(false);
         });
     });
 });
