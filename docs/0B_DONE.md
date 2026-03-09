@@ -3,6 +3,10 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- テストカバレッジ追加: useKeepState(7件)、useModalState(7件)、offlineQueue(3件追加)
+- コードリファクタリング: ActivityModal分割(882→105行+3タブ)、page.tsx責務分割(469→207行、3カスタムhooks抽出)
+- 型安全性向上: `any`型の排除(AuthContext, offlineQueue, FeedbackModal, SQLiteRepository等)
+- コード重複排除: shared packageにカテゴリユーティリティを共通化
 - Web版ドメインを `studytodo.vercel.app` に変更
 - App Store提出用のリリースノート、キーワード、サポート情報の整備
 - App Store Connect APIキーとApp IDの登録手順のドキュメント化

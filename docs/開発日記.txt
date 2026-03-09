@@ -1660,3 +1660,20 @@ Mobile側でルーティンTodo(複数日分)を作成した際、ローカル�
 2. `SQLiteRepository.addSRSTodos` の変更通知で配列全体を渡すように修正
 3. `useMobileRealtimeSync` 側で、配列で受け取ったデータを1回のネットワークリクエストでSupabaseへ一括Upsertするように修正（オフライン時のキュー登録も配列全件に対して行うように対応）
 4. （追加確認で発見した不具合対応）`useMobileSync.ts` にて、ログイン時にクラウドにデータが存在する場合にSQLiteのデフォルトデータをPushしようとしてSupabaseのRLS違反(USING expression)が発生する問題に対応。Web版と同様に事前にローカル初期データを削除するように修正。あわせて `useMobileRealtimeSync.ts` 内の `srs_profiles` テーブル名の監視typoを修正。
+
+## 03/09 コード品質改善・リファクタリング・テストカバレッジ追加
+
+**UI修正:**
+- Todo作成モーダル: 記録ボタンをトグルパターンに変更（モバイル準拠）
+- 開始/終了時間レイアウトを縦並びに変更
+- 「今すぐ開始」でスケジュールにTodoが表示される不具合修正
+- アクティビティの時間表示の小数点除去
+- スケジュールのスクロールバー非表示
+- ダークモードカラーをグレーに統一
+- SNS共有画像生成失敗の修正（フォント読み込み待機+リトライ機構）
+
+**型安全性向上:** `any`型を具体型に置換（AuthContext, offlineQueue, FeedbackModal等）
+**コード重複排除:** カテゴリユーティリティをshared packageに共通化
+**page.tsx責務分割 (469→207行):** useModalState, useTodoHandlers, useKeepState の3hooks抽出
+**ActivityModal分割 (882→105行):** AnalyticsTab, HistoryTab, ShareTab の3コンポーネントに分割
+**テストカバレッジ追加:** useKeepState(7件), useModalState(7件), offlineQueue(3件追加), shared/utils(10件)
