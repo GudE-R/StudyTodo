@@ -3,6 +3,7 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- GitHub ActionsでのCI/CDテスト実行と通過確認 (2026-03-10)
 - テストカバレッジ追加: useKeepState(7件)、useModalState(7件)、offlineQueue(3件追加)
 - コードリファクタリング: ActivityModal分割(882→105行+3タブ)、page.tsx責務分割(469→207行、3カスタムhooks抽出)
 - 型安全性向上: `any`型の排除(AuthContext, offlineQueue, FeedbackModal, SQLiteRepository等)
