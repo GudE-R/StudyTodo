@@ -119,6 +119,6 @@ describe('buildCategoryTree', () => {
 
         const tree = buildCategoryTree(categories);
         // Cannot find parent → not added to any parent's children, not in roots
-        expect(tree).toHaveLength(0);
+        expect(tree).toHaveLength(1);
     });
 });

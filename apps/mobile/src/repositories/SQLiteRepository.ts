@@ -164,7 +164,7 @@ export class SQLiteRepository implements StorageInterface {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private fromDB(row: Record<string, any> | null): any {
+    private fromDB(row: any): any {
         if (!row) return undefined;
         const obj = { ...row };
         obj.completed = !!obj.completed;
@@ -252,7 +252,7 @@ export class SQLiteRepository implements StorageInterface {
         if (todo && todo.srsGroupId && todo.srsGroupId === id) {
             // This is the Root SRS Todo -> Cascade Delete Children
             const children = await this.db.getAllAsync('SELECT id FROM todos WHERE srsGroupId = ?', [id]);
-            children.forEach((c: { id: string }) => {
+            children.forEach((c: any) => {
                 if (c.id !== id) idsToDelete.push(c.id);
             });
         }
@@ -280,7 +280,7 @@ export class SQLiteRepository implements StorageInterface {
         await this.db.runAsync('DELETE FROM todos WHERE srsGroupId = ?', [groupId]);
 
         // Notify deletions
-        todosToDelete.forEach((t: { id: string }) => {
+        todosToDelete.forEach((t: any) => {
             this.notifyChange('todos', 'DELETE', { id: t.id });
         });
     }
