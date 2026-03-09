@@ -12,6 +12,9 @@ pnpm-debug.log*
 .vercel
 .env*.local
 
+# Test coverage
+coverage/
+
 # Temporary / generated files
 build_error.txt
 *.transfer.zip
