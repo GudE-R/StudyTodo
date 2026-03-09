@@ -29,7 +29,7 @@
     "expo-sharing": "~14.0.8",
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
-    "i18next": "^25.7.4",
+    "i18next": "^25.8.15",
     "intl-pluralrules": "^2.0.1",
     "lucide-react-native": "^0.561.0",
     "react": "19.1.0",
