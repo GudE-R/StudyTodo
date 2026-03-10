@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, Linking } from 'react-native';
 import { ModalOverlay } from '../ui/ModalOverlay';
-import { X, Mail, Lock, LogIn, UserPlus } from 'lucide-react-native';
+import { X, Mail, Lock, LogIn, UserPlus, Check } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +21,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [agreeToTerms, setAgreeToTerms] = useState(false);
 
     const isLoginMode = mode === "login";
     const isResetMode = mode === "reset";
@@ -68,6 +69,11 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                 Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.passwordMismatch', 'Passwords do not match'));
                 return;
             }
+        }
+
+        if (!isResetMode && !agreeToTerms) {
+            Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.mustAgreeTerms', 'Please agree to the Terms and Privacy Policy'));
+            return;
         }
 
         setLoading(true);
@@ -144,28 +150,28 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
 
                         {/* Password Input */}
                         {!isResetMode && (
-                        <View style={styles.inputContainer}>
-                            <Text style={[styles.label, { color: colors.text }]}>{t('auth.password', 'Password')}</Text>
-                            <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}>
-                                <Lock size={20} color={colors.textSecondary} style={styles.inputIcon} />
-                                <TextInput
-                                    style={[styles.input, { color: colors.text }]}
-                                    placeholder="••••••••"
-                                    placeholderTextColor={colors.textSecondary}
-                                    value={password}
-                                    onChangeText={setPassword}
-                                    secureTextEntry
-                                />
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.label, { color: colors.text }]}>{t('auth.password', 'Password')}</Text>
+                                <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}>
+                                    <Lock size={20} color={colors.textSecondary} style={styles.inputIcon} />
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text }]}
+                                        placeholder="••••••••"
+                                        placeholderTextColor={colors.textSecondary}
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry
+                                    />
+                                </View>
+                                {!isLoginMode && (
+                                    <Text style={[styles.hint, { color: colors.textSecondary }]}>{t('auth.passwordHint', 'At least 8 characters with letters and numbers')}</Text>
+                                )}
+                                {isLoginMode && (
+                                    <TouchableOpacity onPress={() => setMode("reset")} style={styles.forgotBtn}>
+                                        <Text style={styles.forgotText}>{t('auth.forgotPassword', 'Forgot password?')}</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
-                            {!isLoginMode && (
-                                <Text style={[styles.hint, { color: colors.textSecondary }]}>{t('auth.passwordHint', 'At least 8 characters with letters and numbers')}</Text>
-                            )}
-                            {isLoginMode && (
-                                <TouchableOpacity onPress={() => setMode("reset")} style={styles.forgotBtn}>
-                                    <Text style={styles.forgotText}>{t('auth.forgotPassword', 'Forgot password?')}</Text>
-                                </TouchableOpacity>
-                            )}
-                        </View>
                         )}
 
                         {/* Confirm Password Input - Only for Sign Up */}
@@ -182,6 +188,36 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                                         onChangeText={setConfirmPassword}
                                         secureTextEntry
                                     />
+                                </View>
+                            </View>
+                        )}
+
+                        {/* Terms and Privacy Policy Consent */}
+                        {!isResetMode && (
+                            <View style={styles.termsContainer}>
+                                <TouchableOpacity
+                                    style={[styles.checkbox, agreeToTerms && styles.checkboxChecked]}
+                                    onPress={() => setAgreeToTerms(!agreeToTerms)}
+                                >
+                                    {agreeToTerms && <Check size={14} color="#fff" />}
+                                </TouchableOpacity>
+                                <View style={styles.termsTextContainer}>
+                                    <Text style={[styles.termsText, { color: colors.textSecondary }]}>
+                                        <Text
+                                            style={[styles.linkText, { color: colors.primary }]}
+                                            onPress={() => Linking.openURL('https://studytodo.com/ja/terms')}
+                                        >
+                                            {t('common.termsOfService', 'Terms of Service')}
+                                        </Text>
+                                        <Text> と </Text>
+                                        <Text
+                                            style={[styles.linkText, { color: colors.primary }]}
+                                            onPress={() => Linking.openURL('https://studytodo.com/ja/privacy')}
+                                        >
+                                            {t('common.privacyPolicy', 'Privacy Policy')}
+                                        </Text>
+                                        <Text> に同意します。</Text>
+                                    </Text>
                                 </View>
                             </View>
                         )}
@@ -335,5 +371,35 @@ const styles = StyleSheet.create({
     toggleText: {
         color: '#64748b',
         fontSize: 14,
+    },
+    termsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15,
+        marginLeft: 4,
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#2563eb',
+        marginRight: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkboxChecked: {
+        backgroundColor: '#2563eb',
+    },
+    termsTextContainer: {
+        flex: 1,
+    },
+    termsText: {
+        fontSize: 12,
+        lineHeight: 18,
+    },
+    linkText: {
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
     },
 });
