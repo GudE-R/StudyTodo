@@ -3,6 +3,8 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- アカウント削除機能の不具合修正: 外部キー制約に ON DELETE CASCADE を追加し、データが存在するユーザーでも削除可能に (2026-03-10)
+- モバイル版: 利用規約とプライバシーポリシーを外部ブラウザではなく、ネイティブUI（TermsModal/PrivacyPolicyModal）で表示するように変更 (2026-03-10)
 - GitHub ActionsでのCI/CDテスト実行と通過確認 (2026-03-10)
 - テストカバレッジ追加: useKeepState(7件)、useModalState(7件)、offlineQueue(3件追加)
 - コードリファクタリング: ActivityModal分割(882→105行+3タブ)、page.tsx責務分割(469→207行、3カスタムhooks抽出)
