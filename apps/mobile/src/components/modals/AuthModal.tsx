@@ -5,7 +5,8 @@ import { X, Mail, Lock, LogIn, UserPlus, Check } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useTranslation } from 'react-i18next';
-import * as WebBrowser from 'expo-web-browser';
+import { TermsModal } from './TermsModal';
+import { PrivacyPolicyModal } from './PrivacyPolicyModal';
 
 interface AuthModalProps {
     visible: boolean;
@@ -23,6 +24,8 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [agreeToTerms, setAgreeToTerms] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
+    const [showPrivacy, setShowPrivacy] = useState(false);
 
     const isLoginMode = mode === "login";
     const isResetMode = mode === "reset";
@@ -206,14 +209,14 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                                     <Text style={[styles.termsText, { color: colors.textSecondary }]}>
                                         <Text
                                             style={[styles.linkText, { color: colors.primary }]}
-                                            onPress={() => WebBrowser.openBrowserAsync('https://studytodo.com/ja/terms')}
+                                            onPress={() => setShowTerms(true)}
                                         >
                                             {t('common.termsOfService', 'Terms of Service')}
                                         </Text>
                                         <Text> と </Text>
                                         <Text
                                             style={[styles.linkText, { color: colors.primary }]}
-                                            onPress={() => WebBrowser.openBrowserAsync('https://studytodo.com/ja/privacy')}
+                                            onPress={() => setShowPrivacy(true)}
                                         >
                                             {t('common.privacyPolicy', 'Privacy Policy')}
                                         </Text>
@@ -263,6 +266,15 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                     </View>
                 </View>
             </View>
+
+            <TermsModal
+                visible={showTerms}
+                onClose={() => setShowTerms(false)}
+            />
+            <PrivacyPolicyModal
+                visible={showPrivacy}
+                onClose={() => setShowPrivacy(false)}
+            />
         </ModalOverlay>
     );
 };
