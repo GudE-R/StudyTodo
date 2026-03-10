@@ -15,6 +15,7 @@ interface AuthContextType {
     signOut: () => Promise<{ error: AuthError | null }>;
     resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
     updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
+    deleteAccount: () => Promise<{ error: AuthError | null }>;
     clearRecovery: () => void;
 }
 
@@ -29,6 +30,7 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => ({ error: null }),
     resetPassword: async () => ({ error: null }),
     updatePassword: async () => ({ error: null }),
+    deleteAccount: async () => ({ error: null }),
     clearRecovery: () => { },
 });
 
@@ -107,12 +109,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return await supabase.auth.updateUser({ password });
     };
 
+    const deleteAccount = async () => {
+        try {
+            const { error: rpcError } = await supabase.rpc('delete_user');
+            if (rpcError) return { error: rpcError as unknown as AuthError };
+
+            // Sign out after successful deletion
+            return await supabase.auth.signOut();
+        } catch (error: any) {
+            console.error('[AuthContext] Delete account failed:', error);
+            return { error: error as AuthError };
+        }
+    };
+
     const clearRecovery = () => {
         setIsRecovery(false);
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, isRecovery, signIn, signUp, signInWithProvider, signOut, resetPassword, updatePassword, clearRecovery }}>
+        <AuthContext.Provider value={{ user, session, loading, isRecovery, signIn, signUp, signInWithProvider, signOut, resetPassword, updatePassword, deleteAccount, clearRecovery }}>
             {children}
         </AuthContext.Provider>
     );

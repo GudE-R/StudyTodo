@@ -1678,3 +1678,4 @@ Mobile側でルーティンTodo(複数日分)を作成した際、ローカル�
 **ActivityModal分割 (882→105行):** AnalyticsTab, HistoryTab, ShareTab の3コンポーネントに分割
 **テストカバレッジ追加:** useKeepState(7件), useModalState(7件), offlineQueue(3件追加), shared/utils(10件)
 \n## 2026-03-10 CI/CD実行とテスト通過確認\n\nGitHub Actions上のCI/CDテストを実行し、テストが全て成功することを無事に確認した。\n
+\n[2026-03-10] App Store審査指摘対応: アカウント削除機能の実装\n- ガイドライン 5.1.1(v) 対応として、退会（アカウント削除）機能を実装。\n- SupabaseのRPC機能(`delete_user`)を利用し、`DELETE FROM auth.users WHERE id = auth.uid();` により安全にユーザーを削除。\n- Web版およびMobile版の設定画面（SettingsModal）に赤い「アカウント削除」ボタンと確認ダイアログを追加。\n- 関連する日・英ローカライズを追加対応。

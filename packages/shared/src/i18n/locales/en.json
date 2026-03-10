@@ -195,7 +195,15 @@
         "notification": "Notification",
         "dailyReminder": "Daily Reminder",
         "reminderTime": "Daily at",
-        "permissionRequired": "Notification permission is required for reminders."
+        "permissionRequired": "Notification permission is required for reminders.",
+        "deleteAccount": "Delete Account",
+        "deleteAccountDescription": "Permanently delete all data",
+        "dangerZone": "Danger Zone",
+        "deleteAccountConfirmTitle": "Delete Account",
+        "deleteAccountConfirmMessage": "Are you sure you want to delete your account? All your data will be permanently deleted and cannot be recovered.",
+        "deleteAccountConfirm": "Are you sure you want to delete your account? All your data will be permanently deleted and cannot be recovered.",
+        "deleteAccountError": "Failed to delete account. Please try again or contact support.",
+        "deleteAccountSuccess": "Your account has been successfully deleted."
     },
     "notification": {
         "dailyReminderTitle": "Time to learn!",

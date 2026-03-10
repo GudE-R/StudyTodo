@@ -11,6 +11,7 @@ type AuthContextType = {
     signOut: () => Promise<{ error: any }>;
     resetPassword: (email: string) => Promise<{ error: any }>;
     updatePassword: (password: string) => Promise<{ error: any }>;
+    deleteAccount: () => Promise<{ error: any }>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => ({ error: null }),
     resetPassword: async () => ({ error: null }),
     updatePassword: async () => ({ error: null }),
+    deleteAccount: async () => ({ error: null }),
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -80,8 +82,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return await supabase.auth.updateUser({ password });
     };
 
+    const deleteAccount = async () => {
+        try {
+            const { error: rpcError } = await supabase.rpc('delete_user');
+            if (rpcError) throw rpcError;
+
+            // Sign out after successful deletion
+            return await supabase.auth.signOut();
+        } catch (error: any) {
+            console.error('[AuthProvider] Delete account failed:', error);
+            return { error };
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword }}>
+        <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, resetPassword, updatePassword, deleteAccount }}>
             {children}
         </AuthContext.Provider>
     );

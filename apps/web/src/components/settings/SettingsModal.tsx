@@ -20,7 +20,7 @@ interface SettingsModalProps {
  * テーマ設定と使用ガイドへのアクセスを提供します。
  */
 export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProps) {
-    const { user, signOut } = useAuth();
+    const { user, signOut, deleteAccount } = useAuth();
     const { lastSyncTime } = useSync(); // Removed sync and isSyncing as they are no longer used for a "Sync Now" button
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
@@ -34,6 +34,18 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
         await signOut();
         setUserEmail(null);
         alert(t("logoutConfirm"));
+    };
+
+    const handleDeleteAccount = async () => {
+        if (window.confirm(t("deleteAccountConfirm"))) {
+            const { error } = await deleteAccount();
+            if (error) {
+                alert(t("deleteAccountError"));
+            } else {
+                alert(t("deleteAccountSuccess"));
+                setUserEmail(null);
+            }
+        }
     };
 
     if (!isOpen) return null;
@@ -172,6 +184,28 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
                             </button>
                         </div>
                     </div>
+
+                    {/* アカウント削除セクション (ログイン時のみ) */}
+                    {userEmail && (
+                        <div className="space-y-3 pt-4 border-t border-red-100 dark:border-red-900/30">
+                            <div className="flex items-center space-x-2 text-red-600 dark:text-red-400 font-bold border-b border-red-100 dark:border-red-900/30 pb-2">
+                                <LogOut size={20} />
+                                <h3>{t("dangerZone")}</h3>
+                            </div>
+                            <div className="space-y-2">
+                                <button
+                                    onClick={handleDeleteAccount}
+                                    className="w-full flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 rounded-xl border border-red-200 dark:border-red-800 transition-colors group"
+                                >
+                                    <div className="flex flex-col items-start">
+                                        <span className="text-sm font-bold text-red-600 dark:text-red-400">{t("deleteAccount")}</span>
+                                        <span className="text-xs text-red-500/70 dark:text-red-400/70">{t("deleteAccountDescription")}</span>
+                                    </div>
+                                    <X size={18} className="text-red-400 group-hover:text-red-600 transition-colors" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Version Info (Optional) */}
                     <div className="text-center text-xs text-gray-400 pt-4">

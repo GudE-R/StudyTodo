@@ -197,7 +197,15 @@
         "notification": "通知",
         "dailyReminder": "学習リマインダー",
         "reminderTime": "通知時間",
-        "permissionRequired": "リマインダーを使用するには通知権限が必要です。"
+        "permissionRequired": "リマインダーを使用するには通知権限が必要です。",
+        "deleteAccount": "アカウント削除",
+        "deleteAccountDescription": "すべてのデータを完全に削除",
+        "dangerZone": "Danger Zone",
+        "deleteAccountConfirmTitle": "アカウント削除",
+        "deleteAccountConfirmMessage": "本当にアカウントを削除しますか？すべてのデータが完全に削除され、復元できなくなります。",
+        "deleteAccountConfirm": "本当にアカウントを削除しますか？すべてのデータが完全に削除され、復元できなくなります。",
+        "deleteAccountError": "アカウントの削除に失敗しました。もう一度お試しいただくか、サポートにお問い合わせください。",
+        "deleteAccountSuccess": "アカウントが正常に削除されました。"
     },
     "notification": {
         "dailyReminderTitle": "学習の時間です！",

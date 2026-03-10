@@ -5,7 +5,7 @@ import React from 'react';
 // TouchableOpacity: タップ可能なボタン（押すと少し透明になる）
 // Modal: 画面最前面に表示されるウィンドウ
 // StyleSheet: スタイル定義用
-import { View, Text, TouchableOpacity, StyleSheet, Switch, ActivityIndicator, ScrollView, FlatList, Image, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Switch, ActivityIndicator, ScrollView, FlatList, Image, Platform, Alert } from 'react-native';
 import { ModalOverlay } from '../ui/ModalOverlay';
 
 // アイコンライブラリからのインポート
@@ -41,8 +41,8 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // テーマ設定を取得（現在の色, ダークモード状態, モード設定関数）
     const { colors, isDark, themeMode, setThemeMode } = useTheme();
 
-    // 認証情報を取得（ユーザー情報, ログアウト関数）
-    const { user, signOut } = useAuth();
+    // 認証情報を取得（ユーザー情報, ログアウト関数, アカウント削除関数）
+    const { user, signOut, deleteAccount } = useAuth();
 
     // データ同期の状態と関数を取得
     const { isSyncing, lastSyncTime, sync } = useMobileSync();
@@ -206,6 +206,36 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                         >
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>{t('settings.logout', 'Log Out')}</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* 退会（アカウント削除）ボタン */}
+                        <TouchableOpacity
+                            style={[styles.actionBtn, { borderColor: '#dc2626', marginTop: 10 }]}
+                            onPress={() => {
+                                Alert.alert(
+                                    t('settings.deleteAccountConfirmTitle', 'Delete Account'),
+                                    t('settings.deleteAccountConfirmMessage', 'Are you sure you want to delete your account? All your data will be permanently deleted and cannot be recovered.'),
+                                    [
+                                        { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+                                        {
+                                            text: t('settings.deleteAccount', 'Delete'),
+                                            style: 'destructive',
+                                            onPress: async () => {
+                                                const { error } = await deleteAccount();
+                                                if (error) {
+                                                    Alert.alert(t('common.error', 'Error'), t('settings.deleteAccountError', 'Failed to delete account. Please try again or contact support.'));
+                                                } else {
+                                                    Alert.alert(t('common.success', 'Success'), t('settings.deleteAccountSuccess', 'Your account has been successfully deleted.'));
+                                                }
+                                            }
+                                        }
+                                    ]
+                                );
+                            }}
+                        >
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={[styles.actionBtnText, { color: '#dc2626' }]}>{t('settings.deleteAccount', 'Delete Account')}</Text>
                             </View>
                         </TouchableOpacity>
 
