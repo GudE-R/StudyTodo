@@ -17,6 +17,13 @@ export function useMobileSync() {
         if (__DEV__) console.log("Starting Mobile Full Sync...");
 
         try {
+            // セッションを明示的にリフレッシュしてからSync開始
+            const { data: { session: freshSession } } = await supabase.auth.getSession();
+            if (!freshSession || freshSession.user.id !== uId) {
+                if (__DEV__) console.warn("No valid session or user mismatch, skipping sync");
+                return;
+            }
+
             const { data: cloudTodos, error: todoError } = await supabase.from('todos').select('*');
             const { data: cloudSessions, error: sessionError } = await supabase.from('sessions').select('*');
             const { data: cloudCategories, error: catError } = await supabase.from('categories').select('*');

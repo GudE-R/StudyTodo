@@ -157,6 +157,17 @@ export function useMobileRealtimeSync(userId: string | undefined) {
             const allowedFields = allowedFieldsMap[table];
 
             try {
+                // セッションの有効性を確認
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    if (__DEV__) console.warn('[Mobile] No valid session, queuing change');
+                    const dataArray = Array.isArray(data) ? data : [data];
+                    for (const item of dataArray) {
+                        await offlineQueue.add({ table, operation: type, data: item });
+                    }
+                    return;
+                }
+
                 // Check network status
                 const online = await isOnline();
                 const dataArray = Array.isArray(data) ? data : [data];

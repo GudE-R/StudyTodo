@@ -5,6 +5,7 @@ import { X, Mail, Lock, LogIn, UserPlus, Check } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useTranslation } from 'react-i18next';
+import * as WebBrowser from 'expo-web-browser';
 
 interface AuthModalProps {
     visible: boolean;
@@ -205,14 +206,14 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                                     <Text style={[styles.termsText, { color: colors.textSecondary }]}>
                                         <Text
                                             style={[styles.linkText, { color: colors.primary }]}
-                                            onPress={() => Linking.openURL('https://studytodo.com/ja/terms')}
+                                            onPress={() => WebBrowser.openBrowserAsync('https://studytodo.com/ja/terms')}
                                         >
                                             {t('common.termsOfService', 'Terms of Service')}
                                         </Text>
                                         <Text> と </Text>
                                         <Text
                                             style={[styles.linkText, { color: colors.primary }]}
-                                            onPress={() => Linking.openURL('https://studytodo.com/ja/privacy')}
+                                            onPress={() => WebBrowser.openBrowserAsync('https://studytodo.com/ja/privacy')}
                                         >
                                             {t('common.privacyPolicy', 'Privacy Policy')}
                                         </Text>
