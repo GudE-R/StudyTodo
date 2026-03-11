@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Hizmet Şartları",
+        "privacyPolicy": "Gizlilik Politikası"
     },
     "home": {
         "title": "Ana Sayfa",
@@ -84,6 +86,10 @@
         "password": "Şifre",
         "loginButton": "Giriş Yap",
         "signUpButton": "Kayıt Ol",
+        "agreeAndLogin": "Kabul et ve giriş yap",
+        "agreeAndSignUp": "Kabul et ve kayıt ol",
+        "termsNote": "Devam ederek,",
+        "termsAnd": " ve ",
         "noAccountLink": "Hesabınız yok mu?",
         "haveAccountLink": "Zaten bir hesabınız var mı? Giriş yapın",
         "loginSuccess": "Başarıyla giriş yapıldı!",
@@ -113,6 +119,7 @@
         "title": "Ayarlar",
         "appearance": "Görünüm",
         "cloudSync": "Bulut Senkronizasyonu",
+        "cloudSyncDescription": "Birden fazla cihaz arasında veri senkronizasyonu için kullanılır. Bu uygulamayı yalnızca bir cihazda kullanıyorsanız kayıt gerekmez.",
         "loggedInAs": "Giriş yapan",
         "logout": "Çıkış Yap",
         "loginToBackup": "Giriş Yap / Hesap Oluştur",

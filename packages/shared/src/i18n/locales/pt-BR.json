@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Termos de serviço",
+        "privacyPolicy": "Política de privacidade"
     },
     "home": {
         "title": "Início",
@@ -84,6 +86,10 @@
         "password": "Senha",
         "loginButton": "Entrar",
         "signUpButton": "Registrar",
+        "agreeAndLogin": "Concordar e entrar",
+        "agreeAndSignUp": "Concordar e cadastrar",
+        "termsNote": "Ao continuar, você concorda com os",
+        "termsAnd": " e a ",
         "noAccountLink": "Não tem uma conta?",
         "haveAccountLink": "Já tem uma conta? Entre aqui",
         "loginSuccess": "Login realizado com sucesso!",
@@ -113,6 +119,7 @@
         "title": "Ajustes",
         "appearance": "Aparência",
         "cloudSync": "Sincronização em Nuvem",
+        "cloudSyncDescription": "Usado para sincronizar dados entre vários dispositivos. O cadastro não é necessário se você usa este aplicativo em apenas um dispositivo.",
         "loggedInAs": "Conectado como",
         "logout": "Sair",
         "loginToBackup": "Entrar / Criar Conta",

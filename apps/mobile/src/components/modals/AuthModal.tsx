@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, ActivityIndicator, Alert, Linking } from 'react-native';
 import { ModalOverlay } from '../ui/ModalOverlay';
-import { X, Mail, Lock, LogIn, UserPlus, Check } from 'lucide-react-native';
+import { X, Mail, Lock, LogIn, UserPlus } from 'lucide-react-native';
 import { useAuth } from '../../providers/AuthProvider';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,6 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    const [agreeToTerms, setAgreeToTerms] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
     const [showPrivacy, setShowPrivacy] = useState(false);
 
@@ -73,11 +72,6 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                 Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.passwordMismatch', 'Passwords do not match'));
                 return;
             }
-        }
-
-        if (!isResetMode && !agreeToTerms) {
-            Alert.alert(t('auth.errorOccurred', 'Error'), t('auth.mustAgreeTerms', 'Please agree to the Terms and Privacy Policy'));
-            return;
         }
 
         setLoading(true);
@@ -196,33 +190,25 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                             </View>
                         )}
 
-                        {/* Terms and Privacy Policy Consent */}
+                        {/* Terms and Privacy Policy Note */}
                         {!isResetMode && (
                             <View style={styles.termsContainer}>
-                                <TouchableOpacity
-                                    style={[styles.checkbox, agreeToTerms && styles.checkboxChecked]}
-                                    onPress={() => setAgreeToTerms(!agreeToTerms)}
-                                >
-                                    {agreeToTerms && <Check size={14} color="#fff" />}
-                                </TouchableOpacity>
-                                <View style={styles.termsTextContainer}>
-                                    <Text style={[styles.termsText, { color: colors.textSecondary }]}>
-                                        <Text
-                                            style={[styles.linkText, { color: colors.primary }]}
-                                            onPress={() => setShowTerms(true)}
-                                        >
-                                            {t('common.termsOfService', 'Terms of Service')}
-                                        </Text>
-                                        <Text> と </Text>
-                                        <Text
-                                            style={[styles.linkText, { color: colors.primary }]}
-                                            onPress={() => setShowPrivacy(true)}
-                                        >
-                                            {t('common.privacyPolicy', 'Privacy Policy')}
-                                        </Text>
-                                        <Text> に同意します。</Text>
+                                <Text style={[styles.termsText, { color: colors.textSecondary }]}>
+                                    {t('auth.termsNote', 'By continuing, you agree to the')}{' '}
+                                    <Text
+                                        style={[styles.linkText, { color: colors.primary }]}
+                                        onPress={() => setShowTerms(true)}
+                                    >
+                                        {t('common.termsOfService', 'Terms of Service')}
                                     </Text>
-                                </View>
+                                    {t('auth.termsAnd', ' and ')}{' '}
+                                    <Text
+                                        style={[styles.linkText, { color: colors.primary }]}
+                                        onPress={() => setShowPrivacy(true)}
+                                    >
+                                        {t('common.privacyPolicy', 'Privacy Policy')}
+                                    </Text>
+                                </Text>
                             </View>
                         )}
 
@@ -244,7 +230,7 @@ export const AuthModal = ({ visible, onClose }: AuthModalProps) => {
                                         <UserPlus size={20} color="#fff" />
                                     )}
                                     <Text style={styles.submitBtnText}>
-                                        {isResetMode ? t('auth.sendResetLink', 'Send Reset Link') : isLoginMode ? t('auth.loginButton', 'Log In') : t('auth.signUpButton', 'Sign Up')}
+                                        {isResetMode ? t('auth.sendResetLink', 'Send Reset Link') : isLoginMode ? t('auth.agreeAndLogin', 'Agree & Log In') : t('auth.agreeAndSignUp', 'Agree & Sign Up')}
                                     </Text>
                                 </View>
                             )}
@@ -386,30 +372,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     termsContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
         marginBottom: 15,
         marginLeft: 4,
-    },
-    checkbox: {
-        width: 20,
-        height: 20,
-        borderRadius: 4,
-        borderWidth: 2,
-        borderColor: '#2563eb',
-        marginRight: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    checkboxChecked: {
-        backgroundColor: '#2563eb',
-    },
-    termsTextContainer: {
-        flex: 1,
     },
     termsText: {
         fontSize: 12,
         lineHeight: 18,
+        textAlign: 'center',
     },
     linkText: {
         fontWeight: 'bold',

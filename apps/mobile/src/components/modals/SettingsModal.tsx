@@ -185,6 +185,9 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
 
             {/* --- クラウド同期 / アカウント設定 --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.cloudSync', 'Cloud Sync')}</Text>
+            <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 8, lineHeight: 18 }}>
+                {t('settings.cloudSyncDescription', 'Used for syncing data across multiple devices. Registration is not required if you only use this app on one device.')}
+            </Text>
 
             {
                 user ? (

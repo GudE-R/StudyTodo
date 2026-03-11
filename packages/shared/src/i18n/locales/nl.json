@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Servicevoorwaarden",
+        "privacyPolicy": "Privacybeleid"
     },
     "home": {
         "title": "Home",
@@ -84,6 +86,10 @@
         "password": "Wachtwoord",
         "loginButton": "Inloggen",
         "signUpButton": "Registreren",
+        "agreeAndLogin": "Akkoord en inloggen",
+        "agreeAndSignUp": "Akkoord en registreren",
+        "termsNote": "Door verder te gaan, ga je akkoord met de",
+        "termsAnd": " en het ",
         "noAccountLink": "Nog geen account?",
         "haveAccountLink": "Heb je al een account? Log hier in",
         "loginSuccess": "Succesvol ingelogd!",
@@ -113,6 +119,7 @@
         "title": "Instellingen",
         "appearance": "Uiterlijk",
         "cloudSync": "Cloud Synchronisatie",
+        "cloudSyncDescription": "Wordt gebruikt voor het synchroniseren van gegevens tussen meerdere apparaten. Registratie is niet nodig als je deze app alleen op één apparaat gebruikt.",
         "loggedInAs": "Ingelogd als",
         "logout": "Uitloggen",
         "loginToBackup": "Inloggen / Account aanmaken",

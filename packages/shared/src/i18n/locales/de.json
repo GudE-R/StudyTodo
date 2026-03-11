@@ -38,7 +38,9 @@
             "4": "D",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Nutzungsbedingungen",
+        "privacyPolicy": "Datenschutzerklärung"
     },
     "home": {
         "title": "Startseite",
@@ -84,6 +86,10 @@
         "password": "Passwort",
         "loginButton": "Anmelden",
         "signUpButton": "Registrieren",
+        "agreeAndLogin": "Zustimmen & Anmelden",
+        "agreeAndSignUp": "Zustimmen & Registrieren",
+        "termsNote": "Mit dem Fortfahren stimmen Sie den",
+        "termsAnd": " und der ",
         "noAccountLink": "Noch kein Konto? Hier erstellen",
         "haveAccountLink": "Bereits ein Konto? Hier anmelden",
         "loginSuccess": "Erfolgreich angemeldet!",
@@ -113,6 +119,7 @@
         "title": "Einstellungen",
         "appearance": "Erscheinungsbild",
         "cloudSync": "Cloud-Synchronisierung",
+        "cloudSyncDescription": "Wird zur Synchronisierung von Daten zwischen mehreren Geräten verwendet. Wenn Sie diese App nur auf einem Gerät nutzen, ist keine Registrierung erforderlich.",
         "loggedInAs": "Angemeldet als",
         "logout": "Abmelden",
         "loginToBackup": "Anmelden / Konto erstellen",

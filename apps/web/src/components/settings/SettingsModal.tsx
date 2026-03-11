@@ -85,6 +85,9 @@ export function SettingsModal({ isOpen, onClose, onOpenAuth }: SettingsModalProp
                             <Cloud size={20} className="text-blue-500" />
                             <h3>{t("cloudSync")}</h3>
                         </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {t("cloudSyncDescription")}
+                        </p>
 
                         {userEmail ? (
                             // Logged In State

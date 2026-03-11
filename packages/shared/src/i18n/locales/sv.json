@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Användarvillkor",
+        "privacyPolicy": "Integritetspolicy"
     },
     "home": {
         "title": "Hem",
@@ -84,6 +86,10 @@
         "password": "Lösenord",
         "loginButton": "Logga in",
         "signUpButton": "Registrera dig",
+        "agreeAndLogin": "Godkänn och logga in",
+        "agreeAndSignUp": "Godkänn och registrera",
+        "termsNote": "Genom att fortsätta godkänner du",
+        "termsAnd": " och ",
         "noAccountLink": "Inget konto? Skapa ett",
         "haveAccountLink": "Har du redan ett konto? Logga in",
         "loginSuccess": "Inloggad!",
@@ -113,6 +119,7 @@
         "title": "Inställningar",
         "appearance": "Utseende",
         "cloudSync": "Molnsynkronisering",
+        "cloudSyncDescription": "Används för att synkronisera data mellan flera enheter. Registrering krävs inte om du bara använder appen på en enhet.",
         "loggedInAs": "Inloggad som",
         "logout": "Logga ut",
         "loginToBackup": "Logga in / Skapa konto",

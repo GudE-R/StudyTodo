@@ -38,7 +38,9 @@
             "4": "J",
             "5": "V",
             "6": "S"
-        }
+        },
+        "termsOfService": "Conditions d'utilisation",
+        "privacyPolicy": "Politique de confidentialité"
     },
     "home": {
         "title": "Accueil",
@@ -84,6 +86,10 @@
         "password": "Mot de passe",
         "loginButton": "Se connecter",
         "signUpButton": "S'inscrire",
+        "agreeAndLogin": "Accepter et se connecter",
+        "agreeAndSignUp": "Accepter et s'inscrire",
+        "termsNote": "En continuant, vous acceptez les",
+        "termsAnd": " et la ",
         "noAccountLink": "Pas encore de compte ? En créer un",
         "haveAccountLink": "Déjà un compte ? Se connecter",
         "loginSuccess": "Connexion réussie !",
@@ -113,6 +119,7 @@
         "title": "Paramètres",
         "appearance": "Apparence",
         "cloudSync": "Synchronisation Cloud",
+        "cloudSyncDescription": "Utilisé pour synchroniser les données entre plusieurs appareils. L'inscription n'est pas nécessaire si vous utilisez cette application sur un seul appareil.",
         "loggedInAs": "Connecté en tant que",
         "logout": "Se déconnecter",
         "loginToBackup": "Se connecter / Créer un compte",

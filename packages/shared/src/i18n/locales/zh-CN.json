@@ -38,7 +38,9 @@
             "4": "四",
             "5": "五",
             "6": "六"
-        }
+        },
+        "termsOfService": "服务条款",
+        "privacyPolicy": "隐私政策"
     },
     "home": {
         "title": "首页",
@@ -84,6 +86,10 @@
         "password": "密码",
         "loginButton": "登录",
         "signUpButton": "注册账号",
+        "agreeAndLogin": "同意并登录",
+        "agreeAndSignUp": "同意并注册",
+        "termsNote": "继续即表示您同意",
+        "termsAnd": "和",
         "noAccountLink": "还没有账号？",
         "haveAccountLink": "已有账号？点此登录",
         "loginSuccess": "登录成功！",
@@ -113,6 +119,7 @@
         "title": "设置",
         "appearance": "外观设置",
         "cloudSync": "云同步",
+        "cloudSyncDescription": "用于在多台设备之间同步数据。如果仅在一台设备上使用，则无需注册账户。",
         "loggedInAs": "已登录为",
         "logout": "注销",
         "loginToBackup": "登录 / 创建账号",

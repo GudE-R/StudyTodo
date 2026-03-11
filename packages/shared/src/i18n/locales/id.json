@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Ketentuan Layanan",
+        "privacyPolicy": "Kebijakan Privasi"
     },
     "home": {
         "title": "Beranda",
@@ -84,6 +86,10 @@
         "password": "Kata Sandi",
         "loginButton": "Masuk",
         "signUpButton": "Daftar",
+        "agreeAndLogin": "Setuju & masuk",
+        "agreeAndSignUp": "Setuju & daftar",
+        "termsNote": "Dengan melanjutkan, Anda menyetujui",
+        "termsAnd": " dan ",
         "noAccountLink": "Belum punya akun?",
         "haveAccountLink": "Sudah punya akun? Masuk",
         "loginSuccess": "Berhasil masuk!",
@@ -113,6 +119,7 @@
         "title": "Pengaturan",
         "appearance": "Tampilan",
         "cloudSync": "Sinkronisasi Cloud",
+        "cloudSyncDescription": "Digunakan untuk menyinkronkan data antar beberapa perangkat. Pendaftaran tidak diperlukan jika Anda hanya menggunakan aplikasi ini di satu perangkat.",
         "loggedInAs": "Masuk sebagai",
         "logout": "Keluar",
         "loginToBackup": "Masuk / Buat Akun",

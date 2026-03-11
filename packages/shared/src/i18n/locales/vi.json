@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Điều khoản dịch vụ",
+        "privacyPolicy": "Chính sách bảo mật"
     },
     "home": {
         "title": "Trang chủ",
@@ -84,6 +86,10 @@
         "password": "Mật khẩu",
         "loginButton": "Đăng nhập",
         "signUpButton": "Đăng ký",
+        "agreeAndLogin": "Đồng ý và đăng nhập",
+        "agreeAndSignUp": "Đồng ý và đăng ký",
+        "termsNote": "Bằng cách tiếp tục, bạn đồng ý với",
+        "termsAnd": " và ",
         "noAccountLink": "Chưa có tài khoản?",
         "haveAccountLink": "Đã có tài khoản? Đăng nhập",
         "loginSuccess": "Đăng nhập thành công!",
@@ -113,6 +119,7 @@
         "title": "Cài đặt",
         "appearance": "Giao diện",
         "cloudSync": "Đồng bộ đám mây",
+        "cloudSyncDescription": "Dùng để đồng bộ dữ liệu giữa nhiều thiết bị. Không cần đăng ký tài khoản nếu bạn chỉ sử dụng ứng dụng trên một thiết bị.",
         "loggedInAs": "Đăng nhập với",
         "logout": "Đăng xuất",
         "loginToBackup": "Đăng nhập / Tạo tài khoản",

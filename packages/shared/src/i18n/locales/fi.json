@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Käyttöehdot",
+        "privacyPolicy": "Tietosuojakäytäntö"
     },
     "home": {
         "title": "Koti",
@@ -84,6 +86,10 @@
         "password": "Salasana",
         "loginButton": "Kirjaudu",
         "signUpButton": "Rekisteröidy",
+        "agreeAndLogin": "Hyväksy ja kirjaudu",
+        "agreeAndSignUp": "Hyväksy ja rekisteröidy",
+        "termsNote": "Jatkamalla hyväksyt",
+        "termsAnd": " ja ",
         "noAccountLink": "Ei tiliä? Luo sellainen",
         "haveAccountLink": "Onko sinulla jo tili? Kirjaudu",
         "loginSuccess": "Kirjauduttu sisään!",
@@ -113,6 +119,7 @@
         "title": "Asetukset",
         "appearance": "Ulkoasu",
         "cloudSync": "Pilvisynkronointi",
+        "cloudSyncDescription": "Käytetään tietojen synkronointiin useiden laitteiden välillä. Rekisteröinti ei ole tarpeen, jos käytät sovellusta vain yhdellä laitteella.",
         "loggedInAs": "Kirjautuneena",
         "logout": "Kirjaudu ulos",
         "loginToBackup": "Kirjaudu / Luo tili",

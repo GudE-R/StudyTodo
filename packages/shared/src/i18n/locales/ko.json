@@ -38,7 +38,9 @@
             "4": "목",
             "5": "금",
             "6": "토"
-        }
+        },
+        "termsOfService": "이용약관",
+        "privacyPolicy": "개인정보 처리방침"
     },
     "home": {
         "title": "홈",
@@ -84,6 +86,10 @@
         "password": "비밀번호",
         "loginButton": "로그인",
         "signUpButton": "계정 등록",
+        "agreeAndLogin": "동의 후 로그인",
+        "agreeAndSignUp": "동의 후 가입",
+        "termsNote": "계속하면",
+        "termsAnd": " 및 ",
         "noAccountLink": "계정이 없으신가요?",
         "haveAccountLink": "이미 계정이 있으신가요?",
         "loginSuccess": "로그인에 성공했습니다!",
@@ -113,6 +119,7 @@
         "title": "설정",
         "appearance": "표시 설정",
         "cloudSync": "클라우드 동기화",
+        "cloudSyncDescription": "여러 기기 간 데이터 동기화에 사용됩니다. 하나의 기기에서만 사용하는 경우 계정 등록이 필요하지 않습니다.",
         "loggedInAs": "로그인 중",
         "logout": "로그아웃",
         "loginToBackup": "로그인 / 계정 만들기",

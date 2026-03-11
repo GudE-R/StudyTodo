@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslations } from "next-intl";
-import { X, Mail, Lock, LogIn, UserPlus, CheckSquare, Square } from "lucide-react";
+import { X, Mail, Lock, LogIn, UserPlus } from "lucide-react";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -16,7 +16,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string; type: "error" | "success" } | null>(null);
 
@@ -25,6 +24,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const isUpdatePasswordMode = mode === "updatePassword";
 
     const t = useTranslations("auth");
+    const tc = useTranslations("common");
 
     useEffect(() => {
         if (isRecovery) {
@@ -105,11 +105,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             }
             if (password !== confirmPassword) {
                 setMessage({ text: t("passwordMismatch"), type: "error" });
-                setLoading(false);
-                return;
-            }
-            if (!agreedToTerms) {
-                setMessage({ text: t("mustAgreeTerms"), type: "error" });
                 setLoading(false);
                 return;
             }
@@ -251,23 +246,14 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             </div>
                         )}
 
-                        {/* Terms Agreement (Sign Up only) */}
-                        {!isLoginMode && !isResetMode && !isUpdatePasswordMode && (
-                            <div className="flex items-start space-x-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setAgreedToTerms(!agreedToTerms)}
-                                    className="mt-0.5 text-blue-600 dark:text-blue-400"
-                                >
-                                    {agreedToTerms ? <CheckSquare size={20} /> : <Square size={20} />}
-                                </button>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    {t.rich("termsAgreement", {
-                                        terms: (chunks) => <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{chunks}</a>,
-                                        privacy: (chunks) => <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{chunks}</a>,
-                                    })}
-                                </p>
-                            </div>
+                        {/* Terms and Privacy Policy Note */}
+                        {!isResetMode && !isUpdatePasswordMode && (
+                            <p className="text-xs text-center text-gray-500 dark:text-gray-400">
+                                {t("termsNote")}{" "}
+                                <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{tc("termsOfService")}</a>
+                                {t("termsAnd")}{" "}
+                                <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{tc("privacyPolicy")}</a>
+                            </p>
                         )}
 
                         <button
@@ -280,7 +266,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                             ) : (
                                 <>
                                     {isUpdatePasswordMode ? <Lock size={20} /> : isResetMode ? <Mail size={20} /> : isLoginMode ? <LogIn size={20} /> : <UserPlus size={20} />}
-                                    <span>{isUpdatePasswordMode ? t("setNewPassword") : isResetMode ? t("sendResetLink") : isLoginMode ? t("loginButton") : t("signUpButton")}</span>
+                                    <span>{isUpdatePasswordMode ? t("setNewPassword") : isResetMode ? t("sendResetLink") : isLoginMode ? t("agreeAndLogin") : t("agreeAndSignUp")}</span>
                                 </>
                             )}
                         </button>

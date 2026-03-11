@@ -38,7 +38,9 @@
             "4": "T",
             "5": "F",
             "6": "S"
-        }
+        },
+        "termsOfService": "Tjenestevilkår",
+        "privacyPolicy": "Personvernerklæring"
     },
     "home": {
         "title": "Hjem",
@@ -84,6 +86,10 @@
         "password": "Passord",
         "loginButton": "Logg inn",
         "signUpButton": "Registrer deg",
+        "agreeAndLogin": "Godta og logg inn",
+        "agreeAndSignUp": "Godta og registrer",
+        "termsNote": "Ved å fortsette godtar du",
+        "termsAnd": " og ",
         "noAccountLink": "Ingen konto? Opprett en",
         "haveAccountLink": "Har du allerede en konto? Logg inn",
         "loginSuccess": "Logget inn!",
@@ -113,6 +119,7 @@
         "title": "Innstillinger",
         "appearance": "Utseende",
         "cloudSync": "Skysynkronisering",
+        "cloudSyncDescription": "Brukes til å synkronisere data mellom flere enheter. Registrering er ikke nødvendig hvis du bare bruker denne appen på én enhet.",
         "loggedInAs": "Logget inn som",
         "logout": "Logg ut",
         "loginToBackup": "Logg inn / Opprett konto",
