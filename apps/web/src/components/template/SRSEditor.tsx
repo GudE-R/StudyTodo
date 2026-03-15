@@ -139,7 +139,7 @@ export function SRSEditor() {
                                 ) : (
                                     <Calendar size={16} className="text-blue-500" />
                                 )}
-                                <span className="font-bold text-gray-700 dark:text-gray-200">{profile.name}</span>
+                                <span className="font-bold text-gray-700 dark:text-gray-200">{profile.isDefault ? t("defaultProfileName") : profile.name}</span>
                                 {profile.isDefault && (
                                     <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">{t("defaultBadge")}</span>
                                 )}

@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
         "recordConfirm": "Confirm",
-        "postpone": "Move to Tomorrow"
+        "postpone": "Move to Tomorrow",
+        "defaultSrsProfileName": "Đường cong lãng quên (Tiêu chuẩn)"
     },
     "auth": {
         "welcomeBack": "Chào mừng trở lại",
@@ -198,7 +199,8 @@
         "daysAfter": "{days} ngày sau",
         "invalidInput": "Vui lòng nhập giá trị hợp lệ",
         "addFailed": "Thêm SRS thất bại",
-        "deleteFailed": "Xóa SRS thất bại"
+        "deleteFailed": "Xóa SRS thất bại",
+        "defaultProfileName": "Đường cong lãng quên (Tiêu chuẩn)"
     },
     "theme": {
         "title": "Chủ đề",

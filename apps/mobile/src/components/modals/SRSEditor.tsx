@@ -116,7 +116,7 @@ export const SRSEditor = () => {
                                 ) : (
                                     <Calendar size={18} color={colors.primary} />
                                 )}
-                                <Text style={[styles.cardName, { color: colors.text }]}>{profile.name}</Text>
+                                <Text style={[styles.cardName, { color: colors.text }]}>{profile.isDefault ? t('srs.defaultProfileName', 'Forgetting Curve (Standard)') : profile.name}</Text>
                                 {profile.isDefault && (
                                     <View style={[styles.badge, { backgroundColor: colors.surfaceHighlight }]}>
                                         <Text style={[styles.badgeText, { color: colors.textSecondary }]}>{t('srs.defaultBadge', 'Default')}</Text>

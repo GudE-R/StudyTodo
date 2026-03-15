@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "작업 이름을 입력하거나 카테고리를 선택하세요",
         "durationRecordOnly": "기록 모드에서 입력",
         "recordConfirm": "확인",
-        "postpone": "내일로 이동"
+        "postpone": "내일로 이동",
+        "defaultSrsProfileName": "망각 곡선 (표준)"
     },
     "auth": {
         "welcomeBack": "다시 오신 것을 환영합니다",
@@ -198,7 +199,8 @@
         "daysAfter": "{days}일 후",
         "invalidInput": "유효한 숫자가 입력되지 않았습니다",
         "addFailed": "SRS 설정 추가에 실패했습니다",
-        "deleteFailed": "SRS 설정 삭제에 실패했습니다"
+        "deleteFailed": "SRS 설정 삭제에 실패했습니다",
+        "defaultProfileName": "망각 곡선 (표준)"
     },
     "theme": {
         "title": "테마",

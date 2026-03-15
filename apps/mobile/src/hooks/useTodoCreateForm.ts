@@ -67,7 +67,10 @@ export function useTodoCreateForm({
 
     // Computed
     const selectedCategoryLabel = categoryOptions.find(c => c.value === categoryId)?.label || t('todo.noCategory', 'No Category');
-    const selectedSrsName = srsProfiles.find(p => p.id === srsProfileId)?.name || '';
+    const selectedProfile = srsProfiles.find(p => p.id === srsProfileId);
+    const selectedSrsName = selectedProfile
+        ? (selectedProfile.isDefault ? t('srs.defaultProfileName', 'Forgetting Curve (Standard)') : selectedProfile.name)
+        : '';
 
     // --- Helpers ---
 

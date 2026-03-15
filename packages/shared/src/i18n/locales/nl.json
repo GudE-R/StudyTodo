@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
         "recordConfirm": "Confirm",
-        "postpone": "Move to Tomorrow"
+        "postpone": "Move to Tomorrow",
+        "defaultSrsProfileName": "Vergeetcurve (Standaard)"
     },
     "auth": {
         "welcomeBack": "Welkom terug",
@@ -198,7 +199,8 @@
         "daysAfter": "Over {days} dagen",
         "invalidInput": "Voer geldige getallen in",
         "addFailed": "Toevoegen SRS mislukt",
-        "deleteFailed": "Verwijderen SRS mislukt"
+        "deleteFailed": "Verwijderen SRS mislukt",
+        "defaultProfileName": "Vergeetcurve (Standaard)"
     },
     "theme": {
         "title": "Thema",

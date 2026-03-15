@@ -425,7 +425,7 @@ export const TodoCreateModal = ({
                                     style={[styles.pickerItem, { borderBottomColor: colors.border }]}
                                     onPress={() => { form.setSrsProfileId(p.id); form.setShowSRSPicker(false); }}
                                 >
-                                    <Text style={[styles.pickerItemText, { color: colors.text }]}>{p.name}</Text>
+                                    <Text style={[styles.pickerItemText, { color: colors.text }]}>{p.isDefault ? t('srs.defaultProfileName', 'Forgetting Curve (Standard)') : p.name}</Text>
                                 </TouchableOpacity>
                             ))}
                         </ScrollView>

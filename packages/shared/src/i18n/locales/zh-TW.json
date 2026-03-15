@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "請輸入任務名稱或選擇類別",
         "durationRecordOnly": "在記錄模式下輸入",
         "recordConfirm": "確認",
-        "postpone": "移至明天"
+        "postpone": "移至明天",
+        "defaultSrsProfileName": "遺忘曲線 (標準)"
     },
     "auth": {
         "welcomeBack": "歡迎回來",
@@ -198,7 +199,8 @@
         "daysAfter": "{days}天後",
         "invalidInput": "請輸入有效的數值",
         "addFailed": "添加 SRS 配置失敗",
-        "deleteFailed": "刪除 SRS 配置失敗"
+        "deleteFailed": "刪除 SRS 配置失敗",
+        "defaultProfileName": "遺忘曲線 (標準)"
     },
     "theme": {
         "title": "主題",

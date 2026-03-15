@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Veuillez entrer un nom de tâche ou sélectionner une catégorie",
         "durationRecordOnly": "Entrer en mode enregistrement",
         "recordConfirm": "Confirmer",
-        "postpone": "Reporter à demain"
+        "postpone": "Reporter à demain",
+        "defaultSrsProfileName": "Courbe de l'oubli (Standard)"
     },
     "auth": {
         "welcomeBack": "Bon retour",
@@ -198,7 +199,8 @@
         "daysAfter": "Après {days} jours",
         "invalidInput": "Aucune valeur valide n'a été saisie",
         "addFailed": "Échec de l'ajout du profil SRS",
-        "deleteFailed": "Échec de la suppression du profil SRS"
+        "deleteFailed": "Échec de la suppression du profil SRS",
+        "defaultProfileName": "Courbe de l'oubli (Standard)"
     },
     "theme": {
         "title": "Thème",

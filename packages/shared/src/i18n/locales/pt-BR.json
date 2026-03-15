@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
         "recordConfirm": "Confirm",
-        "postpone": "Move to Tomorrow"
+        "postpone": "Move to Tomorrow",
+        "defaultSrsProfileName": "Curva do esquecimento (Padrão)"
     },
     "auth": {
         "welcomeBack": "Bem-vindo de volta",
@@ -198,7 +199,8 @@
         "daysAfter": "{days} dias depois",
         "invalidInput": "Insira valores válidos",
         "addFailed": "Falha ao adicionar SRS",
-        "deleteFailed": "Falha ao excluir SRS"
+        "deleteFailed": "Falha ao excluir SRS",
+        "defaultProfileName": "Curva do esquecimento (Padrão)"
     },
     "theme": {
         "title": "Tema",

@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Por favor ingrese un nombre de tarea o seleccione una categoría",
         "durationRecordOnly": "Ingresar en modo de registro",
         "recordConfirm": "Confirmar",
-        "postpone": "Mover a mañana"
+        "postpone": "Mover a mañana",
+        "defaultSrsProfileName": "Curva del olvido (Estándar)"
     },
     "auth": {
         "welcomeBack": "Bienvenido de nuevo",
@@ -198,7 +199,8 @@
         "daysAfter": "{days} días después",
         "invalidInput": "No se introdujeron valores válidos",
         "addFailed": "Error al añadir el perfil SRS",
-        "deleteFailed": "Error al eliminar el perfil SRS"
+        "deleteFailed": "Error al eliminar el perfil SRS",
+        "defaultProfileName": "Curva del olvido (Estándar)"
     },
     "theme": {
         "title": "Tema",

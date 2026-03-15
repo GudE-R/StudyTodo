@@ -129,7 +129,8 @@
         "postpone": "Move to Tomorrow",
         "inputTitleOrCategory": "Please enter a title or select a category",
         "inputDuration": "Please enter a duration",
-        "selectDate": "Select Date"
+        "selectDate": "Select Date",
+        "defaultSrsProfileName": "Forgetting Curve (Standard)"
     },
     "auth": {
         "welcomeBack": "Welcome Back",
@@ -296,6 +297,7 @@
         "namePlaceholder": "Name (e.g., Intensive)",
         "intervalPlaceholder": "Intervals (e.g., 1, 3, 7)",
         "defaultBadge": "Default",
+        "defaultProfileName": "Forgetting Curve (Standard)",
         "deleteButton": "Delete",
         "daysAfter": "{days} days later",
         "invalidInput": "No valid values were entered",

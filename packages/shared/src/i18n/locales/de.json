@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Bitte geben Sie einen Aufgabennamen ein oder wählen Sie eine Kategorie",
         "durationRecordOnly": "Im Aufnahmemodus eingeben",
         "recordConfirm": "Bestätigen",
-        "postpone": "Auf morgen verschieben"
+        "postpone": "Auf morgen verschieben",
+        "defaultSrsProfileName": "Vergessenskurve (Standard)"
     },
     "auth": {
         "welcomeBack": "Willkommen zurück",
@@ -198,7 +199,8 @@
         "daysAfter": "Nach {days} Tagen",
         "invalidInput": "Keine gültigen Werte eingegeben",
         "addFailed": "SRS-Profil konnte nicht hinzugefügt werden",
-        "deleteFailed": "SRS-Profil konnte nicht gelöscht werden"
+        "deleteFailed": "SRS-Profil konnte nicht gelöscht werden",
+        "defaultProfileName": "Vergessenskurve (Standard)"
     },
     "theme": {
         "title": "Design",

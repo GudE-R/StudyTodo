@@ -294,7 +294,7 @@ export function TodoCreateModal({
                                         <option value="">{t("noSrs")}</option>
                                         {srsProfiles.map((profile) => (
                                             <option key={profile.id} value={profile.name}>
-                                                {profile.name}
+                                                {profile.isDefault ? t("defaultSrsProfileName") : profile.name}
                                             </option>
                                         ))}
                                     </select>

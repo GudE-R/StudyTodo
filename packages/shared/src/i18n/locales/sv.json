@@ -75,7 +75,8 @@
         "titleOrCategoryRequired": "Please enter a task name or select a category",
         "durationRecordOnly": "Enter in record mode",
         "recordConfirm": "Confirm",
-        "postpone": "Move to Tomorrow"
+        "postpone": "Move to Tomorrow",
+        "defaultSrsProfileName": "Glömskekurvan (Standard)"
     },
     "auth": {
         "welcomeBack": "Välkommen tillbaka",
@@ -198,7 +199,8 @@
         "daysAfter": "{days} dagar senare",
         "invalidInput": "Inga giltiga värden angavs",
         "addFailed": "Misslyckades med att lägga till SRS-profil",
-        "deleteFailed": "Misslyckades med att ta bort SRS-profil"
+        "deleteFailed": "Misslyckades med att ta bort SRS-profil",
+        "defaultProfileName": "Glömskekurvan (Standard)"
     },
     "theme": {
         "title": "Tema",

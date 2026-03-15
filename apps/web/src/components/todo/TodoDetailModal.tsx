@@ -291,7 +291,7 @@ export function TodoDetailModal({
                             >
                                 <option value="">{t("noSrs")}</option>
                                 {srsProfiles.map(p => (
-                                    <option key={p.id} value={p.name}>{p.name}</option>
+                                    <option key={p.id} value={p.name}>{p.isDefault ? t("defaultSrsProfileName") : p.name}</option>
                                 ))}
                             </select>
                         </div>

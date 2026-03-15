@@ -131,7 +131,8 @@
         "recordConfirm": "記録する",
         "routineLabel": "ルーティーン（曜日指定）",
         "routineHint": "{count}曜日に繰り返し作成されます",
-        "postpone": "明日へ移動"
+        "postpone": "明日へ移動",
+        "defaultSrsProfileName": "忘却曲線 (標準)"
     },
     "auth": {
         "welcomeBack": "おかえりなさい",
@@ -289,6 +290,7 @@
         "namePlaceholder": "設定名（例: 短期集中）",
         "intervalPlaceholder": "復習間隔（例: 1, 3, 7）",
         "defaultBadge": "デフォルト",
+        "defaultProfileName": "忘却曲線 (標準)",
         "deleteButton": "削除する",
         "daysAfter": "{days}日後",
         "invalidInput": "有効な数値が入力されませんでした",
