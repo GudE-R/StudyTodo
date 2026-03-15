@@ -193,10 +193,11 @@ export function useTodoCreateForm({
         }
         const durationNum = parseInt(duration, 10) || 0;
         const baseData = buildTodoData();
+        const recordDate = baseData.dueDate ? new Date(baseData.dueDate) : new Date();
         const newTodo: Todo = {
             ...baseData,
             id: generateId(),
-            createdAt: new Date(),
+            createdAt: recordDate,
             completed: true,
         };
 
@@ -206,12 +207,12 @@ export function useTodoCreateForm({
             await addSession({
                 id: generateId(),
                 todoId: newTodo.id,
-                startTime: new Date(Date.now() - durationNum * 60000),
-                endTime: new Date(),
+                startTime: new Date(recordDate.getTime() - durationNum * 60000),
+                endTime: recordDate,
                 duration: durationNum * 60,
                 todoTitle: newTodo.title,
                 mode: 'pomodoro',
-                createdAt: new Date(),
+                createdAt: recordDate,
             });
         }
 
