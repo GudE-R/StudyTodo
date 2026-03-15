@@ -256,5 +256,16 @@
         "ctaTitle": "Start Learning Today",
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
+    },
+    "timer": {
+        "switchToStopwatch": "Byt till stoppur",
+        "saveRecordOnly": "Spara bara inspelning",
+        "completeTask": "Slutför uppgift",
+        "autoProgress": "Automatisk framsteg",
+        "sessionLog": "Sessionslogg",
+        "noRecordsYet": "Inga poster ännu",
+        "durationMinSec": "{{min}} min {{sec}} s",
+        "durationMin": "{{min}} min",
+        "totalMinutes": "Totalt: {{min}} min"
     }
 }

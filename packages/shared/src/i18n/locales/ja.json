@@ -398,5 +398,16 @@
         "distribution": "カテゴリ別配分",
         "noData": "データなし",
         "tasks": "件"
+    },
+    "timer": {
+        "switchToStopwatch": "ストップウォッチに切替",
+        "saveRecordOnly": "記録のみ保存",
+        "completeTask": "タスク完了",
+        "autoProgress": "オート進行",
+        "sessionLog": "記録ログ",
+        "noRecordsYet": "まだ記録がありません",
+        "durationMinSec": "{{min}}分{{sec}}秒",
+        "durationMin": "{{min}}分",
+        "totalMinutes": "合計: {{min}}分"
     }
 }

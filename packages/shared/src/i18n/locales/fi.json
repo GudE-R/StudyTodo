@@ -256,5 +256,16 @@
         "ctaTitle": "Start Learning Today",
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
+    },
+    "timer": {
+        "switchToStopwatch": "Vaihda sekuntikelloon",
+        "saveRecordOnly": "Tallenna vain merkintä",
+        "completeTask": "Viimeistele tehtävä",
+        "autoProgress": "Automaattinen edistyminen",
+        "sessionLog": "Istuntoloki",
+        "noRecordsYet": "Ei merkintöjä vielä",
+        "durationMinSec": "{{min}} min {{sec}} s",
+        "durationMin": "{{min}} min",
+        "totalMinutes": "Yhteensä: {{min}} min"
     }
 }

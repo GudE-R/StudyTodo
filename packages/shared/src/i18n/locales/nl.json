@@ -256,5 +256,16 @@
         "ctaTitle": "Start Learning Today",
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
+    },
+    "timer": {
+        "switchToStopwatch": "Schakel naar stopwatch",
+        "saveRecordOnly": "Alleen opname opslaan",
+        "completeTask": "Taak voltooien",
+        "autoProgress": "Automatische voortgang",
+        "sessionLog": "Sessielog",
+        "noRecordsYet": "Nog geen opnames",
+        "durationMinSec": "{{min}} min {{sec}} s",
+        "durationMin": "{{min}} min",
+        "totalMinutes": "Totaal: {{min}} min"
     }
 }

@@ -4,6 +4,7 @@ import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle
 import { Svg, Circle } from 'react-native-svg';
 import { Todo } from '@studytodo/shared';
 import { useMobileTimer } from '../../hooks/useMobileTimer';
+import { useTranslation } from 'react-i18next';
 
 interface MobileTimerViewProps {
     todo: Todo;
@@ -20,6 +21,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
     const RADIUS = CIRCLE_SIZE / 2 - 10;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
+    const { t } = useTranslation();
     const timer = useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask });
 
     const strokeDashoffset = CIRCUMFERENCE - (timer.progress / 100) * CIRCUMFERENCE;
@@ -162,7 +164,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                 {timer.mode !== "stopwatch" && (timer.isRunning || timer.isPaused) && (
                     <TouchableOpacity style={[styles.switchBtn, isDark && { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' }]} onPress={timer.switchToStopwatch}>
                         <ChevronDown size={18} color="#2563eb" style={{ transform: [{ rotate: '-90deg' }] }} />
-                        <Text style={styles.switchBtnText}>ストップウォッチに切替</Text>
+                        <Text style={styles.switchBtnText}>{t('timer.switchToStopwatch')}</Text>
                     </TouchableOpacity>
                 )}
 
@@ -170,13 +172,13 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                 <View style={styles.bottomActions}>
                     <TouchableOpacity style={styles.recordBtn} onPress={timer.handleSave}>
                         <CheckCircle size={18} color={isDark ? '#6b7280' : '#999'} />
-                        <Text style={[styles.recordText, { color: colors.textSub }]}>記録のみ保存</Text>
+                        <Text style={[styles.recordText, { color: colors.textSub }]}>{t('timer.saveRecordOnly')}</Text>
                     </TouchableOpacity>
 
                     {onCompleteTask && (
                         <TouchableOpacity style={styles.completeBtn} onPress={timer.handleCompleteTask}>
                             <CheckCircle size={18} color="#fff" />
-                            <Text style={styles.completeBtnText}>タスク完了</Text>
+                            <Text style={styles.completeBtnText}>{t('timer.completeTask')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -188,7 +190,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                     <View style={[styles.menuContainer, { backgroundColor: colors.menuBg }]}>
                         {/* Auto Progress Toggle */}
                         <View style={[styles.menuItem, { borderBottomColor: colors.menuBorder }]}>
-                            <Text style={[styles.menuItemText, { color: colors.text }]}>オート進行</Text>
+                            <Text style={[styles.menuItemText, { color: colors.text }]}>{t('timer.autoProgress')}</Text>
                             <Switch
                                 value={timer.autoProgress}
                                 onValueChange={(v) => timer.setAutoProgress(v)}
@@ -203,7 +205,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                         >
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                 <RotateCcw size={16} color={colors.textSub} />
-                                <Text style={[styles.menuItemText, { color: colors.text }]}>記録ログ</Text>
+                                <Text style={[styles.menuItemText, { color: colors.text }]}>{t('timer.sessionLog')}</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -215,14 +217,14 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                 <View style={styles.logOverlay}>
                     <View style={[styles.logContainer, { backgroundColor: colors.logBg }]}>
                         <View style={styles.logHeader}>
-                            <Text style={[styles.logTitle, { color: colors.text }]}>記録ログ</Text>
+                            <Text style={[styles.logTitle, { color: colors.text }]}>{t('timer.sessionLog')}</Text>
                             <TouchableOpacity onPress={() => timer.setShowSessionLog(false)}>
                                 <X size={24} color={colors.textSub} />
                             </TouchableOpacity>
                         </View>
                         <ScrollView style={styles.logScroll}>
                             {timer.sessionLog.length === 0 ? (
-                                <Text style={[styles.logEmpty, { color: colors.textSub }]}>まだ記録がありません</Text>
+                                <Text style={[styles.logEmpty, { color: colors.textSub }]}>{t('timer.noRecordsYet')}</Text>
                             ) : (
                                 timer.sessionLog.map((s) => {
                                     const d = new Date(s.createdAt);
@@ -234,7 +236,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                                         <View key={s.id} style={[styles.logItem, { borderBottomColor: colors.logItemBorder }]}>
                                             <Text style={styles.logMode}>{modeLabel}</Text>
                                             <View style={styles.logInfo}>
-                                                <Text style={[styles.logDuration, { color: colors.text }]}>{min}分{sec > 0 ? `${sec}秒` : ''}</Text>
+                                                <Text style={[styles.logDuration, { color: colors.text }]}>{sec > 0 ? t('timer.durationMinSec', { min, sec }) : t('timer.durationMin', { min })}</Text>
                                                 <Text style={[styles.logDate, { color: colors.textSub }]}>{dateStr}</Text>
                                             </View>
                                         </View>
@@ -245,7 +247,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                         {timer.sessionLog.length > 0 && (
                             <View style={[styles.logFooter, { borderTopColor: colors.menuBorder }]}>
                                 <Text style={styles.logTotal}>
-                                    合計: {Math.floor(timer.sessionLog.reduce((sum, s) => sum + s.duration, 0) / 60)}分
+                                    {t('timer.totalMinutes', { min: Math.floor(timer.sessionLog.reduce((sum, s) => sum + s.duration, 0) / 60) })}
                                 </Text>
                             </View>
                         )}

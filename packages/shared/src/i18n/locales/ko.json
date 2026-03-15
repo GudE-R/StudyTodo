@@ -256,5 +256,16 @@
         "ctaTitle": "Start Learning Today",
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
+    },
+    "timer": {
+        "switchToStopwatch": "스톱워치로 전환",
+        "saveRecordOnly": "기록만 저장",
+        "completeTask": "작업 완료",
+        "autoProgress": "자동 진행",
+        "sessionLog": "세션 기록",
+        "noRecordsYet": "아직 기록이 없습니다",
+        "durationMinSec": "{{min}}분 {{sec}}초",
+        "durationMin": "{{min}}분",
+        "totalMinutes": "합계: {{min}}분"
     }
 }

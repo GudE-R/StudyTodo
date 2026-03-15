@@ -382,5 +382,16 @@
         "distribution": "Category Distribution",
         "noData": "No Data",
         "tasks": "tasks"
+    },
+    "timer": {
+        "switchToStopwatch": "Switch to Stopwatch",
+        "saveRecordOnly": "Save Record Only",
+        "completeTask": "Complete Task",
+        "autoProgress": "Auto Progress",
+        "sessionLog": "Session Log",
+        "noRecordsYet": "No records yet",
+        "durationMinSec": "{{min}}m {{sec}}s",
+        "durationMin": "{{min}}m",
+        "totalMinutes": "Total: {{min}}m"
     }
 }

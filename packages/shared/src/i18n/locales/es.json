@@ -256,5 +256,16 @@
         "ctaTitle": "Start Learning Today",
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
+    },
+    "timer": {
+        "switchToStopwatch": "Cambiar a cronómetro",
+        "saveRecordOnly": "Solo guardar registro",
+        "completeTask": "Completar tarea",
+        "autoProgress": "Progreso automático",
+        "sessionLog": "Registro de sesiones",
+        "noRecordsYet": "Aún no hay registros",
+        "durationMinSec": "{{min}} min {{sec}} s",
+        "durationMin": "{{min}} min",
+        "totalMinutes": "Total: {{min}} min"
     }
 }

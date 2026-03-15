@@ -165,7 +165,7 @@
         "themeTitle": "主題設定",
         "themeDesc": "在設定中可選擇淺色、深色或跟隨系統外觀。",
         "historyTitle": "學習歷史",
-        "historyDesc": "點擊底部の「活動」按鈕查看學習紀錄，支持日、週統計。",
+        "historyDesc": "點擊底部的「活動」按鈕查看學習紀錄，支持日、週統計。",
         "detailTitle": "任務詳情",
         "detailDesc": "在列表或日程中點擊任務可打開詳情。可直接開始計時或刪除任務。",
         "catIntro": "入門",
@@ -256,5 +256,16 @@
         "ctaTitle": "Start Learning Today",
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
+    },
+    "timer": {
+        "switchToStopwatch": "切換到碼錶",
+        "saveRecordOnly": "僅儲存記錄",
+        "completeTask": "完成任務",
+        "autoProgress": "自動進行",
+        "sessionLog": "記錄日誌",
+        "noRecordsYet": "尚無記錄",
+        "durationMinSec": "{{min}}分{{sec}}秒",
+        "durationMin": "{{min}}分",
+        "totalMinutes": "合計：{{min}}分"
     }
 }
