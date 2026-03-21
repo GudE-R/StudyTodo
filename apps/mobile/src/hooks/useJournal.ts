@@ -12,6 +12,9 @@ const DEFAULT_SETTINGS: JournalSettings = {
     autoPromptOnComplete: true,
 };
 
+// 複数のuseJournalSettingsインスタンス間で設定変更を同期するためのリスナー
+const settingsListeners = new Set<(s: JournalSettings) => void>();
+
 export function useJournalSettings() {
     const [settings, setSettings] = useState<JournalSettings>(DEFAULT_SETTINGS);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -25,12 +28,17 @@ export function useJournalSettings() {
             }
             setIsLoaded(true);
         });
+
+        const listener = (s: JournalSettings) => setSettings(s);
+        settingsListeners.add(listener);
+        return () => { settingsListeners.delete(listener); };
     }, []);
 
     const updateSettings = useCallback(async (updates: Partial<JournalSettings>) => {
         const newSettings = { ...settings, ...updates };
         setSettings(newSettings);
         await AsyncStorage.setItem(JOURNAL_SETTINGS_KEY, JSON.stringify(newSettings));
+        settingsListeners.forEach(fn => fn(newSettings));
     }, [settings]);
 
     return { settings, updateSettings, isLoaded };

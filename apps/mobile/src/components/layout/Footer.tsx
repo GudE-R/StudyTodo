@@ -21,6 +21,13 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, o
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            {journalEnabled && onOpenJournal && (
+                <TouchableOpacity style={styles.button} onPress={onOpenJournal}>
+                    <BookOpen size={20} color={colors.icon} />
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>{t('journal.title', 'Journal')}</Text>
+                </TouchableOpacity>
+            )}
+
             <TouchableOpacity style={styles.button} onPress={onOpenTemplate}>
                 <FolderTree size={20} color={colors.icon} />
                 <Text style={[styles.label, { color: colors.textSecondary }]}>{t('common.template', 'Template')}</Text>
@@ -39,13 +46,6 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, o
                     </TouchableOpacity>
                 )}
             </View>
-
-            {journalEnabled && onOpenJournal && (
-                <TouchableOpacity style={styles.button} onPress={onOpenJournal}>
-                    <BookOpen size={20} color={colors.icon} />
-                    <Text style={[styles.label, { color: colors.textSecondary }]}>{t('journal.title', 'Journal')}</Text>
-                </TouchableOpacity>
-            )}
 
             <TouchableOpacity style={styles.button} onPress={onOpenReport}>
                 <BarChart2 size={20} color={colors.icon} />

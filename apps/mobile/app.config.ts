@@ -7,7 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: "studytodo",
   version: "1.0.2",
   orientation: "portrait",
-  icon: "./assets/icon.png",
+  icon: "./assets/combined-icon.png",
   userInterfaceStyle: "light",
   newArchEnabled: true,
   splash: {
@@ -28,8 +28,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/adaptive-icon.png",
-      backgroundColor: "#000000"
+      foregroundImage: "./assets/combined-icon.png",
+      backgroundColor: "#ffffff"
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
