@@ -1710,3 +1710,18 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 7. **既存ロケール更新**: 19言語すべてにPro/オフライン/テーマ/Journal関連の翻訳キーを追加。OnboardingScreenにオフライン・Proスライドを追加。
 
 セキュリティレビュー実施済み。SQLiteのパラメタライズドクエリ、ローカルオンリーのデータ保存を確認。
+
+03/22
+**Web版メジャーアップデート: 完全ソロユース・デジタルプランナー化**
+
+モバイル版に続き、Web版にも同等のアップデートを適用した。
+
+主な変更内容:
+1. **i18n 35言語対応 + RTLサポート**: routing.tsのlocales拡張、layout.tsxでar/ur/fa/he向けにdir="rtl"を設定。globals.cssにRTLスタイル追加。
+2. **ペーパーテーマ3種追加**: ThemeContext完全書き換え。paper-classic（茶系）、paper-washi（青系）、paper-planner（緑系）。CSS変数ベースでlight/dark自動切替。デフォルトをpaper-classicに変更。
+3. **ジャーナル機能**: JournalModal新規作成（4投稿タイプ、5段階気分セレクター、タイムライン表示）。useJournal hook（Dexie live query）。Dexie v5マイグレーションでjournalPostsテーブル追加。
+4. **Share機能削除**: ActivityModalを2タブ（Analytics/History）に簡素化。
+5. **SettingsModal整理**: 認証・クラウド同期関連を削除。Proプラン案内（Crown）とJournal設定トグル（BookOpen）を追加。
+6. **DayScheduleパフォーマンス改善**: BUFFER_DAYSを60→14に削減（DOM要素5,808→1,392、76%削減）。RECENTER_THRESHOLDも15→5に調整。
+
+セキュリティレビュー実施済み。TypeScriptチェック通過確認。

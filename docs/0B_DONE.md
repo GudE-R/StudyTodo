@@ -3,6 +3,13 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- Web版メジャーアップデート: 完全ソロユース・デジタルプランナー化 (2026-03-22)
+  - i18n 35言語対応 + RTLサポート (ar, ur, fa, he)
+  - ペーパーテーマ3種追加 (classic/washi/planner)、デフォルトをpaper-classicに変更
+  - ジャーナル機能追加 (JournalModal, useJournal, Dexie v5マイグレーション)
+  - Share機能削除、クラウド同期→Proプラン案内に変更
+  - DayScheduleバッファ60→14日に削減（パフォーマンス改善、DOM要素76%削減）
+  - SettingsModal整理（認証関連削除、Journal設定・Proプラン案内追加）
 - モバイル版メジャーアップデート: 完全ソロユース・デジタルプランナー化 (2026-03-21)
   - Step 1: Share機能削除・クラウド同期の無効化（AuthProvider stub化、ShareCard削除、ActivityModal 2タブ化）
   - Step 2: Journal データモデル（JournalPost型・SQLiteテーブル・CRUD実装）
