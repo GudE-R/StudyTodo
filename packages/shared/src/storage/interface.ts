@@ -1,4 +1,4 @@
-import { Todo, Category, SRSProfile, Session, Feedback } from "../types";
+import { Todo, Category, SRSProfile, Session, Feedback, JournalPost } from "../types";
 
 export interface StorageInterface {
     // Todos
@@ -44,6 +44,13 @@ export interface StorageInterface {
     // Feedback
     /** フィードバックを保存します */
     addFeedback(feedback: Feedback): Promise<void>;
+
+    // Journal Posts
+    getJournalPosts?(options?: { type?: string; limit?: number; offset?: number }): Promise<JournalPost[]>;
+    getJournalPost?(id: string): Promise<JournalPost | null>;
+    addJournalPost?(post: JournalPost): Promise<void>;
+    updateJournalPost?(id: string, updates: Partial<JournalPost>): Promise<void>;
+    deleteJournalPost?(id: string): Promise<void>;
 
     // Maintenance
     /** 全データを削除します（ログアウト時用） */

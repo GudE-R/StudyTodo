@@ -71,6 +71,26 @@ export interface Session {
 }
 
 /**
+ * ジャーナル投稿（1人SNS）
+ */
+export interface JournalPost {
+    id: string;
+    content: string;
+    type: 'note' | 'learning' | 'reflection' | 'milestone';
+    mood?: 'great' | 'good' | 'neutral' | 'bad' | 'terrible';
+    tags?: string[];
+    linkedTodoId?: string;
+    linkedTodoTitle?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface JournalSettings {
+    enabled: boolean;
+    autoPromptOnComplete: boolean;
+}
+
+/**
  * ユーザーからのフィードバック
  */
 export interface Feedback {

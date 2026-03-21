@@ -42,6 +42,21 @@
         "termsOfService": "服务条款",
         "privacyPolicy": "隐私政策"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "您的数据，您的设备",
+                "description": "所有数据都存储在此设备本地。无需账户 — 立即开始使用应用。"
+            },
+            "pro": {
+                "title": "Pro 计划（即将推出）",
+                "description": "云同步、多设备支持和更多功能将在即将推出的 Pro 计划中提供。"
+            }
+        }
+    },
     "home": {
         "title": "首页",
         "newTodo": "新建待办",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "用于分析的会话历史",
         "logoutConfirm": "已退出登录",
         "backupConfirm": "确定要备份所有数据为 JSON 格式吗？",
-        "exportConfirm": "确定要导出学习记录为 CSV 格式吗？"
+        "exportConfirm": "确定要导出学习记录为 CSV 格式吗？",
+        "proComingSoon": "Pro 计划即将推出",
+        "proDescription": "云同步和多设备支持将在即将推出的 Pro 计划中提供。您的数据安全地存储在此设备上。"
     },
     "feedback": {
         "title": "反馈",

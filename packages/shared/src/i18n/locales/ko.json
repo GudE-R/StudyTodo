@@ -42,6 +42,21 @@
         "termsOfService": "이용약관",
         "privacyPolicy": "개인정보 처리방침"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "내 데이터, 내 기기",
+                "description": "모든 데이터는 이 기기에 로컬로 저장됩니다. 계정이 필요 없습니다 — 바로 앱을 사용하세요."
+            },
+            "pro": {
+                "title": "Pro 플랜 (출시 예정)",
+                "description": "클라우드 동기화, 다중 기기 지원 및 더 많은 기능이 곧 출시될 Pro 플랜에서 제공됩니다."
+            }
+        }
+    },
     "home": {
         "title": "홈",
         "newTodo": "새 TODO",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "분석용 세션 이력",
         "logoutConfirm": "로그아웃되었습니다",
         "backupConfirm": "모든 데이터를 JSON 형식으로 백업하시겠습니까?",
-        "exportConfirm": "학습 기록을 CSV 형식으로 내보내시겠습니까?"
+        "exportConfirm": "학습 기록을 CSV 형식으로 내보내시겠습니까?",
+        "proComingSoon": "Pro 플랜에서 제공 예정",
+        "proDescription": "클라우드 동기화 및 다중 기기 지원은 곧 출시될 Pro 플랜에서 제공될 예정입니다. 데이터는 이 기기에 안전하게 저장되어 있습니다."
     },
     "feedback": {
         "title": "피드백",

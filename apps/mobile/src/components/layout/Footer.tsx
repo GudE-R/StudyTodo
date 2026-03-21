@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { FolderTree, BarChart2, X, Menu } from 'lucide-react-native';
+import { FolderTree, BarChart2, X, Menu, BookOpen } from 'lucide-react-native';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useTranslation } from 'react-i18next';
 
@@ -9,11 +9,13 @@ interface FooterProps {
     onOpenTodo: () => void;
     onOpenReport: () => void;
     onOpenMenu?: () => void;
+    onOpenJournal?: () => void;
+    journalEnabled?: boolean;
     isHighlighted?: boolean;
     onResetKeep?: () => void;
 }
 
-export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, isHighlighted, onResetKeep }: FooterProps) => {
+export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, onOpenJournal, journalEnabled, isHighlighted, onResetKeep }: FooterProps) => {
     const { colors } = useThemeColors();
     const { t } = useTranslation();
 
@@ -37,6 +39,13 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, i
                     </TouchableOpacity>
                 )}
             </View>
+
+            {journalEnabled && onOpenJournal && (
+                <TouchableOpacity style={styles.button} onPress={onOpenJournal}>
+                    <BookOpen size={20} color={colors.icon} />
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>{t('journal.title', 'Journal')}</Text>
+                </TouchableOpacity>
+            )}
 
             <TouchableOpacity style={styles.button} onPress={onOpenReport}>
                 <BarChart2 size={20} color={colors.icon} />

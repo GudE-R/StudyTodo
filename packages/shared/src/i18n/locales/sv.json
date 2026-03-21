@@ -42,6 +42,21 @@
         "termsOfService": "Användarvillkor",
         "privacyPolicy": "Integritetspolicy"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Dina data, din enhet",
+                "description": "All din data lagras lokalt på denna enhet. Inget konto krävs — börja använda appen direkt."
+            },
+            "pro": {
+                "title": "Pro-plan (kommer snart)",
+                "description": "Molnsynkronisering, stöd för flera enheter och fler funktioner kommer att finnas tillgängliga i den kommande Pro-planen."
+            }
+        }
+    },
     "home": {
         "title": "Hem",
         "newTodo": "Ny uppgift",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Sessionshistorik för analys",
         "logoutConfirm": "Utloggad",
         "backupConfirm": "Exportera all data i JSON-format?",
-        "exportConfirm": "Exportera studieposter i CSV-format?"
+        "exportConfirm": "Exportera studieposter i CSV-format?",
+        "proComingSoon": "Kommer i Pro-planen",
+        "proDescription": "Molnsynkronisering och stöd för flera enheter kommer att finnas tillgängligt i den kommande Pro-planen. Dina data lagras säkert på denna enhet."
     },
     "feedback": {
         "title": "Feedback",

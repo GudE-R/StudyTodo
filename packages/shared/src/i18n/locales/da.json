@@ -42,6 +42,21 @@
         "termsOfService": "Servicevilkår",
         "privacyPolicy": "Privatlivspolitik"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Dine data, din enhed",
+                "description": "Alle dine data gemmes lokalt på denne enhed. Ingen konto nødvendig — begynd at bruge appen med det samme."
+            },
+            "pro": {
+                "title": "Pro-abonnement (kommer snart)",
+                "description": "Cloud-synkronisering, understøttelse af flere enheder og flere funktioner vil være tilgængelige i det kommende Pro-abonnement."
+            }
+        }
+    },
     "home": {
         "title": "Hjem",
         "newTodo": "Ny opgave",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Sessionshistorik til analyse",
         "logoutConfirm": "Logget ud",
         "backupConfirm": "Eksporter alle data i JSON-format?",
-        "exportConfirm": "Eksporter studieposter i CSV-format?"
+        "exportConfirm": "Eksporter studieposter i CSV-format?",
+        "proComingSoon": "Kommer i Pro-abonnement",
+        "proDescription": "Cloud-synkronisering og understøttelse af flere enheder vil være tilgængelig i det kommende Pro-abonnement. Dine data er sikkert gemt på denne enhed."
     },
     "feedback": {
         "title": "Feedback",

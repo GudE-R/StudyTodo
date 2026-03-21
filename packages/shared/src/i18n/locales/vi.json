@@ -42,6 +42,21 @@
         "termsOfService": "Điều khoản dịch vụ",
         "privacyPolicy": "Chính sách bảo mật"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Dữ liệu của bạn, thiết bị của bạn",
+                "description": "Tất cả dữ liệu được lưu trữ cục bộ trên thiết bị này. Không cần tài khoản — bắt đầu sử dụng ứng dụng ngay."
+            },
+            "pro": {
+                "title": "Gói Pro (Sắp ra mắt)",
+                "description": "Đồng bộ đám mây, hỗ trợ đa thiết bị và nhiều tính năng khác sẽ có trong gói Pro sắp ra mắt."
+            }
+        }
+    },
     "home": {
         "title": "Trang chủ",
         "newTodo": "Việc cần làm mới",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Lịch sử các phiên học để phân tích",
         "logoutConfirm": "Bạn đã đăng xuất",
         "backupConfirm": "Bạn có muốn sao lưu tất cả dữ liệu sang định dạng JSON không?",
-        "exportConfirm": "Bạn có muốn xuất lịch sử học tập sang định dạng CSV không?"
+        "exportConfirm": "Bạn có muốn xuất lịch sử học tập sang định dạng CSV không?",
+        "proComingSoon": "Sắp có trong Gói Pro",
+        "proDescription": "Đồng bộ đám mây và hỗ trợ đa thiết bị sẽ có trong gói Pro sắp ra mắt. Dữ liệu của bạn được lưu trữ an toàn trên thiết bị này."
     },
     "feedback": {
         "title": "Phản hồi",

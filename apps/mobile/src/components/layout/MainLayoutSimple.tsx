@@ -20,9 +20,11 @@ import { UsageGuideModal } from '../modals/UsageGuideModal';
 import { MobileTimerView } from '../timer/MobileTimerView';
 import { MenuModal } from '../modals/MenuModal';
 
+import { JournalModal } from '../journal/JournalModal';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useTodoHandlers } from '../../hooks/useTodoHandlers';
+import { useJournalSettings } from '../../hooks/useJournal';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -34,6 +36,8 @@ export const MainLayoutSimple = () => {
     const { categories, refreshCategories } = useMobileCategories();
     const { colors } = useThemeColors();
     const h = useTodoHandlers();
+    const { settings: journalSettings } = useJournalSettings();
+    const [isJournalVisible, setJournalVisible] = useState(false);
 
     // Calendar Mode (week / month)
     const [calendarMode, setCalendarMode] = useState<'week' | 'month'>('week');
@@ -170,6 +174,8 @@ export const MainLayoutSimple = () => {
                 onOpenTodo={() => h.setTodoModalVisible(true)}
                 onOpenReport={() => h.setActivityModalVisible(true)}
                 onOpenMenu={() => h.setMenuModalVisible(true)}
+                onOpenJournal={() => setJournalVisible(true)}
+                journalEnabled={journalSettings.enabled}
                 isHighlighted={!!h.keptDate || !!h.keptTime}
                 onResetKeep={h.handleResetKeep}
             />
@@ -196,6 +202,7 @@ export const MainLayoutSimple = () => {
             <ActivityModal visible={h.isActivityModalVisible} onClose={() => h.setActivityModalVisible(false)} />
             <FeedbackModal visible={h.isFeedbackModalVisible} onClose={() => h.setFeedbackModalVisible(false)} />
             <UsageGuideModal visible={h.isGuideModalVisible} onClose={() => h.setGuideModalVisible(false)} />
+            <JournalModal visible={isJournalVisible} onClose={() => setJournalVisible(false)} />
             <TodoDetailModal
                 visible={h.isDetailModalVisible}
                 onClose={() => h.setDetailModalVisible(false)}

@@ -42,6 +42,21 @@
         "termsOfService": "Nutzungsbedingungen",
         "privacyPolicy": "Datenschutzerklärung"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Deine Daten, dein Gerät",
+                "description": "Alle deine Daten werden lokal auf diesem Gerät gespeichert. Kein Konto erforderlich — nutze die App sofort."
+            },
+            "pro": {
+                "title": "Pro-Plan (kommt bald)",
+                "description": "Cloud-Synchronisierung, Multi-Geräte-Unterstützung und weitere Funktionen werden im kommenden Pro-Plan verfügbar sein."
+            }
+        }
+    },
     "home": {
         "title": "Startseite",
         "newTodo": "Neues Todo",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Sitzungsverlauf zur Analyse",
         "logoutConfirm": "Erfolgreich abgemeldet",
         "backupConfirm": "Alle Daten im JSON-Format exportieren?",
-        "exportConfirm": "Lernaufzeichnungen im CSV-Format exportieren?"
+        "exportConfirm": "Lernaufzeichnungen im CSV-Format exportieren?",
+        "proComingSoon": "Im Pro-Plan verfügbar",
+        "proDescription": "Cloud-Synchronisierung und Multi-Geräte-Unterstützung werden im kommenden Pro-Plan verfügbar sein. Ihre Daten sind sicher auf diesem Gerät gespeichert."
     },
     "feedback": {
         "title": "Feedback",

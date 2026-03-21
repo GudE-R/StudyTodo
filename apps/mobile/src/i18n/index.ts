@@ -3,7 +3,9 @@ import { initReactI18next } from 'react-i18next';
 import type { LanguageDetectorAsyncModule } from 'i18next';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { I18nManager, Platform } from 'react-native';
 import 'intl-pluralrules';
+import { RTL_LANGUAGES } from './languages';
 
 import da from '@studytodo/shared/src/i18n/locales/da.json';
 import de from '@studytodo/shared/src/i18n/locales/de.json';
@@ -24,6 +26,23 @@ import tr from '@studytodo/shared/src/i18n/locales/tr.json';
 import vi from '@studytodo/shared/src/i18n/locales/vi.json';
 import zhCN from '@studytodo/shared/src/i18n/locales/zh-CN.json';
 import zhTW from '@studytodo/shared/src/i18n/locales/zh-TW.json';
+// New languages
+import hi from '@studytodo/shared/src/i18n/locales/hi.json';
+import ar from '@studytodo/shared/src/i18n/locales/ar.json';
+import bn from '@studytodo/shared/src/i18n/locales/bn.json';
+import ur from '@studytodo/shared/src/i18n/locales/ur.json';
+import th from '@studytodo/shared/src/i18n/locales/th.json';
+import pl from '@studytodo/shared/src/i18n/locales/pl.json';
+import tl from '@studytodo/shared/src/i18n/locales/tl.json';
+import fa from '@studytodo/shared/src/i18n/locales/fa.json';
+import ms from '@studytodo/shared/src/i18n/locales/ms.json';
+import ro from '@studytodo/shared/src/i18n/locales/ro.json';
+import cs from '@studytodo/shared/src/i18n/locales/cs.json';
+import el from '@studytodo/shared/src/i18n/locales/el.json';
+import hu from '@studytodo/shared/src/i18n/locales/hu.json';
+import uk from '@studytodo/shared/src/i18n/locales/uk.json';
+import he from '@studytodo/shared/src/i18n/locales/he.json';
+import sw from '@studytodo/shared/src/i18n/locales/sw.json';
 
 const resources = {
     da: { translation: da },
@@ -45,6 +64,23 @@ const resources = {
     vi: { translation: vi },
     'zh-CN': { translation: zhCN },
     'zh-TW': { translation: zhTW },
+    // New languages
+    hi: { translation: hi },
+    ar: { translation: ar },
+    bn: { translation: bn },
+    ur: { translation: ur },
+    th: { translation: th },
+    pl: { translation: pl },
+    tl: { translation: tl },
+    fa: { translation: fa },
+    ms: { translation: ms },
+    ro: { translation: ro },
+    cs: { translation: cs },
+    el: { translation: el },
+    hu: { translation: hu },
+    uk: { translation: uk },
+    he: { translation: he },
+    sw: { translation: sw },
 };
 
 const LANGUAGE_DETECTOR: LanguageDetectorAsyncModule = {
@@ -88,6 +124,8 @@ const LANGUAGE_DETECTOR: LanguageDetectorAsyncModule = {
     },
 };
 
+const isRTL = (lang: string) => (RTL_LANGUAGES as readonly string[]).includes(lang);
+
 i18n
     .use(initReactI18next)
     .use(LANGUAGE_DETECTOR)
@@ -99,8 +137,19 @@ i18n
         },
         compatibilityJSON: 'v4',
         react: {
-            useSuspense: false, // React Native doesn't support Suspense well yet (or async usage)
+            useSuspense: false,
         },
     });
+
+// Apply RTL when language changes
+i18n.on('languageChanged', (lang: string) => {
+    const shouldBeRTL = isRTL(lang);
+    if (I18nManager.isRTL !== shouldBeRTL) {
+        I18nManager.forceRTL(shouldBeRTL);
+        I18nManager.allowRTL(shouldBeRTL);
+        // Note: App restart required for RTL changes to take effect.
+        // React Native's I18nManager changes apply on next app launch.
+    }
+});
 
 export default i18n;

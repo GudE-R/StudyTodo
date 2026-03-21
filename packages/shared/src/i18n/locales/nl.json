@@ -42,6 +42,21 @@
         "termsOfService": "Servicevoorwaarden",
         "privacyPolicy": "Privacybeleid"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Jouw data, jouw apparaat",
+                "description": "Al je gegevens worden lokaal op dit apparaat opgeslagen. Geen account nodig — begin meteen met het gebruik van de app."
+            },
+            "pro": {
+                "title": "Pro-abonnement (binnenkort beschikbaar)",
+                "description": "Cloudsynchronisatie, ondersteuning voor meerdere apparaten en meer functies worden beschikbaar in het aankomende Pro-abonnement."
+            }
+        }
+    },
     "home": {
         "title": "Home",
         "newTodo": "Nieuwe taak",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Sessiegeschiedenis voor analyse",
         "logoutConfirm": "Je bent uitgelogd",
         "backupConfirm": "Wil je alle gegevens back-uppen naar JSON-formaat?",
-        "exportConfirm": "Wil je de studiegeschiedenis exporteren naar CSV-formaat?"
+        "exportConfirm": "Wil je de studiegeschiedenis exporteren naar CSV-formaat?",
+        "proComingSoon": "Beschikbaar in Pro-abonnement",
+        "proDescription": "Cloudsynchronisatie en ondersteuning voor meerdere apparaten worden beschikbaar in het aankomende Pro-abonnement. Je gegevens zijn veilig opgeslagen op dit apparaat."
     },
     "feedback": {
         "title": "Feedback",

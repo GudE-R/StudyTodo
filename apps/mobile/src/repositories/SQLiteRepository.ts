@@ -1,4 +1,4 @@
-import { StorageInterface, Todo, Category, SRSProfile, Session, Feedback, generateId } from "@studytodo/shared";
+import { StorageInterface, Todo, Category, SRSProfile, Session, Feedback, JournalPost, generateId } from "@studytodo/shared";
 import * as SQLite from 'expo-sqlite';
 
 /**
@@ -124,6 +124,24 @@ export class SQLiteRepository implements StorageInterface {
         // Additional migrations...
         try { this.db.execSync(`ALTER TABLE todos ADD COLUMN estimatedDuration INTEGER;`); } catch (e) { }
         try { this.db.execSync(`ALTER TABLE todos ADD COLUMN actualDuration INTEGER;`); } catch (e) { }
+
+        // ジャーナル投稿テーブル
+        this.db.execSync(`
+            CREATE TABLE IF NOT EXISTS journalPosts (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL DEFAULT '',
+                type TEXT NOT NULL DEFAULT 'note',
+                mood TEXT,
+                tags TEXT,
+                linkedTodoId TEXT,
+                linkedTodoTitle TEXT,
+                createdAt TEXT NOT NULL,
+                updatedAt TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_journal_created ON journalPosts(createdAt);
+            CREATE INDEX IF NOT EXISTS idx_journal_type ON journalPosts(type);
+            CREATE INDEX IF NOT EXISTS idx_journal_todo ON journalPosts(linkedTodoId);
+        `);
 
         // デフォルトSRSプロファイルの投入（初回のみ）
         const existingProfiles = this.db.getFirstSync<{ count: number }>('SELECT COUNT(*) as count FROM srsProfiles');
@@ -321,8 +339,10 @@ export class SQLiteRepository implements StorageInterface {
 
     async updateCategory(id: string, updates: Partial<Category>): Promise<void> {
         const row = this.toDB(updates);
-        // childrenプロパティはSQLには保存せず、メモリ上で再構築するため除外します
-        const keys = Object.keys(row).filter(k => k !== 'id' && k !== 'children');
+        const allowedColumns = [
+            'name', 'parentId', 'level', 'isDefault', 'order', 'color', 'icon', 'customIconUri', 'createdAt', 'updatedAt'
+        ];
+        const keys = Object.keys(row).filter(k => k !== 'id' && k !== 'children' && allowedColumns.includes(k));
         if (keys.length === 0) return;
 
         const setClause = keys.map(k => `"${k}" = ?`).join(', '); // quote keys for "order"
@@ -358,7 +378,8 @@ export class SQLiteRepository implements StorageInterface {
 
     async updateSRSProfile(id: string, updates: Partial<SRSProfile>): Promise<void> {
         const row = this.toDB(updates);
-        const keys = Object.keys(row).filter(k => k !== 'id');
+        const allowedColumns = ['name', 'intervals', 'isDefault', 'createdAt', 'updatedAt'];
+        const keys = Object.keys(row).filter(k => k !== 'id' && allowedColumns.includes(k));
         if (keys.length === 0) return;
 
         const setClause = keys.map(k => `${k} = ?`).join(', ');
@@ -398,6 +419,7 @@ export class SQLiteRepository implements StorageInterface {
         await this.db.runAsync('DELETE FROM srsProfiles');
         await this.db.runAsync('DELETE FROM sessions');
         await this.db.runAsync('DELETE FROM feedbacks');
+        await this.db.runAsync('DELETE FROM journalPosts');
     }
 
     async addFeedback(feedback: Feedback): Promise<void> {
@@ -408,5 +430,83 @@ export class SQLiteRepository implements StorageInterface {
             [row.id, row.userId, row.content, row.type, row.deviceInfo, row.version, row.createdAt]
         );
         this.notifyChange('feedbacks', 'INSERT', feedback);
+    }
+
+    // --- Journal Posts ---
+
+    async getJournalPosts(options?: { type?: string; limit?: number; offset?: number }): Promise<JournalPost[]> {
+        let query = 'SELECT * FROM journalPosts';
+        const params: any[] = [];
+
+        if (options?.type) {
+            query += ' WHERE type = ?';
+            params.push(options.type);
+        }
+
+        query += ' ORDER BY createdAt DESC';
+
+        if (options?.limit) {
+            query += ' LIMIT ?';
+            params.push(options.limit);
+        }
+
+        if (options?.offset) {
+            query += ' OFFSET ?';
+            params.push(options.offset);
+        }
+
+        const rows = await this.db.getAllAsync<any>(query, params);
+        return rows.map(row => ({
+            ...row,
+            tags: row.tags ? (() => { try { return JSON.parse(row.tags); } catch { return undefined; } })() : undefined,
+        }));
+    }
+
+    async getJournalPost(id: string): Promise<JournalPost | null> {
+        const row = await this.db.getFirstAsync<any>(
+            'SELECT * FROM journalPosts WHERE id = ?', [id]
+        );
+        if (!row) return null;
+        return {
+            ...row,
+            tags: row.tags ? (() => { try { return JSON.parse(row.tags); } catch { return undefined; } })() : undefined,
+        };
+    }
+
+    async addJournalPost(post: JournalPost): Promise<void> {
+        await this.db.runAsync(
+            `INSERT INTO journalPosts (id, content, type, mood, tags, linkedTodoId, linkedTodoTitle, createdAt, updatedAt)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [post.id, post.content, post.type, post.mood ?? null,
+             post.tags ? JSON.stringify(post.tags) : null,
+             post.linkedTodoId ?? null, post.linkedTodoTitle ?? null,
+             post.createdAt, post.updatedAt]
+        );
+        this.notifyChange('journalPosts', 'INSERT', post);
+    }
+
+    async updateJournalPost(id: string, updates: Partial<JournalPost>): Promise<void> {
+        const fields: string[] = [];
+        const values: any[] = [];
+
+        if (updates.content !== undefined) { fields.push('content = ?'); values.push(updates.content); }
+        if (updates.type !== undefined) { fields.push('type = ?'); values.push(updates.type); }
+        if (updates.mood !== undefined) { fields.push('mood = ?'); values.push(updates.mood); }
+        if (updates.tags !== undefined) { fields.push('tags = ?'); values.push(JSON.stringify(updates.tags)); }
+
+        fields.push('updatedAt = ?');
+        values.push(new Date().toISOString());
+        values.push(id);
+
+        await this.db.runAsync(
+            `UPDATE journalPosts SET ${fields.join(', ')} WHERE id = ?`,
+            values
+        );
+        this.notifyChange('journalPosts', 'UPDATE', { id, ...updates } as any);
+    }
+
+    async deleteJournalPost(id: string): Promise<void> {
+        await this.db.runAsync('DELETE FROM journalPosts WHERE id = ?', [id]);
+        this.notifyChange('journalPosts', 'DELETE', { id });
     }
 }

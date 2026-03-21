@@ -42,6 +42,21 @@
         "termsOfService": "Käyttöehdot",
         "privacyPolicy": "Tietosuojakäytäntö"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Sinun datasi, sinun laitteesi",
+                "description": "Kaikki tietosi tallennetaan paikallisesti tähän laitteeseen. Tiliä ei tarvita — aloita sovelluksen käyttö heti."
+            },
+            "pro": {
+                "title": "Pro-tilaus (tulossa pian)",
+                "description": "Pilvisynkronointi, monilaitetuki ja lisää ominaisuuksia tulevat saataville tulevassa Pro-tilauksessa."
+            }
+        }
+    },
     "home": {
         "title": "Koti",
         "newTodo": "Uusi tehtävä",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Istuntohistoria analyysiä varten",
         "logoutConfirm": "Kirjauduttu ulos",
         "backupConfirm": "Viedäänkö kaikki tiedot JSON-muodossa?",
-        "exportConfirm": "Viedäänkö opiskelutiedot CSV-muodossa?"
+        "exportConfirm": "Viedäänkö opiskelutiedot CSV-muodossa?",
+        "proComingSoon": "Tulossa Pro-tilauksessa",
+        "proDescription": "Pilvisynkronointi ja monilaitetuki tulevat saataville tulevassa Pro-tilauksessa. Tietosi on turvallisesti tallennettu tähän laitteeseen."
     },
     "feedback": {
         "title": "Palaute",

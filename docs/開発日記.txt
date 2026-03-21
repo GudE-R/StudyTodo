@@ -1694,3 +1694,19 @@ Mobile側でルーティンTodo(複数日分)を作成した際、ローカル�
 **規約同意UIの改善と多言語対応の更新:**
 AuthModalやSettingsModalにおける「利用規約」と「プライバシーポリシー」の同意UIを改善した。
 不要なチェックボックスを廃止し、アクションボタン（「同意して登録」など）を押すことで同意とみなすシンプルな形式に変更し、19言語の翻訳ファイルをすべて更新した。
+
+03/21
+**メジャーアップデート: 完全ソロユース・デジタルプランナー化**
+
+モバイル版を「完全ソロユース・デジタルプランナー」として再構築する大規模アップデートを実施した。
+
+主な変更内容:
+1. **Share機能削除・クラウド同期の無効化**: AuthProviderをstub化、ShareCard削除、ActivityModalを2タブ（Analytics/History）に簡素化。Proプラン案内をSettingsに追加。
+2. **Journalデータモデル**: JournalPost型をshared typesに追加、SQLiteにjournalPostsテーブルとインデックスを追加、CRUD操作を実装。
+3. **i18n 16言語追加（19→35言語対応）**: hi（ヒンディー）, ar（アラビア）, bn（ベンガル）, ur（ウルドゥー）, th（タイ）, pl（ポーランド）, tl（タガログ）, fa（ペルシア）, ms（マレー）, ro（ルーマニア）, cs（チェコ）, el（ギリシャ）, hu（ハンガリー）, uk（ウクライナ）, he（ヘブライ）, sw（スワヒリ）の完全翻訳ファイルを作成。
+4. **RTL対応**: ar, ur, fa, heの4言語で`I18nManager.forceRTL()`を適用。言語切替時にRTLレイアウトが自動適用される。
+5. **ペーパーテーマ5種**: ThemeProviderを完全書き換え。light, dark, paper-classic（クラシックノート風）, paper-washi（和紙テクスチャ風）, paper-planner（レザーバインダー風）の5テーマ。ペーパーテーマはシステムのカラースキーム（useColorScheme）に応じてlight/dark自動切替。
+6. **Journal機能UI**: JournalModal（タイムライン+コンポーザー）、JournalPostCard（投稿カード）、useJournal/useJournalSettings hooks、Footer・MainLayout統合。4種類の投稿タイプ（Note/Learning/Reflection/Milestone）と5段階の気分セレクター。
+7. **既存ロケール更新**: 19言語すべてにPro/オフライン/テーマ/Journal関連の翻訳キーを追加。OnboardingScreenにオフライン・Proスライドを追加。
+
+セキュリティレビュー実施済み。SQLiteのパラメタライズドクエリ、ローカルオンリーのデータ保存を確認。

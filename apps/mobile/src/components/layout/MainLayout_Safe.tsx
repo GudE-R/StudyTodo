@@ -19,9 +19,11 @@ import { FeedbackModal } from '../modals/FeedbackModal';
 import { UsageGuideModal } from '../modals/UsageGuideModal';
 import { MobileTimerView } from '../timer/MobileTimerView';
 
+import { JournalModal } from '../journal/JournalModal';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useThemeColors } from '../../providers/ThemeProvider';
 import { useTodoHandlers } from '../../hooks/useTodoHandlers';
+import { useJournalSettings } from '../../hooks/useJournal';
 import { useState } from 'react';
 
 export const MainLayout = () => {
@@ -29,6 +31,8 @@ export const MainLayout = () => {
     const { categories, refreshCategories } = useMobileCategories();
     const { colors } = useThemeColors();
     const h = useTodoHandlers();
+    const { settings: journalSettings } = useJournalSettings();
+    const [isJournalVisible, setJournalVisible] = useState(false);
 
     if (h.viewMode === "timer" && h.activeTodo) {
         return (
@@ -95,6 +99,8 @@ export const MainLayout = () => {
                 onOpenTemplate={() => h.setTemplateModalVisible(true)}
                 onOpenTodo={() => h.setTodoModalVisible(true)}
                 onOpenReport={() => h.setActivityModalVisible(true)}
+                onOpenJournal={() => setJournalVisible(true)}
+                journalEnabled={journalSettings.enabled}
                 isHighlighted={!!h.keptDate || !!h.keptTime}
                 onResetKeep={h.handleResetKeep}
             />
@@ -112,6 +118,7 @@ export const MainLayout = () => {
             <ActivityModal visible={h.isActivityModalVisible} onClose={() => h.setActivityModalVisible(false)} />
             <FeedbackModal visible={h.isFeedbackModalVisible} onClose={() => h.setFeedbackModalVisible(false)} />
             <UsageGuideModal visible={h.isGuideModalVisible} onClose={() => h.setGuideModalVisible(false)} />
+            <JournalModal visible={isJournalVisible} onClose={() => setJournalVisible(false)} />
             <TodoDetailModal
                 visible={h.isDetailModalVisible}
                 onClose={() => h.setDetailModalVisible(false)}

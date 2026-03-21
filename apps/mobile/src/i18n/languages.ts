@@ -18,4 +18,25 @@ export const SUPPORTED_LANGUAGES = [
     { code: 'no', label: 'Norsk' },
     { code: 'da', label: 'Dansk' },
     { code: 'fi', label: 'Suomi' },
-];
+    // New languages
+    { code: 'hi', label: 'हिन्दी' },
+    { code: 'ar', label: 'العربية', rtl: true },
+    { code: 'bn', label: 'বাংলা' },
+    { code: 'ur', label: 'اردو', rtl: true },
+    { code: 'th', label: 'ไทย' },
+    { code: 'pl', label: 'Polski' },
+    { code: 'tl', label: 'Filipino' },
+    { code: 'fa', label: 'فارسی', rtl: true },
+    { code: 'ms', label: 'Bahasa Melayu' },
+    { code: 'ro', label: 'Română' },
+    { code: 'cs', label: 'Čeština' },
+    { code: 'el', label: 'Ελληνικά' },
+    { code: 'hu', label: 'Magyar' },
+    { code: 'uk', label: 'Українська' },
+    { code: 'he', label: 'עברית', rtl: true },
+    { code: 'sw', label: 'Kiswahili' },
+] as const;
+
+export type LanguageCode = typeof SUPPORTED_LANGUAGES[number]['code'];
+
+export const RTL_LANGUAGES = ['ar', 'ur', 'fa', 'he'] as const;

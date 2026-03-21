@@ -87,6 +87,14 @@
             "feedback": {
                 "title": "Your Feedback Matters",
                 "description": "Please share your thoughts and feature requests using the in-app feedback feature."
+            },
+            "offline": {
+                "title": "Your Data, Your Device",
+                "description": "All your data is stored locally on this device. No account required — start using the app right away."
+            },
+            "pro": {
+                "title": "Pro Plan (Coming Soon)",
+                "description": "Cloud sync, multi-device support, and more features will be available in the upcoming Pro plan."
             }
         }
     },
@@ -181,23 +189,8 @@
         "language": "Language",
         "appearance": "Appearance",
         "cloudSync": "Cloud Sync",
-        "cloudSyncDescription": "Used for syncing data across multiple devices. Registration is not required if you only use this app on one device.",
-        "loggedInAs": "Logged in as",
-        "logout": "Logout",
-        "loginToBackup": "Login / Create Account",
-        "backupCloudDescription": "Backup and sync data to cloud",
-        "syncEnabled": "Enabled (Real-time)",
-        "syncNow": "Sync Now",
-        "lastSynced": "Last Synced",
-        "justSynced": "Synced",
-        "dataManagement": "Data Management",
-        "backupJson": "Create Backup (JSON)",
-        "backupJsonDescription": "All data including settings and tasks",
-        "exportCsv": "Export Stats (CSV)",
-        "exportCsvDescription": "Session history for analysis",
-        "logoutConfirm": "Logged out successfully",
-        "backupConfirm": "Export all data in JSON format?",
-        "exportConfirm": "Export study records in CSV format?",
+        "proComingSoon": "Coming in Pro Plan",
+        "proDescription": "Cloud sync and multi-device support will be available in the upcoming Pro plan. Your data is safely stored on this device.",
         "notification": "Notification",
         "dailyReminder": "Daily Reminder",
         "reminderTime": "Daily at",
@@ -265,8 +258,12 @@
         "lightDesc": "Bright background",
         "dark": "Dark",
         "darkDesc": "Dark background",
-        "system": "System",
-        "systemDesc": "Follow OS settings"
+        "paperClassic": "Classic",
+        "paperClassicDesc": "Warm notebook-style theme with ruled lines",
+        "paperWashi": "Washi",
+        "paperWashiDesc": "Minimal theme with Japanese paper texture",
+        "paperPlanner": "Planner",
+        "paperPlannerDesc": "Premium leather binder-style theme"
     },
     "template": {
         "categoryTab": "Categories",
@@ -315,7 +312,6 @@
     "activity": {
         "analytics": "Analytics",
         "history": "History",
-        "share": "Share",
         "tasks": "Tasks",
         "filters": "Filters:",
         "allStatus": "All Status",
@@ -326,12 +322,8 @@
         "deleteSelected": "Delete selected items ({count})",
         "deleteGroupConfirm": "Are you sure you want to delete all {count} group tasks?",
         "deleteTodoConfirm": "Are you sure you want to delete {count} tasks?",
-        "shareTitle": "Generate Share Card",
         "selectCategory": "Category to Display",
-        "allActivities": "All Activities",
-        "shareSocial": "Share to Social Media",
-        "shareSocialDesc": "Share to get Ad-Free for 24 Hours!",
-        "downloadOnly": "Download Image Only"
+        "allActivities": "All Activities"
     },
     "welcome": {
         "heroTitle": "Record, Measure, Plan.",
@@ -373,16 +365,6 @@
         "ctaSubtitle": "No sign-up required. Try it now for free.",
         "ctaButton": "Get Started Free"
     },
-    "share": {
-        "streak": "{{count}} Days Streak",
-        "bestStreak": "Best {{count}} Days",
-        "totalTime": "Total Time",
-        "completed": "Completed",
-        "last14Days": "Last 14 Days activity",
-        "distribution": "Category Distribution",
-        "noData": "No Data",
-        "tasks": "tasks"
-    },
     "timer": {
         "switchToStopwatch": "Switch to Stopwatch",
         "saveRecordOnly": "Save Record Only",
@@ -393,5 +375,21 @@
         "durationMinSec": "{{min}}m {{sec}}s",
         "durationMin": "{{min}}m",
         "totalMinutes": "Total: {{min}}m"
+    },
+    "journal": {
+        "title": "Journal",
+        "empty": "No entries yet. Share your thoughts!",
+        "placeholder": "What's on your mind?",
+        "typeNote": "Note",
+        "typeLearning": "Learning",
+        "typeReflection": "Reflection",
+        "typeMilestone": "Milestone",
+        "deleteTitle": "Delete Entry",
+        "deleteConfirm": "Are you sure you want to delete this entry?",
+        "settings": "Journal",
+        "enabled": "Journal Feature",
+        "autoPrompt": "Prompt on task completion",
+        "completedPromptTitle": "Record it?",
+        "completedPromptMessage": "You completed \"{{title}}\". Would you like to add a journal entry?"
     }
 }

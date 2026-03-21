@@ -42,6 +42,21 @@
         "termsOfService": "Hizmet Şartları",
         "privacyPolicy": "Gizlilik Politikası"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Verileriniz, Cihazınız",
+                "description": "Tüm verileriniz bu cihazda yerel olarak saklanır. Hesap gerekmez — uygulamayı hemen kullanmaya başlayın."
+            },
+            "pro": {
+                "title": "Pro Plan (Yakında)",
+                "description": "Bulut senkronizasyonu, çoklu cihaz desteği ve daha fazla özellik yakında çıkacak Pro planda kullanılabilir olacak."
+            }
+        }
+    },
     "home": {
         "title": "Ana Sayfa",
         "newTodo": "Yeni Görev",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Analiz için oturum geçmişi",
         "logoutConfirm": "Çıkış yapıldı",
         "backupConfirm": "Tüm verileri JSON formatında yedeklemek istiyor musunuz?",
-        "exportConfirm": "Çalışma geçmişini CSV formatında dışa aktarmak istiyor musunuz?"
+        "exportConfirm": "Çalışma geçmişini CSV formatında dışa aktarmak istiyor musunuz?",
+        "proComingSoon": "Pro Planda Gelecek",
+        "proDescription": "Bulut senkronizasyonu ve çoklu cihaz desteği yakında çıkacak Pro planda kullanılabilir olacak. Verileriniz bu cihazda güvenle saklanmaktadır."
     },
     "feedback": {
         "title": "Geri Bildirim",

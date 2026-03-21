@@ -5,23 +5,21 @@ import React from 'react';
 // TouchableOpacity: タップ可能なボタン（押すと少し透明になる）
 // Modal: 画面最前面に表示されるウィンドウ
 // StyleSheet: スタイル定義用
-import { View, Text, TouchableOpacity, StyleSheet, Switch, ActivityIndicator, ScrollView, FlatList, Image, Platform, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Switch, ScrollView, FlatList, Image, Platform } from 'react-native';
 import { ModalOverlay } from '../ui/ModalOverlay';
 
 // アイコンライブラリからのインポート
-import { X, Moon, Sun, Monitor, RefreshCw, Languages, ChevronRight, ArrowLeft, Layout, Bell } from 'lucide-react-native';
+import { X, Moon, Sun, Languages, ChevronRight, ArrowLeft, Layout, Bell, BookOpen, Leaf, Briefcase } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 // アプリケーション固有の機能をインポート（カスタムフックなど）
-import { useAuth } from '../../providers/AuthProvider'; // 認証状態管理
-import { AuthModal } from './AuthModal'; // ログイン用モーダル
 import { useTheme, ThemeMode } from '../../providers/ThemeProvider'; // テーマ管理（ダークモード等）
-import { useMobileSync } from '../../hooks/useMobileSync'; // データ同期機能
 import { useTranslation } from 'react-i18next'; // 多言語対応
 import { SUPPORTED_LANGUAGES } from '../../i18n/languages'; // サポート言語リスト
 import { useLayout } from '../../providers/LayoutProvider';
 import { useSettingsForm } from '../../hooks/useSettingsForm';
+import { useJournalSettings } from '../../hooks/useJournal';
 
 // Propsの型定義
 // 親コンポーネントから受け取るデータの型を指定します
@@ -41,12 +39,6 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // テーマ設定を取得（現在の色, ダークモード状態, モード設定関数）
     const { colors, isDark, themeMode, setThemeMode } = useTheme();
 
-    // 認証情報を取得（ユーザー情報, ログアウト関数, アカウント削除関数）
-    const { user, signOut, deleteAccount } = useAuth();
-
-    // データ同期の状態と関数を取得
-    const { isSyncing, lastSyncTime, sync } = useMobileSync();
-
     // 翻訳機能を取得（t: テキスト取得関数, i18n: 言語切り替えオブジェクト）
     const { t, i18n } = useTranslation();
     const { layoutMode, setLayoutMode } = useLayout();
@@ -54,10 +46,10 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // リマインダー設定フック
     const { reminderEnabled, reminderTime, showTimePicker, setShowTimePicker, toggleReminder, onTimeChange } = useSettingsForm();
 
-    // --- State (状態管理) ---
+    // ジャーナル設定
+    const { settings: journalSettings, updateSettings: updateJournalSettings } = useJournalSettings();
 
-    // ログインモーダルの表示状態
-    const [showAuthModal, setShowAuthModal] = React.useState(false);
+    // --- State (状態管理) ---
 
     // 現在表示しているビューの切り替え ('main' | 'language' | 'layout')
     const [view, setView] = React.useState<'main' | 'language' | 'layout'>('main');
@@ -100,9 +92,13 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
             {/* --- 外観設定 (Appearance) --- */}
             <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>{t('settings.appearance', 'Appearance')}</Text>
             <View style={styles.themeRow}>
-                {renderThemeOption(t('theme.light', 'Light'), <Sun size={24} color={themeMode === 'light' ? colors.primary : colors.icon} />, 'light')}
-                {renderThemeOption(t('theme.dark', 'Dark'), <Moon size={24} color={themeMode === 'dark' ? colors.primary : colors.icon} />, 'dark')}
-                {renderThemeOption(t('theme.system', 'System'), <Monitor size={24} color={themeMode === 'system' ? colors.primary : colors.icon} />, 'system')}
+                {renderThemeOption(t('theme.light', 'Light'), <Sun size={20} color={themeMode === 'light' ? colors.primary : colors.icon} />, 'light')}
+                {renderThemeOption(t('theme.dark', 'Dark'), <Moon size={20} color={themeMode === 'dark' ? colors.primary : colors.icon} />, 'dark')}
+            </View>
+            <View style={[styles.themeRow, { marginTop: 8 }]}>
+                {renderThemeOption(t('theme.paperClassic', 'Classic'), <BookOpen size={20} color={themeMode === 'paper-classic' ? colors.primary : colors.icon} />, 'paper-classic')}
+                {renderThemeOption(t('theme.paperWashi', 'Washi'), <Leaf size={20} color={themeMode === 'paper-washi' ? colors.primary : colors.icon} />, 'paper-washi')}
+                {renderThemeOption(t('theme.paperPlanner', 'Planner'), <Briefcase size={20} color={themeMode === 'paper-planner' ? colors.primary : colors.icon} />, 'paper-planner')}
             </View>
 
             {/* --- 言語設定 (Language) --- */}
@@ -183,108 +179,37 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 )}
             </View>
 
-            {/* --- クラウド同期 / アカウント設定 --- */}
-            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.cloudSync', 'Cloud Sync')}</Text>
-            <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 8, lineHeight: 18 }}>
-                {t('settings.cloudSyncDescription', 'Used for syncing data across multiple devices. Registration is not required if you only use this app on one device.')}
-            </Text>
-
-            {
-                user ? (
-                    // ログイン済みの場合の表示
-                    <View>
-                        {/* ユーザー情報表示 */}
-                        <View style={[styles.userInfo, { backgroundColor: isDark ? '#1e3a8a30' : '#eff6ff', borderColor: '#bfdbfe' }]}>
-                            <Text style={[styles.userLabel, { color: '#2563eb' }]}>{t('settings.loggedInAs', 'LOGGED IN AS')}</Text>
-                            <Text style={[styles.userEmail, { color: colors.text }]}>{user.email}</Text>
-                        </View>
-
-                        {/* ログアウトボタン */}
-                        <TouchableOpacity
-                            style={[styles.actionBtn, { borderColor: user ? '#ef4444' : colors.border, marginTop: 10 }]}
-                            onPress={async () => {
-                                await signOut();
-                                // ログアウト後の処理（必要であれば）
-                            }}
-                        >
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={[styles.actionBtnText, { color: '#ef4444' }]}>{t('settings.logout', 'Log Out')}</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        {/* 退会（アカウント削除）ボタン */}
-                        <TouchableOpacity
-                            style={[styles.actionBtn, { borderColor: '#dc2626', marginTop: 10 }]}
-                            onPress={() => {
-                                Alert.alert(
-                                    t('settings.deleteAccountConfirmTitle', 'Delete Account'),
-                                    t('settings.deleteAccountConfirmMessage', 'Are you sure you want to delete your account? All your data will be permanently deleted and cannot be recovered.'),
-                                    [
-                                        { text: t('common.cancel', 'Cancel'), style: 'cancel' },
-                                        {
-                                            text: t('settings.deleteAccount', 'Delete'),
-                                            style: 'destructive',
-                                            onPress: async () => {
-                                                const { error } = await deleteAccount();
-                                                if (error) {
-                                                    Alert.alert(t('common.error', 'Error'), t('settings.deleteAccountError', 'Failed to delete account. Please try again or contact support.'));
-                                                } else {
-                                                    Alert.alert(t('common.success', 'Success'), t('settings.deleteAccountSuccess', 'Your account has been successfully deleted.'));
-                                                }
-                                            }
-                                        }
-                                    ]
-                                );
-                            }}
-                        >
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={[styles.actionBtnText, { color: '#dc2626' }]}>{t('settings.deleteAccount', 'Delete Account')}</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        {/* 同期実行ボタン */}
-                        <TouchableOpacity
-                            style={[styles.syncBtn, { backgroundColor: isDark ? '#1e293b' : '#f8fafc', borderColor: colors.border }]}
-                            onPress={async () => {
-                                // 同期中でない場合のみ同期を実行
-                                if (user && !isSyncing) {
-                                    await sync(user.id);
-                                }
-                            }}
-                            disabled={isSyncing} // 同期中はボタンを無効化
-                        >
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <View>
-                                    <Text style={[styles.syncBtnText, { color: colors.text }]}>
-                                        {isSyncing ? t('common.syncing', "Syncing...") : t('settings.syncNow', "Sync Now")}
-                                    </Text>
-                                    <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 2 }}>
-                                        {lastSyncTime
-                                            ? `${t('settings.lastSynced', 'Last sync')}: ${lastSyncTime.toLocaleTimeString()}`
-                                            : t('settings.backupCloudDescription', "Sync to cloud")}
-                                    </Text>
-                                </View>
-                                {/* 同期中はローディング表示、それ以外は更新アイコンを表示 */}
-                                {isSyncing ? (
-                                    <ActivityIndicator size="small" color={colors.primary} />
-                                ) : (
-                                    <RefreshCw size={20} color={colors.textSecondary} />
-                                )}
-                            </View>
-                        </TouchableOpacity>
+            {/* --- ジャーナル設定 --- */}
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('journal.settings', 'Journal')}</Text>
+            <View style={[styles.menuItem, { borderColor: colors.border, flexDirection: 'column', alignItems: 'flex-start' }]}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <Text style={[styles.menuItemText, { color: colors.text, marginLeft: 0 }]}>{t('journal.enabled', 'Journal Feature')}</Text>
+                    <Switch
+                        value={journalSettings.enabled}
+                        onValueChange={(v) => updateJournalSettings({ enabled: v })}
+                        trackColor={{ true: colors.primary }}
+                    />
+                </View>
+                {journalSettings.enabled && (
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 12 }}>
+                        <Text style={{ color: colors.textSecondary, fontSize: 13 }}>{t('journal.autoPrompt', 'Prompt on task completion')}</Text>
+                        <Switch
+                            value={journalSettings.autoPromptOnComplete}
+                            onValueChange={(v) => updateJournalSettings({ autoPromptOnComplete: v })}
+                            trackColor={{ true: colors.primary }}
+                        />
                     </View>
-                ) : (
-                    // 未ログインの場合の表示
-                    <TouchableOpacity
-                        style={[styles.actionBtn, { borderColor: colors.border, backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}
-                        onPress={() => setShowAuthModal(true)}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={[styles.actionBtnText, { color: colors.text }]}>{t('settings.loginToBackup', 'Log In / Sign Up')}</Text>
-                        </View>
-                    </TouchableOpacity>
-                )
-            }
+                )}
+            </View>
+
+            {/* --- クラウド同期（Proプラン予定） --- */}
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.cloudSync', 'Cloud Sync')}</Text>
+            <View style={[styles.proInfo, { backgroundColor: isDark ? '#1e3a8a15' : '#eff6ff', borderColor: isDark ? '#1e3a8a40' : '#bfdbfe' }]}>
+                <Text style={[styles.proInfoTitle, { color: colors.primary }]}>{t('settings.proComingSoon', 'Coming in Pro Plan')}</Text>
+                <Text style={[styles.proInfoText, { color: colors.textSecondary }]}>
+                    {t('settings.proDescription', 'Cloud sync and multi-device support will be available in the upcoming Pro plan. Your data is safely stored on this device.')}
+                </Text>
+            </View>
 
             {/* ガイドセクション (現在非表示) */}
             {/* <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('settings.guide', 'About App')}</Text>
@@ -453,8 +378,6 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 </View>
             </View>
 
-            {/* ログイン/サインアップモーダル（入れ子で表示） */}
-            <AuthModal visible={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </ModalOverlay>
     );
 };
@@ -549,40 +472,19 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontWeight: '500',
     },
-    userInfo: {
+    proInfo: {
         padding: 15,
         borderRadius: 10,
         borderWidth: 1,
-        marginBottom: 10,
     },
-    userLabel: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    userEmail: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    actionBtn: {
-        padding: 15,
-        borderRadius: 10,
-        borderWidth: 1,
-        alignItems: 'center',
-    },
-    actionBtnText: {
+    proInfoTitle: {
         fontSize: 14,
         fontWeight: 'bold',
+        marginBottom: 6,
     },
-    syncBtn: {
-        marginTop: 10,
-        padding: 15,
-        borderRadius: 10,
-        borderWidth: 1,
-    },
-    syncBtnText: {
-        fontSize: 14,
-        fontWeight: '600',
+    proInfoText: {
+        fontSize: 12,
+        lineHeight: 18,
     },
     menuItem: {
         flexDirection: 'row',

@@ -3,6 +3,15 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- モバイル版メジャーアップデート: 完全ソロユース・デジタルプランナー化 (2026-03-21)
+  - Step 1: Share機能削除・クラウド同期の無効化（AuthProvider stub化、ShareCard削除、ActivityModal 2タブ化）
+  - Step 2: Journal データモデル（JournalPost型・SQLiteテーブル・CRUD実装）
+  - Step 3: i18n 16言語追加（19→35言語対応: hi, ar, bn, ur, th, pl, tl, fa, ms, ro, cs, el, hu, uk, he, sw）
+  - Step 4: RTL対応（ar, ur, fa, he の4言語で I18nManager.forceRTL 適用）
+  - Step 5: ペーパーテーマ5種実装（light, dark, paper-classic, paper-washi, paper-planner）。ペーパーテーマはシステムのカラースキームに応じてlight/dark自動切替
+  - Step 6: Journal機能UI（JournalModal, JournalPostCard, useJournal hooks, Footer/Layout統合）
+  - 既存19言語のロケールファイルにPro/オフライン/テーマ/Journal関連の翻訳キーを追加
+  - OnboardingScreenにオフライン・Proスライドを追加
 - アカウント削除機能の不具合修正: 外部キー制約に ON DELETE CASCADE を追加し、データが存在するユーザーでも削除可能に (2026-03-10)
 - モバイル版: 利用規約とプライバシーポリシーを外部ブラウザではなく、ネイティブUI（TermsModal/PrivacyPolicyModal）で表示するように変更 (2026-03-10)
 - GitHub ActionsでのCI/CDテスト実行と通過確認 (2026-03-10)

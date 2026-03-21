@@ -42,6 +42,21 @@
         "termsOfService": "Ketentuan Layanan",
         "privacyPolicy": "Kebijakan Privasi"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Data Anda, Perangkat Anda",
+                "description": "Semua data Anda disimpan secara lokal di perangkat ini. Tidak perlu akun — langsung gunakan aplikasi."
+            },
+            "pro": {
+                "title": "Paket Pro (Segera Hadir)",
+                "description": "Sinkronisasi cloud, dukungan multi-perangkat, dan lebih banyak fitur akan tersedia di paket Pro mendatang."
+            }
+        }
+    },
     "home": {
         "title": "Beranda",
         "newTodo": "Tugas Baru",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Riwayat sesi untuk analisis",
         "logoutConfirm": "Anda telah keluar",
         "backupConfirm": "Cadangkan semua data ke format JSON?",
-        "exportConfirm": "Ekspor riwayat belajar ke format CSV?"
+        "exportConfirm": "Ekspor riwayat belajar ke format CSV?",
+        "proComingSoon": "Tersedia di Paket Pro",
+        "proDescription": "Sinkronisasi cloud dan dukungan multi-perangkat akan tersedia di paket Pro mendatang. Data Anda tersimpan dengan aman di perangkat ini."
     },
     "feedback": {
         "title": "Umpan Balik",

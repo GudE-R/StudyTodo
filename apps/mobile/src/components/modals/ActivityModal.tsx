@@ -1,16 +1,12 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, useWindowDimensions } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { ModalOverlay } from '../ui/ModalOverlay';
-import { X, BarChart2, History, Share2 } from 'lucide-react-native';
+import { X, BarChart2, History } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useMobileSessions } from '../../hooks/useMobileSessions';
 import { useMobileTodos } from '../../hooks/useMobileTodos';
 import { useMobileCategories } from '../../hooks/useMobileCategories';
 import { useTheme } from '../../providers/ThemeProvider';
-import { captureRef } from 'react-native-view-shot';
-import { shareAsync } from 'expo-sharing';
-import { calculateStreak } from '@studytodo/shared';
-import { ShareCard } from '../activity/ShareCard';
 import { ActivityCharts } from '../activity/ActivityCharts';
 import { ActivitySummary } from '../activity/ActivitySummary';
 import { ActivityHistory } from '../activity/ActivityHistory';
@@ -21,7 +17,7 @@ interface ActivityModalProps {
     onClose: () => void;
 }
 
-type Tab = "analytics" | "history" | "share";
+type Tab = "analytics" | "history";
 
 export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     const { sessions, refreshSessions } = useMobileSessions();
@@ -33,9 +29,6 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
     const [activeTab, setActiveTab] = useState<Tab>("analytics");
     const [range, setRange] = useState<Range>("week");
     const [filterCategory, setFilterCategory] = useState<string>("all");
-
-    const shareRef = useRef<View>(null);
-    const streakStats = useMemo(() => calculateStreak(sessions), [sessions]);
 
     const {
         chartData,
@@ -57,19 +50,6 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
             refreshTodos();
         }
     }, [visible]);
-
-    const handleShare = async () => {
-        try {
-            const uri = await captureRef(shareRef, {
-                format: 'png',
-                quality: 1,
-            });
-            await shareAsync(uri);
-        } catch (e) {
-            console.error(e);
-            Alert.alert(t('common.error'), t('activity.shareError', 'Failed to share'));
-        }
-    };
 
     return (
         <ModalOverlay visible={visible} animationType="slide">
@@ -110,38 +90,10 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                         activeTab === 'history' && { color: colors.primary }
                                     ]}>{t('activity.history', 'History')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.tab, activeTab === 'share' && [styles.activeTab, { backgroundColor: colors.surface }]]}
-                                    onPress={() => setActiveTab('share')}
-                                >
-                                    <Share2 size={16} color={activeTab === 'share' ? colors.primary : colors.textSecondary} />
-                                    <Text style={[
-                                        styles.tabText,
-                                        { color: colors.textSecondary },
-                                        activeTab === 'share' && { color: colors.primary }
-                                    ]}>{t('activity.share', 'Share')}</Text>
-                                </TouchableOpacity>
                             </View>
                         </View>
 
-                        {activeTab === 'share' ? (
-                            <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-                                <View ref={shareRef} collapsable={false} style={{ backgroundColor: colors.background, padding: 10, borderRadius: 20 }}>
-                                    <ShareCard
-                                        sessions={sessions}
-                                        todos={todos}
-                                        categories={categories}
-                                        streak={streakStats}
-                                        totalDuration={totalTimeMinutes}
-                                        completedCount={completedCount}
-                                    />
-                                </View>
-                                <TouchableOpacity style={[styles.shareBtn, { backgroundColor: colors.primary }]} onPress={handleShare}>
-                                    <Share2 size={20} color="#fff" />
-                                    <Text style={styles.shareBtnText}>{t('activity.shareAction', 'Share Activity')}</Text>
-                                </TouchableOpacity>
-                            </ScrollView>
-                        ) : activeTab === 'analytics' ? (
+                        {activeTab === 'analytics' ? (
                             <ScrollView showsVerticalScrollIndicator={false}>
                                 {/* Range Selector */}
                                 <View style={[styles.rangeContainer, { backgroundColor: colors.surfaceHighlight }]}>
@@ -317,24 +269,5 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#64748b',
         fontWeight: '600',
-    },
-    shareBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 30,
-        gap: 8,
-        marginTop: 30,
-        elevation: 2,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    shareBtnText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
     },
 });

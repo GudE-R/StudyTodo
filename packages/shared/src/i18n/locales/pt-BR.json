@@ -42,6 +42,21 @@
         "termsOfService": "Termos de serviço",
         "privacyPolicy": "Política de privacidade"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Seus dados, seu dispositivo",
+                "description": "Todos os seus dados são armazenados localmente neste dispositivo. Nenhuma conta necessária — comece a usar o app imediatamente."
+            },
+            "pro": {
+                "title": "Plano Pro (em breve)",
+                "description": "Sincronização em nuvem, suporte a múltiplos dispositivos e mais recursos estarão disponíveis no próximo plano Pro."
+            }
+        }
+    },
     "home": {
         "title": "Início",
         "newTodo": "Nova Tarefa",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Histórico de sessões para análise",
         "logoutConfirm": "Você saiu da conta",
         "backupConfirm": "Deseja fazer backup de todos os dados em formato JSON?",
-        "exportConfirm": "Deseja exportar seu histórico em formato CSV?"
+        "exportConfirm": "Deseja exportar seu histórico em formato CSV?",
+        "proComingSoon": "Disponível no Plano Pro",
+        "proDescription": "Sincronização em nuvem e suporte a múltiplos dispositivos estarão disponíveis no próximo plano Pro. Seus dados estão armazenados com segurança neste dispositivo."
     },
     "feedback": {
         "title": "Feedback",

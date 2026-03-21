@@ -42,6 +42,21 @@
         "termsOfService": "Conditions d'utilisation",
         "privacyPolicy": "Politique de confidentialité"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "Vos données, votre appareil",
+                "description": "Toutes vos données sont stockées localement sur cet appareil. Aucun compte requis — commencez à utiliser l'application immédiatement."
+            },
+            "pro": {
+                "title": "Plan Pro (bientôt disponible)",
+                "description": "La synchronisation cloud, le support multi-appareils et d'autres fonctionnalités seront disponibles dans le prochain plan Pro."
+            }
+        }
+    },
     "home": {
         "title": "Accueil",
         "newTodo": "Nouvelle tâche",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Historique des sessions pour analyse",
         "logoutConfirm": "Déconnexion réussie",
         "backupConfirm": "Exporter toutes les données au format JSON ?",
-        "exportConfirm": "Exporter les enregistrements d'étude au format CSV ?"
+        "exportConfirm": "Exporter les enregistrements d'étude au format CSV ?",
+        "proComingSoon": "Disponible dans le Plan Pro",
+        "proDescription": "La synchronisation cloud et le support multi-appareils seront disponibles dans le prochain plan Pro. Vos données sont stockées en toute sécurité sur cet appareil."
     },
     "feedback": {
         "title": "Commentaires",

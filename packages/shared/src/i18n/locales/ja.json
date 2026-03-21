@@ -87,6 +87,14 @@
             "feedback": {
                 "title": "フィードバック",
                 "description": "アプリ内のフィードバック機能から、ぜひご意見やご要望をお聞かせください。"
+            },
+            "offline": {
+                "title": "オフラインファースト",
+                "description": "すべてのデータはこの端末にローカル保存されます。アカウント不要ですぐに使えます。"
+            },
+            "pro": {
+                "title": "Proプラン（近日公開）",
+                "description": "クラウド同期やマルチデバイス対応など、さらに便利な機能をProプランで提供予定です。"
             }
         }
     },
@@ -183,23 +191,8 @@
         "language": "言語",
         "appearance": "表示設定",
         "cloudSync": "クラウド同期",
-        "cloudSyncDescription": "複数の端末間でデータを同期するために使用します。1台の端末のみで使用する場合、アカウント登録は不要です。",
-        "loggedInAs": "ログイン中",
-        "logout": "ログアウト",
-        "loginToBackup": "ログイン / アカウント作成",
-        "backupCloudDescription": "データをクラウドにバックアップ・同期",
-        "syncEnabled": "有効 (リアルタイム)",
-        "syncNow": "今すぐ同期",
-        "lastSynced": "最終同期",
-        "justSynced": "同期済み",
-        "dataManagement": "データ管理",
-        "backupJson": "バックアップを作成 (JSON)",
-        "backupJsonDescription": "設定やタスクを含む全データ",
-        "exportCsv": "学習記録をエクスポート (CSV)",
-        "exportCsvDescription": "分析用のセッション履歴",
-        "logoutConfirm": "ログアウトしました",
-        "backupConfirm": "全てのデータをJSON形式でバックアップしますか？",
-        "exportConfirm": "学習記録をCSV形式でエクスポートしますか？",
+        "proComingSoon": "Proプランで提供予定",
+        "proDescription": "クラウド同期やマルチデバイス対応は、今後のProプランで利用可能になります。データはこの端末にローカル保存されています。",
         "notification": "通知",
         "dailyReminder": "学習リマインダー",
         "reminderTime": "通知時間",
@@ -253,12 +246,10 @@
         "routineDesc": "毎週決まった曜日にやるタスクを一括作成。Todo作成時のカレンダーアイコンから曜日を選択すると、今後30日分のタスクを自動生成します。",
         "historyTitle": "学習履歴の分析",
         "historyDesc": "「Activity」からこれまでの推移をグラフで確認。グループ化された履歴では、SRSやルーティーンの進捗を一目で把握できます。",
-        "shareTitle": "成果のシェアと報酬",
-        "shareDesc": "学習成果をSNSでシェアしましょう。シェアすると、リワードとして24時間の広告非表示が適用されます。",
-        "syncTitle": "クラウド同期",
-        "syncDesc": "ログインすると、PCとスマホでデータをリアルタイム同期。ブラウザを閉じても、別の端末から続きを再開できます。",
+        "syncTitle": "オフラインファースト",
+        "syncDesc": "すべてのデータはお使いの端末にローカル保存されます。アカウント不要ですぐに使えます。",
         "themeTitle": "テーマ設定",
-        "themeDesc": "ライトモード・ダークモードを完備。OSの設定に合わせる「システム」も選択でき、好みの環境で学習できます。",
+        "themeDesc": "ライトモード・ダークモードを完備。好みの環境で学習できます。",
         "keepTitle": "キープ機能 (日時固定)",
         "keepDesc": "カレンダーの日付やスケジュールの時間を長押しすると、その日時をキープできます。タスク作成時に日時が自動入力され、連続作成に便利です。",
         "catColorTitle": "カテゴリの色分け",
@@ -312,8 +303,12 @@
         "lightDesc": "明るい背景",
         "dark": "ダーク",
         "darkDesc": "暗い背景",
-        "system": "システム",
-        "systemDesc": "OSの設定に従う"
+        "paperClassic": "クラシック",
+        "paperClassicDesc": "罫線入りノートのような温かみのあるテーマ",
+        "paperWashi": "和紙",
+        "paperWashiDesc": "和紙の質感を持つミニマルなテーマ",
+        "paperPlanner": "手帳",
+        "paperPlannerDesc": "レザーバインダーのような高級感のあるテーマ"
     },
     "template": {
         "title": "テンプレート",
@@ -323,7 +318,6 @@
     "activity": {
         "analytics": "分析",
         "history": "履歴",
-        "share": "シェア",
         "tasks": "タスク",
         "filters": "フィルタ:",
         "allStatus": "全ステータス",
@@ -334,12 +328,8 @@
         "deleteSelected": "選択した項目を削除 ({count})",
         "deleteGroupConfirm": "{count}件のグループタスクをすべて削除しますか？",
         "deleteTodoConfirm": "{count}件のタスクを削除しますか？",
-        "shareTitle": "シェアカードを生成",
         "selectCategory": "表示するカテゴリ",
         "allActivities": "すべての活動",
-        "shareSocial": "SNSでシェア",
-        "shareSocialDesc": "シェアして24時間広告非表示をゲット！",
-        "downloadOnly": "画像のみダウンロード",
         "focusTrend": "集中時間の推移 (分)",
         "categoryDistribution": "カテゴリ別配分",
         "noData": "表示するデータがありません",
@@ -389,16 +379,6 @@
         "ctaSubtitle": "登録不要ですぐに使えます。まずは試してみてください。",
         "ctaButton": "無料で始める"
     },
-    "share": {
-        "streak": "{{count}}日連続",
-        "bestStreak": "最高{{count}}日",
-        "totalTime": "総学習時間",
-        "completed": "完了タスク",
-        "last14Days": "直近14日間の活動",
-        "distribution": "カテゴリ別配分",
-        "noData": "データなし",
-        "tasks": "件"
-    },
     "timer": {
         "switchToStopwatch": "ストップウォッチに切替",
         "saveRecordOnly": "記録のみ保存",
@@ -409,5 +389,21 @@
         "durationMinSec": "{{min}}分{{sec}}秒",
         "durationMin": "{{min}}分",
         "totalMinutes": "合計: {{min}}分"
+    },
+    "journal": {
+        "title": "ジャーナル",
+        "empty": "まだ投稿がありません。思ったことを書いてみましょう！",
+        "placeholder": "今、何を考えていますか？",
+        "typeNote": "メモ",
+        "typeLearning": "学び",
+        "typeReflection": "振り返り",
+        "typeMilestone": "マイルストーン",
+        "deleteTitle": "投稿を削除",
+        "deleteConfirm": "この投稿を削除してもよろしいですか？",
+        "settings": "ジャーナル",
+        "enabled": "ジャーナル機能",
+        "autoPrompt": "タスク完了時に投稿を促す",
+        "completedPromptTitle": "記録する？",
+        "completedPromptMessage": "「{{title}}」を完了しました。ジャーナルに記録しますか？"
     }
 }

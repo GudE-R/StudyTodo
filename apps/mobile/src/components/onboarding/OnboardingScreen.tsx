@@ -1,19 +1,17 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { View, StyleSheet, FlatList, Animated, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare, Calendar } from 'lucide-react-native';
+import { CheckSquare, Clock, Brain, BarChart3, ArrowRight, MessageSquare, Calendar, Smartphone, Crown } from 'lucide-react-native';
 import { OnboardingSlide, OnboardingSlideData } from './OnboardingSlide';
 import { Paginator } from './Paginator';
 import { useTheme } from '../../providers/ThemeProvider';
 import { useOnboarding } from '../../providers/OnboardingProvider';
-import { useAuth } from '../../providers/AuthProvider';
 
 export const OnboardingScreen = () => {
     const { width } = useWindowDimensions();
     const { t } = useTranslation();
     const { colors } = useTheme();
     const { completeOnboarding } = useOnboarding();
-    const { signIn } = useAuth(); // Assuming basic access or we just navigate to main
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef = useRef<FlatList>(null);
@@ -67,6 +65,20 @@ export const OnboardingScreen = () => {
             description: t('onboarding.slides.feedback.description'),
             Icon: MessageSquare,
             color: '#ec4899', // pink-500
+        },
+        {
+            id: '8',
+            title: t('onboarding.slides.offline.title', 'Your Data, Your Device'),
+            description: t('onboarding.slides.offline.description', 'All your data is stored locally on this device. No account required — start using the app right away.'),
+            Icon: Smartphone,
+            color: '#14b8a6', // teal-500
+        },
+        {
+            id: '9',
+            title: t('onboarding.slides.pro.title', 'Pro Plan (Coming Soon)'),
+            description: t('onboarding.slides.pro.description', 'Cloud sync, multi-device support, and more features will be available in the upcoming Pro plan.'),
+            Icon: Crown,
+            color: '#f59e0b', // amber-500
         },
     ], [t]);
 

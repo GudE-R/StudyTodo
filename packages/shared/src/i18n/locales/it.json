@@ -42,6 +42,21 @@
         "termsOfService": "Termini di servizio",
         "privacyPolicy": "Informativa sulla privacy"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "I tuoi dati, il tuo dispositivo",
+                "description": "Tutti i tuoi dati sono memorizzati localmente su questo dispositivo. Nessun account necessario — inizia a usare l'app subito."
+            },
+            "pro": {
+                "title": "Piano Pro (in arrivo)",
+                "description": "Sincronizzazione cloud, supporto multi-dispositivo e altre funzionalità saranno disponibili nel prossimo piano Pro."
+            }
+        }
+    },
     "home": {
         "title": "Home",
         "newTodo": "Nuovo ToDo",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "Cronologia sessioni per analisi",
         "logoutConfirm": "Sei uscito",
         "backupConfirm": "Vuoi eseguire il backup di tutti i dati in formato JSON?",
-        "exportConfirm": "Vuoi esportare la cronologia in formato CSV?"
+        "exportConfirm": "Vuoi esportare la cronologia in formato CSV?",
+        "proComingSoon": "In arrivo nel Piano Pro",
+        "proDescription": "La sincronizzazione cloud e il supporto multi-dispositivo saranno disponibili nel prossimo piano Pro. I tuoi dati sono conservati in modo sicuro su questo dispositivo."
     },
     "feedback": {
         "title": "Feedback",

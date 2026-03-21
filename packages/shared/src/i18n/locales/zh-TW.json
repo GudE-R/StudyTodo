@@ -42,6 +42,21 @@
         "termsOfService": "服務條款",
         "privacyPolicy": "隱私政策"
     },
+    "onboarding": {
+        "skip": "Skip",
+        "next": "Next",
+        "getStarted": "Get Started",
+        "slides": {
+            "offline": {
+                "title": "您的資料，您的裝置",
+                "description": "所有資料都儲存在此裝置本機。無需帳號 — 立即開始使用應用程式。"
+            },
+            "pro": {
+                "title": "Pro 方案（即將推出）",
+                "description": "雲端同步、多裝置支援和更多功能將在即將推出的 Pro 方案中提供。"
+            }
+        }
+    },
     "home": {
         "title": "首頁",
         "newTodo": "新建待辦",
@@ -135,7 +150,9 @@
         "exportCsvDescription": "用於分析的階段歷史",
         "logoutConfirm": "已登出",
         "backupConfirm": "確定要備份所有數據為 JSON 格式嗎？",
-        "exportConfirm": "確定要匯出學習紀錄為 CSV 格式嗎？"
+        "exportConfirm": "確定要匯出學習紀錄為 CSV 格式嗎？",
+        "proComingSoon": "Pro 方案即將推出",
+        "proDescription": "雲端同步和多裝置支援將在即將推出的 Pro 方案中提供。您的資料安全地儲存在此裝置上。"
     },
     "feedback": {
         "title": "意見回饋",
