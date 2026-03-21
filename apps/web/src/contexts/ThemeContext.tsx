@@ -2,83 +2,72 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-/**
- * テーマの型定義
- * - light: ライトモード
- * - dark: ダークモード
- * - system: システム設定に従う
- */
-type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark" | "paper-classic" | "paper-washi" | "paper-planner";
 
 interface ThemeContextType {
     theme: Theme;
     setTheme: (theme: Theme) => void;
-    resolvedTheme: "light" | "dark"; // 実際に適用されるテーマ
+    resolvedTheme: "light" | "dark";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-/**
- * テーマプロバイダーコンポーネント
- * 
- * アプリ全体でテーマ状態を共有し、HTMLのclass属性でダークモードを制御します。
- * LocalStorageにテーマ設定を永続化します。
- */
+const VALID_THEMES: Theme[] = ['light', 'dark', 'paper-classic', 'paper-washi', 'paper-planner'];
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    // LocalStorageから初期値を取得（SSR対策でnull初期化）
-    const [theme, setThemeState] = useState<Theme>("light");
+    const [theme, setThemeState] = useState<Theme>("paper-classic");
     const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
     const [mounted, setMounted] = useState(false);
 
-    // クライアントサイドでマウント後にLocalStorageから読み込み
     useEffect(() => {
         setMounted(true);
         const stored = localStorage.getItem("studytodo-theme") as Theme | null;
-        if (stored && ["light", "dark", "system"].includes(stored)) {
+        if (stored && VALID_THEMES.includes(stored)) {
             setThemeState(stored);
         }
     }, []);
 
-    // テーマ変更時の処理
     useEffect(() => {
         if (!mounted) return;
 
-        // LocalStorageに保存
         localStorage.setItem("studytodo-theme", theme);
 
-        // 実際に適用するテーマを決定
-        let effectiveTheme: "light" | "dark";
-        if (theme === "system") {
-            effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light";
+        let effectiveLight: "light" | "dark";
+        if (theme === "light") {
+            effectiveLight = "light";
+        } else if (theme === "dark") {
+            effectiveLight = "dark";
         } else {
-            effectiveTheme = theme;
+            // Paper themes follow system preference
+            effectiveLight = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
-        setResolvedTheme(effectiveTheme);
+        setResolvedTheme(effectiveLight);
 
-        // HTML要素にクラスを適用
+        // Apply CSS classes
         const root = document.documentElement;
-        const body = document.body;
+        root.classList.remove("light", "dark", "paper-classic", "paper-washi", "paper-planner");
 
-        root.classList.remove("light", "dark");
-        root.classList.add(effectiveTheme);
-
-        if (body) {
-            body.classList.remove("light", "dark");
-            body.classList.add(effectiveTheme);
+        if (theme === "light" || theme === "dark") {
+            root.classList.add(theme);
+        } else {
+            // Paper themes: add both the paper class and the resolved light/dark
+            root.classList.add(effectiveLight);
+            root.classList.add(theme);
         }
     }, [theme, mounted]);
 
-    // システムテーマ変更を監視
+    // Watch system theme changes for paper themes
     useEffect(() => {
-        if (!mounted || theme !== "system") return;
+        if (!mounted) return;
+        if (theme === "light" || theme === "dark") return;
 
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
         const handleChange = (e: MediaQueryListEvent) => {
-            setResolvedTheme(e.matches ? "dark" : "light");
-            document.documentElement.classList.remove("light", "dark");
-            document.documentElement.classList.add(e.matches ? "dark" : "light");
+            const resolved = e.matches ? "dark" : "light";
+            setResolvedTheme(resolved);
+            const root = document.documentElement;
+            root.classList.remove("light", "dark");
+            root.classList.add(resolved);
         };
 
         mediaQuery.addEventListener("change", handleChange);
@@ -96,9 +85,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     );
 }
 
-/**
- * テーマコンテキストを使用するカスタムフック
- */
 export function useTheme() {
     const context = useContext(ThemeContext);
     if (context === undefined) {

@@ -1,5 +1,5 @@
 import Dexie, { Table, Transaction } from 'dexie';
-import { Todo, Category, SRSProfile, Session, Feedback, mapper, allowedFieldsMap, supabaseTableMap, SyncOperationType } from '@studytodo/shared';
+import { Todo, Category, SRSProfile, Session, Feedback, JournalPost, mapper, allowedFieldsMap, supabaseTableMap, SyncOperationType } from '@studytodo/shared';
 import { generateId } from '@/lib/utils';
 
 /**
@@ -12,7 +12,7 @@ interface ExtendedTransaction extends Transaction {
 /**
  * Table name type for type-safe dynamic access
  */
-type TableName = 'todos' | 'categories' | 'srsProfiles' | 'sessions' | 'feedbacks';
+type TableName = 'todos' | 'categories' | 'srsProfiles' | 'sessions' | 'feedbacks' | 'journalPosts';
 
 export class StudyTodoDatabase extends Dexie {
     todos!: Table<Todo>;
@@ -20,6 +20,7 @@ export class StudyTodoDatabase extends Dexie {
     srsProfiles!: Table<SRSProfile>;
     sessions!: Table<Session>;
     feedbacks!: Table<Feedback>;
+    journalPosts!: Table<JournalPost>;
 
     private currentUserId: string | null = null;
 
@@ -36,6 +37,15 @@ export class StudyTodoDatabase extends Dexie {
             srsProfiles: 'id, isDefault, createdAt, updatedAt',
             sessions: 'id, todoId, createdAt',
             feedbacks: 'id, createdAt, type'
+        });
+
+        this.version(5).stores({
+            todos: 'id, dueDate, categoryId, completed, createdAt, updatedAt, srsGroupId',
+            categories: 'id, parentId, order, createdAt, updatedAt',
+            srsProfiles: 'id, isDefault, createdAt, updatedAt',
+            sessions: 'id, todoId, createdAt',
+            feedbacks: 'id, createdAt, type',
+            journalPosts: 'id, type, createdAt, linkedTodoId'
         });
 
         // Setup hooks for realtime push
@@ -83,7 +93,7 @@ export class StudyTodoDatabase extends Dexie {
     }
 
     private setupHooks() {
-        const tables: TableName[] = ['todos', 'categories', 'srsProfiles', 'sessions', 'feedbacks'];
+        const tables: TableName[] = ['todos', 'categories', 'srsProfiles', 'sessions', 'feedbacks', 'journalPosts'];
 
         tables.forEach((tableName) => {
             const table = this[tableName] as Table;

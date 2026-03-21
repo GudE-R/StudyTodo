@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { FolderTree, Plus, X, BarChart2 } from "lucide-react";
+import { FolderTree, Plus, X, BarChart2, BookOpen } from "lucide-react";
 
 interface BottomActionsProps {
     onOpenTodoModal: () => void;
@@ -7,6 +7,8 @@ interface BottomActionsProps {
     isHighlighted?: boolean;
     onResetKeep?: () => void;
     onOpenActivityModal: () => void;
+    onOpenJournalModal?: () => void;
+    journalEnabled?: boolean;
 }
 
 export function BottomActions({
@@ -14,11 +16,26 @@ export function BottomActions({
     onOpenTemplateModal,
     isHighlighted = false,
     onResetKeep,
-    onOpenActivityModal
+    onOpenActivityModal,
+    onOpenJournalModal,
+    journalEnabled = false,
 }: BottomActionsProps) {
     const t = useTranslations("common");
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-8 py-3 flex justify-between items-center h-20 z-50 rounded-2xl shadow-2xl w-full max-w-lg transition-all duration-300 hover:scale-[1.02]">
+            {/* Journal button */}
+            {journalEnabled && onOpenJournalModal && (
+                <button
+                    onClick={onOpenJournalModal}
+                    className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 space-y-1.5 px-4 group"
+                >
+                    <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
+                        <BookOpen size={24} />
+                    </div>
+                    <span className="text-xs font-medium">{t("journal", { defaultValue: "Journal" })}</span>
+                </button>
+            )}
+
             {/* テンプレート作成ボタン */}
             <button
                 onClick={onOpenTemplateModal}

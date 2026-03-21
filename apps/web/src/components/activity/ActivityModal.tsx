@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, BarChart2, History, Share2 } from "lucide-react";
+import { X, BarChart2, History } from "lucide-react";
 import { Session, Todo, Category } from "@studytodo/shared";
 import { useTranslations } from "next-intl";
 import { AnalyticsTab } from "./AnalyticsTab";
 import { HistoryTab } from "./HistoryTab";
-import { ShareTab } from "./ShareTab";
+
 
 interface ActivityModalProps {
     isOpen: boolean;
@@ -19,7 +19,7 @@ interface ActivityModalProps {
     onOpenTodoDetail: (todo: Todo) => void;
 }
 
-type Tab = "analytics" | "history" | "share";
+type Tab = "analytics" | "history";
 
 export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, onBulkDelete, categories, onOpenTodoDetail }: ActivityModalProps) {
     const [activeTab, setActiveTab] = useState<Tab>("analytics");
@@ -62,13 +62,7 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                             <History size={18} />
                             <span className="text-sm font-bold">{t("history")}</span>
                         </button>
-                        <button
-                            onClick={() => setActiveTab("share")}
-                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "share" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
-                        >
-                            <Share2 size={18} />
-                            <span className="text-sm font-bold">{t("share")}</span>
-                        </button>
+
                     </div>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
                         <X size={24} />
@@ -78,25 +72,9 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-800/50 p-6 min-h-0">
                     {activeTab === "analytics" ? (
-                        <AnalyticsTab
-                            sessions={sessions}
-                            todos={todos}
-                            flatCategories={flatCategories}
-                        />
-                    ) : activeTab === "history" ? (
-                        <HistoryTab
-                            todos={todos}
-                            flatCategories={flatCategories}
-                            onDeleteTodo={onDeleteTodo}
-                            onBulkDelete={onBulkDelete}
-                            onOpenTodoDetail={onOpenTodoDetail}
-                        />
+                        <AnalyticsTab sessions={sessions} todos={todos} flatCategories={flatCategories} />
                     ) : (
-                        <ShareTab
-                            sessions={sessions}
-                            todos={todos}
-                            flatCategories={flatCategories}
-                        />
+                        <HistoryTab todos={todos} flatCategories={flatCategories} onDeleteTodo={onDeleteTodo} onBulkDelete={onBulkDelete} onOpenTodoDetail={onOpenTodoDetail} />
                     )}
                 </div>
             </div>

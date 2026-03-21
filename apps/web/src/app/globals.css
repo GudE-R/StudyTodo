@@ -38,6 +38,114 @@
   --input-border: #4b5563;
 }
 
+/* Paper Classic - クリーム×セピアブラウン */
+.paper-classic {
+  --background: #FDF6E3;
+  --foreground: #433422;
+  --card-bg: #FFF8E7;
+  --card-border: #E3D5B8;
+  --text-primary: #433422;
+  --text-secondary: #7A6548;
+  --text-muted: #A89574;
+  --accent-primary: #8B5E3C;
+  --accent-secondary: #D4A05A;
+  --button-bg: #F5EBCF;
+  --button-hover: #E8DCBA;
+  --border-color: #E3D5B8;
+  --modal-bg: #FDF6E3;
+  --input-bg: #FFF8E7;
+  --input-border: #D4C4A0;
+}
+.paper-classic.dark {
+  --background: #2A1F14;
+  --foreground: #EDDCC8;
+  --card-bg: #3B2E20;
+  --card-border: #5C4A36;
+  --text-primary: #EDDCC8;
+  --text-secondary: #C4AD8F;
+  --text-muted: #917A5E;
+  --accent-primary: #D4A05A;
+  --accent-secondary: #E8C07A;
+  --button-bg: #4D3D2B;
+  --button-hover: #5C4A36;
+  --border-color: #5C4A36;
+  --modal-bg: #2A1F14;
+  --input-bg: #3B2E20;
+  --input-border: #5C4A36;
+}
+
+/* Paper Washi - 薄灰青×藍 */
+.paper-washi {
+  --background: #F0F2F4;
+  --foreground: #2C3E50;
+  --card-bg: #F8F9FB;
+  --card-border: #C8D1DA;
+  --text-primary: #2C3E50;
+  --text-secondary: #5D7085;
+  --text-muted: #8FA0B0;
+  --accent-primary: #2E5E8E;
+  --accent-secondary: #5A8DB8;
+  --button-bg: #E4E8ED;
+  --button-hover: #D0D6DE;
+  --border-color: #C8D1DA;
+  --modal-bg: #F0F2F4;
+  --input-bg: #F8F9FB;
+  --input-border: #B8C4D0;
+}
+.paper-washi.dark {
+  --background: #141E30;
+  --foreground: #D4DEE8;
+  --card-bg: #1E2D42;
+  --card-border: #2F4562;
+  --text-primary: #D4DEE8;
+  --text-secondary: #8DA3B8;
+  --text-muted: #5D7A94;
+  --accent-primary: #7EB8E0;
+  --accent-secondary: #A0D0F0;
+  --button-bg: #263A53;
+  --button-hover: #2F4562;
+  --border-color: #2F4562;
+  --modal-bg: #141E30;
+  --input-bg: #1E2D42;
+  --input-border: #2F4562;
+}
+
+/* Paper Planner - アイボリー×深緑ゴールド */
+.paper-planner {
+  --background: #F9F6F1;
+  --foreground: #2D3830;
+  --card-bg: #FFFFFF;
+  --card-border: #CDD4C8;
+  --text-primary: #2D3830;
+  --text-secondary: #5C6B5E;
+  --text-muted: #8A9B8C;
+  --accent-primary: #2D6B48;
+  --accent-secondary: #4A9E6A;
+  --button-bg: #EEE9DF;
+  --button-hover: #E0D8CC;
+  --border-color: #CDD4C8;
+  --modal-bg: #F9F6F1;
+  --input-bg: #FFFFFF;
+  --input-border: #B8C4B0;
+}
+.paper-planner.dark {
+  --background: #171D17;
+  --foreground: #DDE4DF;
+  --card-bg: #232B24;
+  --card-border: #3A4E3E;
+  --text-primary: #DDE4DF;
+  --text-secondary: #A0B4A4;
+  --text-muted: #6E8672;
+  --accent-primary: #C9A84C;
+  --accent-secondary: #E0C06A;
+  --button-bg: #2E3A30;
+  --button-hover: #3A4E3E;
+  --border-color: #3A4E3E;
+  --modal-bg: #171D17;
+  --input-bg: #232B24;
+  --input-border: #3A4E3E;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -97,4 +205,10 @@ body {
 /* スクロールバー非表示 */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
 }

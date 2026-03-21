@@ -207,7 +207,7 @@ export default async function RootLayout(props: {
   const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} dir={['ar', 'ur', 'fa', 'he'].includes(locale) ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <head>
         {/* 構造化データ (JSON-LD) */}
         <script

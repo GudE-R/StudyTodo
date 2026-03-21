@@ -23,6 +23,7 @@ import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { JournalModal } from "@/components/journal/JournalModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { Todo } from "@studytodo/shared";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -31,6 +32,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useModalState } from "@/hooks/useModalState";
 import { useTodoHandlers } from "@/hooks/useTodoHandlers";
 import { useKeepState } from "@/hooks/useKeepState";
+import { useJournalSettings } from "@/hooks/useJournal";
 import { dataService } from "@/services/dataService";
 
 
@@ -41,6 +43,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<"home" | "timer">("home");
   const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [showWelcome] = useState(true);
 
   // Client-side rendering guard
@@ -59,6 +62,7 @@ export default function Home() {
   const keep = useKeepState();
   const { isSyncing } = useSync();
   const { user, loading: authLoading } = useAuth();
+  const { settings: journalSettings } = useJournalSettings();
 
   const handlers = useTodoHandlers({
     todos,
@@ -190,6 +194,8 @@ export default function Home() {
               onOpenActivityModal={() => modals.setIsActivityModalOpen(true)}
               isHighlighted={!!keep.keptDate || !!keep.keptTime}
               onResetKeep={keep.handleResetKeep}
+              onOpenJournalModal={() => setIsJournalOpen(true)}
+              journalEnabled={journalSettings.enabled}
             />
           </div>
         </div>
@@ -234,7 +240,6 @@ export default function Home() {
         <SettingsModal
           isOpen={modals.isSettingsModalOpen}
           onClose={() => modals.setIsSettingsModalOpen(false)}
-          onOpenAuth={() => modals.setIsAuthModalOpen(true)}
         />
         <UsageGuideModal
           isOpen={modals.isGuideModalOpen}
@@ -248,6 +253,10 @@ export default function Home() {
           isOpen={modals.isFeedbackModalOpen}
           onClose={() => modals.setIsFeedbackModalOpen(false)}
           onSubmit={handlers.handleFeedbackSubmit}
+        />
+        <JournalModal
+          isOpen={isJournalOpen}
+          onClose={() => setIsJournalOpen(false)}
         />
       </div>
     </AppShell>

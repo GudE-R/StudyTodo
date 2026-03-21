@@ -43,9 +43,9 @@ export function DaySchedule({
 
     // バッファサイズ（前後何日分を表示するか）
     // 60日分あれば、頻繁な再レンダリングを防げます
-    const BUFFER_DAYS = 60;
+    const BUFFER_DAYS = 14;
     // 再中心化のトリガーとなる閾値（端から何日以内で更新するか）
-    const RECENTER_THRESHOLD = 15;
+    const RECENTER_THRESHOLD = 5;
 
     // 30分刻みの時間枠 (24時間 * 2 = 48枠)
     const timeSlots = Array.from({ length: 48 }, (_, i) => i * 0.5);

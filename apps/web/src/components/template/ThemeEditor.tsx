@@ -1,23 +1,20 @@
 "use client";
 
 import React from "react";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon, BookOpen, Leaf, Briefcase } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme, Theme } from "@/contexts/ThemeContext";
 
-/**
- * テーマ設定エディターコンポーネント
- * 
- * ライト/ダーク/システムのテーマを選択できるUIを提供します。
- */
 export function ThemeEditor() {
     const { theme, setTheme } = useTheme();
     const t = useTranslations("theme");
 
-    const themes = [
-        { id: "light" as const, label: t("light"), icon: Sun, description: t("lightDesc") },
-        { id: "dark" as const, label: t("dark"), icon: Moon, description: t("darkDesc") },
-        { id: "system" as const, label: t("system"), icon: Monitor, description: t("systemDesc") },
+    const themes: { id: Theme; label: string; icon: React.ElementType; description: string }[] = [
+        { id: "light", label: t("light"), icon: Sun, description: t("lightDesc") },
+        { id: "dark", label: t("dark"), icon: Moon, description: t("darkDesc") },
+        { id: "paper-classic", label: t("paperClassic"), icon: BookOpen, description: t("paperClassicDesc") },
+        { id: "paper-washi", label: t("paperWashi"), icon: Leaf, description: t("paperWashiDesc") },
+        { id: "paper-planner", label: t("paperPlanner"), icon: Briefcase, description: t("paperPlannerDesc") },
     ];
 
     return (
@@ -30,14 +27,14 @@ export function ThemeEditor() {
             </div>
 
             <div className="space-y-2">
-                {themes.map((t) => {
-                    const Icon = t.icon;
-                    const isSelected = theme === t.id;
+                {themes.map((item) => {
+                    const Icon = item.icon;
+                    const isSelected = theme === item.id;
 
                     return (
                         <button
-                            key={t.id}
-                            onClick={() => setTheme(t.id)}
+                            key={item.id}
+                            onClick={() => setTheme(item.id)}
                             className={`
                                 w-full flex items-center space-x-3 p-4 rounded-xl border-2 transition-all duration-200
                                 ${isSelected
@@ -57,10 +54,10 @@ export function ThemeEditor() {
                             </div>
                             <div className="flex-1 text-left">
                                 <div className={`text-sm font-bold ${isSelected ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-200"}`}>
-                                    {t.label}
+                                    {item.label}
                                 </div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                                    {t.description}
+                                    {item.description}
                                 </div>
                             </div>
                             {isSelected && (
