@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Sigurado ka bang gusto mong tanggalin ang iyong account? Lahat ng iyong data ay permanenteng tatanggalin at hindi na mababawi.",
         "deleteAccountConfirm": "Sigurado ka bang gusto mong tanggalin ang iyong account? Lahat ng iyong data ay permanenteng tatanggalin at hindi na mababawi.",
         "deleteAccountError": "Hindi matagumpay na natanggal ang account. Subukan muli o makipag-ugnayan sa support.",
-        "deleteAccountSuccess": "Matagumpay na natanggal ang iyong account."
+        "deleteAccountSuccess": "Matagumpay na natanggal ang iyong account.",
+        "accentColor": "Kulay ng Accent",
+        "accentBlue": "Asul",
+        "accentGreen": "Berde",
+        "accentRed": "Pula",
+        "accentPurple": "Lila",
+        "accentOrange": "Kahel",
+        "accentPink": "Rosas",
+        "accentTeal": "Teal"
     },
     "notification": {
         "dailyReminderTitle": "Oras na para mag-aral!",

@@ -12,7 +12,7 @@ interface JournalModalProps {
 }
 
 const TYPE_CONFIG = {
-    note: { icon: BookOpen, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/30" },
+    note: { icon: BookOpen, color: "text-[var(--accent-primary)]", bg: "bg-[var(--accent-secondary)]" },
     learning: { icon: GraduationCap, color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/30" },
     reflection: { icon: Lightbulb, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-900/30" },
     milestone: { icon: Trophy, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-900/30" },
@@ -67,7 +67,7 @@ export function JournalModal({ isOpen, onClose }: JournalModalProps) {
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
                     <div className="flex items-center space-x-2">
-                        <BookOpen size={20} className="text-blue-500" />
+                        <BookOpen size={20} style={{ color: "var(--accent-primary)" }} />
                         <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">{t("title")}</h2>
                     </div>
                     <button onClick={onClose} className="p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
@@ -109,7 +109,7 @@ export function JournalModal({ isOpen, onClose }: JournalModalProps) {
                                 placeholder={t("placeholder")}
                                 maxLength={2000}
                                 rows={2}
-                                className="w-full resize-none rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full resize-none rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                                         handleSubmit();
@@ -134,7 +134,8 @@ export function JournalModal({ isOpen, onClose }: JournalModalProps) {
                             <button
                                 onClick={handleSubmit}
                                 disabled={!content.trim()}
-                                className="p-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                className="p-2 text-white rounded-xl hover:brightness-90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                style={{ backgroundColor: "var(--accent-primary)" }}
                             >
                                 <Send size={18} />
                             </button>

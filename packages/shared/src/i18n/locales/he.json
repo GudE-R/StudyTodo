@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "האם אתה בטוח שברצונך למחוק את החשבון? כל הנתונים יימחקו לצמיתות ולא ניתן יהיה לשחזרם.",
         "deleteAccountConfirm": "האם אתה בטוח שברצונך למחוק את החשבון? כל הנתונים יימחקו לצמיתות ולא ניתן יהיה לשחזרם.",
         "deleteAccountError": "מחיקת החשבון נכשלה. אנא נסה שוב או פנה לתמיכה.",
-        "deleteAccountSuccess": "החשבון שלך נמחק בהצלחה."
+        "deleteAccountSuccess": "החשבון שלך נמחק בהצלחה.",
+        "accentColor": "צבע הדגשה",
+        "accentBlue": "כחול",
+        "accentGreen": "ירוק",
+        "accentRed": "אדום",
+        "accentPurple": "סגול",
+        "accentOrange": "כתום",
+        "accentPink": "ורוד",
+        "accentTeal": "כחול-ירוק"
     },
     "notification": {
         "dailyReminderTitle": "הגיע הזמן ללמוד!",

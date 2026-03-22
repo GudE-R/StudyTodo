@@ -10,4 +10,5 @@ export * from "./domain/todo";
 export * from "./domain/srs";
 export * from "./domain/routineTodos";
 export * from "./domain/srsDateShift";
+export * from "./accentColors";
 

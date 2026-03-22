@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "آیا مطمئن هستید که می‌خواهید حساب خود را حذف کنید؟ تمام داده‌های شما برای همیشه حذف خواهد شد و قابل بازیابی نیست.",
         "deleteAccountConfirm": "آیا مطمئن هستید که می‌خواهید حساب خود را حذف کنید؟ تمام داده‌های شما برای همیشه حذف خواهد شد و قابل بازیابی نیست.",
         "deleteAccountError": "حذف حساب با خطا مواجه شد. لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.",
-        "deleteAccountSuccess": "حساب کاربری شما با موفقیت حذف شد."
+        "deleteAccountSuccess": "حساب کاربری شما با موفقیت حذف شد.",
+        "accentColor": "رنگ تأکیدی",
+        "accentBlue": "آبی",
+        "accentGreen": "سبز",
+        "accentRed": "قرمز",
+        "accentPurple": "بنفش",
+        "accentOrange": "نارنجی",
+        "accentPink": "صورتی",
+        "accentTeal": "سبزآبی"
     },
     "notification": {
         "dailyReminderTitle": "وقت یادگیری است!",

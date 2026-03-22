@@ -85,8 +85,8 @@ export const UsageGuideModal = ({ visible, onClose }: UsageGuideModalProps) => {
                                         return (
                                             <View key={itemIndex} style={[styles.itemCard, { backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}>
                                                 <View style={styles.itemHeader}>
-                                                    <View style={[styles.iconBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : '#dbeafe' }]}>
-                                                        <Icon size={20} color={isDark ? '#60a5fa' : '#2563eb'} />
+                                                    <View style={[styles.iconBox, { backgroundColor: isDark ? colors.primaryLight : '#dbeafe' }]}>
+                                                        <Icon size={20} color={colors.primary} />
                                                     </View>
                                                     <Text style={[styles.itemTitle, { color: colors.text }]}>{item.title}</Text>
                                                 </View>

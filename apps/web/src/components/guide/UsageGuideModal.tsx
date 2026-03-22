@@ -77,7 +77,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                 <div className="flex-1 overflow-y-auto p-4 space-y-8">
                     {guideCategories.map((category, catIndex) => (
                         <div key={catIndex} className="space-y-3">
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 border-l-4 border-blue-500 pl-3">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 border-l-4 pl-3" style={{ borderColor: "var(--accent-primary)" }}>
                                 {category.title}
                             </h3>
                             <div className="space-y-3">
@@ -86,8 +86,8 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                                     return (
                                         <div key={itemIndex} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                                             <div className="flex items-center space-x-3 mb-2">
-                                                <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                                                    <Icon className="text-blue-600 dark:text-blue-400" size={20} />
+                                                <div className="p-2 rounded-lg" style={{ backgroundColor: "var(--accent-secondary)" }}>
+                                                    <Icon size={20} style={{ color: "var(--accent-primary)" }} />
                                                 </div>
                                                 <h4 className="font-bold text-gray-800 dark:text-gray-100">{item.title}</h4>
                                             </div>
@@ -106,7 +106,8 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800">
                     <button
                         onClick={onClose}
-                        className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold transition-colors"
+                        className="w-full py-3 text-white rounded-xl font-bold transition-colors hover:brightness-90"
+                        style={{ backgroundColor: "var(--accent-primary)" }}
                     >
                         {tc("close")}
                     </button>

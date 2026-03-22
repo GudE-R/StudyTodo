@@ -152,7 +152,15 @@
         "backupConfirm": "Cadangkan semua data ke format JSON?",
         "exportConfirm": "Ekspor riwayat belajar ke format CSV?",
         "proComingSoon": "Tersedia di Paket Pro",
-        "proDescription": "Sinkronisasi cloud dan dukungan multi-perangkat akan tersedia di paket Pro mendatang. Data Anda tersimpan dengan aman di perangkat ini."
+        "proDescription": "Sinkronisasi cloud dan dukungan multi-perangkat akan tersedia di paket Pro mendatang. Data Anda tersimpan dengan aman di perangkat ini.",
+        "accentColor": "Warna Aksen",
+        "accentBlue": "Biru",
+        "accentGreen": "Hijau",
+        "accentRed": "Merah",
+        "accentPurple": "Ungu",
+        "accentOrange": "Oranye",
+        "accentPink": "Merah Muda",
+        "accentTeal": "Teal"
     },
     "feedback": {
         "title": "Umpan Balik",

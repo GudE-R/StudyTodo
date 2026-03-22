@@ -80,8 +80,8 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                         onClick={() => onTodoClick?.(todo)}
                                                         className={`flex items-start p-2 bg-white dark:bg-gray-800 border rounded-lg shadow-sm transition-colors cursor-pointer
                                                             ${snapshot.isDragging
-                                                                ? "border-blue-400 shadow-lg"
-                                                                : "border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-700"
+                                                                ? "border-[var(--accent-primary)] shadow-lg"
+                                                                : "border-gray-100 dark:border-gray-700 hover:border-[var(--accent-primary)]"
                                                             }`}
                                                     >
                                                         {/* ドラッグハンドル */}
@@ -99,7 +99,7 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                                 e.stopPropagation();
                                                                 onToggleComplete?.(todo);
                                                             }}
-                                                            className={`mt-0.5 ${todo.completed ? "text-green-500" : "text-gray-300 dark:text-gray-600 hover:text-blue-500"}`}
+                                                            className={`mt-0.5 ${todo.completed ? "text-green-500" : "text-gray-300 dark:text-gray-600 hover:text-[var(--accent-primary)]"}`}
                                                         >
                                                             {todo.completed ? <CheckCircle size={18} /> : <Circle size={18} />}
                                                         </button>
@@ -111,7 +111,7 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                                     e.stopPropagation();
                                                                     onStart?.(todo);
                                                                 }}
-                                                                className="mt-0.5 ml-1 text-gray-300 dark:text-gray-600 hover:text-blue-500"
+                                                                className="mt-0.5 ml-1 text-gray-300 dark:text-gray-600 hover:text-[var(--accent-primary)]"
                                                             >
                                                                 <PlayCircle size={18} />
                                                             </button>
@@ -129,7 +129,7 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                                     </span>
                                                                 )}
                                                                 {category && (
-                                                                    <span className="flex items-center space-x-1 text-[10px] text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">
+                                                                    <span className="flex items-center space-x-1 text-[10px] px-1.5 py-0.5 rounded" style={{ color: "var(--accent-primary)", backgroundColor: "var(--accent-secondary)" }}>
                                                                         {category.color && (
                                                                             <span
                                                                                 className="w-1.5 h-1.5 rounded-full"

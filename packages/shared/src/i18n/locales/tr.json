@@ -152,7 +152,15 @@
         "backupConfirm": "Tüm verileri JSON formatında yedeklemek istiyor musunuz?",
         "exportConfirm": "Çalışma geçmişini CSV formatında dışa aktarmak istiyor musunuz?",
         "proComingSoon": "Pro Planda Gelecek",
-        "proDescription": "Bulut senkronizasyonu ve çoklu cihaz desteği yakında çıkacak Pro planda kullanılabilir olacak. Verileriniz bu cihazda güvenle saklanmaktadır."
+        "proDescription": "Bulut senkronizasyonu ve çoklu cihaz desteği yakında çıkacak Pro planda kullanılabilir olacak. Verileriniz bu cihazda güvenle saklanmaktadır.",
+        "accentColor": "Vurgu Rengi",
+        "accentBlue": "Mavi",
+        "accentGreen": "Yeşil",
+        "accentRed": "Kırmızı",
+        "accentPurple": "Mor",
+        "accentOrange": "Turuncu",
+        "accentPink": "Pembe",
+        "accentTeal": "Deniz mavisi"
     },
     "feedback": {
         "title": "Geri Bildirim",

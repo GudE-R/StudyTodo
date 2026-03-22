@@ -70,7 +70,7 @@ export function IconPicker({ value, onChange, isOpen, onClose }: IconPickerProps
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="アイコンを検索..."
-                        className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                     />
                 </div>
 
@@ -88,9 +88,10 @@ export function IconPicker({ value, onChange, isOpen, onClose }: IconPickerProps
                                     onClick={() => handleSelect(iconName)}
                                     className={`p-3 rounded-xl transition-colors flex items-center justify-center
                                         ${isSelected
-                                            ? "bg-blue-500 text-white"
+                                            ? "text-white"
                                             : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         }`}
+                                    style={isSelected ? { backgroundColor: "var(--accent-primary)" } : undefined}
                                     title={iconName}
                                 >
                                     <IconComponent size={20} />

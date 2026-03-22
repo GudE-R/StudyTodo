@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AccentColor, ACCENT_PRESETS, DEFAULT_ACCENT } from '@studytodo/shared';
 
 export type ThemeMode = 'light' | 'dark' | 'paper-classic' | 'paper-washi' | 'paper-planner';
 
@@ -189,21 +190,32 @@ interface ThemeContextType {
     setThemeMode: (mode: ThemeMode) => void;
     colors: ColorPalette;
     isDark: boolean;
+    accentColor: AccentColor;
+    setAccentColor: (color: AccentColor) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = '@studytodo_theme_mode';
+const ACCENT_STORAGE_KEY = '@studytodo_accent_color';
+const VALID_ACCENTS: AccentColor[] = Object.keys(ACCENT_PRESETS) as AccentColor[];
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const systemScheme = useColorScheme();
     const [themeMode, setThemeModeState] = useState<ThemeMode>('paper-classic');
+    const [accentColor, setAccentColorState] = useState<AccentColor>(DEFAULT_ACCENT);
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        AsyncStorage.getItem(THEME_STORAGE_KEY).then((saved) => {
-            if (saved && VALID_THEMES.includes(saved as ThemeMode)) {
-                setThemeModeState(saved as ThemeMode);
+        Promise.all([
+            AsyncStorage.getItem(THEME_STORAGE_KEY),
+            AsyncStorage.getItem(ACCENT_STORAGE_KEY),
+        ]).then(([savedTheme, savedAccent]) => {
+            if (savedTheme && VALID_THEMES.includes(savedTheme as ThemeMode)) {
+                setThemeModeState(savedTheme as ThemeMode);
+            }
+            if (savedAccent && VALID_ACCENTS.includes(savedAccent as AccentColor)) {
+                setAccentColorState(savedAccent as AccentColor);
             }
             setIsLoaded(true);
         });
@@ -214,15 +226,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
     };
 
+    const setAccentColor = (color: AccentColor) => {
+        setAccentColorState(color);
+        AsyncStorage.setItem(ACCENT_STORAGE_KEY, color);
+    };
+
     const systemIsDark = systemScheme === 'dark';
     const { colors, isDark } = resolveColors(themeMode, systemIsDark);
+
+    // Apply accent color override to primary/primaryLight
+    const accentPreset = ACCENT_PRESETS[accentColor];
+    const accentVariant = isDark ? accentPreset.dark : accentPreset.light;
+    const finalColors: ColorPalette = {
+        ...colors,
+        primary: accentVariant.primary,
+        primaryLight: accentVariant.primaryLight,
+    };
 
     if (!isLoaded) {
         return null;
     }
 
     return (
-        <ThemeContext.Provider value={{ themeMode, setThemeMode, colors, isDark }}>
+        <ThemeContext.Provider value={{ themeMode, setThemeMode, colors: finalColors, isDark, accentColor, setAccentColor }}>
             {children}
         </ThemeContext.Provider>
     );

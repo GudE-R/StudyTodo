@@ -82,7 +82,7 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
                 disabled={disabled}
                 className={`
           w-full flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg text-sm outline-none transition-colors
-          ${isOpen ? "ring-2 ring-blue-100 bg-white dark:bg-gray-600" : disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 dark:hover:bg-gray-600"}
+          ${isOpen ? "ring-2 ring-[var(--accent-secondary)] bg-white dark:bg-gray-600" : disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100 dark:hover:bg-gray-600"}
         `}
             >
                 {icon || <Clock size={18} className="text-gray-500" />}
@@ -105,7 +105,7 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
                                             onClick={() => handleHourChange(h)}
                                             className={`
                         w-full py-1 text-sm transition-colors
-                        ${h === selectedHour ? "text-blue-600 font-bold scale-110" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}
+                        ${h === selectedHour ? "text-[var(--accent-primary)] font-bold scale-110" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}
                       `}
                                         >
                                             {h}
@@ -126,7 +126,7 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
                                             onClick={() => handleMinuteChange(m)}
                                             className={`
                         w-full py-1 text-sm transition-colors
-                        ${m === selectedMinute ? "text-blue-600 font-bold scale-110" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}
+                        ${m === selectedMinute ? "text-[var(--accent-primary)] font-bold scale-110" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"}
                       `}
                                         >
                                             {m}
@@ -137,7 +137,7 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
                         </div>
 
                         {/* 中央のハイライトバー（視覚的ガイド） */}
-                        <div className="absolute top-1/2 left-0 right-0 h-8 -mt-4 bg-blue-50 dark:bg-blue-900/30 -z-10 pointer-events-none opacity-50" />
+                        <div className="absolute top-1/2 left-0 right-0 h-8 -mt-4 -z-10 pointer-events-none opacity-50" style={{ backgroundColor: "var(--accent-secondary)" }} />
                     </div>
                 </div>
             )}

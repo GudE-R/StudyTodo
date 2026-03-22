@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Biztosan törölni szeretné fiókját? Minden adata véglegesen törlődik és nem állítható vissza.",
         "deleteAccountConfirm": "Biztosan törölni szeretné fiókját? Minden adata véglegesen törlődik és nem állítható vissza.",
         "deleteAccountError": "A fiók törlése sikertelen. Próbálja újra vagy forduljon az ügyfélszolgálathoz.",
-        "deleteAccountSuccess": "Fiókja sikeresen törölve."
+        "deleteAccountSuccess": "Fiókja sikeresen törölve.",
+        "accentColor": "Kiemelő szín",
+        "accentBlue": "Kék",
+        "accentGreen": "Zöld",
+        "accentRed": "Piros",
+        "accentPurple": "Lila",
+        "accentOrange": "Narancssárga",
+        "accentPink": "Rózsaszín",
+        "accentTeal": "Kékeszöld"
     },
     "notification": {
         "dailyReminderTitle": "Ideje tanulni!",

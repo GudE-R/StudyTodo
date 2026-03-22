@@ -2,10 +2,12 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
-import { X, Palette, Database, Download, Crown, BookOpen } from "lucide-react";
+import { X, Palette, Database, Download, Crown, BookOpen, Check } from "lucide-react";
 import { ThemeEditor } from "../template/ThemeEditor";
 import { exportToJson, exportSessionsToCsv } from "@/lib/export";
 import { useJournalSettings } from "@/hooks/useJournal";
+import { useTheme } from "@/contexts/ThemeContext";
+import { ACCENT_PRESETS, AccentColor } from "@studytodo/shared";
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -15,6 +17,7 @@ interface SettingsModalProps {
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const t = useTranslations("settings");
     const { settings: journalSettings, updateSettings: updateJournalSettings } = useJournalSettings();
+    const { accentColor, setAccentColor, resolvedTheme } = useTheme();
 
     if (!isOpen) return null;
 
@@ -38,18 +41,43 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     {/* テーマ設定セクション */}
                     <div className="space-y-3">
                         <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
-                            <Palette size={20} className="text-blue-500" />
+                            <Palette size={20} style={{ color: "var(--accent-primary)" }} />
                             <h3>{t("appearance")}</h3>
                         </div>
                         <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
                             <ThemeEditor />
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+                            <div className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">
+                                {t("accentColor", { defaultValue: "Accent Color" })}
+                            </div>
+                            <div className="flex flex-wrap gap-3">
+                                {(Object.keys(ACCENT_PRESETS) as AccentColor[]).map((color) => {
+                                    const preset = ACCENT_PRESETS[color];
+                                    const displayColor = resolvedTheme === "dark" ? preset.dark.primary : preset.light.primary;
+                                    const selected = accentColor === color;
+                                    return (
+                                        <button
+                                            key={color}
+                                            onClick={() => setAccentColor(color)}
+                                            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                                                selected ? "ring-2 ring-offset-2 ring-gray-400 dark:ring-offset-gray-800 scale-110" : "hover:scale-110"
+                                            }`}
+                                            style={{ backgroundColor: displayColor }}
+                                            title={t(`accent${color.charAt(0).toUpperCase() + color.slice(1)}` as Parameters<typeof t>[0], { defaultValue: color })}
+                                        >
+                                            {selected && <Check size={16} className="text-white" />}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
 
                     {/* Journal設定セクション */}
                     <div className="space-y-3">
                         <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-200 font-bold border-b border-gray-100 dark:border-gray-800 pb-2">
-                            <BookOpen size={20} className="text-blue-500" />
+                            <BookOpen size={20} style={{ color: "var(--accent-primary)" }} />
                             <h3>{t("journal", { defaultValue: "Journal" })}</h3>
                         </div>
                         <div className="space-y-2">
@@ -61,7 +89,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     type="checkbox"
                                     checked={journalSettings.enabled}
                                     onChange={(e) => updateJournalSettings({ enabled: e.target.checked })}
-                                    className="w-5 h-5 rounded accent-blue-500"
+                                    className="w-5 h-5 rounded" style={{ accentColor: "var(--accent-primary)" }}
                                 />
                             </label>
                         </div>

@@ -16,6 +16,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 // アプリケーション固有の機能をインポート（カスタムフックなど）
 import { useTheme, ThemeMode } from '../../providers/ThemeProvider'; // テーマ管理（ダークモード等）
 import { useTranslation } from 'react-i18next'; // 多言語対応
+import { ACCENT_PRESETS, AccentColor } from '@studytodo/shared';
+import { Check } from 'lucide-react-native';
 import { SUPPORTED_LANGUAGES } from '../../i18n/languages'; // サポート言語リスト
 import { useLayout } from '../../providers/LayoutProvider';
 import { useSettingsForm } from '../../hooks/useSettingsForm';
@@ -37,7 +39,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
     // --- Custom Hooks (機能の呼び出し) ---
 
     // テーマ設定を取得（現在の色, ダークモード状態, モード設定関数）
-    const { colors, isDark, themeMode, setThemeMode } = useTheme();
+    const { colors, isDark, themeMode, setThemeMode, accentColor, setAccentColor } = useTheme();
 
     // 翻訳機能を取得（t: テキスト取得関数, i18n: 言語切り替えオブジェクト）
     const { t, i18n } = useTranslation();
@@ -99,6 +101,35 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                 {renderThemeOption(t('theme.paperClassic', 'Classic'), <BookOpen size={20} color={themeMode === 'paper-classic' ? colors.primary : colors.icon} />, 'paper-classic')}
                 {renderThemeOption(t('theme.paperWashi', 'Washi'), <Leaf size={20} color={themeMode === 'paper-washi' ? colors.primary : colors.icon} />, 'paper-washi')}
                 {renderThemeOption(t('theme.paperPlanner', 'Planner'), <Briefcase size={20} color={themeMode === 'paper-planner' ? colors.primary : colors.icon} />, 'paper-planner')}
+            </View>
+
+            {/* --- アクセントカラー設定 --- */}
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 16 }]}>{t('settings.accentColor', 'Accent Color')}</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                {(Object.keys(ACCENT_PRESETS) as AccentColor[]).map((color) => {
+                    const preset = ACCENT_PRESETS[color];
+                    const displayColor = isDark ? preset.dark.primary : preset.light.primary;
+                    const selected = accentColor === color;
+                    return (
+                        <TouchableOpacity
+                            key={color}
+                            onPress={() => setAccentColor(color)}
+                            style={{
+                                width: 36,
+                                height: 36,
+                                borderRadius: 18,
+                                backgroundColor: displayColor,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderWidth: selected ? 3 : 0,
+                                borderColor: isDark ? '#ffffff60' : '#00000030',
+                                transform: [{ scale: selected ? 1.15 : 1 }],
+                            }}
+                        >
+                            {selected && <Check size={16} color="#fff" />}
+                        </TouchableOpacity>
+                    );
+                })}
             </View>
 
             {/* --- 言語設定 (Language) --- */}

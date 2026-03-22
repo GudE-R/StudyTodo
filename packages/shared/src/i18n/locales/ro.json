@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Ești sigur că vrei să ștergi contul? Toate datele tale vor fi șterse permanent și nu pot fi recuperate.",
         "deleteAccountConfirm": "Ești sigur că vrei să ștergi contul? Toate datele tale vor fi șterse permanent și nu pot fi recuperate.",
         "deleteAccountError": "Ștergerea contului a eșuat. Te rugăm să încerci din nou sau să contactezi asistența.",
-        "deleteAccountSuccess": "Contul tău a fost șters cu succes."
+        "deleteAccountSuccess": "Contul tău a fost șters cu succes.",
+        "accentColor": "Culoare de accent",
+        "accentBlue": "Albastru",
+        "accentGreen": "Verde",
+        "accentRed": "Roșu",
+        "accentPurple": "Violet",
+        "accentOrange": "Portocaliu",
+        "accentPink": "Roz",
+        "accentTeal": "Turcoaz"
     },
     "notification": {
         "dailyReminderTitle": "E timpul să înveți!",

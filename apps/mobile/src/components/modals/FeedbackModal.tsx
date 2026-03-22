@@ -90,7 +90,7 @@ export const FeedbackModal = ({ visible, onClose }: FeedbackModalProps) => {
     const types: { id: Feedback['type']; label: string; icon: any; color: string; bgColor: string }[] = [
         { id: 'request', label: t('feedback.typeRequest', 'Request'), icon: Lightbulb, color: '#eab308', bgColor: 'rgba(234, 179, 8, 0.1)' },
         { id: 'bug', label: t('feedback.typeBug', 'Bug'), icon: AlertCircle, color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
-        { id: 'other', label: t('feedback.typeOther', 'Other'), icon: HelpCircle, color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
+        { id: 'other', label: t('feedback.typeOther', 'Other'), icon: HelpCircle, color: colors.primary, bgColor: colors.primaryLight },
     ];
 
     // if (!visible) return null; // Removed to keep Modal mounted

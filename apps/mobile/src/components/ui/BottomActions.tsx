@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Layers, Plus, BarChart3 } from 'lucide-react-native';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface BottomActionsProps {
     onAddPress: () => void;
@@ -9,6 +10,7 @@ interface BottomActionsProps {
 }
 
 export const BottomActions = ({ onAddPress, onTemplatePress }: BottomActionsProps) => {
+    const { colors } = useThemeColors();
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.button} onPress={onTemplatePress}>
@@ -16,7 +18,7 @@ export const BottomActions = ({ onAddPress, onTemplatePress }: BottomActionsProp
                 <Text style={styles.label}>Template</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.mainButton} onPress={onAddPress}>
+            <TouchableOpacity style={[styles.mainButton, { backgroundColor: colors.primary }]} onPress={onAddPress}>
                 <Plus size={32} color="#fff" />
             </TouchableOpacity>
 
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     mainButton: {
-        backgroundColor: '#3b82f6', // Tailwind blue-500
+        backgroundColor: '#3b82f6',
         width: 56,
         height: 56,
         borderRadius: 28,

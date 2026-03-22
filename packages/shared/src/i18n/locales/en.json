@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Are you sure you want to delete your account? All your data will be permanently deleted and cannot be recovered.",
         "deleteAccountConfirm": "Are you sure you want to delete your account? All your data will be permanently deleted and cannot be recovered.",
         "deleteAccountError": "Failed to delete account. Please try again or contact support.",
-        "deleteAccountSuccess": "Your account has been successfully deleted."
+        "deleteAccountSuccess": "Your account has been successfully deleted.",
+        "accentColor": "Accent Color",
+        "accentBlue": "Blue",
+        "accentGreen": "Green",
+        "accentRed": "Red",
+        "accentPurple": "Purple",
+        "accentOrange": "Orange",
+        "accentPink": "Pink",
+        "accentTeal": "Teal"
     },
     "notification": {
         "dailyReminderTitle": "Time to learn!",

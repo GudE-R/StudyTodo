@@ -152,7 +152,15 @@
         "backupConfirm": "Viedäänkö kaikki tiedot JSON-muodossa?",
         "exportConfirm": "Viedäänkö opiskelutiedot CSV-muodossa?",
         "proComingSoon": "Tulossa Pro-tilauksessa",
-        "proDescription": "Pilvisynkronointi ja monilaitetuki tulevat saataville tulevassa Pro-tilauksessa. Tietosi on turvallisesti tallennettu tähän laitteeseen."
+        "proDescription": "Pilvisynkronointi ja monilaitetuki tulevat saataville tulevassa Pro-tilauksessa. Tietosi on turvallisesti tallennettu tähän laitteeseen.",
+        "accentColor": "Korostusväri",
+        "accentBlue": "Sininen",
+        "accentGreen": "Vihreä",
+        "accentRed": "Punainen",
+        "accentPurple": "Violetti",
+        "accentOrange": "Oranssi",
+        "accentPink": "Vaaleanpunainen",
+        "accentTeal": "Sinivihreä"
     },
     "feedback": {
         "title": "Palaute",

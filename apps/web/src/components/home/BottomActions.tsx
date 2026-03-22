@@ -27,10 +27,11 @@ export function BottomActions({
             {journalEnabled && onOpenJournalModal && (
                 <button
                     onClick={onOpenJournalModal}
-                    className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 space-y-1.5 px-4 group"
+                    className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:opacity-80 space-y-1.5 px-4 group"
+                    style={{ ["--btn-accent" as string]: "var(--accent-primary)" }}
                 >
-                    <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
-                        <BookOpen size={24} />
+                    <div className="p-2 rounded-xl transition-colors" style={{ backgroundColor: "transparent" }}>
+                        <BookOpen size={24} className="group-hover:text-[var(--accent-primary)]" />
                     </div>
                     <span className="text-xs font-medium">{t("journal", { defaultValue: "Journal" })}</span>
                 </button>
@@ -39,10 +40,10 @@ export function BottomActions({
             {/* テンプレート作成ボタン */}
             <button
                 onClick={onOpenTemplateModal}
-                className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 space-y-1.5 px-4 group"
+                className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:opacity-80 space-y-1.5 px-4 group"
             >
-                <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
-                    <FolderTree size={24} />
+                <div className="p-2 rounded-xl transition-colors">
+                    <FolderTree size={24} className="group-hover:text-[var(--accent-primary)]" />
                 </div>
                 <span className="text-xs font-medium">{t("template")}</span>
             </button>
@@ -55,8 +56,9 @@ export function BottomActions({
                         flex flex-col items-center justify-center bg-white dark:bg-gray-800 border-4 border-gray-100 dark:border-gray-900 rounded-full p-4 shadow-xl transition-all duration-300
                         ${isHighlighted
                             ? "text-orange-500 ring-4 ring-orange-100 dark:ring-orange-900/50 scale-110"
-                            : "text-blue-600 dark:text-blue-400 hover:scale-110 hover:shadow-2xl"}
+                            : "hover:scale-110 hover:shadow-2xl"}
                     `}
+                    style={!isHighlighted ? { color: "var(--accent-primary)" } : undefined}
                 >
                     <Plus size={36} strokeWidth={2.5} />
                 </button>
@@ -78,10 +80,10 @@ export function BottomActions({
             {/* アクティビティボタン */}
             <button
                 onClick={onOpenActivityModal}
-                className="flex flex-col items-center justify-center space-y-1.5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-4 group"
+                className="flex flex-col items-center justify-center space-y-1.5 text-gray-500 dark:text-gray-400 hover:opacity-80 transition-colors px-4 group"
             >
-                <div className="p-2 rounded-xl group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 transition-colors">
-                    <BarChart2 size={24} />
+                <div className="p-2 rounded-xl transition-colors">
+                    <BarChart2 size={24} className="group-hover:text-[var(--accent-primary)]" />
                 </div>
                 <span className="text-xs font-medium">{t("activity")}</span>
             </button>

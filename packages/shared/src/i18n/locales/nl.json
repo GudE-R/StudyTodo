@@ -152,7 +152,15 @@
         "backupConfirm": "Wil je alle gegevens back-uppen naar JSON-formaat?",
         "exportConfirm": "Wil je de studiegeschiedenis exporteren naar CSV-formaat?",
         "proComingSoon": "Beschikbaar in Pro-abonnement",
-        "proDescription": "Cloudsynchronisatie en ondersteuning voor meerdere apparaten worden beschikbaar in het aankomende Pro-abonnement. Je gegevens zijn veilig opgeslagen op dit apparaat."
+        "proDescription": "Cloudsynchronisatie en ondersteuning voor meerdere apparaten worden beschikbaar in het aankomende Pro-abonnement. Je gegevens zijn veilig opgeslagen op dit apparaat.",
+        "accentColor": "Accentkleur",
+        "accentBlue": "Blauw",
+        "accentGreen": "Groen",
+        "accentRed": "Rood",
+        "accentPurple": "Paars",
+        "accentOrange": "Oranje",
+        "accentPink": "Roze",
+        "accentTeal": "Groenblauw"
     },
     "feedback": {
         "title": "Feedback",

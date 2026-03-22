@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "คุณแน่ใจหรือไม่? ข้อมูลทั้งหมดจะถูกลบอย่างถาวรและไม่สามารถกู้คืนได้",
         "deleteAccountConfirm": "คุณแน่ใจหรือไม่? ข้อมูลทั้งหมดจะถูกลบอย่างถาวรและไม่สามารถกู้คืนได้",
         "deleteAccountError": "ลบบัญชีไม่สำเร็จ กรุณาลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน",
-        "deleteAccountSuccess": "ลบบัญชีเรียบร้อยแล้ว"
+        "deleteAccountSuccess": "ลบบัญชีเรียบร้อยแล้ว",
+        "accentColor": "สีเน้น",
+        "accentBlue": "น้ำเงิน",
+        "accentGreen": "เขียว",
+        "accentRed": "แดง",
+        "accentPurple": "ม่วง",
+        "accentOrange": "ส้ม",
+        "accentPink": "ชมพู",
+        "accentTeal": "เขียวน้ำเงิน"
     },
     "notification": {
         "dailyReminderTitle": "ได้เวลาเรียนแล้ว!",

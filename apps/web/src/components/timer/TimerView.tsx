@@ -231,8 +231,8 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
     const circumference = 2 * Math.PI * 120;
     const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-    const getThemeColor = () => status === "break" ? "text-green-500" : "text-blue-600";
-    const getBgColor = () => status === "break" ? "bg-green-50 dark:bg-green-950/30" : "bg-blue-50 dark:bg-blue-950/30";
+    const getThemeColor = () => status === "break" ? "text-green-500" : "text-[var(--accent-primary)]";
+    const getBgColor = () => status === "break" ? "bg-green-50 dark:bg-green-950/30" : "bg-[var(--accent-secondary)]";
 
     const handleSaveSession = () => {
         let actualDuration = 0;
@@ -288,13 +288,15 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                 <div className="flex bg-white/50 dark:bg-white/10 rounded-full p-1">
                     <button
                         onClick={() => { setMode("pomodoro"); setStatus("focus"); setIsRunning(false); resetTimer(); }}
-                        className={`p-2 rounded-full transition-colors ${mode === "pomodoro" ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600" : "text-gray-400"}`}
+                        className={`p-2 rounded-full transition-colors ${mode === "pomodoro" ? "bg-white dark:bg-gray-700 shadow-sm" : "text-gray-400"}`}
+                        style={mode === "pomodoro" ? { color: "var(--accent-primary)" } : undefined}
                     >
                         <Timer size={20} />
                     </button>
                     <button
                         onClick={() => { setMode("countdown"); setIsRunning(false); resetTimer(); }}
-                        className={`p-2 rounded-full transition-colors ${mode === "countdown" ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600" : "text-gray-400"}`}
+                        className={`p-2 rounded-full transition-colors ${mode === "countdown" ? "bg-white dark:bg-gray-700 shadow-sm" : "text-gray-400"}`}
+                        style={mode === "countdown" ? { color: "var(--accent-primary)" } : undefined}
                     >
                         <Watch size={20} />
                     </button>
@@ -308,7 +310,8 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                 setMode("stopwatch");
                             }
                         }}
-                        className={`p-2 rounded-full transition-colors ${mode === "stopwatch" ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600" : "text-gray-400"}`}
+                        className={`p-2 rounded-full transition-colors ${mode === "stopwatch" ? "bg-white dark:bg-gray-700 shadow-sm" : "text-gray-400"}`}
+                        style={mode === "stopwatch" ? { color: "var(--accent-primary)" } : undefined}
                     >
                         <Play size={20} className="rotate-90" />
                     </button>
@@ -331,7 +334,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                             >
                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-200">オート進行</span>
-                                <div className={`w-10 h-6 rounded-full transition-colors relative ${autoProgress ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
+                                <div className={`w-10 h-6 rounded-full transition-colors relative ${autoProgress ? "" : "bg-gray-300 dark:bg-gray-600"}`} style={autoProgress ? { backgroundColor: "var(--accent-primary)" } : undefined}>
                                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${autoProgress ? "translate-x-5" : "translate-x-1"}`} />
                                 </div>
                             </button>
@@ -353,7 +356,8 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
 
                 {/* Task Info */}
                 <div className="text-center space-y-2">
-                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-colors ${status === "break" ? "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400" : "bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"}`}>
+                    <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-colors ${status === "break" ? "bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400" : ""}`}
+                        style={status !== "break" ? { backgroundColor: "var(--accent-secondary)", color: "var(--accent-primary)" } : undefined}>
                         {status === "break" ? "BREAK TIME" : "CURRENT TASK"}
                     </div>
                     <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 line-clamp-2">
@@ -383,8 +387,9 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                     onClick={() => { if (!isPaused) pausedElapsedRef.current = 0; setIsRunning(true); setIsPaused(false); }}
                                     className={`flex items-center justify-center w-14 h-14 rounded-full transition-all hover:scale-105 ${status === "break"
                                         ? "bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25"
-                                        : "bg-blue-600/15 text-blue-600 dark:text-blue-400 hover:bg-blue-600/25"
+                                        : ""
                                         }`}
+                                    style={status !== "break" ? { backgroundColor: "color-mix(in srgb, var(--accent-primary) 15%, transparent)", color: "var(--accent-primary)" } : undefined}
                                 >
                                     <Play size={24} fill="currentColor" className="ml-0.5" />
                                 </button>
@@ -418,11 +423,13 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                         {status === "focus" ? (
                             <>
                                 <button onClick={() => setFocusDuration(25)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 25 ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 25 ? "text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}
+                                    style={focusDuration === 25 ? { backgroundColor: "var(--accent-primary)" } : undefined}>
                                     25分
                                 </button>
                                 <button onClick={() => setFocusDuration(50)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 50 ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}>
+                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${focusDuration === 50 ? "text-white" : "bg-white dark:bg-gray-700 text-gray-500 dark:text-gray-300"}`}
+                                    style={focusDuration === 50 ? { backgroundColor: "var(--accent-primary)" } : undefined}>
                                     50分
                                 </button>
                             </>
@@ -447,7 +454,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                         <span className="text-sm font-bold text-gray-500 dark:text-gray-300">タイマー時間:</span>
                         <input type="number" min="1" value={countdownDuration}
                             onChange={(e) => setCountdownDuration(Math.max(1, parseInt(e.target.value) || 0))}
-                            className="w-16 text-center border-b-2 border-blue-100 dark:border-blue-800 focus:border-blue-500 outline-none font-bold text-gray-800 dark:text-gray-100 bg-transparent" />
+                            className="w-16 text-center border-b-2 border-gray-200 dark:border-gray-700 focus:border-[var(--accent-primary)] outline-none font-bold text-gray-800 dark:text-gray-100 bg-transparent" />
                         <span className="text-sm font-bold text-gray-500 dark:text-gray-300">分</span>
                     </div>
                 )}
@@ -504,7 +511,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                         </div>
                         {sessionLog.length > 0 && (
                             <div className="pt-3 border-t border-gray-200 dark:border-gray-700 text-center">
-                                <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                                <span className="text-sm font-bold" style={{ color: "var(--accent-primary)" }}>
                                     合計: {Math.floor(sessionLog.reduce((sum, s) => sum + s.duration, 0) / 60)}分
                                 </span>
                             </div>

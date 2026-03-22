@@ -17,8 +17,8 @@ interface LoadingSpinnerProps {
 export function LoadingSpinner({ size = 24, className = "" }: LoadingSpinnerProps) {
     return (
         <div
-            className={`inline-block animate-spin rounded-full border-2 border-current border-t-transparent text-blue-600 ${className}`}
-            style={{ width: size, height: size }}
+            className={`inline-block animate-spin rounded-full border-2 border-current border-t-transparent ${className}`}
+            style={{ width: size, height: size, color: "var(--accent-primary)" }}
             role="status"
             aria-label="Loading"
         >

@@ -152,7 +152,15 @@
         "backupConfirm": "모든 데이터를 JSON 형식으로 백업하시겠습니까?",
         "exportConfirm": "학습 기록을 CSV 형식으로 내보내시겠습니까?",
         "proComingSoon": "Pro 플랜에서 제공 예정",
-        "proDescription": "클라우드 동기화 및 다중 기기 지원은 곧 출시될 Pro 플랜에서 제공될 예정입니다. 데이터는 이 기기에 안전하게 저장되어 있습니다."
+        "proDescription": "클라우드 동기화 및 다중 기기 지원은 곧 출시될 Pro 플랜에서 제공될 예정입니다. 데이터는 이 기기에 안전하게 저장되어 있습니다.",
+        "accentColor": "강조 색상",
+        "accentBlue": "파랑",
+        "accentGreen": "초록",
+        "accentRed": "빨강",
+        "accentPurple": "보라",
+        "accentOrange": "주황",
+        "accentPink": "분홍",
+        "accentTeal": "청록"
     },
     "feedback": {
         "title": "피드백",

@@ -262,7 +262,7 @@ export const HomeCalendar = ({ currentDate = new Date(), onDateSelect, keptDate,
                             >
                                 <View style={[
                                     styles.dateCircle,
-                                    isSelected && styles.selectedDay,
+                                    isSelected && [styles.selectedDay, { backgroundColor: colors.primary }],
                                     isKept && !isSelected && [styles.keptDayCircle, { backgroundColor: isDark ? colors.surface : '#fff' }]
                                 ]}>
                                     <Text style={[

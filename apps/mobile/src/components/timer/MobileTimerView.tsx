@@ -5,6 +5,7 @@ import { Svg, Circle } from 'react-native-svg';
 import { Todo } from '@studytodo/shared';
 import { useMobileTimer } from '../../hooks/useMobileTimer';
 import { useTranslation } from 'react-i18next';
+import { useThemeColors } from '../../providers/ThemeProvider';
 
 interface MobileTimerViewProps {
     todo: Todo;
@@ -22,6 +23,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
     const { t } = useTranslation();
+    const { colors: themeColors } = useThemeColors();
     const timer = useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask });
 
     const strokeDashoffset = CIRCUMFERENCE - (timer.progress / 100) * CIRCUMFERENCE;
@@ -38,7 +40,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
         modeTabs: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)',
         activeTab: isDark ? '#374151' : '#fff',
         badge: {
-            focus: isDark ? { bg: '#1e3a5f', text: '#60a5fa' } : { bg: '#dbeafe', text: '#2563eb' },
+            focus: isDark ? { bg: '#1e3a5f', text: themeColors.primary } : { bg: '#dbeafe', text: themeColors.primary },
             break: isDark ? { bg: '#14532d', text: '#4ade80' } : { bg: '#dcfce7', text: '#166534' },
         },
         durationBtn: isDark ? '#374151' : '#fff',
@@ -162,7 +164,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
 
                 {/* Switch to Stopwatch */}
                 {timer.mode !== "stopwatch" && (timer.isRunning || timer.isPaused) && (
-                    <TouchableOpacity style={[styles.switchBtn, isDark && { backgroundColor: '#1e3a5f', borderColor: '#3b82f6' }]} onPress={timer.switchToStopwatch}>
+                    <TouchableOpacity style={[styles.switchBtn, isDark && { backgroundColor: '#1e3a5f', borderColor: themeColors.primary }]} onPress={timer.switchToStopwatch}>
                         <ChevronDown size={18} color="#2563eb" style={{ transform: [{ rotate: '-90deg' }] }} />
                         <Text style={styles.switchBtnText}>{t('timer.switchToStopwatch')}</Text>
                     </TouchableOpacity>
@@ -194,7 +196,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                             <Switch
                                 value={timer.autoProgress}
                                 onValueChange={(v) => timer.setAutoProgress(v)}
-                                trackColor={{ false: isDark ? '#4b5563' : '#d1d5db', true: '#3b82f6' }}
+                                trackColor={{ false: isDark ? '#4b5563' : '#d1d5db', true: themeColors.primary }}
                                 thumbColor="#fff"
                             />
                         </View>

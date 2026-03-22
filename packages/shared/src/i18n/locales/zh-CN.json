@@ -152,7 +152,15 @@
         "backupConfirm": "确定要备份所有数据为 JSON 格式吗？",
         "exportConfirm": "确定要导出学习记录为 CSV 格式吗？",
         "proComingSoon": "Pro 计划即将推出",
-        "proDescription": "云同步和多设备支持将在即将推出的 Pro 计划中提供。您的数据安全地存储在此设备上。"
+        "proDescription": "云同步和多设备支持将在即将推出的 Pro 计划中提供。您的数据安全地存储在此设备上。",
+        "accentColor": "强调色",
+        "accentBlue": "蓝色",
+        "accentGreen": "绿色",
+        "accentRed": "红色",
+        "accentPurple": "紫色",
+        "accentOrange": "橙色",
+        "accentPink": "粉色",
+        "accentTeal": "青色"
     },
     "feedback": {
         "title": "反馈",

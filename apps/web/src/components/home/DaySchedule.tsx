@@ -226,7 +226,7 @@ export function DaySchedule({
                         >
                             {/* 日付ヘッダー */}
                             <div className="sticky top-0 bg-card/90 backdrop-blur-sm border-b border-border px-3 py-1 z-10 transition-colors duration-300">
-                                <span className={`text-xs font-bold ${isSameDay(day, new Date()) ? "text-blue-600" : "text-gray-600"}`}>
+                                <span className={`text-xs font-bold ${isSameDay(day, new Date()) ? "" : "text-gray-600"}`} style={isSameDay(day, new Date()) ? { color: "var(--accent-primary)" } : undefined}>
                                     {format(day, t("dateFormat"), { locale: dateFnsLocale })}
                                 </span>
                             </div>

@@ -117,7 +117,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                 <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value as "all" | "completed" | "incomplete")}
-                    className="bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                    className="bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)] block p-2.5"
                 >
                     <option value="all">{t("allStatus")}</option>
                     <option value="completed">{t("completed")}</option>
@@ -126,7 +126,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                 <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                    className="bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)] block p-2.5"
                 >
                     <option value="all">{t("allCategories")}</option>
                     {flatCategories.map(cat => (
@@ -167,7 +167,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                         return (
                             <div key={item.id} className="space-y-1">
                                 {/* Group Header */}
-                                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-between group hover:border-blue-200 dark:hover:border-blue-500 transition-colors">
+                                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-between group hover:border-[var(--accent-primary)] transition-colors">
                                     <div className="flex items-center space-x-3 flex-1 overflow-hidden">
                                         <input
                                             type="checkbox"
@@ -181,7 +181,8 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                                 }
                                                 setSelectedIds(next);
                                             }}
-                                            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                            className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] mr-2"
+                                                            style={{ accentColor: "var(--accent-primary)" }}
                                         />
                                         <div className={`w-2 h-12 rounded-full flex-shrink-0 ${allCompleted ? "bg-green-500" : "bg-gray-300"}`} />
                                         <button
@@ -226,18 +227,19 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                 {isExpanded && (
                                     <div className="ml-8 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
                                         {item.todos.map(todo => (
-                                            <div key={todo.id} className="bg-white/50 dark:bg-gray-600/50 p-3 rounded-xl border border-gray-100 dark:border-gray-500 flex items-center justify-between group hover:border-blue-200 dark:hover:border-blue-500 transition-colors">
+                                            <div key={todo.id} className="bg-white/50 dark:bg-gray-600/50 p-3 rounded-xl border border-gray-100 dark:border-gray-500 flex items-center justify-between group hover:border-[var(--accent-primary)] transition-colors">
                                                 <div className="flex items-center space-x-3">
                                                     <input
                                                         type="checkbox"
                                                         checked={selectedIds.has(todo.id)}
                                                         onChange={() => toggleSelect(todo.id)}
-                                                        className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                                        className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] mr-2"
+                                                            style={{ accentColor: "var(--accent-primary)" }}
                                                     />
                                                     <div className={`w-1 h-8 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
                                                     <div
                                                         onClick={() => onOpenTodoDetail(todo)}
-                                                        className="cursor-pointer hover:underline decoration-blue-500"
+                                                        className="cursor-pointer hover:underline decoration-[var(--accent-primary)]"
                                                     >
                                                         <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                                                             <TodoTitle title={todo.title} />
@@ -263,21 +265,22 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
 
                     const todo = item as Todo;
                     return (
-                        <div key={todo.id} className="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-between group hover:border-blue-200 dark:hover:border-blue-500 transition-colors">
+                        <div key={todo.id} className="bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 flex items-center justify-between group hover:border-[var(--accent-primary)] transition-colors">
                             <div className="flex items-center space-x-3">
                                 {/* Checkbox */}
                                 <input
                                     type="checkbox"
                                     checked={selectedIds.has(todo.id)}
                                     onChange={() => toggleSelect(todo.id)}
-                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 mr-2"
+                                    className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] mr-2"
+                                                            style={{ accentColor: "var(--accent-primary)" }}
                                 />
                                 <div className={`w-2 h-12 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
                                 <div
                                     onClick={() => onOpenTodoDetail(todo)}
                                     className="cursor-pointer flex-1 min-w-0" // Add flex-1 min-w-0 for truncating if needed
                                 >
-                                    <div className="font-bold text-gray-800 dark:text-gray-100 hover:text-blue-600 transition-colors">
+                                    <div className="font-bold text-gray-800 dark:text-gray-100 hover:text-[var(--accent-primary)] transition-colors">
                                         <TodoTitle title={todo.title} />
                                     </div>
                                     <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 mt-1">

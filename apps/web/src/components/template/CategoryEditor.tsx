@@ -151,7 +151,7 @@ export function CategoryEditor() {
                     type="text"
                     value={inputName}
                     onChange={(e) => setInputName(e.target.value)}
-                    className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                    className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-[var(--accent-primary)]"
                     placeholder={t("placeholder")}
                     autoFocus
                     onKeyDown={(e) => {
@@ -159,7 +159,7 @@ export function CategoryEditor() {
                         if (e.key === "Escape") cancelAdding();
                     }}
                 />
-                <button onClick={confirmAdding} className="text-blue-600 hover:text-blue-800 text-xs font-bold">{t("add")}</button>
+                <button onClick={confirmAdding} className="text-xs font-bold" style={{ color: "var(--accent-primary)" }}>{t("add")}</button>
                 <button onClick={cancelAdding} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs">{t("cancel")}</button>
             </div>
         );
@@ -202,7 +202,7 @@ export function CategoryEditor() {
                                             e.stopPropagation();
                                             setColorPickerId(node.id);
                                         }}
-                                        className={`w-3 h-3 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 flex items-center justify-center overflow-hidden`}
+                                        className={`w-3 h-3 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm transition-transform hover:scale-125 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--accent-primary)] flex items-center justify-center overflow-hidden`}
                                         style={{ backgroundColor: node.color || "transparent" }}
                                         title={t("changeColor")}
                                     >
@@ -221,7 +221,7 @@ export function CategoryEditor() {
                                                 {/* なし（透明）オプション */}
                                                 <button
                                                     onClick={() => handleColorChange(node.id, "")}
-                                                    className={`w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 ${!node.color || node.color === "" ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-gray-200 dark:border-gray-700"}`}
+                                                    className={`w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--accent-primary)] ${!node.color || node.color === "" ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-gray-200 dark:border-gray-700"}`}
                                                     title={t("noColor")}
                                                 >
                                                     <div className="w-full h-[1px] bg-red-400 rotate-45" />
@@ -230,7 +230,7 @@ export function CategoryEditor() {
                                                     <button
                                                         key={color}
                                                         onClick={() => handleColorChange(node.id, color)}
-                                                        className={`w-6 h-6 rounded-full border hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 ${node.color === color ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-transparent"}`}
+                                                        className={`w-6 h-6 rounded-full border hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--accent-primary)] ${node.color === color ? "border-gray-600 dark:border-gray-300 ring-2 ring-gray-400 dark:ring-gray-500" : "border-transparent"}`}
                                                         style={{ backgroundColor: color }}
                                                     />
                                                 ))}
@@ -249,7 +249,7 @@ export function CategoryEditor() {
                                     {!isSmall && !isDeleting && (
                                         <button
                                             onClick={() => startAdding(node.id, node.level === "large" ? "medium" : "small")}
-                                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600"
+                                            className="p-1 text-gray-400 dark:text-gray-500 hover:text-[var(--accent-primary)]"
                                             title={t("addChildTitle")}
                                         >
                                             <Plus size={14} />
@@ -285,7 +285,8 @@ export function CategoryEditor() {
                 <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400">{t("treeTitle")}</h3>
                 <button
                     onClick={() => startAdding(undefined, "large")}
-                    className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                    className="flex items-center space-x-1 text-xs px-2 py-1 rounded-md hover:brightness-90"
+                    style={{ backgroundColor: "var(--accent-secondary)", color: "var(--accent-primary)" }}
                 >
                     <Plus size={12} />
                     <span>{t("addLargeCategory")}</span>

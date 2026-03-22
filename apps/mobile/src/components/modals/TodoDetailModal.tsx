@@ -215,7 +215,7 @@ export const TodoDetailModal = ({
                         {/* Stats Summary */}
                         <View style={styles.statsSection}>
                             <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t('todo.statsTitle', 'Learning History').toUpperCase()}</Text>
-                            <View style={[styles.statsBox, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : '#eff6ff' }]}>
+                            <View style={[styles.statsBox, { backgroundColor: isDark ? colors.primaryLight : '#eff6ff' }]}>
                                 <Clock size={20} color={colors.primary} />
                                 <View style={styles.statsTextColumn}>
                                     <Text style={[styles.statsSmallLabel, { color: colors.textSecondary }]}>{t('todo.results', 'Results')}</Text>

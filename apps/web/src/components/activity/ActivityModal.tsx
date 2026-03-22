@@ -50,14 +50,16 @@ export function ActivityModal({ isOpen, onClose, sessions, todos, onDeleteTodo, 
                     <div className="flex space-x-4">
                         <button
                             onClick={() => setActiveTab("analytics")}
-                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "analytics" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "analytics" ? "border-[var(--accent-primary)]" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
+                            style={activeTab === "analytics" ? { color: "var(--accent-primary)" } : undefined}
                         >
                             <BarChart2 size={18} />
                             <span className="text-sm font-bold">{t("analytics")}</span>
                         </button>
                         <button
                             onClick={() => setActiveTab("history")}
-                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "history" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
+                            className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${activeTab === "history" ? "border-[var(--accent-primary)]" : "border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"}`}
+                            style={activeTab === "history" ? { color: "var(--accent-primary)" } : undefined}
                         >
                             <History size={18} />
                             <span className="text-sm font-bold">{t("history")}</span>

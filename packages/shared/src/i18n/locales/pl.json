@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Czy na pewno chcesz usunąć swoje konto? Wszystkie dane zostaną trwale usunięte i nie będzie można ich odzyskać.",
         "deleteAccountConfirm": "Czy na pewno chcesz usunąć swoje konto? Wszystkie dane zostaną trwale usunięte i nie będzie można ich odzyskać.",
         "deleteAccountError": "Nie udało się usunąć konta. Spróbuj ponownie lub skontaktuj się z pomocą techniczną.",
-        "deleteAccountSuccess": "Twoje konto zostało pomyślnie usunięte."
+        "deleteAccountSuccess": "Twoje konto zostało pomyślnie usunięte.",
+        "accentColor": "Kolor akcentu",
+        "accentBlue": "Niebieski",
+        "accentGreen": "Zielony",
+        "accentRed": "Czerwony",
+        "accentPurple": "Fioletowy",
+        "accentOrange": "Pomarańczowy",
+        "accentPink": "Różowy",
+        "accentTeal": "Morski"
     },
     "notification": {
         "dailyReminderTitle": "Czas na naukę!",

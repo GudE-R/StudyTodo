@@ -204,7 +204,15 @@
         "deleteAccountConfirmMessage": "本当にアカウントを削除しますか？すべてのデータが完全に削除され、復元できなくなります。",
         "deleteAccountConfirm": "本当にアカウントを削除しますか？すべてのデータが完全に削除され、復元できなくなります。",
         "deleteAccountError": "アカウントの削除に失敗しました。もう一度お試しいただくか、サポートにお問い合わせください。",
-        "deleteAccountSuccess": "アカウントが正常に削除されました。"
+        "deleteAccountSuccess": "アカウントが正常に削除されました。",
+        "accentColor": "アクセントカラー",
+        "accentBlue": "ブルー",
+        "accentGreen": "グリーン",
+        "accentRed": "レッド",
+        "accentPurple": "パープル",
+        "accentOrange": "オレンジ",
+        "accentPink": "ピンク",
+        "accentTeal": "ティール"
     },
     "notification": {
         "dailyReminderTitle": "学習の時間です！",

@@ -72,7 +72,7 @@ export function DatePicker({ value, onChange, placeholder = "日付を選択" }:
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
           w-full h-full flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg text-sm outline-none transition-colors
-          ${isOpen ? "ring-2 ring-blue-100 bg-white dark:bg-gray-600" : "hover:bg-gray-100 dark:hover:bg-gray-600"}
+          ${isOpen ? "ring-2 ring-[var(--accent-secondary)] bg-white dark:bg-gray-600" : "hover:bg-gray-100 dark:hover:bg-gray-600"}
         `}
             >
                 <CalendarIcon size={18} className="text-gray-500" />
@@ -119,7 +119,7 @@ export function DatePicker({ value, onChange, placeholder = "日付を選択" }:
                                     className={`
                     h-8 w-8 rounded-full flex items-center justify-center text-xs transition-colors
                     ${!isCurrentMonth ? "text-gray-300 dark:text-gray-600" : "text-gray-700 dark:text-gray-200"}
-                    ${isSelected ? "bg-blue-600 text-white font-bold shadow-md" : isToday ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 font-bold" : "hover:bg-gray-100 dark:hover:bg-gray-700"}
+                    ${isSelected ? "text-white font-bold shadow-md bg-[var(--accent-primary)]" : isToday ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 font-bold" : "hover:bg-gray-100 dark:hover:bg-gray-700"}
                   `}
                                 >
                                     {format(date, "d")}

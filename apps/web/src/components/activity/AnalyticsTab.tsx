@@ -201,7 +201,8 @@ export function AnalyticsTab({ sessions, todos, flatCategories }: AnalyticsTabPr
                         <button
                             key={r}
                             onClick={() => setRange(r)}
-                            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${range === r ? "bg-blue-600 text-white" : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600"}`}
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${range === r ? "text-white" : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600"}`}
+                            style={range === r ? { backgroundColor: "var(--accent-primary)" } : undefined}
                         >
                             {r}
                         </button>
@@ -213,7 +214,7 @@ export function AnalyticsTab({ sessions, todos, flatCategories }: AnalyticsTabPr
                     <select
                         value={analyticsCategory}
                         onChange={(e) => setAnalyticsCategory(e.target.value)}
-                        className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"
+                        className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-[var(--accent-primary)] focus:border-[var(--accent-primary)] block p-2"
                     >
                         <option value="all">All Categories</option>
                         {flatCategories.map(cat => (
@@ -263,7 +264,7 @@ export function AnalyticsTab({ sessions, todos, flatCategories }: AnalyticsTabPr
                                     cursor={{ fill: '#f3f4f6' }}
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                 />
-                                <Bar dataKey="time" fill="#3b82f6" radius={[4, 4, 0, 0]} name={t("timeMin")} />
+                                <Bar dataKey="time" fill="var(--accent-primary)" radius={[4, 4, 0, 0]} name={t("timeMin")} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

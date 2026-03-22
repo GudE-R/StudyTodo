@@ -162,7 +162,7 @@ export const TodoCreateModal = ({
                                                 key={index}
                                                 style={[
                                                     styles.weekdayBtn,
-                                                    isSelected && styles.weekdayBtnActive,
+                                                    isSelected && [styles.weekdayBtnActive, { backgroundColor: colors.primary }],
                                                     !isSelected && { backgroundColor: colors.background }
                                                 ]}
                                                 onPress={() => {
@@ -236,7 +236,7 @@ export const TodoCreateModal = ({
                                     <Text style={[styles.actionBtnText, { color: '#ea580c' }]}>{t('todo.start', 'Start')}</Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity style={styles.actionBtnCreate} onPress={form.handleCreate}>
+                                <TouchableOpacity style={[styles.actionBtnCreate, { backgroundColor: colors.primaryLight }]} onPress={form.handleCreate}>
                                     <Plus size={18} color={colors.primary} />
                                     <Text style={[styles.actionBtnText, { color: colors.primary }]}>{t('todo.create', 'Create')}</Text>
                                 </TouchableOpacity>

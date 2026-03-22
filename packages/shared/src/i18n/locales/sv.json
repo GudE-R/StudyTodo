@@ -152,7 +152,15 @@
         "backupConfirm": "Exportera all data i JSON-format?",
         "exportConfirm": "Exportera studieposter i CSV-format?",
         "proComingSoon": "Kommer i Pro-planen",
-        "proDescription": "Molnsynkronisering och stöd för flera enheter kommer att finnas tillgängligt i den kommande Pro-planen. Dina data lagras säkert på denna enhet."
+        "proDescription": "Molnsynkronisering och stöd för flera enheter kommer att finnas tillgängligt i den kommande Pro-planen. Dina data lagras säkert på denna enhet.",
+        "accentColor": "Accentfärg",
+        "accentBlue": "Blå",
+        "accentGreen": "Grön",
+        "accentRed": "Röd",
+        "accentPurple": "Lila",
+        "accentOrange": "Orange",
+        "accentPink": "Rosa",
+        "accentTeal": "Blågrön"
     },
     "feedback": {
         "title": "Feedback",

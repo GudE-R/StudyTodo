@@ -91,7 +91,8 @@ export function SRSEditor() {
                 {!isAdding && (
                     <button
                         onClick={startAdding}
-                        className="flex items-center space-x-1 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                        className="flex items-center space-x-1 text-xs px-2 py-1 rounded-md hover:brightness-90"
+                        style={{ backgroundColor: "var(--accent-secondary)", color: "var(--accent-primary)" }}
                     >
                         <Plus size={12} />
                         <span>{t("createNew")}</span>
@@ -101,13 +102,13 @@ export function SRSEditor() {
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-2">
                 {isAdding && (
-                    <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-lg p-3 mb-3">
+                    <div className="border rounded-lg p-3 mb-3" style={{ backgroundColor: "var(--accent-secondary)", borderColor: "var(--accent-secondary)" }}>
                         <div className="space-y-2">
                             <input
                                 type="text"
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
-                                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-[var(--accent-primary)]"
                                 placeholder={t("namePlaceholder")}
                                 autoFocus
                             />
@@ -115,7 +116,7 @@ export function SRSEditor() {
                                 type="text"
                                 value={newIntervals}
                                 onChange={(e) => setNewIntervals(e.target.value)}
-                                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-[var(--accent-primary)]"
                                 placeholder={t("intervalPlaceholder")}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") confirmAdding();
@@ -124,7 +125,7 @@ export function SRSEditor() {
                             />
                             <div className="flex justify-end space-x-2 mt-2">
                                 <button onClick={cancelAdding} className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">{tc("cancel")}</button>
-                                <button onClick={confirmAdding} className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">{tc("save")}</button>
+                                <button onClick={confirmAdding} className="text-xs text-white px-3 py-1 rounded hover:brightness-90" style={{ backgroundColor: "var(--accent-primary)" }}>{tc("save")}</button>
                             </div>
                         </div>
                     </div>
@@ -137,7 +138,7 @@ export function SRSEditor() {
                                 {profile.isDefault ? (
                                     <TrendingUp size={16} className="text-orange-500" />
                                 ) : (
-                                    <Calendar size={16} className="text-blue-500" />
+                                    <Calendar size={16} style={{ color: "var(--accent-primary)" }} />
                                 )}
                                 <span className="font-bold text-gray-700 dark:text-gray-200">{profile.isDefault ? t("defaultProfileName") : profile.name}</span>
                                 {profile.isDefault && (

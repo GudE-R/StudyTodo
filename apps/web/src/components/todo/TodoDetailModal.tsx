@@ -208,7 +208,8 @@ export function TodoDetailModal({
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={handleUpdate}
-                            className="text-sm font-bold text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 px-3 py-1 rounded-lg transition-colors"
+                            className="text-sm font-bold px-3 py-1 rounded-lg transition-colors"
+                            style={{ color: "var(--accent-primary)" }}
                         >
                             {tc("save")}
                         </button>
@@ -228,7 +229,7 @@ export function TodoDetailModal({
                             data-testid="category-select"
                             value={categoryId}
                             onChange={(e) => setCategoryId(e.target.value)}
-                            className="flex-1 bg-gray-50 dark:bg-gray-800 text-sm p-2 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-400"
+                            className="flex-1 bg-gray-50 dark:bg-gray-800 text-sm p-2 rounded-xl border-none outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                         >
                             <option value="">{t("noCategory")}</option>
                             {categoryOptions.map(opt => (
@@ -260,7 +261,7 @@ export function TodoDetailModal({
                     <div className="grid grid-cols-2 gap-3">
                         {/* Due Date */}
                         <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
-                            <Calendar size={18} className="text-blue-500" />
+                            <Calendar size={18} style={{ color: "var(--accent-primary)" }} />
                             <input
                                 type="date"
                                 value={dueDate ? format(dueDate, "yyyy-MM-dd") : ""}
@@ -271,7 +272,7 @@ export function TodoDetailModal({
 
                         {/* Start Time */}
                         <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
-                            <Clock size={18} className="text-blue-500" />
+                            <Clock size={18} style={{ color: "var(--accent-primary)" }} />
                             <input
                                 type="time"
                                 value={dueTime}
@@ -301,8 +302,8 @@ export function TodoDetailModal({
                     {/* Stats Summary (Learning History) */}
                     <div className="space-y-2 pt-2">
                         <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
-                        <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl">
-                            <Clock className="text-blue-500" size={20} />
+                        <div className="flex items-center space-x-3 p-3 rounded-xl" style={{ backgroundColor: "var(--accent-secondary)" }}>
+                            <Clock size={20} style={{ color: "var(--accent-primary)" }} />
                             <div className="flex-1">
                                 <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
                                 <div className="text-sm font-medium text-gray-700 dark:text-gray-200">

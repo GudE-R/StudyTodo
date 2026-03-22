@@ -35,7 +35,7 @@ export const Footer = ({ onOpenTemplate, onOpenTodo, onOpenReport, onOpenMenu, o
 
             <View style={styles.centerContainer}>
                 <TouchableOpacity
-                    style={[styles.mainButton, isHighlighted && styles.mainButtonHighlighted]}
+                    style={[styles.mainButton, { backgroundColor: colors.primary }, isHighlighted && styles.mainButtonHighlighted]}
                     onPress={onOpenTodo}
                 >
                     <Text style={styles.mainButtonText}>+</Text>

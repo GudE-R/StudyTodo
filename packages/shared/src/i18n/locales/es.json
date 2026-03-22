@@ -152,7 +152,15 @@
         "backupConfirm": "¿Exportar todos los datos en formato JSON?",
         "exportConfirm": "¿Exportar registros de estudio en formato CSV?",
         "proComingSoon": "Disponible en el Plan Pro",
-        "proDescription": "La sincronización en la nube y el soporte multidispositivo estarán disponibles en el próximo plan Pro. Tus datos están almacenados de forma segura en este dispositivo."
+        "proDescription": "La sincronización en la nube y el soporte multidispositivo estarán disponibles en el próximo plan Pro. Tus datos están almacenados de forma segura en este dispositivo.",
+        "accentColor": "Color de acento",
+        "accentBlue": "Azul",
+        "accentGreen": "Verde",
+        "accentRed": "Rojo",
+        "accentPurple": "Púrpura",
+        "accentOrange": "Naranja",
+        "accentPink": "Rosa",
+        "accentTeal": "Verde azulado"
     },
     "feedback": {
         "title": "Comentarios",

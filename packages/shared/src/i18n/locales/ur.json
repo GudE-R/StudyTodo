@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "کیا آپ واقعی اپنا اکاؤنٹ حذف کرنا چاہتے ہیں؟ آپ کا تمام ڈیٹا مستقل طور پر حذف ہو جائے گا اور بحال نہیں ہو سکے گا۔",
         "deleteAccountConfirm": "کیا آپ واقعی اپنا اکاؤنٹ حذف کرنا چاہتے ہیں؟ آپ کا تمام ڈیٹا مستقل طور پر حذف ہو جائے گا اور بحال نہیں ہو سکے گا۔",
         "deleteAccountError": "اکاؤنٹ حذف نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں یا سپورٹ سے رابطہ کریں۔",
-        "deleteAccountSuccess": "آپ کا اکاؤنٹ کامیابی سے حذف ہو گیا۔"
+        "deleteAccountSuccess": "آپ کا اکاؤنٹ کامیابی سے حذف ہو گیا۔",
+        "accentColor": "نمایاں رنگ",
+        "accentBlue": "نیلا",
+        "accentGreen": "سبز",
+        "accentRed": "سرخ",
+        "accentPurple": "جامنی",
+        "accentOrange": "نارنجی",
+        "accentPink": "گلابی",
+        "accentTeal": "ٹیل"
     },
     "notification": {
         "dailyReminderTitle": "سیکھنے کا وقت ہے!",

@@ -33,7 +33,7 @@ export const TemplateModal = ({ visible, onClose }: TemplateModalProps) => {
                     {/* Tabs */}
                     <View style={[styles.tabs, { borderBottomColor: colors.border }]}>
                         <TouchableOpacity
-                            style={[styles.tab, activeTab === "category" && styles.activeTabCat]}
+                            style={[styles.tab, activeTab === "category" && [styles.activeTabCat, { borderBottomColor: colors.primary }]]}
                             onPress={() => setActiveTab("category")}
                         >
                             <FolderTree size={18} color={activeTab === "category" ? colors.primary : colors.textSecondary} />

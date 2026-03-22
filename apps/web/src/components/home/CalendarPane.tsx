@@ -207,9 +207,9 @@ export function CalendarPane({
                     w-full h-full rounded-sm flex flex-col items-center justify-center text-xs transition-all duration-200 z-0 relative py-1
                     ${!isCurrentMonth ? "opacity-30 grayscale" : ""}
                     ${!readOnly && isSelected
-                                            ? "ring-2 ring-blue-500 z-10"
+                                            ? "ring-2 ring-[var(--accent-primary)] z-10"
                                             : !readOnly && isToday
-                                                ? "ring-1 ring-blue-400 dark:ring-blue-500"
+                                                ? "ring-1 ring-[var(--accent-primary)]"
                                                 : !readOnly ? "hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-600" : ""}
                     ${!readOnly && (isSelected || isToday) ? "" : heatmapClass}
                     ${!readOnly && isKept ? "ring-2 ring-orange-400 bg-orange-50 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400" : ""}
@@ -230,7 +230,7 @@ export function CalendarPane({
                                             {/* Show up to 3 dots, then a special mark */}
                                             {dailyTodos.slice(0, 3).map((t, idx) => {
                                                 const category = categories?.find(c => c.id === t.categoryId);
-                                                const dotColor = category?.color ? category.color : (t.completed ? "#22c55e" : "#3b82f6");
+                                                const dotColor = category?.color ? category.color : (t.completed ? "#22c55e" : "var(--accent-primary)");
 
                                                 return (
                                                     <div

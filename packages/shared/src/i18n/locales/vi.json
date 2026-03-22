@@ -152,7 +152,15 @@
         "backupConfirm": "Bạn có muốn sao lưu tất cả dữ liệu sang định dạng JSON không?",
         "exportConfirm": "Bạn có muốn xuất lịch sử học tập sang định dạng CSV không?",
         "proComingSoon": "Sắp có trong Gói Pro",
-        "proDescription": "Đồng bộ đám mây và hỗ trợ đa thiết bị sẽ có trong gói Pro sắp ra mắt. Dữ liệu của bạn được lưu trữ an toàn trên thiết bị này."
+        "proDescription": "Đồng bộ đám mây và hỗ trợ đa thiết bị sẽ có trong gói Pro sắp ra mắt. Dữ liệu của bạn được lưu trữ an toàn trên thiết bị này.",
+        "accentColor": "Màu nhấn",
+        "accentBlue": "Xanh dương",
+        "accentGreen": "Xanh lá",
+        "accentRed": "Đỏ",
+        "accentPurple": "Tím",
+        "accentOrange": "Cam",
+        "accentPink": "Hồng",
+        "accentTeal": "Xanh mòng két"
     },
     "feedback": {
         "title": "Phản hồi",

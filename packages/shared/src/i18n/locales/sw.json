@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Una uhakika? Data yako yote itafutwa kabisa na haiwezi kurudishwa.",
         "deleteAccountConfirm": "Una uhakika? Data yako yote itafutwa kabisa na haiwezi kurudishwa.",
         "deleteAccountError": "Imeshindwa kufuta akaunti. Tafadhali jaribu tena au wasiliana na msaada.",
-        "deleteAccountSuccess": "Akaunti yako imefutwa kwa mafanikio."
+        "deleteAccountSuccess": "Akaunti yako imefutwa kwa mafanikio.",
+        "accentColor": "Rangi ya Msisitizo",
+        "accentBlue": "Bluu",
+        "accentGreen": "Kijani",
+        "accentRed": "Nyekundu",
+        "accentPurple": "Zambarau",
+        "accentOrange": "Machungwa",
+        "accentPink": "Waridi",
+        "accentTeal": "Samawati"
     },
     "notification": {
         "dailyReminderTitle": "Ni wakati wa kujifunza!",

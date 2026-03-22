@@ -152,7 +152,15 @@
         "backupConfirm": "Eksporter all data i JSON-format?",
         "exportConfirm": "Eksporter studieposter i CSV-format?",
         "proComingSoon": "Kommer i Pro-abonnement",
-        "proDescription": "Skysynkronisering og støtte for flere enheter vil være tilgjengelig i det kommende Pro-abonnementet. Dataene dine er trygt lagret på denne enheten."
+        "proDescription": "Skysynkronisering og støtte for flere enheter vil være tilgjengelig i det kommende Pro-abonnementet. Dataene dine er trygt lagret på denne enheten.",
+        "accentColor": "Aksentfarge",
+        "accentBlue": "Blå",
+        "accentGreen": "Grønn",
+        "accentRed": "Rød",
+        "accentPurple": "Lilla",
+        "accentOrange": "Oransje",
+        "accentPink": "Rosa",
+        "accentTeal": "Blågrønn"
     },
     "feedback": {
         "title": "Tilbakemelding",

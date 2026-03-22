@@ -152,7 +152,15 @@
         "backupConfirm": "Deseja fazer backup de todos os dados em formato JSON?",
         "exportConfirm": "Deseja exportar seu histórico em formato CSV?",
         "proComingSoon": "Disponível no Plano Pro",
-        "proDescription": "Sincronização em nuvem e suporte a múltiplos dispositivos estarão disponíveis no próximo plano Pro. Seus dados estão armazenados com segurança neste dispositivo."
+        "proDescription": "Sincronização em nuvem e suporte a múltiplos dispositivos estarão disponíveis no próximo plano Pro. Seus dados estão armazenados com segurança neste dispositivo.",
+        "accentColor": "Cor de destaque",
+        "accentBlue": "Azul",
+        "accentGreen": "Verde",
+        "accentRed": "Vermelho",
+        "accentPurple": "Roxo",
+        "accentOrange": "Laranja",
+        "accentPink": "Rosa",
+        "accentTeal": "Verde-azulado"
     },
     "feedback": {
         "title": "Feedback",

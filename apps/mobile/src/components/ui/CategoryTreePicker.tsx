@@ -65,7 +65,7 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
                         {
                             borderBottomColor: colors.border,
                             paddingLeft: 16 + depth * 20,
-                            backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+                            backgroundColor: isSelected ? colors.primaryLight : 'transparent'
                         }
                     ]}
                     onPress={() => { onSelect(node.id); onClose(); }}
@@ -135,7 +135,7 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
                                     styles.item,
                                     {
                                         borderBottomColor: colors.border,
-                                        backgroundColor: !selectedId ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+                                        backgroundColor: !selectedId ? colors.primaryLight : 'transparent'
                                     }
                                 ]}
                                 onPress={() => { onSelect(''); onClose(); }}

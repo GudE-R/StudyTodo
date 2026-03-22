@@ -37,24 +37,26 @@ export function TemplateModal({
                 <div className="flex border-b border-gray-100 dark:border-gray-800">
                     <button
                         onClick={() => setActiveTab("category")}
-                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "category" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "category" ? "" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                             }`}
+                        style={activeTab === "category" ? { color: "var(--accent-primary)" } : undefined}
                     >
                         <FolderTree size={18} />
                         <span>{t("categoryTab")}</span>
                         {activeTab === "category" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "var(--accent-primary)" }} />
                         )}
                     </button>
                     <button
                         onClick={() => setActiveTab("srs")}
-                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "srs" ? "text-blue-600 dark:text-blue-400" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        className={`flex-1 flex items-center justify-center space-x-2 py-3 text-sm font-bold transition-colors relative ${activeTab === "srs" ? "" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                             }`}
+                        style={activeTab === "srs" ? { color: "var(--accent-primary)" } : undefined}
                     >
                         <Repeat size={18} />
                         <span>{t("srsTab")}</span>
                         {activeTab === "srs" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+                            <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "var(--accent-primary)" }} />
                         )}
                     </button>
                 </div>

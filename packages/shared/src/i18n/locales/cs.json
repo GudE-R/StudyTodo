@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Opravdu chcete smazat svůj účet? Všechna data budou trvale smazána a nelze je obnovit.",
         "deleteAccountConfirm": "Opravdu chcete smazat svůj účet? Všechna data budou trvale smazána a nelze je obnovit.",
         "deleteAccountError": "Smazání účtu se nezdařilo. Zkuste to znovu nebo kontaktujte podporu.",
-        "deleteAccountSuccess": "Váš účet byl úspěšně smazán."
+        "deleteAccountSuccess": "Váš účet byl úspěšně smazán.",
+        "accentColor": "Barva zvýraznění",
+        "accentBlue": "Modrá",
+        "accentGreen": "Zelená",
+        "accentRed": "Červená",
+        "accentPurple": "Fialová",
+        "accentOrange": "Oranžová",
+        "accentPink": "Růžová",
+        "accentTeal": "Tyrkysová"
     },
     "notification": {
         "dailyReminderTitle": "Čas se učit!",

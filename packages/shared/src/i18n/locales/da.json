@@ -152,7 +152,15 @@
         "backupConfirm": "Eksporter alle data i JSON-format?",
         "exportConfirm": "Eksporter studieposter i CSV-format?",
         "proComingSoon": "Kommer i Pro-abonnement",
-        "proDescription": "Cloud-synkronisering og understøttelse af flere enheder vil være tilgængelig i det kommende Pro-abonnement. Dine data er sikkert gemt på denne enhed."
+        "proDescription": "Cloud-synkronisering og understøttelse af flere enheder vil være tilgængelig i det kommende Pro-abonnement. Dine data er sikkert gemt på denne enhed.",
+        "accentColor": "Accentfarve",
+        "accentBlue": "Blå",
+        "accentGreen": "Grøn",
+        "accentRed": "Rød",
+        "accentPurple": "Lilla",
+        "accentOrange": "Orange",
+        "accentPink": "Pink",
+        "accentTeal": "Blågrøn"
     },
     "feedback": {
         "title": "Feedback",

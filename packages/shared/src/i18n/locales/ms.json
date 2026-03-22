@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "Adakah anda pasti mahu memadamkan akaun anda? Semua data anda akan dipadam secara kekal dan tidak boleh dipulihkan.",
         "deleteAccountConfirm": "Adakah anda pasti mahu memadamkan akaun anda? Semua data anda akan dipadam secara kekal dan tidak boleh dipulihkan.",
         "deleteAccountError": "Gagal memadamkan akaun. Sila cuba lagi atau hubungi sokongan.",
-        "deleteAccountSuccess": "Akaun anda telah berjaya dipadam."
+        "deleteAccountSuccess": "Akaun anda telah berjaya dipadam.",
+        "accentColor": "Warna Aksen",
+        "accentBlue": "Biru",
+        "accentGreen": "Hijau",
+        "accentRed": "Merah",
+        "accentPurple": "Ungu",
+        "accentOrange": "Oren",
+        "accentPink": "Merah Jambu",
+        "accentTeal": "Teal"
     },
     "notification": {
         "dailyReminderTitle": "Masa untuk belajar!",

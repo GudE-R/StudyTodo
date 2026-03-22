@@ -22,7 +22,7 @@ export const OnboardingScreen = () => {
             title: t('onboarding.slides.welcome.title'),
             description: t('onboarding.slides.welcome.description'),
             Icon: CheckSquare, // Placeholder icon for logo
-            color: '#3b82f6', // blue-500
+            color: colors.primary,
         },
         {
             id: '2',

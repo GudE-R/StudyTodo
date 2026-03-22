@@ -245,7 +245,7 @@ export function TodoCreateModal({
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             rows={3}
-                            className="w-full text-base font-medium border-b-2 border-blue-100 dark:border-gray-600 focus:border-blue-500 outline-none py-2 placeholder-gray-300 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 resize-none bg-transparent"
+                            className="w-full text-base font-medium border-b-2 border-gray-200 dark:border-gray-600 focus:border-[var(--accent-primary)] outline-none py-2 placeholder-gray-300 dark:placeholder-gray-500 text-gray-800 dark:text-gray-100 resize-none bg-transparent"
                         />
                     </div>
 
@@ -267,7 +267,7 @@ export function TodoCreateModal({
                                     if (!val) setEndTime(""); // Reset end time if start time cleared
                                 }}
                                 placeholder={t("startTime")}
-                                icon={<PlayCircle size={18} className="text-blue-500" />}
+                                icon={<PlayCircle size={18} style={{ color: "var(--accent-primary)" }} />}
                             />
 
                             {/* End Time */}
@@ -396,7 +396,8 @@ export function TodoCreateModal({
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex items-center justify-center space-x-1 bg-blue-100 text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-200 transition-colors"
+                                    className="flex items-center justify-center space-x-1 py-3 rounded-xl font-bold transition-colors hover:brightness-90"
+                                    style={{ backgroundColor: "var(--accent-secondary)", color: "var(--accent-primary)" }}
                                 >
                                     <Plus size={18} />
                                     <span className="text-sm">{t("create")}</span>

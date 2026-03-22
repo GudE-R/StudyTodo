@@ -152,7 +152,15 @@
         "backupConfirm": "Alle Daten im JSON-Format exportieren?",
         "exportConfirm": "Lernaufzeichnungen im CSV-Format exportieren?",
         "proComingSoon": "Im Pro-Plan verfügbar",
-        "proDescription": "Cloud-Synchronisierung und Multi-Geräte-Unterstützung werden im kommenden Pro-Plan verfügbar sein. Ihre Daten sind sicher auf diesem Gerät gespeichert."
+        "proDescription": "Cloud-Synchronisierung und Multi-Geräte-Unterstützung werden im kommenden Pro-Plan verfügbar sein. Ihre Daten sind sicher auf diesem Gerät gespeichert.",
+        "accentColor": "Akzentfarbe",
+        "accentBlue": "Blau",
+        "accentGreen": "Grün",
+        "accentRed": "Rot",
+        "accentPurple": "Lila",
+        "accentOrange": "Orange",
+        "accentPink": "Rosa",
+        "accentTeal": "Blaugrün"
     },
     "feedback": {
         "title": "Feedback",

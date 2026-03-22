@@ -55,7 +55,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
     const types: { id: Feedback["type"]; label: string; icon: LucideIcon; color: string }[] = [
         { id: "request", label: t("typeRequest"), icon: Lightbulb, color: "text-yellow-500" },
         { id: "bug", label: t("typeBug"), icon: AlertCircle, color: "text-red-500" },
-        { id: "other", label: t("typeOther"), icon: HelpCircle, color: "text-blue-500" },
+        { id: "other", label: t("typeOther"), icon: HelpCircle, color: "text-[var(--accent-primary)]" },
     ];
 
     return (
@@ -64,7 +64,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                     <div className="flex items-center space-x-2">
-                        <MessageSquare size={20} className="text-blue-500" />
+                        <MessageSquare size={20} style={{ color: "var(--accent-primary)" }} />
                         <h2 className="text-lg font-bold text-foreground">{t("title")}</h2>
                     </div>
                     <button
@@ -100,12 +100,13 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                                         className={`
                                             flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all
                                             ${isSelected
-                                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                                                ? ""
                                                 : "border-border hover:border-gray-300 dark:hover:border-gray-700"}
                                         `}
+                                        style={isSelected ? { borderColor: "var(--accent-primary)", backgroundColor: "var(--accent-secondary)" } : undefined}
                                     >
                                         <Icon size={20} className={isSelected ? t.color : "text-gray-400"} />
-                                        <span className={`text-[10px] font-bold mt-1 ${isSelected ? "text-blue-600 dark:text-blue-400" : "text-gray-500"}`}>
+                                        <span className={`text-[10px] font-bold mt-1 ${isSelected ? "" : "text-gray-500"}`} style={isSelected ? { color: "var(--accent-primary)" } : undefined}>
                                             {t.label}
                                         </span>
                                     </button>
@@ -123,7 +124,7 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
                                 placeholder={t("placeholder")}
-                                className="w-full h-40 p-4 bg-background border border-border rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-sm text-foreground"
+                                className="w-full h-40 p-4 bg-background border border-border rounded-xl resize-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all outline-none text-sm text-foreground"
                             />
                         </div>
 
@@ -140,9 +141,10 @@ export function FeedbackModal({ isOpen, onClose, onSubmit }: FeedbackModalProps)
                                 type="submit"
                                 disabled={!content.trim() || isSubmitting}
                                 className={`
-                                    flex-[2] px-4 py-3 bg-blue-600 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2
-                                    ${(!content.trim() || isSubmitting) ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700 shadow-lg shadow-blue-500/30"}
+                                    flex-[2] px-4 py-3 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2
+                                    ${(!content.trim() || isSubmitting) ? "opacity-50 cursor-not-allowed" : "hover:brightness-90 shadow-lg"}
                                 `}
+                                style={{ backgroundColor: "var(--accent-primary)" }}
                             >
                                 {isSubmitting ? (
                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

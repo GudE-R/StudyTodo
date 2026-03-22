@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "هل أنت متأكد من حذف حسابك؟ سيتم حذف جميع بياناتك نهائياً ولا يمكن استردادها.",
         "deleteAccountConfirm": "هل أنت متأكد من حذف حسابك؟ سيتم حذف جميع بياناتك نهائياً ولا يمكن استردادها.",
         "deleteAccountError": "فشل حذف الحساب. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.",
-        "deleteAccountSuccess": "تم حذف حسابك بنجاح."
+        "deleteAccountSuccess": "تم حذف حسابك بنجاح.",
+        "accentColor": "لون التمييز",
+        "accentBlue": "أزرق",
+        "accentGreen": "أخضر",
+        "accentRed": "أحمر",
+        "accentPurple": "أرجواني",
+        "accentOrange": "برتقالي",
+        "accentPink": "وردي",
+        "accentTeal": "أزرق مخضر"
     },
     "notification": {
         "dailyReminderTitle": "حان وقت التعلم!",

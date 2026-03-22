@@ -152,7 +152,15 @@
         "backupConfirm": "確定要備份所有數據為 JSON 格式嗎？",
         "exportConfirm": "確定要匯出學習紀錄為 CSV 格式嗎？",
         "proComingSoon": "Pro 方案即將推出",
-        "proDescription": "雲端同步和多裝置支援將在即將推出的 Pro 方案中提供。您的資料安全地儲存在此裝置上。"
+        "proDescription": "雲端同步和多裝置支援將在即將推出的 Pro 方案中提供。您的資料安全地儲存在此裝置上。",
+        "accentColor": "強調色",
+        "accentBlue": "藍色",
+        "accentGreen": "綠色",
+        "accentRed": "紅色",
+        "accentPurple": "紫色",
+        "accentOrange": "橙色",
+        "accentPink": "粉色",
+        "accentTeal": "青色"
     },
     "feedback": {
         "title": "意見回饋",

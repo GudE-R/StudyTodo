@@ -44,7 +44,7 @@ export function WeekdayPicker({ value, onChange, disabled = false }: WeekdayPick
                         className={`
                             w-8 h-8 rounded-full text-xs font-bold transition-all
                             ${isSelected
-                                ? "bg-blue-500 text-white shadow-md"
+                                ? "text-white shadow-md bg-[var(--accent-primary)]"
                                 : isWeekend
                                     ? "bg-gray-100 dark:bg-gray-800 text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
                                     : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"

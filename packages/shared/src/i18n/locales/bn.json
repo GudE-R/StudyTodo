@@ -202,7 +202,15 @@
         "deleteAccountConfirmMessage": "আপনি কি সত্যিই আপনার অ্যাকাউন্ট মুছতে চান? আপনার সমস্ত ডেটা স্থায়ীভাবে মুছে যাবে এবং পুনরুদ্ধার করা যাবে না।",
         "deleteAccountConfirm": "আপনি কি সত্যিই আপনার অ্যাকাউন্ট মুছতে চান? আপনার সমস্ত ডেটা স্থায়ীভাবে মুছে যাবে এবং পুনরুদ্ধার করা যাবে না।",
         "deleteAccountError": "অ্যাকাউন্ট মুছতে ব্যর্থ। অনুগ্রহ করে আবার চেষ্টা করুন বা সাপোর্টে যোগাযোগ করুন।",
-        "deleteAccountSuccess": "আপনার অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে।"
+        "deleteAccountSuccess": "আপনার অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে।",
+        "accentColor": "অ্যাক্সেন্ট রং",
+        "accentBlue": "নীল",
+        "accentGreen": "সবুজ",
+        "accentRed": "লাল",
+        "accentPurple": "বেগুনি",
+        "accentOrange": "কমলা",
+        "accentPink": "গোলাপি",
+        "accentTeal": "টিল"
     },
     "notification": {
         "dailyReminderTitle": "শেখার সময়!",
