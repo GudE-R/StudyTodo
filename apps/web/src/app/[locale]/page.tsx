@@ -22,6 +22,7 @@ import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { LandingPage } from "@/components/landing/LandingPage";
+import { InteractiveOnboarding } from "@/components/onboarding/InteractiveOnboarding";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { JournalModal } from "@/components/journal/JournalModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -45,10 +46,14 @@ export default function Home() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isJournalOpen, setIsJournalOpen] = useState(false);
   const [showWelcome] = useState(true);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
 
   // Client-side rendering guard
   const [isClient, setIsClient] = useState(false);
-  useEffect(() => { setIsClient(true); }, []);
+  useEffect(() => {
+    setIsClient(true);
+    setOnboardingCompleted(localStorage.getItem("onboarding_completed") === "true");
+  }, []);
 
   // DB data
   const todos = useLiveQuery(() => db.todos.orderBy("createdAt").reverse().toArray()) || [];
@@ -99,11 +104,10 @@ export default function Home() {
 
   const isFirstTimeUser = !authLoading && !user && todos.length === 0 && sessions.length === 0;
 
-  if (showWelcome && isFirstTimeUser) {
+  if (showWelcome && isFirstTimeUser && !onboardingCompleted) {
     return (
-      <LandingPage
-        onGetStarted={() => router.push(`/${locale}/auth`)}
-        onLogin={() => router.push(`/${locale}/auth`)}
+      <InteractiveOnboarding
+        onComplete={() => setOnboardingCompleted(true)}
       />
     );
   }

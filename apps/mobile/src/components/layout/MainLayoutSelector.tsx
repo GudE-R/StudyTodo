@@ -4,7 +4,7 @@ import { MainLayout as MainLayoutDefault } from './MainLayout_Safe';
 import { MainLayoutSimple } from './MainLayoutSimple';
 import { useLayout } from '../../providers/LayoutProvider';
 import { useOnboarding } from '../../providers/OnboardingProvider';
-import { OnboardingScreen } from '../onboarding/OnboardingScreen';
+import { InteractiveOnboarding } from '../onboarding/InteractiveOnboarding';
 
 export const MainLayoutSelector = () => {
     const { layoutMode } = useLayout();
@@ -19,7 +19,7 @@ export const MainLayoutSelector = () => {
     }
 
     if (!hasCompletedOnboarding) {
-        return <OnboardingScreen />;
+        return <InteractiveOnboarding />;
     }
 
     if (layoutMode === 'simple') {

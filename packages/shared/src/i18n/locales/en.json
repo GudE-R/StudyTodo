@@ -399,5 +399,25 @@
         "autoPrompt": "Prompt on task completion",
         "completedPromptTitle": "Record it?",
         "completedPromptMessage": "You completed \"{{title}}\". Would you like to add a journal entry?"
+    },
+    "interactiveOnboarding": {
+        "step1Title": "What are you studying?",
+        "step1Subtitle": "Enter the subject you want to learn",
+        "step1Placeholder": "e.g. React, TOEIC, Math...",
+        "step1Cta": "Next",
+        "step2Title": "Reviews auto-scheduled!",
+        "step2Desc": "Based on the forgetting curve, reviews are optimally timed for long-term memory.",
+        "step2Today": "Today",
+        "step2Day": "Day {n}",
+        "step2Original": "{title}",
+        "step2Review": "{title} (Review #{n})",
+        "step2Cta": "Let's start!",
+        "step3Title": "Set your study time",
+        "step3Desc": "Long-press a time slot to reserve your study time.",
+        "step3Hint": "Long-press here",
+        "step3Kept": "Time reserved! You can add tasks from the + button.",
+        "step3Cta": "Done",
+        "skipAll": "Skip",
+        "stepIndicator": "Step {current} of {total}"
     }
 }

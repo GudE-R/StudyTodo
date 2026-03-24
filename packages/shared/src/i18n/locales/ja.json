@@ -413,5 +413,25 @@
         "autoPrompt": "タスク完了時に投稿を促す",
         "completedPromptTitle": "記録する？",
         "completedPromptMessage": "「{{title}}」を完了しました。ジャーナルに記録しますか？"
+    },
+    "interactiveOnboarding": {
+        "step1Title": "何を学んでいますか？",
+        "step1Subtitle": "学習したい内容を入力してください",
+        "step1Placeholder": "例: React, TOEIC, 数学...",
+        "step1Cta": "次へ",
+        "step2Title": "復習が自動スケジュールされました！",
+        "step2Desc": "忘却曲線に基づき、最適なタイミングで復習がスケジュールされます。",
+        "step2Today": "今日",
+        "step2Day": "{n}日後",
+        "step2Original": "{title}",
+        "step2Review": "{title} ({n}回目)",
+        "step2Cta": "はじめましょう！",
+        "step3Title": "学習する時間を決めましょう",
+        "step3Desc": "時間帯を長押しして、学習時間を確保しましょう。",
+        "step3Hint": "ここを長押し",
+        "step3Kept": "時間を確保しました！ +ボタンからタスクを追加できます。",
+        "step3Cta": "完了",
+        "skipAll": "スキップ",
+        "stepIndicator": "ステップ {current} / {total}"
     }
 }
