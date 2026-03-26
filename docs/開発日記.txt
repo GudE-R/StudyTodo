@@ -1723,5 +1723,10 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 4. **Share機能削除**: ActivityModalを2タブ（Analytics/History）に簡素化。
 5. **SettingsModal整理**: 認証・クラウド同期関連を削除。Proプラン案内（Crown）とJournal設定トグル（BookOpen）を追加。
 6. **DayScheduleパフォーマンス改善**: BUFFER_DAYSを60→14に削減（DOM要素5,808→1,392、76%削減）。RECENTER_THRESHOLDも15→5に調整。
-
 セキュリティレビュー実施済み。TypeScriptチェック通過確認。
+
+03/26
+**GitHub CLI 連携強化**
+- `CLAUDE.md` に `gh` コマンドを使用したPull Request・Issueの自動管理ルールを追記
+- リポジトリに PULL_REQUEST_TEMPLATE, bug_report, feature_request テンプレートを追加
+- GitHub CLI認証のテストを実施し、連携を完了

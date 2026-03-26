@@ -49,3 +49,5 @@ Web版 (React + Vite) とモバイル版 (React Native + Expo) のモノレポ�
 - コマンド実行時は `cd` を使わず、`run_command` の `Cwd` パラメータで作業ディレクトリを指定すること
   - （悪い例: `cd /home/gude/Dev/StudyTodo && git status`）
   - （良い例: `Cwd="/home/gude/Dev/StudyTodo"` `CommandLine="git status"`）
+- **GitHub CLI (`gh`) の活用**:
+  - CIの状況確認だけでなく、AIエージェントによる自動的なIssueの確認・作成 (`gh issue`) やPull Requestの作成 (`gh pr`) を適宜実施すること。

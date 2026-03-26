@@ -212,20 +212,6 @@ export const TodoDetailModal = ({
                             )}
                         </View>
 
-                        {/* Stats Summary */}
-                        <View style={styles.statsSection}>
-                            <Text style={[styles.sectionLabel, { color: colors.textMuted }]}>{t('todo.statsTitle', 'Learning History').toUpperCase()}</Text>
-                            <View style={[styles.statsBox, { backgroundColor: isDark ? colors.primaryLight : '#eff6ff' }]}>
-                                <Clock size={20} color={colors.primary} />
-                                <View style={styles.statsTextColumn}>
-                                    <Text style={[styles.statsSmallLabel, { color: colors.textSecondary }]}>{t('todo.results', 'Results')}</Text>
-                                    <Text style={[styles.statsValueText, { color: colors.text }]}>
-                                        {form.todoSessions.length}回 ({form.totalMinutes}分)
-                                    </Text>
-                                </View>
-                            </View>
-                        </View>
-
                     </ScrollView>
 
                     {/* Bottom Actions */}
@@ -662,31 +648,6 @@ const styles = StyleSheet.create({
     },
     weekdayTextActive: {
         color: '#fff',
-    },
-    statsSection: {
-        gap: 8,
-    },
-    sectionLabel: {
-        fontSize: 11,
-        fontWeight: 'bold',
-        letterSpacing: 1,
-    },
-    statsBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 14,
-        borderRadius: 12,
-        gap: 12,
-    },
-    statsTextColumn: {
-        flex: 1,
-    },
-    statsSmallLabel: {
-        fontSize: 11,
-    },
-    statsValueText: {
-        fontSize: 16,
-        fontWeight: 'bold',
     },
     footer: {
         padding: 16,

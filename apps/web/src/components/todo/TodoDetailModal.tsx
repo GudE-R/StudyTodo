@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, CalendarRange } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useTranslations } from "next-intl";
-import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { Todo, Category, SRSProfile, parseTodoContent } from "@studytodo/shared";
 
@@ -63,13 +62,6 @@ export function TodoDetailModal({
         }
     }, [todo, isOpen]);
 
-    const sessions = useLiveQuery(
-        async () => {
-            if (!todo) return [];
-            return await db.sessions.where("todoId").equals(todo.id).toArray();
-        },
-        [todo?.id]
-    ) || [];
 
     if (!isOpen || !todo) return null;
 
@@ -297,20 +289,6 @@ export function TodoDetailModal({
                             </select>
                         </div>
                         {/* Priority removed */}
-                    </div>
-
-                    {/* Stats Summary (Learning History) */}
-                    <div className="space-y-2 pt-2">
-                        <div className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">{t("statsTitle")}</div>
-                        <div className="flex items-center space-x-3 p-3 rounded-xl" style={{ backgroundColor: "var(--accent-secondary)" }}>
-                            <Clock size={20} style={{ color: "var(--accent-primary)" }} />
-                            <div className="flex-1">
-                                <div className="text-xs text-gray-500 dark:text-gray-400">{t("results")}</div>
-                                <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    {sessions.length}回 ({Math.floor(sessions.reduce((acc, s) => acc + s.duration, 0) / 60)}分)
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                 </div>

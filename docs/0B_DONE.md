@@ -3,6 +3,9 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- GitHub CLI 連携・AIエージェント向け拡張対応 (2026-03-26)
+  - `CLAUDE.md` に `gh` コマンドを使用したPull Request・Issueの自動管理ルールを追記
+  - PULL_REQUEST_TEMPLATE, bug_report, feature_request テンプレートを追加
 - Web版メジャーアップデート: 完全ソロユース・デジタルプランナー化 (2026-03-22)
   - i18n 35言語対応 + RTLサポート (ar, ur, fa, he)
   - ペーパーテーマ3種追加 (classic/washi/planner)、デフォルトをpaper-classicに変更

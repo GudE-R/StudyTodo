@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(npx tsc:*)",
+      "Bash(GIT_TERMINAL_PROMPT=0 git push origin main)",
+      "Bash(ssh -T git@github.com)",
+      "Bash(gh auth:*)"
     ]
   }
 }
