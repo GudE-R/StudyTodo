@@ -1730,3 +1730,9 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - `CLAUDE.md` に `gh` コマンドを使用したPull Request・Issueの自動管理ルールを追記
 - リポジトリに PULL_REQUEST_TEMPLATE, bug_report, feature_request テンプレートを追加
 - GitHub CLI認証のテストを実施し、連携を完了
+
+03/26
+**iOS v1.0.3 App Store提出**
+- EASビルド (v1.0.3, buildNumber: 1.0.23) でビルド＆自動提出
+- v1.0.2提出済みのためバージョンを1.0.3に更新してから再提出
+- Appleのレビュー待ち

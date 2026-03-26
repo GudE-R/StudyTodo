@@ -3,6 +3,9 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- iOS v1.0.3 App Store提出 (2026-03-26)
+  - EASビルド (buildNumber: 1.0.23) でApp Store Connectへ提出
+  - v1.0.2はすでに提出済みだったためバージョンを1.0.3に更新
 - GitHub CLI 連携・AIエージェント向け拡張対応 (2026-03-26)
   - `CLAUDE.md` に `gh` コマンドを使用したPull Request・Issueの自動管理ルールを追記
   - PULL_REQUEST_TEMPLATE, bug_report, feature_request テンプレートを追加

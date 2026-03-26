@@ -5,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: "StudyTodo",
   slug: "studytodo",
   scheme: "studytodo",
-  version: "1.0.2",
+  version: "1.0.3",
   orientation: "portrait",
   icon: "./assets/combined-icon.png",
   userInterfaceStyle: "light",
