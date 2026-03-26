@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, Modal, ScrollView, Switch, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, Modal, ScrollView, Switch } from 'react-native';
 import { Play, Pause, Square, ArrowLeft, MoreVertical, Timer, Watch, CheckCircle, ChevronDown, X, RotateCcw } from 'lucide-react-native';
 import { Svg, Circle } from 'react-native-svg';
 import { Todo } from '@studytodo/shared';
@@ -16,39 +16,38 @@ interface MobileTimerViewProps {
 
 export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }: MobileTimerViewProps) => {
     const { width } = useWindowDimensions();
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === 'dark';
     const CIRCLE_SIZE = width * 0.75;
     const RADIUS = CIRCLE_SIZE / 2 - 10;
     const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
     const { t } = useTranslation();
-    const { colors: themeColors } = useThemeColors();
-    const timer = useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask });
+    const { colors: themeColors, isDark } = useThemeColors();
+    const timer = useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask, primaryColor: themeColors.primary, primaryLightColor: themeColors.primaryLight, themeBackgroundColor: themeColors.background });
 
     const strokeDashoffset = CIRCUMFERENCE - (timer.progress / 100) * CIRCUMFERENCE;
 
-    // Dynamic dark mode colors
+    // Theme-aware colors
     const colors = {
-        bg: isDark
-            ? (timer.status === 'break' ? '#052e16' : '#172554')
+        bg: timer.status === 'break'
+            ? (isDark ? '#052e16' : '#f0fdf4')
             : timer.bgColor,
-        text: isDark ? '#f3f4f6' : '#1f2937',
-        textSub: isDark ? '#9ca3af' : '#6b7280',
+        text: themeColors.text,
+        textSub: themeColors.textSecondary,
+        textMuted: themeColors.textMuted,
         circleTrack: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
         iconBtn: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.8)',
         modeTabs: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.5)',
-        activeTab: isDark ? '#374151' : '#fff',
+        activeTab: themeColors.surface,
         badge: {
-            focus: isDark ? { bg: '#1e3a5f', text: themeColors.primary } : { bg: '#dbeafe', text: themeColors.primary },
+            focus: { bg: themeColors.primaryLight, text: themeColors.primary },
             break: isDark ? { bg: '#14532d', text: '#4ade80' } : { bg: '#dcfce7', text: '#166534' },
         },
-        durationBtn: isDark ? '#374151' : '#fff',
-        durationText: isDark ? '#d1d5db' : '#6b7280',
-        menuBg: isDark ? '#1f2937' : '#fff',
-        menuBorder: isDark ? '#374151' : '#f0f0f0',
-        logBg: isDark ? '#1f2937' : '#fff',
-        logItemBorder: isDark ? '#374151' : '#f0f0f0',
+        durationBtn: themeColors.surface,
+        durationText: themeColors.textSecondary,
+        menuBg: themeColors.background,
+        menuBorder: themeColors.border,
+        logBg: themeColors.background,
+        logItemBorder: themeColors.border,
     };
 
     return (
@@ -61,16 +60,16 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
 
                 <View style={[styles.modeTabs, { backgroundColor: colors.modeTabs }]}>
                     <TouchableOpacity onPress={() => { timer.setMode("pomodoro"); timer.setStatus("focus"); timer.setIsRunning(false); }} style={[styles.tab, timer.mode === "pomodoro" && [styles.activeTab, { backgroundColor: colors.activeTab }]]}>
-                        <Timer size={20} color={timer.mode === "pomodoro" ? "#2563eb" : "#999"} />
+                        <Timer size={20} color={timer.mode === "pomodoro" ? themeColors.primary : colors.textMuted} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { timer.setMode("countdown"); timer.setIsRunning(false); }} style={[styles.tab, timer.mode === "countdown" && [styles.activeTab, { backgroundColor: colors.activeTab }]]}>
-                        <Watch size={20} color={timer.mode === "countdown" ? "#2563eb" : "#999"} />
+                        <Watch size={20} color={timer.mode === "countdown" ? themeColors.primary : colors.textMuted} />
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={timer.switchToStopwatch}
                         style={[styles.tab, timer.mode === "stopwatch" && [styles.activeTab, { backgroundColor: colors.activeTab }]]}
                     >
-                        <Play size={20} color={timer.mode === "stopwatch" ? "#2563eb" : "#999"} style={{ transform: [{ rotate: '90deg' }] }} />
+                        <Play size={20} color={timer.mode === "stopwatch" ? themeColors.primary : colors.textMuted} style={{ transform: [{ rotate: '90deg' }] }} />
                     </TouchableOpacity>
                 </View>
 
@@ -105,10 +104,10 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                         <View style={styles.inCircleControls}>
                             {!timer.isRunning ? (
                                 <TouchableOpacity
-                                    style={[styles.inCircleBtn, timer.status === "break" ? styles.inCircleBtnBreak : styles.inCircleBtnFocus]}
+                                    style={[styles.inCircleBtn, timer.status === "break" ? styles.inCircleBtnBreak : { backgroundColor: themeColors.primaryLight }]}
                                     onPress={() => { timer.setIsRunning(true); timer.setIsPaused(false); }}
                                 >
-                                    <Play size={24} color={timer.status === "break" ? "#16a34a" : "#2563eb"} fill={timer.status === "break" ? "#16a34a" : "#2563eb"} />
+                                    <Play size={24} color={timer.status === "break" ? "#16a34a" : themeColors.primary} fill={timer.status === "break" ? "#16a34a" : themeColors.primary} />
                                 </TouchableOpacity>
                             ) : (
                                 <TouchableOpacity
@@ -120,8 +119,8 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                             )}
 
                             {(timer.isRunning || timer.isPaused) && (
-                                <TouchableOpacity style={[styles.inCircleResetBtn, isDark && { backgroundColor: 'rgba(255,255,255,0.1)' }]} onPress={timer.resetTimer}>
-                                    <Square size={18} color={isDark ? '#aaa' : '#999'} fill={isDark ? '#aaa' : '#999'} />
+                                <TouchableOpacity style={[styles.inCircleResetBtn, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)' }]} onPress={timer.resetTimer}>
+                                    <Square size={18} color={colors.textMuted} fill={colors.textMuted} />
                                 </TouchableOpacity>
                             )}
                         </View>
@@ -133,10 +132,10 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                     <View style={styles.settingsRow}>
                         {timer.status === "focus" ? (
                             <>
-                                <TouchableOpacity onPress={() => timer.setFocusDuration(25)} style={[styles.durationBtn, { backgroundColor: colors.durationBtn }, timer.focusDuration === 25 && styles.activeDurationBtn]}>
+                                <TouchableOpacity onPress={() => timer.setFocusDuration(25)} style={[styles.durationBtn, { backgroundColor: colors.durationBtn }, timer.focusDuration === 25 && { backgroundColor: themeColors.primary }]}>
                                     <Text style={[styles.durationText, { color: colors.durationText }, timer.focusDuration === 25 && styles.activeDurationText]}>25 min</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => timer.setFocusDuration(50)} style={[styles.durationBtn, { backgroundColor: colors.durationBtn }, timer.focusDuration === 50 && styles.activeDurationBtn]}>
+                                <TouchableOpacity onPress={() => timer.setFocusDuration(50)} style={[styles.durationBtn, { backgroundColor: colors.durationBtn }, timer.focusDuration === 50 && { backgroundColor: themeColors.primary }]}>
                                     <Text style={[styles.durationText, { color: colors.durationText }, timer.focusDuration === 50 && styles.activeDurationText]}>50 min</Text>
                                 </TouchableOpacity>
                             </>
@@ -164,16 +163,16 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
 
                 {/* Switch to Stopwatch */}
                 {timer.mode !== "stopwatch" && (timer.isRunning || timer.isPaused) && (
-                    <TouchableOpacity style={[styles.switchBtn, isDark && { backgroundColor: '#1e3a5f', borderColor: themeColors.primary }]} onPress={timer.switchToStopwatch}>
-                        <ChevronDown size={18} color="#2563eb" style={{ transform: [{ rotate: '-90deg' }] }} />
-                        <Text style={styles.switchBtnText}>{t('timer.switchToStopwatch')}</Text>
+                    <TouchableOpacity style={[styles.switchBtn, { backgroundColor: themeColors.surface, borderColor: themeColors.primary }]} onPress={timer.switchToStopwatch}>
+                        <ChevronDown size={18} color={themeColors.primary} style={{ transform: [{ rotate: '-90deg' }] }} />
+                        <Text style={[styles.switchBtnText, { color: themeColors.primary }]}>{t('timer.switchToStopwatch')}</Text>
                     </TouchableOpacity>
                 )}
 
                 {/* Bottom Actions */}
                 <View style={styles.bottomActions}>
                     <TouchableOpacity style={styles.recordBtn} onPress={timer.handleSave}>
-                        <CheckCircle size={18} color={isDark ? '#6b7280' : '#999'} />
+                        <CheckCircle size={18} color={colors.textMuted} />
                         <Text style={[styles.recordText, { color: colors.textSub }]}>{t('timer.saveRecordOnly')}</Text>
                     </TouchableOpacity>
 
@@ -196,7 +195,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                             <Switch
                                 value={timer.autoProgress}
                                 onValueChange={(v) => timer.setAutoProgress(v)}
-                                trackColor={{ false: isDark ? '#4b5563' : '#d1d5db', true: themeColors.primary }}
+                                trackColor={{ false: themeColors.border, true: themeColors.primary }}
                                 thumbColor="#fff"
                             />
                         </View>
@@ -248,7 +247,7 @@ export const MobileTimerView = ({ todo, onBack, onSaveSession, onCompleteTask }:
                         </ScrollView>
                         {timer.sessionLog.length > 0 && (
                             <View style={[styles.logFooter, { borderTopColor: colors.menuBorder }]}>
-                                <Text style={styles.logTotal}>
+                                <Text style={[styles.logTotal, { color: themeColors.primary }]}>
                                     {t('timer.totalMinutes', { min: Math.floor(timer.sessionLog.reduce((sum, s) => sum + s.duration, 0) / 60) })}
                                 </Text>
                             </View>
@@ -277,13 +276,13 @@ const styles = StyleSheet.create({
     timeText: { fontSize: 64, fontWeight: 'bold', fontVariant: ['tabular-nums'] },
     inCircleControls: { flexDirection: 'row', alignItems: 'center', gap: 16 },
     inCircleBtn: { width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center' },
-    inCircleBtnFocus: { backgroundColor: 'rgba(37, 99, 235, 0.12)' },
+    inCircleBtnFocus: {},
     inCircleBtnBreak: { backgroundColor: 'rgba(22, 163, 74, 0.12)' },
     inCircleBtnPause: { width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(234, 179, 8, 0.15)', justifyContent: 'center', alignItems: 'center' },
-    inCircleResetBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.06)', justifyContent: 'center', alignItems: 'center' },
+    inCircleResetBtn: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
     settingsRow: { flexDirection: 'row', gap: 15 },
     durationBtn: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 10 },
-    activeDurationBtn: { backgroundColor: '#2563eb' },
+    activeDurationBtn: {},
     activeDurationBtnBreak: { backgroundColor: '#16a34a' },
     durationText: { fontSize: 14, fontWeight: 'bold' },
     activeDurationText: { color: '#fff' },
@@ -294,12 +293,12 @@ const styles = StyleSheet.create({
     completeBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
     adjustBtn: { padding: 10, borderRadius: 8 },
     adjustText: { fontSize: 18, fontWeight: 'bold', paddingHorizontal: 10 },
-    switchBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#2563eb' },
-    switchBtnText: { fontSize: 14, fontWeight: '600', color: '#2563eb' },
+    switchBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1 },
+    switchBtnText: { fontSize: 14, fontWeight: '600' },
     // Menu
     menuOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-start', alignItems: 'flex-end', paddingTop: 55, paddingRight: 16 },
     menuContainer: { borderRadius: 14, width: 220, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8, overflow: 'hidden' },
-    menuItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+    menuItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1 },
     menuItemText: { fontSize: 15, fontWeight: '600' },
     // Session Log
     logOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
@@ -314,5 +313,5 @@ const styles = StyleSheet.create({
     logDuration: { fontSize: 16, fontWeight: '600' },
     logDate: { fontSize: 12, marginTop: 2 },
     logFooter: { paddingTop: 12, borderTopWidth: 1, alignItems: 'center' },
-    logTotal: { fontSize: 16, fontWeight: '700', color: '#2563eb' },
+    logTotal: { fontSize: 16, fontWeight: '700' },
 });

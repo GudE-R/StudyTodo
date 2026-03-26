@@ -12,9 +12,12 @@ interface UseMobileTimerProps {
     onBack: () => void;
     onSaveSession?: (sessionData: { todoId: string; todoTitle: string; duration: number; mode: string }) => void;
     onCompleteTask?: () => void;
+    primaryColor?: string;
+    primaryLightColor?: string;
+    themeBackgroundColor?: string;
 }
 
-export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: UseMobileTimerProps) {
+export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask, primaryColor = '#2563eb', primaryLightColor = '#eff6ff', themeBackgroundColor = '#ffffff' }: UseMobileTimerProps) {
     const repository = useRepository();
 
     // State
@@ -182,8 +185,8 @@ export function useMobileTimer({ todo, onBack, onSaveSession, onCompleteTask }: 
         return ((total - timeLeft) / total) * 100;
     };
 
-    const getThemeColor = () => status === "break" ? "#22c55e" : "#2563eb";
-    const getBgColor = () => status === "break" ? "#f0fdf4" : "#eff6ff";
+    const getThemeColor = () => status === "break" ? "#22c55e" : primaryColor;
+    const getBgColor = () => status === "break" ? "#f0fdf4" : themeBackgroundColor;
 
     const getElapsedTime = () => {
         if (mode === "stopwatch") return stopwatchTime;
