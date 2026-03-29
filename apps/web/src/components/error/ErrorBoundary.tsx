@@ -66,7 +66,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             An unexpected error occurred. Please try refreshing the page.
                         </p>
                         {process.env.NODE_ENV === 'development' && this.state.error && (
-                            <details className="text-left mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded text-sm">
+                            <details className="text-start mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded text-sm">
                                 <summary className="cursor-pointer text-red-600 dark:text-red-400 font-medium">
                                     Error Details
                                 </summary>

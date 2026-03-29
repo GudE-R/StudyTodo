@@ -146,7 +146,7 @@ export function CategoryEditor() {
 
     const renderInput = () => {
         return (
-            <div className="flex items-center space-x-2 ml-8 mt-1">
+            <div className="flex items-center space-x-2 ms-8 mt-1">
                 <input
                     type="text"
                     value={inputName}
@@ -176,7 +176,7 @@ export function CategoryEditor() {
                     const isDeleting = deleteConfirmId === node.id;
 
                     return (
-                        <li key={node.id} className="ml-4">
+                        <li key={node.id} className="ms-4">
                             <div className="flex items-center group">
                                 {/* 展開トグルボタン */}
                                 {!isSmall ? (
@@ -191,7 +191,7 @@ export function CategoryEditor() {
                                 )}
 
                                 {/* アイコン */}
-                                <span className="mr-1 text-gray-400 dark:text-gray-500">
+                                <span className="me-1 text-gray-400 dark:text-gray-500">
                                     {isSmall ? <File size={16} /> : isExpanded ? <FolderOpen size={16} /> : <Folder size={16} />}
                                 </span>
 
@@ -267,7 +267,7 @@ export function CategoryEditor() {
 
                             {/* 子要素のレンダリング */}
                             {(isExpanded || isAddingChild) && (
-                                <div className="border-l border-gray-100 ml-3">
+                                <div className="border-s border-gray-100 ms-3">
                                     {isExpanded && node.children && renderTree(node.children)}
                                     {isAddingChild && renderInput()}
                                 </div>
@@ -293,7 +293,7 @@ export function CategoryEditor() {
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-2">
+            <div className="flex-1 overflow-y-auto pe-2">
                 {categories.length === 0 && !addingState ? (
                     <div className="text-center text-gray-400 dark:text-gray-500 text-sm py-8 whitespace-pre-wrap">
                         {t("noCategory")}
@@ -302,7 +302,7 @@ export function CategoryEditor() {
                     <>
                         {renderTree(categories)}
                         {addingState?.parentId === undefined && addingState !== null && (
-                            <div className="ml-4">
+                            <div className="ms-4">
                                 {renderInput()}
                             </div>
                         )}

@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
     cardUnit: {
         fontSize: 14,
         color: '#94a3b8',
-        marginLeft: 2,
+        marginStart: 2,
     },
 });

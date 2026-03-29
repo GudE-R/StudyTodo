@@ -214,7 +214,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
             <Text style={[styles.sectionTitle, { color: colors.textSecondary, marginTop: 20 }]}>{t('journal.settings', 'Journal')}</Text>
             <View style={[styles.menuItem, { borderColor: colors.border, flexDirection: 'column', alignItems: 'flex-start' }]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <Text style={[styles.menuItemText, { color: colors.text, marginLeft: 0 }]}>{t('journal.enabled', 'Journal Feature')}</Text>
+                    <Text style={[styles.menuItemText, { color: colors.text, marginStart: 0 }]}>{t('journal.enabled', 'Journal Feature')}</Text>
                     <Switch
                         value={journalSettings.enabled}
                         onValueChange={(v) => updateJournalSettings({ enabled: v })}
@@ -391,7 +391,7 @@ export const SettingsModal = ({ visible, onClose }: SettingsModalProps) => {
                                         setView('main');
                                     }}
                                     disabled={selectedLayout === layoutMode}
-                                    style={{ padding: 5, marginRight: 15, opacity: selectedLayout === layoutMode ? 0.3 : 1 }}
+                                    style={{ padding: 5, marginEnd: 15, opacity: selectedLayout === layoutMode ? 0.3 : 1 }}
                                 >
                                     <Text style={{ color: colors.primary, fontWeight: 'bold', fontSize: 16 }}>{t('common.save', 'Save')}</Text>
                                 </TouchableOpacity>
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     guideText: {
-        marginLeft: 10,
+        marginStart: 10,
         fontWeight: '500',
     },
     proInfo: {
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     menuItemText: {
-        marginLeft: 10,
+        marginStart: 10,
         fontSize: 16,
     },
     languageContainer: {
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
     },
     backText: {
-        marginLeft: 10,
+        marginStart: 10,
         fontSize: 16,
         fontWeight: '600',
     },

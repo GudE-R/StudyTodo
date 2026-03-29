@@ -87,7 +87,7 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                         {/* ドラッグハンドル */}
                                                         <div
                                                             {...provided.dragHandleProps}
-                                                            className="mr-1 text-gray-300 dark:text-gray-600 hover:text-gray-500 cursor-grab active:cursor-grabbing"
+                                                            className="me-1 text-gray-300 dark:text-gray-600 hover:text-gray-500 cursor-grab active:cursor-grabbing"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             <GripVertical size={16} />
@@ -111,14 +111,14 @@ export function TodoList({ todos, categories = [], onTodoClick, onToggleComplete
                                                                     e.stopPropagation();
                                                                     onStart?.(todo);
                                                                 }}
-                                                                className="mt-0.5 ml-1 text-gray-300 dark:text-gray-600 hover:text-[var(--accent-primary)]"
+                                                                className="mt-0.5 ms-1 text-gray-300 dark:text-gray-600 hover:text-[var(--accent-primary)]"
                                                             >
                                                                 <PlayCircle size={18} />
                                                             </button>
                                                         )}
 
                                                         {/* タスク内容 */}
-                                                        <div className="ml-2 flex-1 min-w-0">
+                                                        <div className="ms-2 flex-1 min-w-0">
                                                             <div className={`text-sm font-medium truncate ${todo.completed ? "text-gray-400 line-through" : "text-gray-900 dark:text-gray-100"}`}>
                                                                 <TodoTitle title={todo.title} />
                                                             </div>

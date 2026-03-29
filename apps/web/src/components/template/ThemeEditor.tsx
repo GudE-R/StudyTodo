@@ -54,7 +54,7 @@ export function ThemeEditor() {
                             style={isSelected ? { backgroundColor: "var(--accent-primary)" } : undefined}>
                                 <Icon size={20} />
                             </div>
-                            <div className="flex-1 text-left">
+                            <div className="flex-1 text-start">
                                 <div className={`text-sm font-bold ${isSelected ? "" : "text-gray-700 dark:text-gray-200"}`} style={isSelected ? { color: "var(--accent-primary)" } : undefined}>
                                     {item.label}
                                 </div>

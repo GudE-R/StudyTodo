@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     sectionHeader: {
-        paddingLeft: 12,
+        paddingStart: 12,
         borderLeftWidth: 4,
         marginBottom: 12,
     },
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     itemDesc: {
         fontSize: 14,
         lineHeight: 20,
-        marginLeft: 44, // Align with text (Icon size 20 + padding 8*2 + gap 12 roughly) -> 20+16+12 = 48. Let's try 44.
+        marginStart: 44, // Align with text (Icon size 20 + padding 8*2 + gap 12 roughly) -> 20+16+12 = 48. Let's try 44.
     },
     footer: {
         padding: 16,

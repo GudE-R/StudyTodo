@@ -56,7 +56,7 @@ export default function PrivacyPage() {
                                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
                                         アカウントを作成する場合、以下の情報を収集します：
                                     </p>
-                                    <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2">
+                                    <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-2">
                                         <li><strong>アカウント情報</strong>: メールアドレスおよび暗号化されたパスワード。</li>
                                         <li><strong>ユーザーコンテンツ</strong>: Todoアイテム、カテゴリ、学習セッション、SRSプロファイルなど、アプリ内で生成されたデータ。これらのデータは、アカウント確認および複数デバイス間でのデータアクセスのために安全なデータベースに同期されます。</li>
                                         <li><strong>画像</strong>: カスタムアイコンをアップロードした場合、それらの画像は安全なクラウドストレージに保存されます。</li>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
                                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                             広告を表示するためにGoogle AdMobを使用しています。AdMobは以下を収集・使用する場合があります：
                                         </p>
-                                        <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
+                                        <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
                                             <li><strong>デバイス識別子</strong>: 広告ID（GAIDなど）、IPアドレス。</li>
                                             <li><strong>使用状況データ</strong>: 広告とのインタラクションに関する情報。</li>
                                             <li><strong>診断情報</strong>: 広告に関連するクラッシュログやパフォーマンスデータ。</li>
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
                                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                             認証およびデータベースストレージのバックエンドサービスプロバイダーとしてSupabaseを使用しています。
                                         </p>
-                                        <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
+                                        <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
                                             <li><strong>目的</strong>: アカウント情報の保存およびユーザーデータの同期（サインイン時）。</li>
                                             <li><strong>データ保護</strong>: データは安全に保存され、転送中および保存時に暗号化されます。</li>
                                         </ul>
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
                                         <Eye className="text-green-600" size={24} />
                                         3. 情報の利用目的
                                     </h2>
-                                    <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2">
+                                    <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-2">
                                         <li>本サービスの提供、維持、改善のため。</li>
                                         <li>アカウントの管理およびデータの同期のため（サインイン時）。</li>
                                         <li>広告を表示するため（AdMob経由）。</li>
@@ -155,7 +155,7 @@ export default function PrivacyPage() {
                                     <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
                                         If you choose to create an account, we collect the following information:
                                     </p>
-                                    <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2">
+                                    <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-2">
                                         <li><strong>Account Information</strong>: Your email address and an encrypted password.</li>
                                         <li><strong>User Content</strong>: Data you generate within the app, including Todo items, categories, study sessions, and SRS profiles. This data is synced to our secure database to verify your account and allow you to access your data across multiple devices.</li>
                                         <li><strong>Images</strong>: If you upload custom icons, these images are stored in our secure cloud storage.</li>
@@ -184,7 +184,7 @@ export default function PrivacyPage() {
                                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                             We use Google AdMob to display advertisements. AdMob may collect and use:
                                         </p>
-                                        <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
+                                        <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
                                             <li><strong>Device Identifiers</strong>: Advertising ID (e.g., GAID), IP address.</li>
                                             <li><strong>Usage Data</strong>: Information about how you interact with the ads.</li>
                                             <li><strong>Diagnostics</strong>: Crash logs and performance data related to ads.</li>
@@ -197,7 +197,7 @@ export default function PrivacyPage() {
                                         <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                             We use Supabase as our backend service provider for authentication and database storage.
                                         </p>
-                                        <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
+                                        <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-1 mt-2">
                                             <li><strong>Purpose</strong>: To store account information and sync user data (if signed in).</li>
                                             <li><strong>Data Protection</strong>: Data is stored securely and is encrypted in transit and at rest.</li>
                                         </ul>
@@ -209,7 +209,7 @@ export default function PrivacyPage() {
                                         <Eye className="text-green-600" size={24} />
                                         3. How We Use Your Information
                                     </h2>
-                                    <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2">
+                                    <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-2">
                                         <li>To provide, maintain, and improve our application.</li>
                                         <li>To manage your account and sync your data (if signed in).</li>
                                         <li>To display advertisements (via AdMob).</li>

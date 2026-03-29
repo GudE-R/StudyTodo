@@ -92,10 +92,10 @@ export function TimePicker({ value, onChange, placeholder = "時間を選択", d
             </button>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute top-full start-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
                     <div className="flex h-48">
                         {/* 時間 (Hours) カラム */}
-                        <div className="flex-1 border-r border-gray-100 dark:border-gray-700 relative">
+                        <div className="flex-1 border-e border-gray-100 dark:border-gray-700 relative">
                             <div className="sticky top-0 bg-gray-50 dark:bg-gray-700 text-xs text-center py-1 text-gray-500 dark:text-gray-400 font-bold z-10">時</div>
                             <ul ref={hourRef} className="h-full overflow-y-auto scrollbar-hide py-16">
                                 {hours.map((h) => (

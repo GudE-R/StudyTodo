@@ -329,7 +329,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
 
                     {/* ドロップダウンメニュー */}
                     {showMenu && (
-                        <div className="absolute right-0 top-12 w-56 rounded-xl shadow-xl py-2 z-50" style={{ backgroundColor: "var(--modal-bg)", borderColor: "var(--border-color)", borderWidth: "1px" }}>
+                        <div className="absolute end-0 top-12 w-56 rounded-xl shadow-xl py-2 z-50" style={{ backgroundColor: "var(--modal-bg)", borderColor: "var(--border-color)", borderWidth: "1px" }}>
                             <button
                                 onClick={() => { setAutoProgress(!autoProgress); }}
                                 className="w-full flex items-center justify-between px-4 py-3 transition-colors hover:opacity-80"
@@ -344,7 +344,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                 onClick={() => { fetchSessionLog(); setShowSessionLog(true); setShowMenu(false); }}
                                 className="w-full flex items-center px-4 py-3 transition-colors hover:opacity-80"
                             >
-                                <RotateCcw size={16} className="mr-3" style={{ color: "var(--text-muted)" }} />
+                                <RotateCcw size={16} className="me-3" style={{ color: "var(--text-muted)" }} />
                                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>記録ログ</span>
                             </button>
                         </div>
@@ -392,7 +392,7 @@ export function TimerView({ todo, onBack, onSaveSession, onCompleteTask }: Timer
                                         }`}
                                     style={status !== "break" ? { backgroundColor: "color-mix(in srgb, var(--accent-primary) 15%, transparent)", color: "var(--accent-primary)" } : undefined}
                                 >
-                                    <Play size={24} fill="currentColor" className="ml-0.5" />
+                                    <Play size={24} fill="currentColor" className="ms-0.5" />
                                 </button>
                             ) : (
                                 <button

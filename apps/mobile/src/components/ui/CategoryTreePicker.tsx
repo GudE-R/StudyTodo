@@ -64,7 +64,7 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
                         styles.item,
                         {
                             borderBottomColor: colors.border,
-                            paddingLeft: 16 + depth * 20,
+                            paddingStart: 16 + depth * 20,
                             backgroundColor: isSelected ? colors.primaryLight : 'transparent'
                         }
                     ]}
@@ -77,7 +77,7 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
                                 e.stopPropagation();
                                 toggleExpand(node.id);
                             }}
-                            style={{ padding: 4, marginRight: 4 }}
+                            style={{ padding: 4, marginEnd: 4 }}
                         >
                             {isExpanded
                                 ? <ChevronDown size={16} color={colors.textSecondary} />
@@ -85,11 +85,11 @@ export const CategoryTreePicker: React.FC<CategoryTreePickerProps> = ({
                             }
                         </TouchableOpacity>
                     ) : (
-                        <View style={{ width: 24, marginRight: 4 }} />
+                        <View style={{ width: 24, marginEnd: 4 }} />
                     )}
 
                     {/* Category Icon */}
-                    <View style={{ marginRight: 8 }}>
+                    <View style={{ marginEnd: 8 }}>
                         {node.customIconUri || node.icon ? (
                             <CategoryIcon
                                 iconName={node.icon}

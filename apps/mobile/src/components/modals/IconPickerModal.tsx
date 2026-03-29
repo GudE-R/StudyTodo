@@ -174,7 +174,7 @@ export const IconPickerModal: React.FC<IconPickerModalProps> = ({
                     )}
 
                     <View style={styles.searchContainer}>
-                        <Search size={16} color={colors.textSecondary} style={{ marginRight: 8 }} />
+                        <Search size={16} color={colors.textSecondary} style={{ marginEnd: 8 }} />
                         <TextInput
                             style={[styles.searchInput, { backgroundColor: colors.surface, color: colors.text }]}
                             placeholder={t('common.search', 'Search...')}

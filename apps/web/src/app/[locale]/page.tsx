@@ -140,7 +140,7 @@ export default function Home() {
 
         <div className="flex-1 flex overflow-hidden min-h-0 relative z-0">
           {/* Left: Todo List (30%) */}
-          <div className="w-[30%] h-full border-r border-border flex flex-col transition-colors duration-300">
+          <div className="w-[30%] h-full border-e border-border flex flex-col transition-colors duration-300">
             <div className="px-3 py-2 bg-background border-b border-border transition-colors duration-300">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t("todoList")}</h3>
             </div>
@@ -158,7 +158,7 @@ export default function Home() {
           </div>
 
           {/* Center: Day Schedule (30%) */}
-          <div className="w-[30%] h-full border-r border-border bg-background flex flex-col transition-colors duration-300">
+          <div className="w-[30%] h-full border-e border-border bg-background flex flex-col transition-colors duration-300">
             <div className="px-3 py-2 bg-background border-b border-border transition-colors duration-300">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t("schedule")}</h3>
             </div>

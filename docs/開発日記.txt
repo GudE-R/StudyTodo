@@ -1736,3 +1736,10 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - EASビルド (v1.0.3, buildNumber: 1.0.23) でビルド＆自動提出
 - v1.0.2提出済みのためバージョンを1.0.3に更新してから再提出
 - Appleのレビュー待ち
+
+03/29
+**RTLレイアウト対応: 論理プロパティへの全���移行**
+- Web版: Tailwindの方向性クラス (ml-/mr-/pl-/pr-) を論理クラス (ms-/me-/ps-/pe-) に全面変換
+- Web版: border, positioning, text-align も論理プロパティに変換
+- Mobile版: React Nativeの marginLeft/Right, paddingLeft/Right を marginStart/End, paddingStart/End に全面変換
+- RTL言語 (アラビア語, ヘブライ語, ペルシア語, ウルドゥー語) でレイアウトが正しく反転するように改善

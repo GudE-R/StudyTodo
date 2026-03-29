@@ -181,7 +181,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                                 }
                                                 setSelectedIds(next);
                                             }}
-                                            className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] mr-2"
+                                            className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] me-2"
                                                             style={{ accentColor: "var(--accent-primary)" }}
                                         />
                                         <div className={`w-2 h-12 rounded-full flex-shrink-0 ${allCompleted ? "bg-green-500" : "bg-gray-300"}`} />
@@ -190,7 +190,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                                 e.stopPropagation(); // Parent checks group toggle if wrapped, here used for group toggle
                                                 toggleGroup(item.id);
                                             }}
-                                            className="flex items-center space-x-3 text-left flex-1 overflow-hidden"
+                                            className="flex items-center space-x-3 text-start flex-1 overflow-hidden"
                                         >
                                             <div className="p-1 px-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded text-[10px] font-bold flex items-center space-x-1 shrink-0">
                                                 <Layers size={10} />
@@ -199,7 +199,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                             <div className="overflow-hidden">
                                                 <div className="font-bold text-gray-800 dark:text-gray-100 flex items-center truncate">
                                                     <TodoTitle title={item.title} />
-                                                    {isExpanded ? <ChevronDown size={16} className="ml-1 shrink-0" /> : <ChevronRight size={16} className="ml-1 shrink-0" />}
+                                                    {isExpanded ? <ChevronDown size={16} className="ms-1 shrink-0" /> : <ChevronRight size={16} className="ms-1 shrink-0" />}
                                                 </div>
                                                 <div className="text-[10px] text-gray-400 truncate">
                                                     {item.completedCount}/{item.todos.length} {tc("completed")} • {format(item.createdAt, "yyyy/MM/dd HH:mm")}
@@ -225,7 +225,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
 
                                 {/* Group Content (Accordion) */}
                                 {isExpanded && (
-                                    <div className="ml-8 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    <div className="ms-8 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
                                         {item.todos.map(todo => (
                                             <div key={todo.id} className="bg-white/50 dark:bg-gray-600/50 p-3 rounded-xl border border-gray-100 dark:border-gray-500 flex items-center justify-between group hover:border-[var(--accent-primary)] transition-colors">
                                                 <div className="flex items-center space-x-3">
@@ -233,7 +233,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                                         type="checkbox"
                                                         checked={selectedIds.has(todo.id)}
                                                         onChange={() => toggleSelect(todo.id)}
-                                                        className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] mr-2"
+                                                        className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] me-2"
                                                             style={{ accentColor: "var(--accent-primary)" }}
                                                     />
                                                     <div className={`w-1 h-8 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />
@@ -272,7 +272,7 @@ export function HistoryTab({ todos, flatCategories, onDeleteTodo, onBulkDelete, 
                                     type="checkbox"
                                     checked={selectedIds.has(todo.id)}
                                     onChange={() => toggleSelect(todo.id)}
-                                    className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] mr-2"
+                                    className="w-4 h-4 rounded border-gray-300 focus:ring-[var(--accent-primary)] me-2"
                                                             style={{ accentColor: "var(--accent-primary)" }}
                                 />
                                 <div className={`w-2 h-12 rounded-full ${todo.completed ? "bg-green-500" : "bg-gray-300"}`} />

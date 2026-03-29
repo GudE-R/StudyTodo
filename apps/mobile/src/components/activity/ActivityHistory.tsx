@@ -89,7 +89,7 @@ export const ActivityHistory = ({ todos, categories, deleteTodo }: ActivityHisto
                                                 <Layers size={12} color={isDark ? '#d8b4fe' : '#7e22ce'} />
                                                 <Text style={[styles.groupBadgeText, { color: isDark ? '#d8b4fe' : '#7e22ce' }]}>{item.todos.length}</Text>
                                             </View>
-                                            <View style={{ flex: 1, marginLeft: 8 }}>
+                                            <View style={{ flex: 1, marginStart: 8 }}>
                                                 <Text style={[styles.groupTitle, { color: colors.text }]} numberOfLines={1}>{item.title}</Text>
                                                 <Text style={[styles.groupMeta, { color: colors.textSecondary }]}>{item.completedCount}/{item.todos.length} {t('common.done')} • {format(item.createdAt, 'MM/dd')}</Text>
                                             </View>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 6,
         paddingVertical: 2,
         borderRadius: 4,
-        marginRight: 8,
+        marginEnd: 8,
         gap: 4,
     },
     groupBadgeText: {
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         borderWidth: 2,
         borderColor: '#cbd5e1',
-        marginRight: 10,
+        marginEnd: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },

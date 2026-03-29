@@ -57,7 +57,7 @@ export function DateBar({ selectedDate = new Date(), onDateChange, onSettingsCli
 
             {/* Sync Indicator */}
             {isSyncing && (
-                <div className="flex items-center space-x-1 px-2 py-1 rounded-full mr-2" style={{ backgroundColor: "var(--accent-secondary)" }}>
+                <div className="flex items-center space-x-1 px-2 py-1 rounded-full me-2" style={{ backgroundColor: "var(--accent-secondary)" }}>
                     <Cloud size={14} className="animate-pulse" style={{ color: "var(--accent-primary)" }} />
                     <span className="text-xs" style={{ color: "var(--accent-primary)" }}>Syncing...</span>
                 </div>

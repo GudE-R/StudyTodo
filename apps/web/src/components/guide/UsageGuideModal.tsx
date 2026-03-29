@@ -77,7 +77,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                 <div className="flex-1 overflow-y-auto p-4 space-y-8">
                     {guideCategories.map((category, catIndex) => (
                         <div key={catIndex} className="space-y-3">
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 border-l-4 pl-3" style={{ borderColor: "var(--accent-primary)" }}>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 border-s-4 ps-3" style={{ borderColor: "var(--accent-primary)" }}>
                                 {category.title}
                             </h3>
                             <div className="space-y-3">
@@ -91,7 +91,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
                                                 </div>
                                                 <h4 className="font-bold text-gray-800 dark:text-gray-100">{item.title}</h4>
                                             </div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed ml-11">
+                                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed ms-11">
                                                 {item.desc}
                                             </p>
                                         </div>

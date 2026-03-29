@@ -199,7 +199,7 @@ export function DaySchedule({
     };
 
     return (
-        <div className="flex-1 flex flex-col h-full overflow-hidden border-l border-border transition-colors duration-300">
+        <div className="flex-1 flex flex-col h-full overflow-hidden border-s border-border transition-colors duration-300">
             {/* ヘッダー領域削除 (ExpandablePaneへ移動) */}
 
             {/* タイムライン領域（スクロール可能） */}
@@ -255,14 +255,14 @@ export function DaySchedule({
                                             onTouchEnd={handleTouchEnd}
                                         >
                                             <div className={`
-                                                w-12 text-[10px] text-right pr-2 pt-0.5 transition-colors
+                                                w-12 text-[10px] text-end pe-2 pt-0.5 transition-colors
                                                 ${isKept ? "text-orange-600 font-bold" : "text-gray-400"}
                                             `}>
                                                 {!isHalfHour || isKept ? timeStr : ""}
                                             </div>
                                             <div className="flex-1 relative">
                                                 <div className={`
-                                                    absolute inset-y-0 left-0 border-l border-dashed border-gray-50
+                                                    absolute inset-y-0 start-0 border-s border-dashed border-gray-50
                                                     ${isKept ? "border-orange-200" : ""}
                                                 `} />
                                             </div >
@@ -291,7 +291,7 @@ export function DaySchedule({
                                             <div
                                                 key={todo.id}
                                                 onClick={() => onTodoClick?.(todo)}
-                                                className="absolute left-14 right-2 rounded-md border-l-4 p-1 text-xs overflow-hidden z-10 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-sm"
+                                                className="absolute start-14 end-2 rounded-md border-s-4 p-1 text-xs overflow-hidden z-10 cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99] shadow-sm"
                                                 style={{
                                                     top: `${top}px`,
                                                     height: `${height}px`,

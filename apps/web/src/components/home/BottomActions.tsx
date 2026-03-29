@@ -70,7 +70,7 @@ export function BottomActions({
                             e.stopPropagation();
                             onResetKeep();
                         }}
-                        className="absolute -right-1 top-0 bg-gray-500 text-white rounded-full p-1.5 shadow-md hover:bg-gray-600 transition-colors animate-in zoom-in duration-200"
+                        className="absolute -end-1 top-0 bg-gray-500 text-white rounded-full p-1.5 shadow-md hover:bg-gray-600 transition-colors animate-in zoom-in duration-200"
                     >
                         <X size={16} />
                     </button>

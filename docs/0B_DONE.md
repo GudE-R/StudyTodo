@@ -3,6 +3,11 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- RTLレイアウト対応: 論理プロパティへの全面移行 (2026-03-29)
+  - Web版: Tailwindの方向性クラス (ml-/mr-/pl-/pr-) を論理クラス (ms-/me-/ps-/pe-) に変換（16ファイル）
+  - Web版: border-l/r → border-s/e, left-/right- → start-/end-, text-left/right → text-start/end も変換
+  - Mobile版: RNの方向性スタイル (marginLeft/Right, paddingLeft/Right) を論理プロパティ (marginStart/End, paddingStart/End) に変換（16ファイル���
+  - RTL言語 (ar, ur, fa, he) でレイアウトが正しく反転するように改善
 - iOS v1.0.3 App Store提出 (2026-03-26)
   - EASビルド (buildNumber: 1.0.23) でApp Store Connectへ提出
   - v1.0.2はすでに提出済みだったためバージョンを1.0.3に更新

@@ -100,7 +100,7 @@ export function SRSEditor() {
                 )}
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+            <div className="flex-1 overflow-y-auto space-y-3 pe-2">
                 {isAdding && (
                     <div className="border rounded-lg p-3 mb-3" style={{ backgroundColor: "var(--accent-secondary)", borderColor: "var(--accent-secondary)" }}>
                         <div className="space-y-2">

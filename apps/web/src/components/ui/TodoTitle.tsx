@@ -14,7 +14,7 @@ export const TodoTitle = ({ title, className = "" }: { title: string, className?
         return (
             <span className={className}>
                 {main}
-                <span className="text-gray-400 font-normal ml-1">{suffix}</span>
+                <span className="text-gray-400 font-normal ms-1">{suffix}</span>
             </span>
         );
     }

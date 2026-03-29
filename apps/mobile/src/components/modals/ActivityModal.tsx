@@ -134,7 +134,7 @@ export const ActivityModal = ({ visible, onClose }: ActivityModalProps) => {
                                             ]}
                                             onPress={() => setFilterCategory(c.id)}
                                         >
-                                            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.color, marginRight: 4 }} />
+                                            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.color, marginEnd: 4 }} />
                                             <Text style={[
                                                 styles.filterChipText,
                                                 { color: colors.textSecondary },
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 16,
         backgroundColor: '#f1f5f9',
-        marginRight: 8,
+        marginEnd: 8,
         borderWidth: 1,
         borderColor: 'transparent',
     },

@@ -127,7 +127,7 @@ export const CategoryEditor = () => {
 
         return (
             <View key={node.id}>
-                <View style={[styles.nodeRow, { paddingLeft: depth * 20, borderBottomColor: colors.border }]}>
+                <View style={[styles.nodeRow, { paddingStart: depth * 20, borderBottomColor: colors.border }]}>
                     <TouchableOpacity
                         style={styles.expandIcon}
                         onPress={() => !isSmall && toggleExpand(node.id)}
@@ -181,7 +181,7 @@ export const CategoryEditor = () => {
 
                 {/* Color Picker Palette */}
                 {isPickingColor && (
-                    <View style={[styles.colorPalette, { marginLeft: depth * 20 + 40, backgroundColor: colors.surfaceHighlight }]}>
+                    <View style={[styles.colorPalette, { marginStart: depth * 20 + 40, backgroundColor: colors.surfaceHighlight }]}>
                         {/* Clear Color Option */}
                         <TouchableOpacity
                             style={[styles.colorOption, { borderColor: colors.border, borderWidth: 1 }]}
@@ -203,7 +203,7 @@ export const CategoryEditor = () => {
 
                 {/* Input for new child */}
                 {addingParentId === node.id && (
-                    <View style={[styles.inputRow, { paddingLeft: (depth + 1) * 20, backgroundColor: colors.surfaceHighlight }]}>
+                    <View style={[styles.inputRow, { paddingStart: (depth + 1) * 20, backgroundColor: colors.surfaceHighlight }]}>
                         <TextInput
                             style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.text }]}
                             value={inputName}
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     iconContainer: {
-        marginRight: 8,
+        marginEnd: 8,
     },
     nodeText: {
         flex: 1,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     actions: {
         flexDirection: 'row',
         gap: 10,
-        marginRight: 5,
+        marginEnd: 5,
     },
     actionBtn: {
         padding: 4,
@@ -345,13 +345,13 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         paddingHorizontal: 8,
         paddingVertical: 4,
-        marginRight: 8,
+        marginEnd: 8,
     },
     saveBtn: {
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 4,
-        marginRight: 4,
+        marginEnd: 4,
     },
     saveText: {
         color: '#fff',
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
         height: 16,
         borderRadius: 8,
         borderWidth: 1,
-        marginRight: 8,
+        marginEnd: 8,
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',

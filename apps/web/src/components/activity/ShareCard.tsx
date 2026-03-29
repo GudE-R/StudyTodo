@@ -111,11 +111,11 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                             {hours > 0 && (
                                 <>
                                     <span className="text-4xl font-black text-blue-600">{hours}</span>
-                                    <span className="text-lg text-gray-500 ml-1">h</span>
+                                    <span className="text-lg text-gray-500 ms-1">h</span>
                                 </>
                             )}
-                            <span className="text-4xl font-black text-blue-600 ml-1">{minutes}</span>
-                            <span className="text-lg text-gray-500 ml-1">m</span>
+                            <span className="text-4xl font-black text-blue-600 ms-1">{minutes}</span>
+                            <span className="text-lg text-gray-500 ms-1">m</span>
                         </div>
                     </div>
                     <div className="text-center">
@@ -125,7 +125,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                         </div>
                         <div className="flex items-baseline justify-center">
                             <span className="text-4xl font-black text-green-600">{completedCount}</span>
-                            <span className="text-lg text-gray-500 ml-1">件</span>
+                            <span className="text-lg text-gray-500 ms-1">件</span>
                         </div>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                                     <circle r="0.6" fill="white" />
                                 </svg>
                                 {/* Mini Legend (Top 2) to fit space better with 14d heatmap */}
-                                <div className="ml-2 flex flex-col space-y-1">
+                                <div className="ms-2 flex flex-col space-y-1">
                                     {pieData.slice(0, 2).map((d, i) => (
                                         <div key={i} className="flex items-center space-x-1">
                                             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
@@ -215,7 +215,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
                         <div className="text-[10px] text-gray-400">studytodo.app</div>
                     </div>
                 </div>
-                <div className="text-right">
+                <div className="text-end">
                     <div className="text-xs text-gray-400">成果をカタチに。</div>
                 </div>
             </div>

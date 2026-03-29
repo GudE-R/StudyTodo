@@ -51,7 +51,7 @@ export default function TermsPage() {
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                 ユーザーは，本サービスの利用にあたり，以下の行為をしてはなりません。
                             </p>
-                            <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2">
+                            <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-2">
                                 <li>法令または公序良俗に違反する行為</li>
                                 <li>犯罪行為に関連する行為</li>
                                 <li>本サービスの内容等，本サービスに含まれる著作権，商標権ほか知的財産権を侵害する行為</li>
@@ -66,7 +66,7 @@ export default function TermsPage() {
                             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                 管理者は，以下のいずれかの事由があると判断した場合，ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
                             </p>
-                            <ul className="list-disc pl-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
+                            <ul className="list-disc ps-6 text-gray-600 dark:text-gray-400 space-y-2 mt-2">
                                 <li>本サービスにかかるコンピュータシステムの保守点検または更新を行う場合</li>
                                 <li>地震，落雷，火災，停電または天災などの不可抗力により，本サービスの提供が困難となった場合</li>
                                 <li>その他，管理者が本サービスの提供が困難と判断した場合</li>

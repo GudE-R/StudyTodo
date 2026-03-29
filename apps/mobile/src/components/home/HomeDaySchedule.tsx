@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     hourText: {
         width: 40,
         fontSize: 10,
-        marginRight: 10,
+        marginEnd: 10,
     },
     keptText: {
         fontWeight: 'bold',
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
         height: 8,
         borderRadius: 4,
         backgroundColor: '#ef4444', // Red
-        marginRight: -4,
+        marginEnd: -4,
     },
     line: {
         flex: 1,

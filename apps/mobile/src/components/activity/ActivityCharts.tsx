@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     },
     legendContainer: {
         flex: 1,
-        marginLeft: 20,
+        marginStart: 20,
         gap: 8,
     },
     legendItem: {
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         width: 12,
         height: 12,
         borderRadius: 6,
-        marginRight: 8,
+        marginEnd: 8,
     },
     legendText: {
         fontSize: 12,

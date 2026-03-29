@@ -149,7 +149,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <div className="relative bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-center">
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+                        className="absolute top-4 end-4 text-white/80 hover:text-white transition-colors"
                     >
                         <X size={24} />
                     </button>
@@ -179,15 +179,15 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                         {!isUpdatePasswordMode && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t("email")}</label>
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ms-1">{t("email")}</label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <Mail className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
                                     type="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full ps-10 pe-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="your@email.com"
                                 />
                             </div>
@@ -196,29 +196,29 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                         {(!isResetMode || isUpdatePasswordMode) && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ms-1">
                                 {isUpdatePasswordMode ? t("newPassword") : t("password")}
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <Lock className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                 <input
                                     type="password"
                                     required
                                     minLength={8}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full ps-10 pe-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="••••••••"
                                 />
                             </div>
                             {(!isLoginMode || isUpdatePasswordMode) && (
-                                <p className="text-xs text-gray-500 dark:text-gray-400 ml-1">{t("passwordHint")}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 ms-1">{t("passwordHint")}</p>
                             )}
                             {isLoginMode && !isUpdatePasswordMode && (
                                 <button
                                     type="button"
                                     onClick={() => { setMode("reset"); setMessage(null); }}
-                                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline ml-1"
+                                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline ms-1"
                                 >
                                     {t("forgotPassword")}
                                 </button>
@@ -229,17 +229,17 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         {/* Confirm Password */}
                         {(isUpdatePasswordMode || (!isLoginMode && !isResetMode)) && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 ms-1">
                                     {isUpdatePasswordMode ? t("confirmNewPassword") : t("confirmPassword")}
                                 </label>
                                 <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                    <Lock className="absolute start-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                                     <input
                                         type="password"
                                         required
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        className="w-full ps-10 pe-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                         placeholder="••••••••"
                                     />
                                 </div>

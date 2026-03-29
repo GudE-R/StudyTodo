@@ -311,12 +311,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '500',
         marginBottom: 8,
-        marginLeft: 4,
+        marginStart: 4,
     },
     hint: {
         fontSize: 12,
         marginTop: 4,
-        marginLeft: 4,
+        marginStart: 4,
     },
     inputWrapper: {
         flexDirection: 'row',
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
         height: 50,
     },
     inputIcon: {
-        marginRight: 10,
+        marginEnd: 10,
     },
     input: {
         flex: 1,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     },
     forgotBtn: {
         marginTop: 4,
-        marginLeft: 4,
+        marginStart: 4,
     },
     forgotText: {
         color: '#2563eb',
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     },
     termsContainer: {
         marginBottom: 15,
-        marginLeft: 4,
+        marginStart: 4,
     },
     termsText: {
         fontSize: 12,

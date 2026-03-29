@@ -50,7 +50,7 @@ export function TermsModal({ visible, onClose }: TermsModalProps) {
 
                             <View style={styles.section}>
                                 <View style={styles.titleWithIcon}>
-                                    <FileText size={20} color={colors.primary} style={{ marginRight: 8 }} />
+                                    <FileText size={20} color={colors.primary} style={{ marginEnd: 8 }} />
                                     <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 0 }]}>第1条（はじめに）</Text>
                                 </View>
                                 <Text style={[styles.sectionText, { color: colors.textSecondary, marginTop: 12 }]}>

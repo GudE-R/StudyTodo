@@ -486,6 +486,6 @@ const styles = StyleSheet.create({
     durationPickerBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, gap: 8 },
     durationValueContainer: { flex: 1 },
     durationValueText: { fontSize: 14, fontWeight: 'bold' },
-    durationUnitText: { fontSize: 12, fontWeight: 'normal', marginLeft: 4 },
+    durationUnitText: { fontSize: 12, fontWeight: 'normal', marginStart: 4 },
     recordActionBtn: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
 });

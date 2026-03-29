@@ -229,8 +229,8 @@ export function AnalyticsTab({ sessions, todos, flatCategories }: AnalyticsTabPr
                 <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600">
                     <div className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">{t("totalFocusTime")}</div>
                     <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-                        {totalDurationHours}<span className="text-lg font-normal text-gray-500 ml-1">h</span>
-                        {totalDurationMinutes}<span className="text-lg font-normal text-gray-500 ml-1">m</span>
+                        {totalDurationHours}<span className="text-lg font-normal text-gray-500 ms-1">h</span>
+                        {totalDurationMinutes}<span className="text-lg font-normal text-gray-500 ms-1">m</span>
                     </div>
                 </div>
                 <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600">
@@ -244,7 +244,7 @@ export function AnalyticsTab({ sessions, todos, flatCategories }: AnalyticsTabPr
                                         range === "year" ? isWithinInterval(new Date(t.createdAt), { start: startOfYear(new Date()), end: endOfYear(new Date()) }) : true
                             )
                         ).length}
-                        <span className="text-lg font-normal text-gray-500 ml-1">{t("tasksUnit")}</span>
+                        <span className="text-lg font-normal text-gray-500 ms-1">{t("tasksUnit")}</span>
                     </div>
                 </div>
             </div>

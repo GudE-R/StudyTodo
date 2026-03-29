@@ -81,7 +81,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                 {/* Hero Section */}
                 <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto text-center">
                     <div className="inline-flex items-center justify-center px-3 py-1 mb-6 text-sm font-medium text-blue-700 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 rounded-full">
-                        <Zap className="w-4 h-4 mr-2" />
+                        <Zap className="w-4 h-4 me-2" />
                         {welcomeT("footerTagline")}
                     </div>
                     <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent leading-tight">
@@ -97,7 +97,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                             className="inline-flex justify-center items-center w-full sm:w-auto text-lg h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25 rounded-xl group transition-all duration-200"
                         >
                             {welcomeT("getStarted")}
-                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight className="ms-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
                         <button
                             onClick={onLogin}
@@ -241,7 +241,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
                         className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-white text-blue-600 hover:bg-blue-50 rounded-xl shadow-lg transition-colors duration-200 group"
                     >
                         {welcomeT("ctaButton")}
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="ms-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
             </section>
