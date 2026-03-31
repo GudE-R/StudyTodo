@@ -1,6 +1,25 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
+import { withAndroidManifest } from '@expo/config-plugins';
 
-export default ({ config }: ConfigContext): ExpoConfig => ({
+// DELAY_APP_MEASUREMENT_INIT の値競合を解決するプラグイン
+// react-native-google-mobile-ads の AAR manifest と app manifest で値が衝突するため
+// tools:replace="android:value" を追加して上書きを許可する
+const withAdMobManifestFix = (config: ExpoConfig): ExpoConfig => {
+  return withAndroidManifest(config, (mod) => {
+    const manifest = mod.modResults.manifest;
+    const application = manifest.application?.[0];
+    if (application?.['meta-data']) {
+      for (const metaData of application['meta-data']) {
+        if (metaData.$?.['android:name'] === 'com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT') {
+          metaData.$['tools:replace'] = 'android:value';
+        }
+      }
+    }
+    return mod;
+  });
+};
+
+export default ({ config }: ConfigContext): ExpoConfig => withAdMobManifestFix({
   ...config,
   name: "StudyTodo",
   slug: "studytodo",
