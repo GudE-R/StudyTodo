@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { startOfMonth, getDaysInMonth } from 'date-fns';
-import { View, StyleSheet, PanResponder, Animated, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { View, StyleSheet, PanResponder, Animated, LayoutAnimation, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react-native';
 
 import { AdBanner } from './AdBanner';
 import { Footer } from './Footer';
@@ -26,10 +27,8 @@ import { useThemeColors } from '../../providers/ThemeProvider';
 import { useTodoHandlers } from '../../hooks/useTodoHandlers';
 import { useJournalSettings } from '../../hooks/useJournal';
 
-// Enable LayoutAnimation for Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+
+const LAYOUT_ANIM = LayoutAnimation.create(200, LayoutAnimation.Types.easeInEaseOut, LayoutAnimation.Properties.scaleXY);
 
 export const MainLayoutSimple = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -45,19 +44,8 @@ export const MainLayoutSimple = () => {
     // Schedule expand mode
     const [scheduleExpanded, setScheduleExpanded] = useState(false);
 
-    // Animated height for smooth transitions
-    const calendarHeight = useRef(new Animated.Value(100)).current;
-    const calendarTranslateX = useRef(new Animated.Value(0)).current;
-    const todoFlex = useRef(new Animated.Value(7.5)).current;
-    const scheduleFlex = useRef(new Animated.Value(2.5)).current;
-
-    // Animate schedule width
-    useEffect(() => {
-        Animated.parallel([
-            Animated.spring(todoFlex, { toValue: scheduleExpanded ? 4 : 7.5, friction: 10, tension: 40, useNativeDriver: false }),
-            Animated.spring(scheduleFlex, { toValue: scheduleExpanded ? 6 : 2.5, friction: 10, tension: 40, useNativeDriver: false }),
-        ]).start();
-    }, [scheduleExpanded]);
+    // Animated height for calendar only (height cannot use LayoutAnimation easily)
+    const calendarHeight = useRef(new Animated.Value(85)).current;
 
     // Animate calendar height
     useEffect(() => {
@@ -65,12 +53,24 @@ export const MainLayoutSimple = () => {
         if (calendarMode === 'month') {
             const startDay = startOfMonth(currentDate).getDay();
             const daysInMonth = getDaysInMonth(currentDate);
-            const totalSlots = startDay + daysInMonth;
-            const rows = Math.ceil(totalSlots / 7);
-            targetHeight = 58 + (rows * 60);
+            const rows = Math.ceil((startDay + daysInMonth) / 7);
+            targetHeight = 58 + rows * 60;
         }
-        Animated.spring(calendarHeight, { toValue: targetHeight, friction: 12, tension: 40, useNativeDriver: false }).start();
+        Animated.timing(calendarHeight, { toValue: targetHeight, duration: 200, useNativeDriver: false }).start();
     }, [calendarMode, currentDate]);
+
+    // Toggle calendar mode (height is handled by Animated.timing in useEffect)
+    const toggleCalendarMode = () => {
+        setCalendarMode(m => m === 'week' ? 'month' : 'week');
+    };
+
+    // Toggle schedule — LayoutAnimation handles the flex change on the native layout engine
+    const scheduleExpandedRef = useRef(false);
+    const toggleSchedule = (expand: boolean) => {
+        scheduleExpandedRef.current = expand;
+        LayoutAnimation.configureNext(LAYOUT_ANIM);
+        setScheduleExpanded(expand);
+    };
 
     // Week navigation
     const navigateWeek = (direction: 'next' | 'prev') => {
@@ -107,12 +107,14 @@ export const MainLayoutSimple = () => {
     ).current;
 
     // Schedule pane swipe
+    const toggleScheduleRef = useRef(toggleSchedule);
+    toggleScheduleRef.current = toggleSchedule;
     const schedulePanResponder = useRef(
         PanResponder.create({
-            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 20,
+            onMoveShouldSetPanResponder: (_, gs) => Math.abs(gs.dx) > 10 && Math.abs(gs.dx) > Math.abs(gs.dy),
             onPanResponderRelease: (_, gs) => {
-                if (gs.dx < -50) setScheduleExpanded(true);
-                else if (gs.dx > 50) setScheduleExpanded(false);
+                if (gs.dx < -30) toggleScheduleRef.current(true);
+                else if (gs.dx > 30) toggleScheduleRef.current(false);
             },
         })
     ).current;
@@ -136,7 +138,7 @@ export const MainLayoutSimple = () => {
             <AdBanner />
 
             <Animated.View
-                style={[styles.calendarContainer, { borderColor: colors.border, height: calendarHeight, transform: [{ translateX: calendarTranslateX }] }]}
+                style={[styles.calendarContainer, { borderColor: colors.border, height: calendarHeight }]}
                 {...panResponder.panHandlers}
             >
                 <HomeCalendar
@@ -146,16 +148,39 @@ export const MainLayoutSimple = () => {
                     onDateLongPress={(date) => h.handleDateLongPress(date)}
                     viewMode={calendarMode}
                 />
+                <TouchableOpacity
+                    style={[styles.calendarToggle, { backgroundColor: colors.background, borderColor: colors.border }]}
+                    onPress={toggleCalendarMode}
+                    activeOpacity={0.6}
+                    hitSlop={{ top: 8, bottom: 8, left: 12, right: 12 }}
+                >
+                    {calendarMode === 'month'
+                        ? <ChevronUp size={12} color={colors.text} />
+                        : <ChevronDown size={12} color={colors.text} />
+                    }
+                </TouchableOpacity>
             </Animated.View>
 
             <View style={[styles.mainContent, { backgroundColor: colors.background }]}>
                 <View style={styles.splitRow}>
-                    <Animated.View style={[styles.todoPane, { borderColor: colors.border, flex: todoFlex }]}>
+                    <View style={[styles.todoPane, { flex: scheduleExpanded ? 4 : 7.5 }]}>
                         <HomeTodoList date={currentDate} onTodoPress={h.handleTodoPress} />
-                    </Animated.View>
+                    </View>
 
-                    <Animated.View
-                        style={[styles.schedulePane, { borderColor: colors.border, flex: scheduleFlex }]}
+                    <TouchableOpacity
+                        style={[styles.dividerToggle, { backgroundColor: colors.background, borderColor: colors.border }]}
+                        onPress={() => toggleSchedule(!scheduleExpandedRef.current)}
+                        activeOpacity={0.6}
+                        hitSlop={{ top: 12, bottom: 12, left: 8, right: 8 }}
+                    >
+                        {scheduleExpanded
+                            ? <ChevronRight size={14} color={colors.text} />
+                            : <ChevronLeft size={14} color={colors.text} />
+                        }
+                    </TouchableOpacity>
+
+                    <View
+                        style={[styles.schedulePane, { flex: scheduleExpanded ? 6 : 2.5 }]}
                         {...schedulePanResponder.panHandlers}
                     >
                         <HomeDaySchedule
@@ -165,7 +190,7 @@ export const MainLayoutSimple = () => {
                             keptTime={h.keptTime}
                             onTimeLongPress={(date, time) => h.handleTimeLongPress(date, time)}
                         />
-                    </Animated.View>
+                    </View>
                 </View>
             </View>
 
@@ -220,7 +245,26 @@ const styles = StyleSheet.create({
     safeArea: { flex: 1 },
     mainContent: { flex: 1 },
     splitRow: { flex: 1, flexDirection: 'row' },
-    todoPane: { borderRightWidth: 1 },
-    schedulePane: { borderLeftWidth: 1 },
+    todoPane: { overflow: 'hidden' },
+    schedulePane: { overflow: 'hidden' },
     calendarContainer: { borderBottomWidth: 1, overflow: 'hidden' },
+    calendarToggle: {
+        position: 'absolute',
+        bottom: 0,
+        end: 0,
+        width: 32,
+        height: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopStartRadius: 6,
+        borderTopWidth: 1,
+        borderStartWidth: 1,
+    },
+    dividerToggle: {
+        width: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+        borderStartWidth: 1,
+    },
 });

@@ -1,11 +1,14 @@
 {
   "permissions": {
+    "defaultMode": "auto",
     "allow": [
       "WebSearch",
       "Bash(npx tsc:*)",
       "Bash(GIT_TERMINAL_PROMPT=0 git push origin main)",
       "Bash(ssh -T git@github.com)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(eas build:*)",
+      "Bash(npx eas:*)"
     ]
   }
 }
