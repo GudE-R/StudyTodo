@@ -13,7 +13,7 @@ Web版 (React + Vite) とモバイル版 (React Native + Expo) のモノレポ�
 ## 技術スタック
 - **Web**: React, TypeScript, Vite, Dexie.js (IndexedDB), Vercel
 - **Mobile**: React Native, Expo, EAS Build
-- **共通**: Supabase (認証・同期), i18n (19言語対応)
+- **共通**: Supabase (認証・同期), i18n (36言語対応)
 - **広告**: Web=AdSense, Mobile=react-native-google-mobile-ads
 
 ## 開発ルール
