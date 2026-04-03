@@ -1,183 +1,95 @@
-# Supabase CLI
+# StudyTodo
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
-](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
+タスク管理・スケジュール管理・学習記録・ポモドーロタイマーを統合したデジタルプランナーアプリです。  
+Web版とモバイル版のモノレポ構成で開発しています。
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+**Web**: https://pom-arc-web-wx4z.vercel.app  
+**Mobile**: iOS / Android (App Store / Google Play)
 
-This repository contains all the functionality for Supabase CLI.
-
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
-
-## Layout Preview (Mobile)
-
-| Layout 1 (Simple) | Layout 2 (Default) |
+| Mobile (Simple) | Mobile (Default) |
 |:---:|:---:|
-| ![Layout 1](docs/images/layout_1.PNG) | ![Layout 2](docs/images/layout_2.PNG) |
+| ![Simple Layout](docs/images/layout_1.PNG) | ![Default Layout](docs/images/layout_2.PNG) |
 
-## Getting started
+## 主な機能
 
-### Install the CLI
+- **タスク管理** — 作成・編集・カテゴリ分類・ドラッグ&ドロップ並べ替え
+- **スケジュール管理** — カレンダー + タイムライン表示
+- **ポモドーロタイマー** — タスク連携・画面スリープ防止
+- **学習記録 (Journal)** — 日記・振り返り機能
+- **アクティビティレポート** — 学習時間・達成率の可視化 (Recharts)
+- **テンプレート** — 定型タスクの一括作成
+- **多言語対応** — 35言語 + RTL (アラビア語, ウルドゥー語, ペルシア語, ヘブライ語)
+- **テーマ** — ライト / ダーク / ペーパーテーマ3種 + アクセントカラー設定
+- **オフラインファースト** — ローカルDB完結、Pro版でクラウド同期
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
+## アーキテクチャ
+
+```
+studytodo/
+├── apps/
+│   ├── web/          # Next.js + Dexie.js (IndexedDB)
+│   └── mobile/       # Expo (React Native) + SQLite
+├── packages/
+│   └── shared/       # 共通ロジック・型定義
+└── docs/             # 設計書・ダイアグラム
+```
+
+```mermaid
+graph TD
+  subgraph Client
+    W[Web - Next.js]
+    M[Mobile - Expo RN]
+  end
+  subgraph Local Storage
+    IDB[IndexedDB]
+    SQLITE[SQLite]
+  end
+  subgraph Backend
+    SUPA[Supabase Auth/DB/RLS]
+    ADS[AdMob / AdSense]
+  end
+  W-->IDB
+  M-->SQLITE
+  IDB<-.->SUPA
+  SQLITE<-.->SUPA
+  W-->ADS
+  M-->ADS
+```
+
+## 技術スタック
+
+| カテゴリ | 技術 |
+|---------|------|
+| Web | Next.js, React 19, TypeScript, Tailwind CSS, Dexie.js (IndexedDB) |
+| Mobile | React Native, Expo (SDK 54), SQLite, EAS Build |
+| 共通 | Supabase (Auth / Database / RLS), next-intl / expo-localization |
+| テスト | Vitest, React Testing Library |
+| CI/CD | GitHub Actions, Vercel (Web), EAS Build (Mobile) |
+| その他 | Recharts, Lucide Icons, html-to-image |
+
+## 開発のこだわり
+
+- **オフラインファースト設計** — Web は IndexedDB (Dexie.js)、Mobile は SQLite で全操作がローカル完結
+- **モノレポ共通化** — 型定義・バリデーション・ユーティリティを `packages/shared` に集約
+- **35言語 i18n** — 翻訳キー管理・RTL レイアウト対応 (論理プロパティへの全面移行)
+- **テスト** — ビジネスロジック・カスタムフック・設定バリデーションのユニットテスト
+- **設計ドキュメント** — ER図・シーケンス図・画面遷移図・アーキテクチャ図を Mermaid で管理
+
+## セットアップ
 
 ```bash
-npm i supabase --save-dev
+# 依存関係のインストール
+npm install
+
+# Web 開発サーバー
+cd apps/web && npm run dev
+
+# Mobile 開発サーバー
+cd apps/mobile && npx expo start
 ```
 
-When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+環境変数の設定が必要です。`.env.example` を参照してください。
 
-```
-NODE_OPTIONS=--no-experimental-fetch yarn add supabase
-```
+## ライセンス
 
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
-
-<details>
-  <summary><b>macOS</b></summary>
-
-  Available via [Homebrew](https://brew.sh). To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Windows</b></summary>
-
-  Available via [Scoop](https://scoop.sh). To install:
-
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
-
-  To upgrade:
-
-  ```powershell
-  scoop update supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Linux</b></summary>
-
-  Available via [Homebrew](https://brew.sh) and Linux packages.
-
-  #### via Homebrew
-
-  To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-
-  #### via Linux packages
-
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
-
-  ```sh
-  sudo apk add --allow-untrusted <...>.apk
-  ```
-
-  ```sh
-  sudo dpkg -i <...>.deb
-  ```
-
-  ```sh
-  sudo rpm -i <...>.rpm
-  ```
-
-  ```sh
-  sudo pacman -U <...>.pkg.tar.zst
-  ```
-</details>
-
-<details>
-  <summary><b>Other Platforms</b></summary>
-
-  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
-
-  ```sh
-  go install github.com/supabase/cli@latest
-  ```
-
-  Add a symlink to the binary in `$PATH` for easier access:
-
-  ```sh
-  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
-  ```
-
-  This works on other non-standard Linux distros.
-</details>
-
-<details>
-  <summary><b>Community Maintained Packages</b></summary>
-
-  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
-  To install in your working directory:
-
-  ```bash
-  pkgx install supabase
-  ```
-
-  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
-</details>
-
-### Run the CLI
-
-```bash
-supabase bootstrap
-```
-
-Or using npx:
-
-```bash
-npx supabase bootstrap
-```
-
-The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
-
-## Docs
-
-Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
-
-## Breaking changes
-
-We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
-
-However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
-
-## Developing
-
-To run from source:
-
-```sh
-# Go >= 1.22
-go run . help
-```
+[MIT](LICENSE)
