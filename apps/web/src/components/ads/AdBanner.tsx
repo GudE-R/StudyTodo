@@ -8,6 +8,9 @@ declare global {
     }
 }
 
+// 広告を一時的に無効化（復活時はこのフラグをtrueに戻す）
+const ADS_ENABLED = false;
+
 interface AdBannerProps {
     slot?: string;
     style?: React.CSSProperties;
@@ -17,11 +20,13 @@ interface AdBannerProps {
 
 /**
  * 広告バナーコンポーネント (Google AdSense 互換)
- * 
+ *
  * 環境変数 NEXT_PUBLIC_ADSENSE_CLIENT_ID が設定されている場合に
  * 実際の広告タグを注入します。設定されていない場合は、開発用プレースホルダーを表示します。
  */
 export function AdBanner({ slot, style, format = "auto", responsive = "true" }: AdBannerProps) {
+    if (!ADS_ENABLED) return null;
+
     const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
     const adRef = useRef<HTMLModElement>(null);
     const initializedRef = useRef(false);

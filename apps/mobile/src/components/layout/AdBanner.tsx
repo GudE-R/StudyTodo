@@ -4,7 +4,7 @@ import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useAdBannerHeight } from './AdBannerContext';
 
 // 広告を一時的に無効化（復活時はこのフラグをtrueに戻す）
-const ADS_ENABLED = true;
+const ADS_ENABLED = false;
 
 // Expo Goかを判定
 const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
