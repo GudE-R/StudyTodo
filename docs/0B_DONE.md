@@ -3,6 +3,12 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- App Store サブタイトル 36言語ローカライズ (2026-04-04)
+  - App Store Connect API を使い、サブタイトルを36言語に一括設定
+  - ASO最適化のため30文字以内に短縮、Pomodoro + Planner 系キーワードを各言語で採用
+  - 全50言語の「このバージョンの最新情報」(What's New) も一括設定
+  - 自動化スクリプト作成: `scripts/update-ios-subtitles.mjs`, `scripts/update-ios-whats-new.mjs`
+  - バージョンを1.0.25に更新、EASビルド & App Store Connect へ提出
 - RTLレイアウト対応: 論理プロパティへの全面移行 (2026-03-29)
   - Web版: Tailwindの方向性クラス (ml-/mr-/pl-/pr-) を論理クラス (ms-/me-/ps-/pe-) に変換（16ファイル）
   - Web版: border-l/r → border-s/e, left-/right- → start-/end-, text-left/right → text-start/end も変換

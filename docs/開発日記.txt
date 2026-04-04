@@ -1743,3 +1743,12 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - Web版: border, positioning, text-align も論理プロパティに変換
 - Mobile版: React Nativeの marginLeft/Right, paddingLeft/Right を marginStart/End, paddingStart/End に全面変換
 - RTL言語 (アラビア語, ヘブライ語, ペルシア語, ウルドゥー語) でレイアウトが正しく反転するように改善
+
+04/04
+**App Store サブタイトル 36言語ローカライズ**
+- App Store Connect API を使い、サブタイトルを36言語に一括設定
+- ASO最適化: 30文字以内に短縮、各言語で「Pomodoro + Planner」系キーワードを採用
+- SRSは一般認知度が低いためサブタイトルから削除（キーワード欄でカバー）
+- 全50言語のWhat's Newも一括設定
+- 自動化スクリプト作成 (scripts/update-ios-subtitles.mjs, scripts/update-ios-whats-new.mjs)
+- バージョンを1.0.25に更新、EASビルド & App Store Connect へ提出
