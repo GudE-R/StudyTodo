@@ -1772,3 +1772,10 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - App Store Connect API (reviewSubmissions) 経由で審査に自動提出
 - state: WAITING_FOR_REVIEW
 - releaseType: AFTER_APPROVAL（審査通過後に自動公開）
+
+**iOS v1.0.26 審査 REJECTED → 復旧 → 再提出**
+- 初回提出後、すぐに state=UNRESOLVED_ISSUES で自動 REJECTED
+- 原因: API で新規作成した version には旧バージョンのスクリーンショットが継承されない（全ロケール0件だった）
+- 対応: v1.0.25 の en-US スクリーンショット18枚（iPad Pro 12.9/iPhone 16 Pro Max/iPhone 14 Plus × 各6枚）を API でダウンロード→再アップロード
+- 旧 submission をキャンセル → 新規 reviewSubmission を作成して再提出 → WAITING_FOR_REVIEW
+- 学び: 今後 API で version record を作る場合、スクリーンショットも明示的にコピーする必要あり（ASC UI で作れば自動継承されるがAPIでは不可）

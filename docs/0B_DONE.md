@@ -6,7 +6,8 @@
 - iOS v1.0.26 リリース (2026-04-22)
   - App Store レビュー投稿プロンプト機能を含むバイナリを EAS で本番ビルド（buildNumber 1.0.27）し、App Store Connect へ自動提出
   - What's New を50言語分まとめて更新 (`scripts/update-ios-whats-new.mjs` を VERSION_STRING ベースで動的解決するように改修)
-  - App Store Connect API (`reviewSubmissions`) で審査へ自動提出 → WAITING_FOR_REVIEW
+  - 注意点: version record を API で新規作成するとスクリーンショットが継承されず自動で REJECTED になる。v1.0.25 の en-US 18枚（iPad Pro 12.9 / iPhone 16 Pro Max / iPhone 14 Plus × 各6枚）を API で再アップロードして復旧
+  - 旧 submission をキャンセル → 新規 reviewSubmission を作成 → 再提出 → WAITING_FOR_REVIEW
   - releaseType: AFTER_APPROVAL（審査通過後、自動公開）
 - App Store レビュー投稿プロンプトの実装 (2026-04-22)
   - `expo-store-review` を導入（モバイルのみ、Web版は対象外）
