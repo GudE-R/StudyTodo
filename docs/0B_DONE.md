@@ -3,6 +3,13 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- App Store レビュー投稿プロンプトの実装 (2026-04-22)
+  - `expo-store-review` を導入（モバイルのみ、Web版は対象外）
+  - SRSプロファイル付きタスクの作成成功時に、OSネイティブの☆評価ダイアログを表示
+  - 初回のみガード: `AsyncStorage` キー `HAS_REQUESTED_STORE_REVIEW` で2回目以降は出さない
+  - 多段ガード: `isAvailableAsync` / `hasAction` で未対応環境（Web・Expo Go・シミュレーター等）は自動スキップ、例外は握りつぶしてタスク作成フローを妨げない
+  - トリガー箇所: `apps/mobile/src/hooks/useTodoCreateForm.ts` の `handleCreate` SRSブランチ
+  - 実体: `apps/mobile/src/utils/storeReview.ts`
 - App Store サブタイトル 36言語ローカライズ (2026-04-04)
   - App Store Connect API を使い、サブタイトルを36言語に一括設定
   - ASO最適化のため30文字以内に短縮、Pomodoro + Planner 系キーワードを各言語で採用

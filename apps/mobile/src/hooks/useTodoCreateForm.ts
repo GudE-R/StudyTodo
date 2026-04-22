@@ -5,6 +5,7 @@ import { Todo, Category, generateId } from '@studytodo/shared';
 import { useMobileTodos } from './useMobileTodos';
 import { useMobileSRS } from './useMobileSRS';
 import { useMobileSessions } from './useMobileSessions';
+import { maybeRequestStoreReview } from '../utils/storeReview';
 
 interface UseTodoCreateFormProps {
     visible: boolean;
@@ -156,6 +157,7 @@ export function useTodoCreateForm({
                 { ...todoData, id: generateId(), createdAt: new Date(), completed: false } as Todo,
                 intervals
             );
+            void maybeRequestStoreReview();
         } else {
             await addTodo({ ...todoData, id: generateId(), createdAt: new Date(), completed: false });
         }
