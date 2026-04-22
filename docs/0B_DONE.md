@@ -6,6 +6,8 @@
 - iOS v1.0.26 リリース (2026-04-22)
   - App Store レビュー投稿プロンプト機能を含むバイナリを EAS で本番ビルド（buildNumber 1.0.27）し、App Store Connect へ自動提出
   - What's New を50言語分まとめて更新 (`scripts/update-ios-whats-new.mjs` を VERSION_STRING ベースで動的解決するように改修)
+  - App Store Connect API (`reviewSubmissions`) で審査へ自動提出 → WAITING_FOR_REVIEW
+  - releaseType: AFTER_APPROVAL（審査通過後、自動公開）
 - App Store レビュー投稿プロンプトの実装 (2026-04-22)
   - `expo-store-review` を導入（モバイルのみ、Web版は対象外）
   - SRSプロファイル付きタスクの作成成功時に、OSネイティブの☆評価ダイアログを表示

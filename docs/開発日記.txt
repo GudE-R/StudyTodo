@@ -1767,3 +1767,8 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - EASで本番ビルド (buildNumber 1.0.27, --auto-submit) → App Store Connect へ自動提出
 - 主な変更点: SRSタスク作成時に App Store レビュー投稿プロンプトを表示する機能を追加
 - What's New は50言語分まとめて更新。スクリプト (scripts/update-ios-whats-new.mjs) を VERSION_STRING ベースで動的解決するよう改修
+
+**iOS v1.0.26 審査提出完了**
+- App Store Connect API (reviewSubmissions) 経由で審査に自動提出
+- state: WAITING_FOR_REVIEW
+- releaseType: AFTER_APPROVAL（審査通過後に自動公開）
