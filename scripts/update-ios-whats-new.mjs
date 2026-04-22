@@ -100,15 +100,61 @@ async function apiGetAll(path) {
 
 async function resolveVersionId() {
   const versions = await apiGetAll(`/apps/${APP_ID}/appStoreVersions?filter[versionString]=${VERSION_STRING}&limit=5`);
-  if (!versions.length) throw new Error(`バージョン ${VERSION_STRING} が App Store Connect に見つかりません`);
-  const target = versions.find((v) => v.attributes?.versionString === VERSION_STRING) || versions[0];
-  return target.id;
+  const target = versions.find((v) => v.attributes?.versionString === VERSION_STRING);
+  return target ? target.id : null;
+}
+
+async function findBuildId(versionString) {
+  const builds = await apiGetAll(`/builds?filter[app]=${APP_ID}&filter[version]=${versionString}&limit=5`);
+  const valid = builds.find((b) => b.attributes?.processingState === "VALID");
+  if (!valid) throw new Error(`build ${versionString} が見つからないか処理中です`);
+  return valid.id;
+}
+
+async function createVersion() {
+  // 既存バージョンの属性を参考に新バージョンを作成
+  const prev = await apiGetAll(`/apps/${APP_ID}/appStoreVersions?limit=10`);
+  const copyright = prev.find((v) => v.attributes?.copyright)?.attributes?.copyright;
+  const result = await api("POST", `/appStoreVersions`, {
+    data: {
+      type: "appStoreVersions",
+      attributes: {
+        platform: "IOS",
+        versionString: VERSION_STRING,
+        releaseType: "AFTER_APPROVAL",
+        ...(copyright ? { copyright } : {}),
+      },
+      relationships: {
+        app: { data: { type: "apps", id: APP_ID } },
+      },
+    },
+  });
+  return result.data.id;
+}
+
+async function attachBuild(versionId, buildId) {
+  await api("PATCH", `/appStoreVersions/${versionId}/relationships/build`, {
+    data: { type: "builds", id: buildId },
+  });
 }
 
 async function main() {
   console.log(`0. バージョン ${VERSION_STRING} の VERSION_ID を取得中...`);
-  const VERSION_ID = await resolveVersionId();
-  console.log(`   → ${VERSION_ID}\n`);
+  let VERSION_ID = await resolveVersionId();
+  if (!VERSION_ID) {
+    console.log(`   → 未作成。新規作成します...`);
+    VERSION_ID = await createVersion();
+    console.log(`   → 作成: ${VERSION_ID}`);
+
+    // buildNumber はアプリの buildNumber（1.0.27）。ビルドを紐付ける。
+    const buildVersion = process.env.BUILD_NUMBER || "1.0.27";
+    console.log(`   → build ${buildVersion} を紐付け中...`);
+    const buildId = await findBuildId(buildVersion);
+    await attachBuild(VERSION_ID, buildId);
+    console.log(`   → build 紐付け完了: ${buildId}\n`);
+  } else {
+    console.log(`   → ${VERSION_ID}\n`);
+  }
 
   console.log("1. バージョンのローカリゼーションを取得中...");
   const locs = await apiGetAll(`/appStoreVersions/${VERSION_ID}/appStoreVersionLocalizations`);
