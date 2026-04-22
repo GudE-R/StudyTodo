@@ -24,7 +24,7 @@ export default ({ config }: ConfigContext): ExpoConfig => withAdMobManifestFix({
   name: "StudyTodo",
   slug: "studytodo",
   scheme: "studytodo",
-  version: "1.0.25",
+  version: "1.0.26",
   orientation: "portrait",
   icon: "./assets/combined-icon.png",
   userInterfaceStyle: "light",

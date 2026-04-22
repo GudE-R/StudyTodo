@@ -5,59 +5,60 @@ const { sign } = jwt;
 const ISSUER_ID = "ea539c79-f9bb-4c45-838b-574451483713";
 const KEY_ID = "ZGA3UZ26CK";
 const P8_PATH = "/home/tatsuya/ダウンロード/AuthKey_ZGA3UZ26CK.p8";
-const VERSION_ID = "3b370337-72fc-4d84-be5b-84e40ba7c81b";
+const APP_ID = "6759635529";
+const VERSION_STRING = process.env.APP_VERSION || "1.0.26";
 
 const WHATS_NEW = {
-  "ja": "多言語対応を強化しました。アプリのサブタイトルが各言語で表示されるようになりました。",
-  "en-US": "Improved multilingual support. App subtitle now displays in your language.",
-  "en-GB": "Improved multilingual support. App subtitle now displays in your language.",
-  "en-CA": "Improved multilingual support. App subtitle now displays in your language.",
-  "en-AU": "Improved multilingual support. App subtitle now displays in your language.",
-  "ko": "다국어 지원이 강화되었습니다. 앱 부제목이 각 언어로 표시됩니다.",
-  "zh-Hans": "增强了多语言支持。应用副标题现在以您的语言显示。",
-  "zh-Hant": "增強了多語言支援。應用程式副標題現在以您的語言顯示。",
-  "fr-FR": "Amélioration du support multilingue. Le sous-titre de l'app s'affiche désormais dans votre langue.",
-  "fr-CA": "Amélioration du support multilingue. Le sous-titre de l'app s'affiche désormais dans votre langue.",
-  "de-DE": "Verbesserte Mehrsprachigkeit. Der App-Untertitel wird jetzt in Ihrer Sprache angezeigt.",
-  "es-ES": "Mejora del soporte multilingüe. El subtítulo de la app ahora se muestra en tu idioma.",
-  "es-MX": "Mejora del soporte multilingüe. El subtítulo de la app ahora se muestra en tu idioma.",
-  "pt-BR": "Suporte multilíngue aprimorado. O subtítulo do app agora aparece no seu idioma.",
-  "pt-PT": "Suporte multilíngue melhorado. O subtítulo da app agora aparece no seu idioma.",
-  "ru": "Улучшена многоязычная поддержка. Подзаголовок приложения теперь отображается на вашем языке.",
-  "it": "Migliorato il supporto multilingue. Il sottotitolo dell'app ora viene visualizzato nella tua lingua.",
-  "nl-NL": "Meertalige ondersteuning verbeterd. De ondertitel van de app wordt nu in uw taal weergegeven.",
-  "sv": "Förbättrat flerspråkigt stöd. Appens underrubrik visas nu på ditt språk.",
-  "no": "Forbedret flerspråklig støtte. Appens undertittel vises nå på ditt språk.",
-  "da": "Forbedret flersproget understøttelse. Appens undertitel vises nu på dit sprog.",
-  "fi": "Monikielinen tuki parannettu. Sovelluksen alaotsikko näkyy nyt omalla kielelläsi.",
-  "tr": "Çok dilli destek iyileştirildi. Uygulama alt başlığı artık kendi dilinizde görüntüleniyor.",
-  "id": "Dukungan multibahasa ditingkatkan. Subjudul aplikasi kini ditampilkan dalam bahasa Anda.",
-  "vi": "Cải thiện hỗ trợ đa ngôn ngữ. Phụ đề ứng dụng hiện hiển thị bằng ngôn ngữ của bạn.",
-  "th": "ปรับปรุงการรองรับหลายภาษา ชื่อรองของแอปแสดงในภาษาของคุณแล้ว",
-  "pl": "Ulepszono obsługę wielu języków. Podtytuł aplikacji wyświetla się teraz w Twoim języku.",
-  "ro": "Suport multilingv îmbunătățit. Subtitlul aplicației este acum afișat în limba dvs.",
-  "cs": "Vylepšena vícejazyčná podpora. Podtitulek aplikace se nyní zobrazuje ve vašem jazyce.",
-  "el": "Βελτιωμένη πολυγλωσσική υποστήριξη. Ο υπότιτλος της εφαρμογής εμφανίζεται τώρα στη γλώσσα σας.",
-  "hu": "Továbbfejlesztett többnyelvű támogatás. Az alkalmazás alcíme most az Ön nyelvén jelenik meg.",
-  "uk": "Покращено багатомовну підтримку. Підзаголовок додатка тепер відображається вашою мовою.",
-  "hi": "बहुभाषी समर्थन में सुधार किया गया। ऐप उपशीर्षक अब आपकी भाषा में प्रदर्शित होता है।",
-  "ar-SA": "تحسين دعم اللغات المتعددة. يظهر العنوان الفرعي للتطبيق الآن بلغتك.",
-  "he": "שיפור תמיכה רב-לשונית. כותרת המשנה של האפליקציה מוצגת כעת בשפה שלך.",
-  "ms": "Sokongan berbilang bahasa dipertingkat. Sari kata aplikasi kini dipaparkan dalam bahasa anda.",
-  "ca": "Millora del suport multilingüe. El subtítol de l'app ara es mostra en el vostre idioma.",
-  "hr": "Poboljšana višejezična podrška. Podnaslov aplikacije sada se prikazuje na vašem jeziku.",
-  "sk": "Vylepšená viacjazyčná podpora. Podnadpis aplikácie sa teraz zobrazuje vo vašom jazyku.",
-  "sl-SI": "Izboljšana večjezična podpora. Podnaslov aplikacije je zdaj prikazan v vašem jeziku.",
-  "bn-BD": "বহুভাষিক সমর্থন উন্নত করা হয়েছে। অ্যাপের সাবটাইটেল এখন আপনার ভাষায় প্রদর্শিত হয়।",
-  "mr-IN": "बहुभाषिक समर्थन सुधारले. अॅप उपशीर्षक आता तुमच्या भाषेत प्रदर्शित होते.",
-  "ta-IN": "பல மொழி ஆதரவு மேம்படுத்தப்பட்டது. ஆப் துணைத்தலைப்பு இப்போது உங்கள் மொழியில் காட்டப்படும்.",
-  "te-IN": "బహుభాషా మద్దతు మెరుగుపరచబడింది. యాప్ ఉపశీర్షిక ఇప్పుడు మీ భాషలో ప్రదర్శించబడుతుంది.",
-  "gu-IN": "બહુભાષી સમર્થન સુધારવામાં આવ્યું. એપ સબટાઈટલ હવે તમારી ભાષામાં દેખાય છે.",
-  "kn-IN": "ಬಹುಭಾಷಾ ಬೆಂಬಲ ಸುಧಾರಿಸಲಾಗಿದೆ. ಅಪ್ಲಿಕೇಶನ್ ಉಪಶೀರ್ಷಿಕೆ ಈಗ ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತದೆ.",
-  "ml-IN": "ബഹുഭാഷാ പിന്തുണ മെച്ചപ്പെടുത്തി. ആപ്പ് ഉപശീർഷകം ഇപ്പോൾ നിങ്ങളുടെ ഭാഷയിൽ പ്രദർശിപ്പിക്കുന്നു.",
-  "pa-IN": "ਬਹੁ-ਭਾਸ਼ਾਈ ਸਮਰਥਨ ਵਿੱਚ ਸੁਧਾਰ ਕੀਤਾ ਗਿਆ। ਐਪ ਉਪਸਿਰਲੇਖ ਹੁਣ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਦਿਖਾਈ ਦਿੰਦਾ ਹੈ।",
-  "ur-PK": "کثیر لسانی معاونت بہتر بنائی گئی۔ ایپ سب ٹائٹل اب آپ کی زبان میں ظاہر ہوتا ہے۔",
-  "or-IN": "ବହୁଭାଷିକ ସମର୍ଥନ ଉନ୍ନତ କରାଯାଇଛି। ଆପ୍ ସବଟାଇଟଲ୍ ବର୍ତ୍ତମାନ ଆପଣଙ୍କ ଭାଷାରେ ପ୍ରଦର୍ଶିତ ହେଉଛି।",
+  "ja": "安定性の向上と細かな改善を行いました。",
+  "en-US": "Stability improvements and minor refinements.",
+  "en-GB": "Stability improvements and minor refinements.",
+  "en-CA": "Stability improvements and minor refinements.",
+  "en-AU": "Stability improvements and minor refinements.",
+  "ko": "안정성을 개선하고 세부 사항을 다듬었습니다.",
+  "zh-Hans": "提升了稳定性并进行了细节改进。",
+  "zh-Hant": "提升了穩定性並進行了細節改進。",
+  "fr-FR": "Améliorations de la stabilité et ajustements mineurs.",
+  "fr-CA": "Améliorations de la stabilité et ajustements mineurs.",
+  "de-DE": "Stabilitätsverbesserungen und kleinere Anpassungen.",
+  "es-ES": "Mejoras de estabilidad y ajustes menores.",
+  "es-MX": "Mejoras de estabilidad y ajustes menores.",
+  "pt-BR": "Melhorias de estabilidade e pequenos ajustes.",
+  "pt-PT": "Melhorias de estabilidade e pequenos ajustes.",
+  "ru": "Улучшена стабильность и внесены мелкие доработки.",
+  "it": "Miglioramenti di stabilità e piccole rifiniture.",
+  "nl-NL": "Stabiliteitsverbeteringen en kleine aanpassingen.",
+  "sv": "Stabilitetsförbättringar och mindre justeringar.",
+  "no": "Forbedret stabilitet og mindre justeringer.",
+  "da": "Stabilitetsforbedringer og mindre justeringer.",
+  "fi": "Vakautta parannettu ja pieniä hienosäätöjä tehty.",
+  "tr": "Kararlılık iyileştirmeleri ve küçük düzenlemeler.",
+  "id": "Peningkatan stabilitas dan penyempurnaan kecil.",
+  "vi": "Cải thiện độ ổn định và các tinh chỉnh nhỏ.",
+  "th": "ปรับปรุงเสถียรภาพและแก้ไขเล็กน้อย",
+  "pl": "Poprawa stabilności i drobne udoskonalenia.",
+  "ro": "Îmbunătățiri de stabilitate și ajustări minore.",
+  "cs": "Vylepšení stability a drobné úpravy.",
+  "el": "Βελτιώσεις σταθερότητας και μικρές διορθώσεις.",
+  "hu": "Stabilitási fejlesztések és apróbb finomítások.",
+  "uk": "Покращено стабільність і внесено незначні вдосконалення.",
+  "hi": "स्थिरता में सुधार और छोटे परिशोधन।",
+  "ar-SA": "تحسينات في الاستقرار وتعديلات طفيفة.",
+  "he": "שיפורי יציבות ושיפורים קלים.",
+  "ms": "Penambahbaikan kestabilan dan pelarasan kecil.",
+  "ca": "Millores d'estabilitat i ajustos menors.",
+  "hr": "Poboljšanja stabilnosti i manje prilagodbe.",
+  "sk": "Vylepšenia stability a drobné úpravy.",
+  "sl-SI": "Izboljšave stabilnosti in manjše prilagoditve.",
+  "bn-BD": "স্থিতিশীলতার উন্নতি এবং ছোটখাটো পরিমার্জন।",
+  "mr-IN": "स्थिरता सुधारणा आणि लहान परिष्करण.",
+  "ta-IN": "நிலைத்தன்மை மேம்பாடுகள் மற்றும் சிறிய சீரமைப்புகள்.",
+  "te-IN": "స్థిరత్వ మెరుగుదలలు మరియు చిన్న మెరుగులు.",
+  "gu-IN": "સ્થિરતામાં સુધારો અને નાના ફેરફારો.",
+  "kn-IN": "ಸ್ಥಿರತೆಯ ಸುಧಾರಣೆಗಳು ಮತ್ತು ಸಣ್ಣ ಪರಿಷ್ಕರಣೆಗಳು.",
+  "ml-IN": "സ്ഥിരത മെച്ചപ്പെടുത്തലുകളും ചെറിയ പരിഷ്കരണങ്ങളും.",
+  "pa-IN": "ਸਥਿਰਤਾ ਵਿੱਚ ਸੁਧਾਰ ਅਤੇ ਛੋਟੇ ਸੁਧਾਰ।",
+  "ur-PK": "استحکام میں بہتری اور معمولی اصلاحات۔",
+  "or-IN": "ସ୍ଥିରତା ଉନ୍ନତି ଏବଂ ଛୋଟ ସଜାଡ଼ିବା।",
 };
 
 function generateToken() {
@@ -97,7 +98,18 @@ async function apiGetAll(path) {
   return allData;
 }
 
+async function resolveVersionId() {
+  const versions = await apiGetAll(`/apps/${APP_ID}/appStoreVersions?filter[versionString]=${VERSION_STRING}&limit=5`);
+  if (!versions.length) throw new Error(`バージョン ${VERSION_STRING} が App Store Connect に見つかりません`);
+  const target = versions.find((v) => v.attributes?.versionString === VERSION_STRING) || versions[0];
+  return target.id;
+}
+
 async function main() {
+  console.log(`0. バージョン ${VERSION_STRING} の VERSION_ID を取得中...`);
+  const VERSION_ID = await resolveVersionId();
+  console.log(`   → ${VERSION_ID}\n`);
+
   console.log("1. バージョンのローカリゼーションを取得中...");
   const locs = await apiGetAll(`/appStoreVersions/${VERSION_ID}/appStoreVersionLocalizations`);
   const locMap = {};

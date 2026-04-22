@@ -3,6 +3,9 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- iOS v1.0.26 リリース (2026-04-22)
+  - App Store レビュー投稿プロンプト機能を含むバイナリを EAS で本番ビルド（buildNumber 1.0.27）し、App Store Connect へ自動提出
+  - What's New を50言語分まとめて更新 (`scripts/update-ios-whats-new.mjs` を VERSION_STRING ベースで動的解決するように改修)
 - App Store レビュー投稿プロンプトの実装 (2026-04-22)
   - `expo-store-review` を導入（モバイルのみ、Web版は対象外）
   - SRSプロファイル付きタスクの作成成功時に、OSネイティブの☆評価ダイアログを表示

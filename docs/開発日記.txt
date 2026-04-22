@@ -1761,3 +1761,9 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - 多段ガード: isAvailableAsync / hasAction で未対応環境は自動スキップ、例外は握りつぶし
 - 追加ファイル: apps/mobile/src/utils/storeReview.ts
 - 変更箇所: apps/mobile/src/hooks/useTodoCreateForm.ts (handleCreate の SRSブランチで呼び出し)
+
+**iOS v1.0.26 リリース**
+- app.config.ts のバージョンを 1.0.25 → 1.0.26 に更新
+- EASで本番ビルド (buildNumber 1.0.27, --auto-submit) → App Store Connect へ自動提出
+- 主な変更点: SRSタスク作成時に App Store レビュー投稿プロンプトを表示する機能を追加
+- What's New は50言語分まとめて更新。スクリプト (scripts/update-ios-whats-new.mjs) を VERSION_STRING ベースで動的解決するよう改修
