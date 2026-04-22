@@ -25,13 +25,12 @@ interface AdBannerProps {
  * 実際の広告タグを注入します。設定されていない場合は、開発用プレースホルダーを表示します。
  */
 export function AdBanner({ slot, style, format = "auto", responsive = "true" }: AdBannerProps) {
-    if (!ADS_ENABLED) return null;
-
     const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
     const adRef = useRef<HTMLModElement>(null);
     const initializedRef = useRef(false);
 
     useEffect(() => {
+        if (!ADS_ENABLED) return;
         if (!clientId || initializedRef.current) return;
 
         // すでにAdSenseによって処理されているかチェック
@@ -51,6 +50,8 @@ export function AdBanner({ slot, style, format = "auto", responsive = "true" }: 
             }
         }
     }, [clientId]);
+
+    if (!ADS_ENABLED) return null;
 
     if (!clientId) {
         // 開発用プレースホルダー

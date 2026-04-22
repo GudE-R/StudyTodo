@@ -21,9 +21,9 @@ export function StepSrsAha({ studyTopic, onNext }: StepSrsAhaProps) {
 
     const srsProfiles = useLiveQuery(() => db.srsProfiles.toArray()) || [];
     const defaultProfile = srsProfiles.find(p => p.isDefault) || srsProfiles[0];
-    const intervals = defaultProfile?.intervals || [1, 3, 7, 14, 30];
 
     const timeline = useMemo(() => {
+        const intervals = defaultProfile?.intervals || [1, 3, 7, 14, 30];
         const today = new Date();
         const items = [
             { label: t("step2Today"), date: today, title: studyTopic, isOriginal: true },
@@ -35,7 +35,7 @@ export function StepSrsAha({ studyTopic, onNext }: StepSrsAhaProps) {
             })),
         ];
         return items;
-    }, [intervals, studyTopic, t]);
+    }, [defaultProfile, studyTopic, t]);
 
     const handleStart = async () => {
         if (!defaultProfile || saved) return;

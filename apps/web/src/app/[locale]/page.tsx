@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { isSameDay } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -21,7 +20,6 @@ import { TimerView } from "@/components/timer/TimerView";
 import { SettingsModal } from "@/components/settings/SettingsModal";
 import { UsageGuideModal } from "@/components/guide/UsageGuideModal";
 import { AuthModal } from "@/components/auth/AuthModal";
-import { LandingPage } from "@/components/landing/LandingPage";
 import { InteractiveOnboarding } from "@/components/onboarding/InteractiveOnboarding";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { JournalModal } from "@/components/journal/JournalModal";
@@ -39,8 +37,6 @@ import { dataService } from "@/services/dataService";
 
 export default function Home() {
   const t = useTranslations("common");
-  const locale = useLocale();
-  const router = useRouter();
   const [viewMode, setViewMode] = useState<"home" | "timer">("home");
   const [activeTodo, setActiveTodo] = useState<Todo | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());

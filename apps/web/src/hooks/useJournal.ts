@@ -24,7 +24,9 @@ export function useJournalSettings() {
         if (saved) {
             try {
                 setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(saved) });
-            } catch {}
+            } catch {
+                // 破損データは無視してデフォルトを使う
+            }
         }
         setIsLoaded(true);
 

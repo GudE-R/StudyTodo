@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { X, Play, Calendar, Clock, Tag, Repeat, CheckCircle, Save, CalendarRange } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useTranslations } from "next-intl";
-import { db } from "@/lib/db";
 import { Todo, Category, SRSProfile, parseTodoContent } from "@studytodo/shared";
 
 interface TodoDetailModalProps {

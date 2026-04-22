@@ -3,7 +3,7 @@ import { toBlob, toPng } from 'html-to-image';
 const imageOptions = {
     cacheBust: true,
     pixelRatio: 2,
-    filter: (node: HTMLElement) => {
+    filter: (_node: HTMLElement) => {
         // html-to-imageが不要なノードを除外しないようにする
         return true;
     },

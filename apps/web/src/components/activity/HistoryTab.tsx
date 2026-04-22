@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Trash2, Filter, ChevronDown, ChevronRight, Layers } from "lucide-react";
-import { Session, Todo, Category } from "@studytodo/shared";
+import { Todo, Category } from "@studytodo/shared";
 import { TodoTitle } from "@/components/ui/TodoTitle";
 import { useTranslations } from "next-intl";
 
