@@ -3,12 +3,15 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
-- iOS v1.0.26 リリース (2026-04-22)
-  - App Store レビュー投稿プロンプト機能を含むバイナリを EAS で本番ビルド（buildNumber 1.0.27）し、App Store Connect へ自動提出
+- iOS v1.0.26 リリース試行 → **却下** (2026-04-22〜23)
+  - App Store レビュー投稿プロンプト機能 (`expo-store-review`) を含むバイナリを EAS で本番ビルド（buildNumber 1.0.27）
   - What's New を50言語分まとめて更新 (`scripts/update-ios-whats-new.mjs` を VERSION_STRING ベースで動的解決するように改修)
-  - 注意点: version record を API で新規作成するとスクリーンショットが継承されず自動で REJECTED になる。v1.0.25 の en-US 18枚（iPad Pro 12.9 / iPhone 16 Pro Max / iPhone 14 Plus × 各6枚）を API で再アップロードして復旧
-  - 旧 submission をキャンセル → 新規 reviewSubmission を作成 → 再提出 → WAITING_FOR_REVIEW
-  - releaseType: AFTER_APPROVAL（審査通過後、自動公開）
+  - API で version record を新規作成するとスクリーンショットが継承されないため、v1.0.25 の en-US 18枚を API で再アップロードして復旧
+  - **却下**: Guideline 2.3.10 違反（Apple 審査、Submission ID: `acf1bc94-76bc-415d-9e2f-d67829570be9`）
+    - 指摘: スクリーンショットが non-iOS のステータスバー（Android 画面を合成したモックアップを使用していたため）
+    - v1.0.25 では同じスクショで通ったが、今回のレビュアーが気付いた
+    - 指摘は適切。Z. 次回リリースで解消する方針に決定（`0A_TODO.md` に追記）
+  - コード変更（`expo-store-review` 導入、SRS タスク作成時にプロンプト表示）は `main` にマージ済み
 - App Store レビュー投稿プロンプトの実装 (2026-04-22)
   - `expo-store-review` を導入（モバイルのみ、Web版は対象外）
   - SRSプロファイル付きタスクの作成成功時に、OSネイティブの☆評価ダイアログを表示

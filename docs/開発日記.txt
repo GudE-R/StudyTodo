@@ -1779,3 +1779,9 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - 対応: v1.0.25 の en-US スクリーンショット18枚（iPad Pro 12.9/iPhone 16 Pro Max/iPhone 14 Plus × 各6枚）を API でダウンロード→再アップロード
 - 旧 submission をキャンセル → 新規 reviewSubmission を作成して再提出 → WAITING_FOR_REVIEW
 - 学び: 今後 API で version record を作る場合、スクリーンショットも明示的にコピーする必要あり（ASC UI で作れば自動継承されるがAPIでは不可）
+
+**v1.0.26 は却下のまま次回リリースに統合する方針に決定**
+- Apple からの却下理由: Guideline 2.3.10（non-iOS status bar）
+- 原因: スクリーンショットに Android 画面を合成したモックアップを使用していた
+- 判断: 指摘は適切なので、アピールではなく次回リリース時に iOS Simulator で撮り直す
+- コード変更 (expo-store-review 導入) は main にマージ済み。次版 (v1.0.27 以降) で合流
