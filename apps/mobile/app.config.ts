@@ -11,7 +11,7 @@ const withAdMobManifestFix = (config: ExpoConfig): ExpoConfig => {
     if (application?.['meta-data']) {
       for (const metaData of application['meta-data']) {
         if (metaData.$?.['android:name'] === 'com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT') {
-          metaData.$['tools:replace'] = 'android:value';
+          (metaData.$ as Record<string, string>)['tools:replace'] = 'android:value';
         }
       }
     }

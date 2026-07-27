@@ -1785,3 +1785,9 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - 原因: スクリーンショットに Android 画面を合成したモックアップを使用していた
 - 判断: 指摘は適切なので、アピールではなく次回リリース時に iOS Simulator で撮り直す
 - コード変更 (expo-store-review 導入) は main にマージ済み。次版 (v1.0.27 以降) で合流
+
+07/27
+- 型エラー修正 (VSCodeでStudyTodoフォルダが赤表示だった原因)
+- apps/web: useModalState.test.ts のモックTodoに createdAt/updatedAt を追加 (TS2739)
+- apps/mobile: app.config.ts の tools:replace 代入を型キャストで解決 (TS7053)
+- 全パッケージ tsc --noEmit エラーゼロを確認
