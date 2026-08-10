@@ -47,7 +47,7 @@
     "eslint-config-next": "^16.0.5",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "globals": "^14.0.0",
+    "globals": "^17.5.0",
     "jsdom": "^27.4.0",
     "tailwindcss": "^4",
     "typescript": "^5",
