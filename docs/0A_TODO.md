@@ -35,6 +35,7 @@
 - [x] **App Store サブタイトルのローカライズ**: 36言語対応完了 (2026-04-04)
 - [ ] **App Store スクリーンショットの iOS Simulator 撮影**: 現行のスクショは Android 画面を合成したものでガイドライン 2.3.10（non-iOS status bar）違反。v1.0.26 リリース時に判明し却下された。次回リリース時に iOS Simulator で iPhone 6.7"/6.5" / iPad Pro 12.9" の3サイズ × 6枚を撮り直して差し替え。
 - [ ] **レビュー投稿プロンプトの再リリース**: v1.0.26 は却下のまま次回リリース（v1.0.27 以降）に統合する。対応済みコード (`expo-store-review`) は `main` にマージ済み。
+- [ ] **iOS ホーム画面ウィジェット（今日の Todo 一覧）**: 実装済み・実機確認待ち。`@bacons/apple-targets` で WidgetKit 拡張（`apps/mobile/targets/widget/`）を追加し、App Group `group.com.studytodo.app` 経由で JSON を受け渡す。残: `ios.appleTeamId` の設定 → EAS development ビルドで Small/Medium/Large の表示・反映・タップ起動を確認 → v1.0.27 に同梱。ja/en 以外の文言は英語フォールバック（全言語展開は別タスク）。
 
 ---
 

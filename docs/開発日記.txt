@@ -1791,3 +1791,10 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - apps/web: useModalState.test.ts のモックTodoに createdAt/updatedAt を追加 (TS2739)
 - apps/mobile: app.config.ts の tools:replace 代入を型キャストで解決 (TS7053)
 - 全パッケージ tsc --noEmit エラーゼロを確認
+
+
+10/21
+- iOS ホーム画面ウィジェット（今日の Todo 一覧）を実装
+- @bacons/apple-targets で WidgetKit 拡張を追加、App Group 経由で JSON 受け渡し（今日・明日分を入れて0時に自動切替）
+- 抽出ロジックを純粋関数化して単体テスト追加、expo prebuild でターゲット・entitlements 生成を確認
+- 残: appleTeamId 設定 → EAS development ビルドで実機確認 → v1.0.27 に同梱

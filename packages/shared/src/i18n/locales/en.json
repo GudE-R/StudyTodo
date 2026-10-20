@@ -419,5 +419,11 @@
         "step3Cta": "Done",
         "skipAll": "Skip",
         "stepIndicator": "Step {current} of {total}"
+    },
+    "widget": {
+        "title": "Today's Todos",
+        "empty": "All done",
+        "more": "+{{n}} more",
+        "openApp": "Open the app to update"
     }
 }

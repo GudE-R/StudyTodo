@@ -3,6 +3,13 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- iOS ホーム画面ウィジェット「今日の Todo」の実装 (2026-10-21、実機確認待ち)
+  - `@bacons/apple-targets` v5 で Widget Extension（`com.studytodo.app.widget`、iOS 17+）を追加。SwiftUI 実装は `apps/mobile/targets/widget/widgets.swift`
+  - App Group `group.com.studytodo.app` の UserDefaults キー `todayWidget` に、JS 側で作った JSON（今日・明日の2日分）を書き込む。翌日0時のタイムラインエントリで自動的に日付が切り替わる
+  - 抽出ロジックは `apps/mobile/src/widget/buildTodayWidgetPayload.ts`（HomeTodoList と同条件: 未完了 & 当日 or 日付なし、時刻昇順、最大8件）。単体テスト7件
+  - 同期は `useTodayWidgetSync`（起動時・todos/categories 変更時・フォアグラウンド復帰時・言語変更時、500ms debounce）を `App.tsx` の AppContent でマウント
+  - サイズ別表示件数: Small 3 / Medium 4 / Large 8、超過分は「ほかN件」。タップで `studytodo://` を開く
+  - 文言は i18next の `widget.*`（ja/en）を payload に載せて渡す
 - iOS v1.0.26 リリース試行 → **却下** (2026-04-22〜23)
   - App Store レビュー投稿プロンプト機能 (`expo-store-review`) を含むバイナリを EAS で本番ビルド（buildNumber 1.0.27）
   - What's New を50言語分まとめて更新 (`scripts/update-ios-whats-new.mjs` を VERSION_STRING ベースで動的解決するように改修)

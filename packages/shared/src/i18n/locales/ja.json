@@ -433,5 +433,11 @@
         "step3Cta": "完了",
         "skipAll": "スキップ",
         "stepIndicator": "ステップ {current} / {total}"
+    },
+    "widget": {
+        "title": "今日のTodo",
+        "empty": "すべて完了",
+        "more": "ほか{{n}}件",
+        "openApp": "アプリを開いて更新"
     }
 }

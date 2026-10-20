@@ -41,6 +41,10 @@ export default ({ config }: ConfigContext): ExpoConfig => withAdMobManifestFix({
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
+    // ホーム画面ウィジェット（targets/widget）とのデータ共有用
+    entitlements: {
+      "com.apple.security.application-groups": ["group.com.studytodo.app"],
+    },
     config: {
       googleMobileAdsAppId: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID,
     }
@@ -61,6 +65,7 @@ export default ({ config }: ConfigContext): ExpoConfig => withAdMobManifestFix({
     favicon: "./assets/favicon.png"
   },
   plugins: [
+    "@bacons/apple-targets",
     "expo-sqlite",
     "expo-secure-store",
     "expo-localization",

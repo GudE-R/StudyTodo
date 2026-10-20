@@ -23,9 +23,11 @@ import { ThemeProvider, useTheme } from './src/providers/ThemeProvider';
 import { LayoutProvider } from './src/providers/LayoutProvider';
 import { OnboardingProvider } from './src/providers/OnboardingProvider';
 import { AdBannerHeightProvider } from './src/components/layout/AdBannerContext';
+import { useTodayWidgetSync } from './src/widget/useTodayWidgetSync';
 
 function AppContent() {
   const { isDark } = useTheme();
+  useTodayWidgetSync();
   return (
     <>
       <MainLayoutSelector />
