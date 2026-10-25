@@ -1803,3 +1803,4 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - README と GitHub の About 欄の Web URL を studytodo.vercel.app に更新（旧URLは DEPLOYMENT_NOT_FOUND）
 - Supabase が無料プランの一時停止で止まっていた → マスターが Restore、全テーブル・データ残存を確認
 - Web版のデフォルトテーマをダーク、アクセントカラーを青に変更
+- Vercel デプロイ失敗の原因を特定（Vercel が 10/01 に Node.js 20 を廃止）→ engines を 24.x に上げて修正

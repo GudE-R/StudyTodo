@@ -10,7 +10,7 @@
     "test": "vitest run"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
