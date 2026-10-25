@@ -6,6 +6,7 @@
 - Vercel デプロイ失敗の修正: Node.js を 20.x → 24.x に変更 (2026-10-25)
   - Vercel が 2026-10-01 に Node.js 20 を廃止し、10/20 以降の本番デプロイが作成直後に失敗していた（公開中は 07/27 版のまま）
   - ルート `package.json` に `engines.node: 24.x` を追加（Root Directory がリポジトリルートのため、こちらがプロジェクト設定より優先される）、`apps/web/package.json` の `engines` も 24.x に
+  - GitHub Actions の CI（`.github/workflows/ci.yml`）も Node 20 → 24 に揃えた
 - Web版のデフォルトテーマをダーク、アクセントカラーを青に変更 (2026-10-25)
   - `apps/web/src/contexts/ThemeContext.tsx` の初期値を `paper-classic`/`DEFAULT_ACCENT`(green) → `dark`/`blue` に変更。共有の `DEFAULT_ACCENT` はモバイルも使うため触らず Web 側で指定
   - 既存ユーザーは保存済みのテーマ (`studytodo-theme`) が優先されるため、変わるのは初回訪問者のみ。アクセントは明示的に選んでいないユーザーなら青になる

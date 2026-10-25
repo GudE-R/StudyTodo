@@ -1804,3 +1804,4 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - Supabase が無料プランの一時停止で止まっていた → マスターが Restore、全テーブル・データ残存を確認
 - Web版のデフォルトテーマをダーク、アクセントカラーを青に変更
 - Vercel デプロイ失敗の原因を特定（Vercel が 10/01 に Node.js 20 を廃止）→ engines を 24.x に上げて修正
+- GitHub Actions の CI も Node 24 に揃えた
