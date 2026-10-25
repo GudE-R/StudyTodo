@@ -1798,3 +1798,8 @@ AuthModalやSettingsModalにおける「利用規約」と「プライバシー�
 - @bacons/apple-targets で WidgetKit 拡張を追加、App Group 経由で JSON 受け渡し（今日・明日分を入れて0時に自動切替）
 - 抽出ロジックを純粋関数化して単体テスト追加、expo prebuild でターゲット・entitlements 生成を確認
 - 残: appleTeamId 設定 → EAS development ビルドで実機確認 → v1.0.27 に同梱
+
+10/25
+- README と GitHub の About 欄の Web URL を studytodo.vercel.app に更新（旧URLは DEPLOYMENT_NOT_FOUND）
+- Supabase が無料プランの一時停止で止まっていた → マスターが Restore、全テーブル・データ残存を確認
+- Web版のデフォルトテーマをダーク、アクセントカラーを青に変更

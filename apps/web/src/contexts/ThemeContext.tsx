@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { AccentColor, ACCENT_PRESETS, DEFAULT_ACCENT } from "@studytodo/shared";
+import { AccentColor, ACCENT_PRESETS } from "@studytodo/shared";
 
 export type Theme = "light" | "dark" | "paper-classic" | "paper-washi" | "paper-planner";
 
@@ -27,9 +27,9 @@ function applyAccentCSSVariables(accent: AccentColor, resolvedTheme: "light" | "
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>("paper-classic");
-    const [accentColor, setAccentColorState] = useState<AccentColor>(DEFAULT_ACCENT);
-    const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
+    const [theme, setThemeState] = useState<Theme>("dark");
+    const [accentColor, setAccentColorState] = useState<AccentColor>("blue");
+    const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

@@ -3,6 +3,9 @@
 これまでの実装状況、完了済みロードマップ、および変更履歴を記録するドキュメントです。
 
 ## 最近の実装記録 (Latest)
+- Web版のデフォルトテーマをダーク、アクセントカラーを青に変更 (2026-10-25)
+  - `apps/web/src/contexts/ThemeContext.tsx` の初期値を `paper-classic`/`DEFAULT_ACCENT`(green) → `dark`/`blue` に変更。共有の `DEFAULT_ACCENT` はモバイルも使うため触らず Web 側で指定
+  - 既存ユーザーは保存済みのテーマ (`studytodo-theme`) が優先されるため、変わるのは初回訪問者のみ。アクセントは明示的に選んでいないユーザーなら青になる
 - iOS ホーム画面ウィジェット「今日の Todo」の実装 (2026-10-21、実機確認待ち)
   - `@bacons/apple-targets` v5 で Widget Extension（`com.studytodo.app.widget`、iOS 17+）を追加。SwiftUI 実装は `apps/mobile/targets/widget/widgets.swift`
   - App Group `group.com.studytodo.app` の UserDefaults キー `todayWidget` に、JS 側で作った JSON（今日・明日の2日分）を書き込む。翌日0時のタイムラインエントリで自動的に日付が切り替わる
