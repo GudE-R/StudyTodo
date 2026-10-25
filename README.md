@@ -8,7 +8,7 @@
 タスク管理・スケジュール管理・学習記録・ポモドーロタイマーを統合したデジタルプランナーアプリです。  
 Web版とモバイル版のモノレポ構成で開発しています。
 
-**🔗 Web**: https://pom-arc-web-wx4z.vercel.app  
+**🔗 Web**: https://studytodo.vercel.app  
 **📱 Mobile**: iOS / Android (App Store / Google Play 配信中)
 
 | Mobile (Simple) | Mobile (Default) |
