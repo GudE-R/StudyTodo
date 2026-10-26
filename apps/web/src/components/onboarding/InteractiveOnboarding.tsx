@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { SRSProfile, Todo } from "@studytodo/shared";
+import { dataService } from "@/services/dataService";
+import { generateId } from "@/lib/utils";
 import { StepWelcomeInput } from "./steps/StepWelcomeInput";
 import { StepSrsAha } from "./steps/StepSrsAha";
 import { StepKeepAha } from "./steps/StepKeepAha";
@@ -18,10 +21,30 @@ export function InteractiveOnboarding({ onComplete }: InteractiveOnboardingProps
     const t = useTranslations("interactiveOnboarding");
     const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome-input");
     const [studyTopic, setStudyTopic] = useState("");
+    const [srsProfile, setSrsProfile] = useState<SRSProfile | null>(null);
+    const completingRef = useRef(false);
 
     const currentIndex = STEPS.indexOf(currentStep);
 
-    const handleComplete = () => {
+    const handleComplete = async () => {
+        if (completingRef.current) return;
+        completingRef.current = true;
+
+        // 2ステップ目で確定した学習内容は最後に保存する。途中で保存すると
+        // ホームの「タスク0件ならオンボーディング」の条件が外れ、3ステップ目の前に画面が切り替わるため
+        if (studyTopic && srsProfile) {
+            const baseTodo: Todo = {
+                id: generateId(),
+                title: studyTopic,
+                completed: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                dueDate: new Date(),
+                srsInterval: srsProfile.name,
+                srsProfileId: srsProfile.id,
+            };
+            await dataService.addSRSTodos(baseTodo, srsProfile.intervals);
+        }
         localStorage.setItem("onboarding_completed", "true");
         onComplete();
     };
@@ -68,7 +91,10 @@ export function InteractiveOnboarding({ onComplete }: InteractiveOnboardingProps
                 {currentStep === "srs-aha" && (
                     <StepSrsAha
                         studyTopic={studyTopic}
-                        onNext={() => setCurrentStep("keep-aha")}
+                        onNext={(profile) => {
+                            setSrsProfile(profile);
+                            setCurrentStep("keep-aha");
+                        }}
                     />
                 )}
                 {currentStep === "keep-aha" && (

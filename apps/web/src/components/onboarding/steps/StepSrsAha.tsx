@@ -6,13 +6,12 @@ import { Brain, Sparkles, Check } from "lucide-react";
 import { addDays, format } from "date-fns";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { dataService } from "@/services/dataService";
-import { generateId } from "@/lib/utils";
-import { Todo } from "@studytodo/shared";
+import { SRSProfile } from "@studytodo/shared";
 
 interface StepSrsAhaProps {
     studyTopic: string;
-    onNext: () => void;
+    // タスクの保存はオンボーディング完了時にまとめて行うため、使うプロファイルだけ渡す
+    onNext: (profile: SRSProfile) => void;
 }
 
 export function StepSrsAha({ studyTopic, onNext }: StepSrsAhaProps) {
@@ -37,23 +36,11 @@ export function StepSrsAha({ studyTopic, onNext }: StepSrsAhaProps) {
         return items;
     }, [defaultProfile, studyTopic, t]);
 
-    const handleStart = async () => {
+    const handleStart = () => {
         if (!defaultProfile || saved) return;
 
-        const baseTodo: Todo = {
-            id: generateId(),
-            title: studyTopic,
-            completed: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            dueDate: new Date(),
-            srsInterval: defaultProfile.name,
-            srsProfileId: defaultProfile.id,
-        };
-
-        await dataService.addSRSTodos(baseTodo, defaultProfile.intervals);
         setSaved(true);
-        setTimeout(onNext, 800);
+        setTimeout(() => onNext(defaultProfile), 800);
     };
 
     return (
