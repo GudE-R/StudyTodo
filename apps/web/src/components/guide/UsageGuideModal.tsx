@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Share2, Cloud, Pin, PaintBucket } from "lucide-react";
+import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Cloud, Pin, PaintBucket } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface UsageGuideModalProps {
@@ -46,8 +46,7 @@ export function UsageGuideModal({ isOpen, onClose }: UsageGuideModalProps) {
         {
             title: t("catReview"),
             items: [
-                { icon: BookOpen, title: t("historyTitle"), desc: t("historyDesc") },
-                { icon: Share2, title: t("shareTitle"), desc: t("shareDesc") }
+                { icon: BookOpen, title: t("historyTitle"), desc: t("historyDesc") }
             ]
         },
         {

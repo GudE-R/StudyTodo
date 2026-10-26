@@ -53,7 +53,10 @@
             "year": "年間"
         },
         "privacyPolicy": "プライバシーポリシー",
-        "termsOfService": "利用規約"
+        "termsOfService": "利用規約",
+        "journal": "ジャーナル",
+        "errorOccurred": "エラーが発生しました",
+        "deleteGroupConfirm": "このグループのタスク{count}件をすべて削除しますか？"
     },
     "onboarding": {
         "skip": "スキップ",
@@ -212,7 +215,16 @@
         "accentPurple": "パープル",
         "accentOrange": "オレンジ",
         "accentPink": "ピンク",
-        "accentTeal": "ティール"
+        "accentTeal": "ティール",
+        "journal": "ジャーナル",
+        "journalEnabled": "ジャーナル機能",
+        "dataManagement": "データ管理",
+        "backupJson": "バックアップを作成 (JSON)",
+        "backupJsonDescription": "設定やタスクを含むすべてのデータ",
+        "backupConfirm": "すべてのデータを JSON 形式で書き出しますか？",
+        "exportCsv": "学習記録を書き出す (CSV)",
+        "exportCsvDescription": "分析用の学習セッション履歴",
+        "exportConfirm": "学習記録を CSV 形式で書き出しますか？"
     },
     "notification": {
         "dailyReminderTitle": "学習の時間です！",

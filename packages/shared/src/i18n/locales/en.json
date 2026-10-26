@@ -53,7 +53,10 @@
             "year": "Year"
         },
         "privacyPolicy": "Privacy Policy",
-        "termsOfService": "Terms of Service"
+        "termsOfService": "Terms of Service",
+        "journal": "Journal",
+        "errorOccurred": "An error occurred",
+        "deleteGroupConfirm": "Delete all {count} tasks in this group?"
     },
     "onboarding": {
         "skip": "Skip",
@@ -138,7 +141,9 @@
         "inputTitleOrCategory": "Please enter a title or select a category",
         "inputDuration": "Please enter a duration",
         "selectDate": "Select Date",
-        "defaultSrsProfileName": "Forgetting Curve (Standard)"
+        "defaultSrsProfileName": "Forgetting Curve (Standard)",
+        "routineLabel": "Routine (Days of Week)",
+        "routineHint": "Repeats on {count, plural, one {# day} other {# days}} of the week"
     },
     "auth": {
         "welcomeBack": "Welcome Back",
@@ -210,7 +215,16 @@
         "accentPurple": "Purple",
         "accentOrange": "Orange",
         "accentPink": "Pink",
-        "accentTeal": "Teal"
+        "accentTeal": "Teal",
+        "journal": "Journal",
+        "journalEnabled": "Journal Feature",
+        "dataManagement": "Data Management",
+        "backupJson": "Create Backup (JSON)",
+        "backupJsonDescription": "All data including settings and tasks",
+        "backupConfirm": "Export all data as JSON?",
+        "exportCsv": "Export Stats (CSV)",
+        "exportCsvDescription": "Session history for analysis",
+        "exportConfirm": "Export study records as CSV?"
     },
     "notification": {
         "dailyReminderTitle": "Time to learn!",
@@ -257,7 +271,11 @@
         "syncTitle": "Cloud Sync",
         "syncDesc": "Login to sync data in real-time between PC and Mobile. Resume exactly where you left off on any device.",
         "themeTitle": "Theme Settings",
-        "themeDesc": "Full Light/Dark mode support. Select 'System' to match your OS settings for your preferred environment."
+        "themeDesc": "Full Light/Dark mode support. Select 'System' to match your OS settings for your preferred environment.",
+        "catColorTitle": "Category Colors",
+        "catColorDesc": "Set colors in the category editor. Tasks in lists and on the calendar are color-coded so you can tell them apart at a glance.",
+        "keepTitle": "Keep (Pin Date & Time)",
+        "keepDesc": "Long-press a date on the calendar or a time in the schedule to keep it. New tasks are prefilled with that date and time, which is handy for creating several in a row."
     },
     "theme": {
         "title": "Theme",
@@ -291,7 +309,9 @@
         "addFailed": "Failed to add category",
         "deleteFailed": "Failed to delete category",
         "cancel": "Cancel",
-        "selectCategory": "Select Category"
+        "selectCategory": "Select Category",
+        "changeColor": "Change Color",
+        "noColor": "None"
     },
     "srs": {
         "title": "SRS (Spaced Repetition)",
@@ -331,7 +351,14 @@
         "deleteGroupConfirm": "Are you sure you want to delete all {count} group tasks?",
         "deleteTodoConfirm": "Are you sure you want to delete {count} tasks?",
         "selectCategory": "Category to Display",
-        "allActivities": "All Activities"
+        "allActivities": "All Activities",
+        "categoryDistribution": "Category Distribution",
+        "completedTasks": "Completed Tasks",
+        "focusTrend": "Focus Time Trend (min)",
+        "noData": "No data to display",
+        "tasksUnit": "tasks",
+        "timeMin": "Time (min)",
+        "totalFocusTime": "Total Focus Time"
     },
     "welcome": {
         "heroTitle": "Record, Measure, Plan.",
