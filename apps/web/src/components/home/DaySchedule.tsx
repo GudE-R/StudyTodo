@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
+import React, { useRef, useEffect, useState, useLayoutEffect, useCallback } from "react";
 import { format, addDays, subDays, isSameDay } from "date-fns";
 import { useLocale, useTranslations } from "next-intl";
 import { getDateFnsLocale } from "@/lib/date-fns-locales";
@@ -104,6 +104,16 @@ export function DaySchedule({
         }
     }, [selectedDate, days]);
 
+    // 自動スクロールの目標位置（scroll-smooth のアニメーションがここに着いたら終了とみなす）
+    const autoScrollTargetRef = useRef<number | null>(null);
+
+    // 自動スクロールを終え、IntersectionObserver による日付連動を有効化する
+    const finishAutoScroll = useCallback(() => {
+        autoScrollTargetRef.current = null;
+        isAutoScrollingRef.current = false;
+        setIsObserverEnabled(true);
+    }, []);
+
     // days更新後やselectedDate変更後のスクロール位置調整
     useLayoutEffect(() => {
         // ユーザースクロール中は、位置調整を行わない（ガタつき防止）
@@ -113,19 +123,47 @@ export function DaySchedule({
         const targetDay = days.find(d => isSameDay(d, selectedDate));
         if (targetDay) {
             const el = dayRefs.current[targetDay.toISOString()];
-            if (el && containerRef.current) {
-                // scrollIntoViewが不安定なため、scrollTopを直接設定する
-                containerRef.current.scrollTop = el.offsetTop;
-
-                // フラグ解除（IntersectionObserverを有効化）
-                // レンダリングとスクロールの完了を確実に待つため時間を延ばす
-                setTimeout(() => {
-                    isAutoScrollingRef.current = false;
-                    setIsObserverEnabled(true);
-                }, 300);
+            const container = containerRef.current;
+            if (el && container) {
+                // アニメーションの途中で通過した日を選択日にしないよう、目標位置に着くまで日付連動を止める
+                isAutoScrollingRef.current = true;
+                const target = Math.min(el.offsetTop, container.scrollHeight - container.clientHeight);
+                if (Math.abs(container.scrollTop - target) < 1) {
+                    // 再中心化で既に目標位置にいる場合も、直前に始まったアニメーションが残っていれば止める
+                    container.scrollTo({ top: target, behavior: "instant" });
+                    finishAutoScroll();
+                } else {
+                    autoScrollTargetRef.current = target;
+                    // scrollIntoViewが不安定なため、scrollTopを直接設定する
+                    container.scrollTop = target;
+                }
             }
         }
-    }, [days, selectedDate]);
+    }, [days, selectedDate, finishAutoScroll]);
+
+    // 自動スクロールの到着と、利用者の操作による割り込みを検知する
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            const target = autoScrollTargetRef.current;
+            if (target !== null && Math.abs(container.scrollTop - target) < 1) finishAutoScroll();
+        };
+        // ホイールやタッチで割り込まれたら、以降は手動スクロールに日付を追従させる
+        const handleUserScroll = () => {
+            if (autoScrollTargetRef.current !== null) finishAutoScroll();
+        };
+
+        container.addEventListener("scroll", handleScroll, { passive: true });
+        container.addEventListener("wheel", handleUserScroll, { passive: true });
+        container.addEventListener("touchstart", handleUserScroll, { passive: true });
+        return () => {
+            container.removeEventListener("scroll", handleScroll);
+            container.removeEventListener("wheel", handleUserScroll);
+            container.removeEventListener("touchstart", handleUserScroll);
+        };
+    }, [finishAutoScroll]);
 
     // スクロール連動（IntersectionObserver）- 初期スクロール完了後にのみ有効化
     useEffect(() => {
