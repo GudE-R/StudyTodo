@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { ModalOverlay } from '../ui/ModalOverlay';
-import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Share2, Cloud, Sparkles, Pin, PaintBucket } from 'lucide-react-native';
+import { X, Play, Calendar, Clock, Repeat, FolderTree, Palette, Timer, BookOpen, MessageSquare, Cloud, Sparkles, Pin, PaintBucket } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../providers/ThemeProvider';
 
@@ -40,8 +40,7 @@ export const UsageGuideModal = ({ visible, onClose }: UsageGuideModalProps) => {
         {
             title: t("guide.catReview", "Review & Share"),
             items: [
-                { icon: BookOpen, title: t("guide.historyTitle", "History"), desc: t("guide.historyDesc", "Analyze your progress.") },
-                { icon: Share2, title: t("guide.shareTitle", "Share"), desc: t("guide.shareDesc", "Share your achievements.") }
+                { icon: BookOpen, title: t("guide.historyTitle", "History"), desc: t("guide.historyDesc", "Analyze your progress.") }
             ]
         },
         {

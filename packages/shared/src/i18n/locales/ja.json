@@ -56,7 +56,16 @@
         "termsOfService": "利用規約",
         "journal": "ジャーナル",
         "errorOccurred": "エラーが発生しました",
-        "deleteGroupConfirm": "このグループのタスク{count}件をすべて削除しますか？"
+        "deleteGroupConfirm": "このグループのタスク{count}件をすべて削除しますか？",
+        "all": "すべて",
+        "calendarTitleFormat": "yyyy年M月",
+        "loading": "読み込み中...",
+        "menu": "メニュー",
+        "minute": "分",
+        "no": "いいえ",
+        "permissionRequired": "許可が必要です",
+        "search": "検索...",
+        "yes": "はい"
     },
     "onboarding": {
         "skip": "スキップ",
@@ -143,7 +152,9 @@
         "routineLabel": "ルーティーン（曜日指定）",
         "routineHint": "{count}曜日に繰り返し作成されます",
         "postpone": "明日へ移動",
-        "defaultSrsProfileName": "忘却曲線 (標準)"
+        "defaultSrsProfileName": "忘却曲線 (標準)",
+        "selectCategory": "カテゴリを選択",
+        "updateRoutineConfirm": "ルーティーンの予定を更新しますか？今後30日分のタスクを作り直します。"
     },
     "auth": {
         "welcomeBack": "おかえりなさい",
@@ -224,7 +235,10 @@
         "backupConfirm": "すべてのデータを JSON 形式で書き出しますか？",
         "exportCsv": "学習記録を書き出す (CSV)",
         "exportCsvDescription": "分析用の学習セッション履歴",
-        "exportConfirm": "学習記録を CSV 形式で書き出しますか？"
+        "exportConfirm": "学習記録を CSV 形式で書き出しますか？",
+        "feedback": "フィードバック",
+        "guide": "使い方ガイド",
+        "select": "選択"
     },
     "notification": {
         "dailyReminderTitle": "学習の時間です！",
@@ -290,7 +304,13 @@
         "deleteFailed": "カテゴリの削除に失敗しました",
         "changeColor": "色を変更",
         "noColor": "なし",
-        "selectCategory": "カテゴリを選択"
+        "selectCategory": "カテゴリを選択",
+        "cameraPermission": "写真を撮るにはカメラへのアクセスを許可してください。",
+        "fromLibrary": "ライブラリ",
+        "imageSaveError": "画像を保存できませんでした。",
+        "photoPermission": "カスタムアイコンを選ぶには写真ライブラリへのアクセスを許可してください。",
+        "selectIcon": "アイコンを選択",
+        "takePhoto": "カメラ"
     },
     "srs": {
         "title": "SRS (間隔反復)",
@@ -357,7 +377,11 @@
         "totalFocusTime": "総集中時間",
         "completedTasks": "完了タスク",
         "tasksUnit": "件",
-        "last7Days": "過去7日間の活動"
+        "last7Days": "過去7日間の活動",
+        "deleteTitle": "タスクを削除",
+        "distribution": "カテゴリ別配分",
+        "focusTime": "集中時間",
+        "trend": "集中時間の推移 (分)"
     },
     "welcome": {
         "heroTitle": "記録、計測、計画。",

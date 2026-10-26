@@ -56,7 +56,16 @@
         "termsOfService": "Terms of Service",
         "journal": "Journal",
         "errorOccurred": "An error occurred",
-        "deleteGroupConfirm": "Delete all {count} tasks in this group?"
+        "deleteGroupConfirm": "Delete all {count} tasks in this group?",
+        "all": "All",
+        "calendarTitleFormat": "MMM yyyy",
+        "loading": "Loading...",
+        "menu": "Menu",
+        "minute": "min",
+        "no": "No",
+        "permissionRequired": "Permission Required",
+        "search": "Search...",
+        "yes": "Yes"
     },
     "onboarding": {
         "skip": "Skip",
@@ -143,7 +152,9 @@
         "selectDate": "Select Date",
         "defaultSrsProfileName": "Forgetting Curve (Standard)",
         "routineLabel": "Routine (Days of Week)",
-        "routineHint": "Repeats on {count, plural, one {# day} other {# days}} of the week"
+        "routineHint": "Repeats on {count, plural, one {# day} other {# days}} of the week",
+        "selectCategory": "Select Category",
+        "updateRoutineConfirm": "Update routine schedule? This will regenerate tasks for next 30 days."
     },
     "auth": {
         "welcomeBack": "Welcome Back",
@@ -224,7 +235,10 @@
         "backupConfirm": "Export all data as JSON?",
         "exportCsv": "Export Stats (CSV)",
         "exportCsvDescription": "Session history for analysis",
-        "exportConfirm": "Export study records as CSV?"
+        "exportConfirm": "Export study records as CSV?",
+        "feedback": "Feedback",
+        "guide": "About App",
+        "select": "Select"
     },
     "notification": {
         "dailyReminderTitle": "Time to learn!",
@@ -311,7 +325,13 @@
         "cancel": "Cancel",
         "selectCategory": "Select Category",
         "changeColor": "Change Color",
-        "noColor": "None"
+        "noColor": "None",
+        "cameraPermission": "Camera access is required to take a photo.",
+        "fromLibrary": "Library",
+        "imageSaveError": "Failed to save image.",
+        "photoPermission": "Photo library access is required to select a custom icon.",
+        "selectIcon": "Select Icon",
+        "takePhoto": "Camera"
     },
     "srs": {
         "title": "SRS (Spaced Repetition)",
@@ -358,7 +378,11 @@
         "noData": "No data to display",
         "tasksUnit": "tasks",
         "timeMin": "Time (min)",
-        "totalFocusTime": "Total Focus Time"
+        "totalFocusTime": "Total Focus Time",
+        "deleteTitle": "Delete Tasks",
+        "distribution": "Distribution",
+        "focusTime": "Focus Time",
+        "trend": "Trend (min)"
     },
     "welcome": {
         "heroTitle": "Record, Measure, Plan.",
