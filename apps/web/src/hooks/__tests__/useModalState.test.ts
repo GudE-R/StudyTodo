@@ -81,6 +81,24 @@ describe('useModalState', () => {
             expect(result.current.isGuideModalOpen).toBe(false);
             expect(result.current.isAnyModalOpen).toBe(false);
         });
+
+        it.each([
+            ['フィードバック', 'setIsFeedbackModalOpen', 'isFeedbackModalOpen'],
+            ['ログイン', 'setIsAuthModalOpen', 'isAuthModalOpen'],
+        ] as const)('%s画面だけが開いていても開いていると判定し、閉じること', (_, setter, flag) => {
+            const { result } = renderHook(() => useModalState());
+
+            act(() => {
+                result.current[setter](true);
+            });
+            expect(result.current.isAnyModalOpen).toBe(true);
+
+            act(() => {
+                result.current.closeAllModals();
+            });
+            expect(result.current[flag]).toBe(false);
+            expect(result.current.isAnyModalOpen).toBe(false);
+        });
     });
 
     describe('openTodoDetail', () => {

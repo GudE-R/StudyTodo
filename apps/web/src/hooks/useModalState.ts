@@ -16,7 +16,7 @@ export function useModalState() {
 
     const isAnyModalOpen =
         isTodoModalOpen || isTemplateModalOpen || isActivityModalOpen ||
-        isSettingsModalOpen || isGuideModalOpen || isTodoDetailOpen || isFeedbackModalOpen;
+        isSettingsModalOpen || isGuideModalOpen || isAuthModalOpen || isTodoDetailOpen || isFeedbackModalOpen;
 
     const closeAllModals = () => {
         setIsTodoModalOpen(false);
@@ -26,6 +26,7 @@ export function useModalState() {
         setIsGuideModalOpen(false);
         setIsAuthModalOpen(false);
         setIsTodoDetailOpen(false);
+        setIsFeedbackModalOpen(false);
     };
 
     const openTodoDetail = (todo: Todo) => {
